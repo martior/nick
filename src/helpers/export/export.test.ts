@@ -15,6 +15,7 @@ import {
   getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
+  getItems,
   mapPrincipalRoles,
 } from './export';
 
@@ -230,6 +231,14 @@ describe('export', () => {
       ]);
       expect(output[0].password).toBe('secret');
       expect(output[2].roles).toEqual([]);
+    });
+  });
+
+  describe('getItems', () => {
+    it('returns the items of a listing', () => {
+      expect(getItems([{ id: 'a' }])).toEqual([{ id: 'a' }]);
+      expect(getItems({ items: [{ id: 'b' }] })).toEqual([{ id: 'b' }]);
+      expect(getItems({ message: 'error' })).toEqual([]);
     });
   });
 });

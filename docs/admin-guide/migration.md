@@ -34,7 +34,7 @@ Each document is written to `documents/<path>.json`, where the path segments are
 | Data | Migrated | Notes |
 | ---- | -------- | ----- |
 | Content tree | Yes | Paths, ids (including ids with dots), types, uuids and field values. |
-| Listing | Yes | `@search`, `@users` and `@groups` are read in batches of 100 (`batching.next`), so large sites are not loaded in one response. |
+| Listing | Yes | `@search` and `@users` are read in batches of 100 (`batching.next`), so large sites are not loaded in one response. `@groups` is not batched by plone.restapi and read at once. Comments, which are cataloged, are skipped. The export stops with an error when a request fails. |
 | Roles | Yes | Roles missing in Nick are added (without permissions). `Manager` and `Site Administrator` map to `Administrator`, `Member` maps to `Authenticated`. |
 | Groups | Yes | Id, title, description, email and global roles. The virtual `AuthenticatedUsers` group is skipped. |
 | Permissions | No | Zope permissions don't apply to Nick. Nick's own permissions are kept. |

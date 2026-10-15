@@ -238,6 +238,7 @@
 - Paginate search, users and groups in export, plone.restapi 10 batches users @martior
 - Keep core users, roles, permissions and actions when importing an exported profile and map Plone roles to Nick roles @martior
 - Give every exported user its own random password instead of one shared password @martior
+- Stop the export on failed requests, read groups unbatched and skip comments in the document listing @martior
 
 ### Internal
 
