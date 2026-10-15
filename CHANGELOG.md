@@ -236,6 +236,7 @@
 - Fix mail debug print link issue @robgietema
 - Support plone.app.querystring operation names in querystring search @martior
 - Fix server error on searchable text with multiple words or operators @martior
+- Support keyword, path query and range parameters in search @martior
 
 ### Internal
 
