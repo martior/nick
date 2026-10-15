@@ -45,6 +45,7 @@ Each document is written to `documents/<path>.json`, where the path segments are
 | Workflow states | Yes | The `review_state` of every document. Documents of types without workflow (by default `File`, `Image` and `Plone Site`) acquire their permissions from the parent in Plone; they get the default workflow and the state of their parent (the root gets the state granting `View` to `Anonymous`). Later changes of the parent state do not cascade to them. |
 | Workflow history | Yes | Every transition with action, actor, comments, state, state title, time and transition title (from the `history` of `@workflow`, oldest first). The creation entry has no action and the title `Create`. |
 | Versions | Yes | Every version of the `@history` endpoint with its content (`@history/<version>`), id, actor, time and change note. Documents without versions get one version of the current content on import. |
+| Local roles | Yes | Roles given to users and groups on the document itself (`@sharing`) and the inherit flag (blocked inheritance). Acquired and global roles are not stored per document. Local roles of the virtual `AuthenticatedUsers` group, and local roles which are not on the sharing page, are not migrated. The `Owner` role follows the owner of the document. |
 
 ## Passwords
 

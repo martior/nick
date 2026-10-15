@@ -664,3 +664,39 @@ export async function convertVersions(
   }
   return versions;
 }
+
+/**
+ * Convert the local roles of a document (`@sharing` endpoint). Only roles
+ * set on the document itself are exported, acquired and global roles are
+ * not. Local roles of virtual groups (like `AuthenticatedUsers`) can't be
+ * set in Nick and are skipped.
+ * @method convertSharing
+ * @param {Object} sharing Data of the `@sharing` endpoint.
+ * @returns {Object} Sharing data and inherit flag of the document.
+ */
+export function convertSharing(sharing: any): {
+  inherit_roles: boolean;
+  sharing: { users: any[]; groups: any[] };
+} {
+  const principals = (type: string) =>
+    (sharing?.entries || [])
+      .filter(
+        (entry: any) =>
+          entry.type === type && !virtualGroups.includes(entry.id),
+      )
+      .map((entry: any) => ({
+        id: entry.id,
+        roles: [
+          ...new Set(
+            Object.keys(entry.roles || {})
+              .filter((role) => entry.roles[role] === true)
+              .map(mapRole),
+          ),
+        ],
+      }))
+      .filter((entry: any) => entry.roles.length > 0);
+  return {
+    inherit_roles: sharing?.inherit !== false,
+    sharing: { users: principals('user'), groups: principals('group') },
+  };
+}

@@ -9,6 +9,7 @@ import { gunzipSync } from 'zlib';
 import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
+  convertSharing,
   convertUserList,
   convertVersions,
   convertWorkflow,
@@ -421,6 +422,9 @@ const convertDocument = async (
         language: json.language.token,
         position_in_parent: document.position_in_parent || 0,
         ...omit(json, omitFields),
+        ...convertSharing(
+          await fetchFromApi(`${document['@id']}/@sharing`, 'GET', token),
+        ),
         ...(versions.length > 0 ? { versions } : {}),
       },
       null,
