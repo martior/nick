@@ -241,6 +241,7 @@
 - Stop the export on failed requests, read groups unbatched and skip comments in the document listing @martior
 - Export type behaviors, allowed content types and unlisted types, so exported documents can be traversed @martior
 - Fix import of exported groups without email @martior
+- Allow descriptions longer than 255 characters for workflows, types and groups @martior
 
 ### Internal
 
