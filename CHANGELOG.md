@@ -267,6 +267,7 @@
 - Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
 - Return the navigation root url as the breadcrumbs root @martior
 - Add description to navigation items and return a bad request on an invalid navigation depth @martior
+- Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
 
 ### Internal
 
