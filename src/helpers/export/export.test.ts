@@ -10,8 +10,10 @@ import { describe, it, expect } from 'vitest';
 import {
   fetchAllBatches,
   forEachBatch,
+  getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
+  mapPrincipalRoles,
 } from './export';
 
 /**
@@ -122,6 +124,35 @@ describe('export', () => {
         { id: 'b' },
       ]);
       expect(items).toEqual([{ id: 'a' }, { id: 'b' }]);
+    });
+  });
+
+  describe('mapPrincipalRoles', () => {
+    it('maps Plone roles to Nick roles', () => {
+      expect(
+        mapPrincipalRoles([
+          'Manager',
+          'Site Administrator',
+          'Member',
+          'Authenticated',
+          'Reviewer',
+          'Custom',
+        ]),
+      ).toEqual(['Administrator', 'Reviewer', 'Custom']);
+    });
+  });
+
+  describe('getCustomRoles', () => {
+    it('returns only roles missing in Nick', () => {
+      expect(
+        getCustomRoles([
+          { id: 'Manager' },
+          { id: 'Member' },
+          { id: 'Editor' },
+          { id: 'Site Administrator' },
+          { id: 'Custom' },
+        ]),
+      ).toEqual([{ id: 'Custom' }]);
     });
   });
 });

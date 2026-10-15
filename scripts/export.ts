@@ -9,8 +9,11 @@ import { v4 as uuid } from 'uuid';
 import {
   fetchAllBatches,
   forEachBatch,
+  getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
+  mapPrincipalRoles,
+  virtualGroups,
 } from '../src/helpers/export/export';
 import { mapAsync } from '../src/helpers/utils/utils';
 import { omit } from 'es-toolkit/object';
@@ -42,36 +45,16 @@ const writeMetadata = (path: string, profile: string) => {
 };
 
 /**
- * Convert permissions
- * @param {Array} permissions Permissions to export.
- * @param {string} path Path of the output folder.
- */
-const convertPermissions = (permissions: any[], path: string) => {
-  process.stdout.write('Converting permissions...');
-
-  const output = permissions.map((permission) => ({
-    id: permission.token,
-    'title:i18n': permission.title,
-  }));
-
-  // Write files
-  writeFileSync(
-    `${path}/permissions.json`,
-    JSON.stringify({ purge: true, permissions: output }, null, 2),
-  );
-
-  console.log('done!');
-};
-
-/**
- * Convert roles
+ * Convert roles. Only roles which are not in Nick's core profile are
+ * exported, Plone's Manager, Site Administrator and Member roles are mapped
+ * to Nick roles.
  * @param {Array} roles Roles to export.
  * @param {string} path Path of the output folder.
  */
 const convertRoles = (roles: any[], path: string) => {
   process.stdout.write('Converting roles...');
 
-  const output = roles.map((role) => ({
+  const output = getCustomRoles(roles).map((role) => ({
     id: role.id,
     'title:i18n': role.title,
     permissions: [], // Missing from API, need to be added manually
@@ -80,7 +63,7 @@ const convertRoles = (roles: any[], path: string) => {
   // Write files
   writeFileSync(
     `${path}/roles.json`,
-    JSON.stringify({ purge: true, roles: output }, null, 2),
+    JSON.stringify({ purge: false, roles: output }, null, 2),
   );
 
   console.log('done!');
@@ -94,18 +77,20 @@ const convertRoles = (roles: any[], path: string) => {
 const convertGroups = (groups: any[], path: string) => {
   process.stdout.write('Converting groups...');
 
-  const output = groups.map((group) => ({
-    id: group.id,
-    'title:i18n': group.title,
-    description: group.description,
-    email: group.email,
-    roles: group.roles,
-  }));
+  const output = groups
+    .filter((group) => !virtualGroups.includes(group.id))
+    .map((group) => ({
+      id: group.id,
+      'title:i18n': group.title,
+      description: group.description,
+      email: group.email,
+      roles: mapPrincipalRoles(group.roles),
+    }));
 
   // Write files
   writeFileSync(
     `${path}/groups.json`,
-    JSON.stringify({ purge: true, groups: output }, null, 2),
+    JSON.stringify({ purge: false, groups: output }, null, 2),
   );
 
   console.log('done!');
@@ -125,51 +110,16 @@ const convertUsers = (users: any[], path: string) => {
     password,
     fullname: user.fullname,
     email: user.email,
-    roles: user.roles,
-    groups: user.groups.items.map((group: any) => group.id),
+    roles: mapPrincipalRoles(user.roles),
+    groups: user.groups.items
+      .map((group: any) => group.id)
+      .filter((group: string) => !virtualGroups.includes(group)),
   }));
 
   // Write files
   writeFileSync(
     `${path}/users.json`,
-    JSON.stringify({ purge: true, users: output }, null, 2),
-  );
-
-  console.log('done!');
-};
-
-/**
- * Convert actions
- * @param {Object} actions Actions to export.
- * @param {string} path Path of the output folder.
- */
-const convertActions = (actions: any, path: string) => {
-  process.stdout.write('Converting actions...');
-
-  const getActions = (actions: any) =>
-    actions
-      ? actions.map((action: any) => ({
-          id: action.id,
-          'title:i18n': action.title,
-          permission: 'Manage', // Not available in API
-        }))
-      : [];
-
-  // Write files
-  writeFileSync(
-    `${path}/actions.json`,
-    JSON.stringify(
-      {
-        purge: true,
-        document_actions: [],
-        object: getActions(actions.object),
-        object_buttons: getActions(actions.object_buttons),
-        user: getActions(actions.user),
-        site_actions: getActions(actions.site_actions),
-      },
-      null,
-      2,
-    ),
+    JSON.stringify({ purge: false, users: output }, null, 2),
   );
 
   console.log('done!');
@@ -379,13 +329,8 @@ async function main() {
   // Write metadata
   writeMetadata(outputfolder, process.argv[5]);
 
-  // Convert permissions
-  const permissions = await fetchFromApi(
-    `${url}/++api++/@vocabularies/plone.app.vocabularies.Permissions?b_size=10000`,
-    'GET',
-    token,
-  );
-  convertPermissions(permissions.items, outputfolder);
+  // Permissions are not exported: Zope permissions don't apply to Nick, the
+  // permissions of Nick's core profile are kept.
 
   // Convert roles
   const roles = await fetchFromApi(`${url}/++api++/@roles`, 'GET', token);
@@ -403,9 +348,8 @@ async function main() {
   );
   convertUsers(users, outputfolder);
 
-  // Convert actions
-  const actions = await fetchFromApi(`${url}/++api++/@actions`, 'GET', token);
-  convertActions(actions, outputfolder);
+  // Actions are not exported: Plone actions are user interface settings
+  // with TALES conditions, the actions of Nick's core profile are kept.
 
   // Convert workflow
   // TODO: No API available

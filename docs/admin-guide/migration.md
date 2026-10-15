@@ -7,7 +7,7 @@ parent: Admin guide
 
 # Migration
 
-`Nick` provides a migration script which can be used to export data (user, groups, roles, permissions, types, documents etc) from an existing running `Plone` or `Nick` website.
+`Nick` provides a migration script which can be used to export data (users, groups, roles, types, workflows, documents etc) from an existing running `Plone` or `Nick` website.
 
 ## Run migration
 
@@ -25,7 +25,7 @@ The `url` is the url of the running backend system, for example: `http://localho
 
 ## Profile
 
-All migrated data is placed in the above profile folder. This profile contains all data including users, groups, roles, permissions, types, documents and much more. This profile can be used (or combined with other profiles) to setup a new website.
+All migrated data is placed in the above profile folder. This profile contains all data including users, groups, roles, types, documents and much more. This profile is meant to be applied on top of the `core` profile: it doesn't purge the users, roles, permissions and actions of `core`.
 
 Each document is written to `documents/<path>.json`, where the path segments are separated by dots. Characters in ids other than letters, digits, `-` and `_` are escaped as `~<hex>` (for example `files.report~2epdf.json`), and the document contains its original `path`, which the import uses.
 
@@ -35,3 +35,7 @@ Each document is written to `documents/<path>.json`, where the path segments are
 | ---- | -------- | ----- |
 | Content tree | Yes | Paths, ids (including ids with dots), types, uuids and field values. |
 | Listing | Yes | `@search`, `@users` and `@groups` are read in batches of 100 (`batching.next`), so large sites are not loaded in one response. |
+| Roles | Yes | Roles missing in Nick are added (without permissions). `Manager` and `Site Administrator` map to `Administrator`, `Member` maps to `Authenticated`. |
+| Groups | Yes | Id, title, description, email and global roles. The virtual `AuthenticatedUsers` group is skipped. |
+| Permissions | No | Zope permissions don't apply to Nick. Nick's own permissions are kept. |
+| Actions | No | Plone actions are user interface settings with TALES conditions. Nick's own actions are kept. |
