@@ -9,6 +9,7 @@ import { describe, it, expect } from 'vitest';
 // Internal imports
 import {
   convertBehaviors,
+  convertSharing,
   convertUserList,
   convertVersions,
   convertWorkflow,
@@ -505,6 +506,48 @@ describe('export', () => {
           changeNote: 'Changed title',
         },
       ]);
+    });
+  });
+
+  describe('convertSharing', () => {
+    it('converts local roles and the inherit flag', () => {
+      expect(
+        convertSharing({
+          inherit: false,
+          entries: [
+            {
+              id: 'AuthenticatedUsers',
+              type: 'group',
+              roles: { Reader: true },
+            },
+            {
+              id: 'staff',
+              type: 'group',
+              roles: { Reader: true, Editor: 'acquired', Reviewer: false },
+            },
+            {
+              id: 'jane',
+              type: 'user',
+              roles: {
+                Editor: true,
+                Reviewer: 'global',
+                'Site Administrator': true,
+              },
+            },
+            { id: 'john', type: 'user', roles: { Reader: 'acquired' } },
+          ],
+        }),
+      ).toEqual({
+        inherit_roles: false,
+        sharing: {
+          users: [{ id: 'jane', roles: ['Editor', 'Administrator'] }],
+          groups: [{ id: 'staff', roles: ['Reader'] }],
+        },
+      });
+    });
+
+    it('inherits roles by default', () => {
+      expect(convertSharing({ entries: [] }).inherit_roles).toBe(true);
     });
   });
 });

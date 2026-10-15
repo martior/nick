@@ -145,6 +145,7 @@
 - Export workflow definitions, type workflows and the state of documents without workflow @martior
 - Export the workflow history of documents @martior
 - Export the versions of documents @martior
+- Export local roles and the inherit flag of documents @martior
 
 ### Bugfix
 
