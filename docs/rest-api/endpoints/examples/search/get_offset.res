@@ -8,6 +8,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events/event-1",
       "@type": "Event",
       "title": "Event 1",
+      "description": "",
       "UID": "405ca717-0c68-43a0-88ac-629a82658675",
       "path": "/events/event-1",
       "Description": null,
@@ -88,12 +89,14 @@ Content-Type: application/json
       "position_in_parent": 1,
       "review_state": "published",
       "start": "2025-04-01T12:49:09.565Z",
-      "title": "Event 2"
+      "title": "Event 2",
+      "description": ""
     },
     {
       "@id": "http://localhost:8080/users",
       "@type": "Folder",
       "title": "Users",
+      "description": "",
       "UID": "80994493-74ca-4b94-9a7c-145a33a6dd80",
       "path": "/users",
       "Description": null,

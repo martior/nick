@@ -7,10 +7,14 @@
 import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
+// External imports
+import { pick } from 'es-toolkit/object';
+
 // Internal imports
 import { chat } from '../../helpers/ai/ai';
 import config from '../../helpers/config/config';
 import { apiLimiter } from '../../helpers/limiter/limiter';
+import { getComponents } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import {
   getBatching,
@@ -19,7 +23,8 @@ import {
   querystringToQuery,
   queryparamToQuery,
 } from '../../helpers/query/query';
-import { getUrl } from '../../helpers/url/url';
+import { getUrl, getUrlByPath } from '../../helpers/url/url';
+import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
 
 interface ChatResult {
@@ -47,6 +52,85 @@ const batching = (
 ): Record<string, any> => {
   const links = getBatching(url, params, total, start, size);
   return links ? { batching: links } : {};
+};
+
+/**
+ * Serialize the search results.
+ *
+ * With `fullobjects` the full content objects are returned. Otherwise a
+ * summary is returned; when `metadata_fields` is specified the summary
+ * contains `@id`, `@type`, `title`, `description` and `review_state` plus
+ * the requested metadata (`_all` for all metadata).
+ * @method serializeItems
+ * @param {Request} req Request object.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @param {Array} items Catalog items.
+ * @param {any} fullobjects Fullobjects parameter.
+ * @param {any} metadataFields Metadata fields parameter.
+ * @returns {Promise<Array>} Serialized items.
+ */
+const serializeItems = async (
+  req: Request,
+  trx: Knex.Transaction,
+  items: any,
+  fullobjects: any,
+  metadataFields: any,
+): Promise<any[]> => {
+  const Document = models.get('Document');
+
+  // Return full objects
+  if (['1', 'true', 'True', true, 1].includes(fullobjects)) {
+    return await mapAsync(items.models || items, async (item: any) => {
+      const document = await Document.fetchOne({ uuid: item.UID }, {}, trx);
+      await document.fetchRelated('_type', trx);
+      await document.applyBehaviors(trx);
+      await document.fetchRelationLists(trx);
+      const parent = document.parent
+        ? await Document.fetchById(document.parent, {}, trx)
+        : undefined;
+      const documentReq = { ...req, document } as Request;
+      return {
+        ...(await document.toJson(
+          documentReq,
+          await getComponents(documentReq, trx, []),
+        )),
+        ...(parent
+          ? {
+              parent: {
+                '@id': getUrlByPath(req, parent.path),
+                '@type': parent.type,
+                title: parent.json.title,
+                description: parent.json.description || '',
+                review_state: parent.workflow_state,
+              },
+            }
+          : {}),
+      };
+    });
+  }
+
+  // Get metadata fields
+  const fields = (
+    Array.isArray(metadataFields) ? metadataFields : [metadataFields]
+  ).filter((field: any) => typeof field === 'string' && field !== '');
+
+  return items.map((item: any) => {
+    const json = {
+      ...item.toJson(req),
+      description: item.Description || '',
+      review_state: item.review_state,
+    };
+    return fields.length === 0 || fields.includes('_all')
+      ? json
+      : pick(json, [
+          '@id',
+          '@type',
+          'title',
+          'description',
+          'review_state',
+          ...fields,
+        ]);
+  });
 };
 
 export default [
@@ -108,8 +192,12 @@ export default [
       return {
         json: {
           '@id': `${getUrl(req)}/@search`,
-          items: items.map((item: InstanceType<typeof Catalog>) =>
-            item.toJson(req),
+          items: await serializeItems(
+            req,
+            trx,
+            items,
+            req.query.fullobjects,
+            req.query.metadata_fields,
           ),
           items_total: total,
           ...batching(`${getUrl(req)}/@search`, req.query, total, start, size),
@@ -180,8 +268,12 @@ export default [
       return {
         json: {
           '@id': `${getUrl(req)}/@search`,
-          items: items.map((item: InstanceType<typeof Catalog>) =>
-            item.toJson(req),
+          items: await serializeItems(
+            req,
+            trx,
+            items,
+            req.body.fullobjects,
+            req.body.metadata_fields,
           ),
           items_total: total,
           ...batching(

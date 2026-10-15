@@ -8,6 +8,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events/event-2",
       "@type": "Event",
       "title": "Event 2",
+      "description": "",
       "Subject": [
         "event"
       ],

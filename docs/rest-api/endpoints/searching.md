@@ -225,6 +225,46 @@ This will return the matching content objects:
 {% include_relative examples/search/get_range.res %}
 ```
 
+## Selecting metadata fields
+
+By default all metadata of the catalog is returned for every item. When `metadata_fields` is specified only `@id`, `@type`, `title`, `description` and `review_state` plus the requested metadata fields are returned. Use `metadata_fields=_all` to get all metadata:
+
+```http
+{% include_relative examples/search/get_metadata_fields.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_metadata_fields.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_metadata_fields.res %}
+```
+
+## Returning full objects
+
+With `fullobjects=1` the full serialization of the content objects is returned instead of the catalog metadata, including a summary of the parent:
+
+```http
+{% include_relative examples/search/get_fullobjects.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_fullobjects.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_fullobjects.res %}
+```
+
 ## Sorting using batching
 
 Results are batched with a default batch size of 25. You can specify the batch size (`b_size`) and the batch start (`b_start`) when searching. `items_total` is the total number of results; when there is more than one batch a `batching` object with links to the current, first, last, next and previous batch is added:
