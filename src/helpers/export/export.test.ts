@@ -8,8 +8,10 @@ import { describe, it, expect } from 'vitest';
 
 // Internal imports
 import {
+  convertUserList,
   fetchAllBatches,
   forEachBatch,
+  generatePassword,
   getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
@@ -153,6 +155,81 @@ describe('export', () => {
           { id: 'Custom' },
         ]),
       ).toEqual([{ id: 'Custom' }]);
+    });
+  });
+
+  describe('generatePassword', () => {
+    it('returns a different password every time', () => {
+      expect(generatePassword()).not.toBe(generatePassword());
+      expect(generatePassword().length).toBeGreaterThanOrEqual(32);
+    });
+  });
+
+  describe('convertUserList', () => {
+    const users = [
+      {
+        '@id': 'http://host/plone/@users/jane',
+        id: 'jane',
+        username: 'jane',
+        fullname: 'Jane Doe',
+        email: 'jane@example.org',
+        location: 'Oslo',
+        roles: ['Member', 'Reviewer'],
+        groups: {
+          items: [{ id: 'AuthenticatedUsers' }, { id: 'staff' }],
+        },
+      },
+      {
+        id: 'john',
+        username: 'john',
+        fullname: 'John Doe',
+        email: 'john@example.org',
+        roles: ['Member'],
+        groups: { items: [] },
+      },
+    ];
+
+    it('gives every user its own password', () => {
+      const output = convertUserList(users, {
+        login: 'admin',
+        password: 'secret',
+      });
+      expect(output[0].password).not.toBe(output[1].password);
+      expect(output[0]).toMatchObject({
+        id: 'jane',
+        fullname: 'Jane Doe',
+        email: 'jane@example.org',
+        location: 'Oslo',
+        roles: ['Reviewer'],
+        groups: ['staff'],
+      });
+    });
+
+    it('adds the user running the export with its password', () => {
+      const output = convertUserList(users, {
+        login: 'admin',
+        password: 'secret',
+      });
+      expect(output[2]).toMatchObject({
+        id: 'admin',
+        password: 'secret',
+        roles: ['Administrator'],
+      });
+    });
+
+    it('adds users referenced by content without roles', () => {
+      const output = convertUserList(
+        users,
+        { login: 'jane', password: 'secret' },
+        ['jane', 'removed', 'removed', 'anonymous'],
+      );
+      expect(output.map((user: any) => user.id)).toEqual([
+        'jane',
+        'john',
+        'removed',
+      ]);
+      expect(output[0].password).toBe('secret');
+      expect(output[2].roles).toEqual([]);
     });
   });
 });
