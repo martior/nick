@@ -8,6 +8,8 @@ import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
 // Internal imports
+import config from '../../helpers/config/config';
+import jobs from '../../helpers/jobs/jobs';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -193,6 +195,29 @@ export default [
           }
         }),
       );
+
+      // Reindex the permissions of the document and the documents below it,
+      // in a job if the subtree is large
+      const Document = models.get('Document');
+      const limit = config.settings.reindexSecurityLimit ?? 1000;
+      const [{ count }] = await Document.knex()('document')
+        .count('uuid')
+        .whereRaw('starts_with(path, ?)', [
+          req.document.path === '/' ? '/' : `${req.document.path}/`,
+        ])
+        .transacting(trx);
+      if (parseInt(count as string) < limit) {
+        await req.document.reindexSecurity(trx);
+      } else {
+        await jobs.add(
+          req.i18n('Reindex security'),
+          req.i18n('Reindex security of {path}', { path: req.document.path }),
+          { action: 'reindex_security', path: req.document.path },
+          req.user.id,
+          trx,
+        );
+      }
+
       return {
         status: 204,
       };

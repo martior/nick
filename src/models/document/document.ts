@@ -1090,6 +1090,137 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the roles which have the global 'View' permission
+   * @method fetchGlobalViewRoles
+   * @static
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<string[]>} List of roles.
+   */
+  static async fetchGlobalViewRoles(trx?: Knex.Transaction): Promise<string[]> {
+    const Permission = models.get('Permission');
+    const view: any = await Permission.fetchById('View', {}, trx);
+    if (!view) {
+      return [];
+    }
+    await view.fetchRelated('_roles', trx);
+    return view._roles.map((role: any) => role.id);
+  }
+
+  /**
+   * Get the roles which have the 'View' permission in a workflow state
+   * @method getViewRoles
+   * @static
+   * @param {Object} workflow Workflow json.
+   * @param {string} state Workflow state.
+   * @param {string[]} globalRoles Roles with the global 'View' permission.
+   * @return {string[]} List of roles.
+   */
+  static getViewRoles(
+    workflow: any,
+    state: string,
+    globalRoles: string[],
+  ): string[] {
+    return uniq([
+      ...globalRoles,
+      ...Object.keys(
+        pickBy(workflow?.states?.[state]?.permissions || {}, (value: any) =>
+          value.includes('View'),
+        ),
+      ),
+    ]);
+  }
+
+  /**
+   * Get the allowed users, groups and roles
+   * @method getAllowed
+   * @static
+   * @param {string[]} viewRoles Roles with the 'View' permission.
+   * @param {Object[]} localRoles Local roles of the document.
+   * @param {string} owner Owner of the document.
+   * @return {string[]} List of allowed users, groups and roles.
+   */
+  static getAllowed(
+    viewRoles: string[],
+    localRoles: { principal: string; role: string }[],
+    owner?: string,
+  ): string[] {
+    return uniq([
+      ...viewRoles,
+      ...localRoles
+        .filter((localRole) => viewRoles.includes(localRole.role))
+        .map((localRole) => localRole.principal),
+      ...(owner && viewRoles.includes('Owner') ? [owner] : []),
+    ]);
+  }
+
+  /**
+   * Fetch the local roles of documents, without inheritance
+   * @method fetchLocalRolesByDocuments
+   * @static
+   * @param {string[]} uuids Uuids of the documents.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<Object>} Local roles by document uuid.
+   */
+  static async fetchLocalRolesByDocuments(
+    uuids: string[],
+    trx?: Knex.Transaction,
+  ): Promise<Record<string, { principal: string; role: string }[]>> {
+    const knex = trx || Document.knex();
+    const localRoles: Record<string, { principal: string; role: string }[]> =
+      {};
+    for (let i = 0; i < uuids.length; i += 1000) {
+      const chunk = uuids.slice(i, i + 1000);
+      const users = await knex('user_role_document').whereIn('document', chunk);
+      const groups = await knex('group_role_document').whereIn(
+        'document',
+        chunk,
+      );
+      users.map((row: any) => {
+        localRoles[row.document] = [
+          ...(localRoles[row.document] || []),
+          { principal: row.user, role: row.role },
+        ];
+      });
+      groups.map((row: any) => {
+        localRoles[row.document] = [
+          ...(localRoles[row.document] || []),
+          { principal: row.group, role: row.role },
+        ];
+      });
+    }
+    return localRoles;
+  }
+
+  /**
+   * Fetch the local roles of this document including the inherited ones
+   * @method fetchLocalRoles
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<Object[]>} List of principals and roles.
+   */
+  async fetchLocalRoles(
+    trx?: Knex.Transaction,
+  ): Promise<{ principal: string; role: string }[]> {
+    const self: InstanceType<typeof Document> = this;
+    const knex = trx || Document.knex();
+
+    // Get this document and the parents it inherits local roles from
+    const chain = await knex.raw(
+      `WITH RECURSIVE chain AS (
+        SELECT uuid, parent, inherit_roles FROM document WHERE uuid = ?
+        UNION ALL
+        SELECT d.uuid, d.parent, d.inherit_roles FROM document d
+          JOIN chain c ON d.uuid = c.parent WHERE c.inherit_roles
+      ) SELECT uuid FROM chain`,
+      [self.uuid],
+    );
+    const localRoles = await Document.fetchLocalRolesByDocuments(
+      chain.rows.map((row: any) => row.uuid),
+      trx,
+    );
+    return flatten(Object.values(localRoles));
+  }
+
+  /**
    * List of allowed users, groups and roles
    * @method allowedUsersGroupsRoles
    * @param {Knex.Transaction} trx Transaction object.
@@ -1097,41 +1228,109 @@ export class Document extends Model {
    */
   async allowedUsersGroupsRoles(trx?: Knex.Transaction): Promise<string[]> {
     const self: InstanceType<typeof Document> = this;
-    const Permission = models.get('Permission');
-    // Get global roles
-    const view: any = await Permission.fetchById('View', {}, trx);
-    await view.fetchRelated('_roles', trx);
-    const globalRoles = view._roles.map((role: any) => role.id);
 
-    // Get workflow roles
-    const workflowRoles = Object.keys(
-      pickBy(
-        self._type._workflow.json.states[self.workflow_state].permissions,
-        (value: any) => value.includes('View'),
+    // Get the roles with 'View' permission, given globally or by the
+    // workflow state, and the local roles of the document
+    return Document.getAllowed(
+      Document.getViewRoles(
+        self._type._workflow.json,
+        self.workflow_state,
+        await Document.fetchGlobalViewRoles(trx),
       ),
+      await self.fetchLocalRoles(trx),
+      self.owner,
     );
+  }
 
-    // Get users and groups from local roles with 'View' permission, given
-    // globally or by the workflow state
-    const localUsersGroups = await this.fetchLocalUsersGroups(
-      uniq([...globalRoles, ...workflowRoles]),
+  /**
+   * Reindex the allowed users, groups and roles of this document and all
+   * documents below it
+   * @method reindexSecurity
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<number>} Number of reindexed documents.
+   */
+  async reindexSecurity(trx: Knex.Transaction): Promise<number> {
+    const self: InstanceType<typeof Document> = this;
+    const Type = models.get('Type');
+    const knex = Document.knex();
+
+    // Get the documents of the subtree, parents before children
+    const documents: any[] = await knex('document')
+      .select(
+        'uuid',
+        'parent',
+        'inherit_roles',
+        'owner',
+        'type',
+        'workflow_state',
+      )
+      .where('uuid', self.uuid)
+      .orWhereRaw('starts_with(path, ?)', [
+        self.path === '/' ? '/' : `${self.path}/`,
+      ])
+      .orderByRaw('length(path)')
+      .transacting(trx);
+    if (documents.length === 0) {
+      return 0;
+    }
+
+    // Get the workflows by type and the global view roles
+    const types = await Type.fetchAll({}, { related: '_workflow' }, trx);
+    const workflows: Record<string, any> = Object.fromEntries(
+      types.map((type: any) => [type.id, type._workflow?.json]),
+    );
+    const globalRoles = await Document.fetchGlobalViewRoles(trx);
+
+    // Get the local roles inherited from above the subtree
+    const top = documents[0];
+    let inherited: { principal: string; role: string }[] = [];
+    if (top.parent && top.inherit_roles) {
+      const parent = await Document.fetchById(top.parent, {}, trx);
+      inherited = parent ? await parent.fetchLocalRoles(trx) : [];
+    }
+
+    // Get the local roles of the subtree
+    const own = await Document.fetchLocalRolesByDocuments(
+      documents.map((document) => document.uuid),
       trx,
     );
 
-    // Add the owner if the owner role has 'View' permission
-    const owner =
-      self.owner &&
-      (globalRoles.includes('Owner') || workflowRoles.includes('Owner'))
-        ? [self.owner]
-        : [];
+    // Calculate the local roles and allowed principals top down
+    const localRoles: Record<string, { principal: string; role: string }[]> =
+      {};
+    const allowed = documents.map((document) => {
+      const above =
+        document.uuid === top.uuid ? inherited : localRoles[document.parent];
+      localRoles[document.uuid] = [
+        ...(own[document.uuid] || []),
+        ...(document.inherit_roles ? above || [] : []),
+      ];
+      return {
+        document: document.uuid,
+        allowed: Document.getAllowed(
+          Document.getViewRoles(
+            workflows[document.type],
+            document.workflow_state,
+            globalRoles,
+          ),
+          localRoles[document.uuid],
+          document.owner,
+        ),
+      };
+    });
 
-    // Return allowed
-    return uniq([
-      ...globalRoles,
-      ...workflowRoles,
-      ...localUsersGroups,
-      ...owner,
-    ]);
+    // Update the catalog in batches
+    for (let i = 0; i < allowed.length; i += 500) {
+      await knex
+        .raw(
+          `UPDATE catalog SET "_allowedUsersGroupsRoles" = item.allowed
+            FROM jsonb_to_recordset(?::jsonb) AS item(document uuid, allowed varchar(255)[])
+            WHERE catalog.document = item.document`,
+          [JSON.stringify(allowed.slice(i, i + 500))],
+        )
+        .transacting(trx);
+    }
+    return allowed.length;
   }
 
   /**
@@ -1276,38 +1475,11 @@ export class Document extends Model {
     viewRoles: string[],
     trx?: Knex.Transaction,
   ): Promise<string[]> {
-    const self: InstanceType<typeof Document> = this;
-    let localUsersGroups: string[] = [];
-
-    // Fetch local user and group roles
-    await self.fetchRelated('[_userRoles, _groupRoles]', trx);
-
-    // Append user roles
-    self._userRoles.map((role: any) => {
-      if (viewRoles.includes(role.id)) {
-        localUsersGroups.push(role.user);
-      }
-    });
-
-    // Append group roles
-    self._groupRoles.map((role: any) => {
-      if (viewRoles.includes(role.id)) {
-        localUsersGroups.push(role.group);
-      }
-    });
-
-    // Check if we should traverse up
-    if (self.parent && self.inherit_roles) {
-      // Fetch parent
-      await self.fetchRelated('_parent', trx);
-
-      // Append parent users and groups
-      localUsersGroups = [
-        ...localUsersGroups,
-        ...(await self._parent.fetchLocalUsersGroups(viewRoles, trx)),
-      ];
-    }
-    return uniq(localUsersGroups);
+    return uniq(
+      (await this.fetchLocalRoles(trx))
+        .filter((localRole) => viewRoles.includes(localRole.role))
+        .map((localRole) => localRole.principal),
+    );
   }
 
   /**

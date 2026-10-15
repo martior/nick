@@ -268,6 +268,7 @@
 - Return the navigation root url as the breadcrumbs root @martior
 - Add description to navigation items and return a bad request on an invalid navigation depth @martior
 - Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
+- Reindex the search permissions of the item and its children after a change of local roles or inheritance in @sharing, in a job for large subtrees @martior
 
 ### Internal
 
