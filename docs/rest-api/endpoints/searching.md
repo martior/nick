@@ -383,6 +383,24 @@ This will return the matching content objects:
 {% include_relative examples/search/post_batch.res %}
 ```
 
+The querystring search can also be called with a `GET` request, passing the JSON encoded body in the `query` parameter:
+
+```http
+{% include_relative examples/search/get_querystring.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_querystring.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_querystring.res %}
+```
+
 When no query is supplied or an operation is unknown a bad request is returned:
 
 ```http

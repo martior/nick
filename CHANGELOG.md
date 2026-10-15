@@ -240,6 +240,7 @@
 - Fix search items total and add batching links with a default batch size of 25 @martior
 - Update the catalog paths of the children of a moved or renamed folder @martior
 - Support fullobjects and metadata_fields in search and add description to the search results @martior
+- Add the GET variant of the querystring search endpoint @martior
 
 ### Internal
 

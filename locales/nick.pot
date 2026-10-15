@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-15T23:20:06.544Z\n"
+"POT-Creation-Date: 2026-10-15T23:20:48.453Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1100,7 +1100,8 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:228
+#: src/routes/search/search.ts:160
+#: src/routes/search/search.ts:307
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1416,7 +1417,7 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:223
+#: src/routes/search/search.ts:155
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
