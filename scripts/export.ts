@@ -5,8 +5,8 @@
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { v4 as uuid } from 'uuid';
 import {
+  convertUserList,
   fetchAllBatches,
   forEachBatch,
   getCustomRoles,
@@ -17,6 +17,19 @@ import {
 } from '../src/helpers/export/export';
 import { mapAsync } from '../src/helpers/utils/utils';
 import { omit } from 'es-toolkit/object';
+
+// Users referenced by content
+const principals = new Set<string>();
+
+/**
+ * Add a user referenced by content
+ * @param {string} id Id of the user.
+ * @returns {string} Id of the user.
+ */
+const addPrincipal = (id: string): string => {
+  principals.add(id);
+  return id;
+};
 
 /**
  * Write metadata
@@ -100,21 +113,16 @@ const convertGroups = (groups: any[], path: string) => {
  * Convert users
  * @param {Array} users Users to export.
  * @param {string} path Path of the output folder.
+ * @param {Object} login Login and password of the user running the export.
  */
-const convertUsers = (users: any[], path: string) => {
+const convertUsers = (
+  users: any[],
+  path: string,
+  login: { login: string; password: string },
+) => {
   process.stdout.write('Converting users...');
-  const password = uuid(); // Random password, need to be reset by users
 
-  const output = users.map((user) => ({
-    id: user.username,
-    password,
-    fullname: user.fullname,
-    email: user.email,
-    roles: mapPrincipalRoles(user.roles),
-    groups: user.groups.items
-      .map((group: any) => group.id)
-      .filter((group: string) => !virtualGroups.includes(group)),
-  }));
+  const output = convertUserList(users, login, [...principals]);
 
   // Write files
   writeFileSync(
@@ -233,7 +241,7 @@ const convertDocument = async (
           /^([\da-f]{8})([\da-f]{4})([\da-f]{4})([\da-f]{4})([\da-f]{12})$/i,
           '$1-$2-$3-$4-$5',
         ),
-        owner: json.creators[0],
+        owner: addPrincipal(json.creators[0]),
         workflow_state: json.review_state,
         language: json.language.token,
         position_in_parent: document.position_in_parent || 0,
@@ -342,12 +350,6 @@ async function main() {
   );
   convertGroups(groups, outputfolder);
 
-  // Convert users
-  const users = await fetchAllBatches(`${url}/++api++/@users`, (batchUrl) =>
-    fetchFromApi(batchUrl, 'GET', token),
-  );
-  convertUsers(users, outputfolder);
-
   // Actions are not exported: Plone actions are user interface settings
   // with TALES conditions, the actions of Nick's core profile are kept.
 
@@ -364,6 +366,12 @@ async function main() {
   // Convert documents
   const root = await fetchFromApi(`${url}/++api++`, 'GET', token);
   await convertDocuments(outputfolder, url, token, root['@id']);
+
+  // Convert users, including users referenced by content
+  const users = await fetchAllBatches(`${url}/++api++/@users`, (batchUrl) =>
+    fetchFromApi(batchUrl, 'GET', token),
+  );
+  convertUsers(users, outputfolder, { login, password });
 }
 
 main();

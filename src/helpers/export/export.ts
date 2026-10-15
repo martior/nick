@@ -3,6 +3,10 @@
  * @module helpers/export/export
  */
 
+// External imports
+import { randomBytes } from 'crypto';
+import { omit } from 'es-toolkit/object';
+
 /**
  * Get the path of a document relative to the site root from its url.
  * @method getDocumentPath
@@ -176,4 +180,76 @@ export function getCustomRoles(roles: any[]): any[] {
   return roles.filter(
     (role) => !coreRoles.includes(role.id) && !(role.id in roleMapping),
   );
+}
+
+/**
+ * Generate a random password. Password hashes can't be read over the REST
+ * api, so every migrated user gets its own random password and has to reset
+ * it.
+ * @method generatePassword
+ * @returns {string} Random password.
+ */
+export function generatePassword(): string {
+  return randomBytes(24).toString('base64url');
+}
+
+/**
+ * Convert users. Every user gets its own random password, except the user
+ * running the export, which keeps the password used for the export. Users
+ * which are referenced by content (owners, actors) but don't exist anymore
+ * (or are not listed, like the Zope root user) are added without roles.
+ * @method convertUserList
+ * @param {Array} users Users from the `@users` endpoint.
+ * @param {Object} login Login and password of the user running the export.
+ * @param {string[]} principals Ids of users referenced by content.
+ * @returns {Array} Users for the profile.
+ */
+export function convertUserList(
+  users: any[],
+  login: { login: string; password: string },
+  principals: string[] = [],
+): any[] {
+  const output = users.map((user) => ({
+    ...omit(user, ['@id', 'id', 'username', 'groups', 'roles', 'portrait']),
+    id: user.username || user.id,
+    password:
+      (user.username || user.id) === login.login
+        ? login.password
+        : generatePassword(),
+    fullname: user.fullname || '',
+    email: user.email || undefined,
+    roles: mapPrincipalRoles(user.roles),
+    groups: (user.groups?.items || [])
+      .map((group: any) => group.id)
+      .filter((group: string) => !virtualGroups.includes(group)),
+  }));
+  const ids = output.map((user) => user.id);
+
+  // Add the user running the export, for example the Zope root user
+  if (!ids.includes(login.login)) {
+    output.push({
+      id: login.login,
+      password: login.password,
+      fullname: login.login,
+      email: undefined,
+      roles: ['Administrator'],
+      groups: [],
+    });
+    ids.push(login.login);
+  }
+
+  // Add users referenced by content
+  [...new Set(principals)]
+    .filter((id) => id && !ids.includes(id) && id !== 'anonymous')
+    .map((id) =>
+      output.push({
+        id,
+        password: generatePassword(),
+        fullname: id,
+        email: undefined,
+        roles: [],
+        groups: [],
+      }),
+    );
+  return output;
 }
