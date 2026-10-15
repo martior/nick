@@ -150,6 +150,7 @@
 - Export relations with uuids and make links in exported documents relative to the site root @martior
 - Export translations of documents @martior
 - Export redirects @martior
+- Export comments of documents @martior
 
 ### Bugfix
 

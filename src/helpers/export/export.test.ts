@@ -9,6 +9,7 @@ import { describe, it, expect } from 'vitest';
 // Internal imports
 import {
   convertBehaviors,
+  convertComments,
   convertRedirects,
   convertRelations,
   convertSharing,
@@ -717,6 +718,48 @@ describe('export', () => {
           path: '/en/about-us',
           manual: true,
           datetime: '2026-01-01T10:00:00+00:00',
+        },
+      ]);
+    });
+  });
+
+  describe('convertComments', () => {
+    it('converts comments and replies', () => {
+      expect(
+        convertComments([
+          {
+            comment_id: '1',
+            in_reply_to: null,
+            author_username: 'jane',
+            creation_date: '2026-01-01T10:00:00+00:00',
+            modification_date: '2026-01-01T10:00:00+00:00',
+            text: { data: 'Hello', 'mime-type': 'text/plain' },
+          },
+          {
+            comment_id: '2',
+            in_reply_to: '1',
+            author_username: 'john',
+            creation_date: '2026-01-02T10:00:00+00:00',
+            modification_date: '2026-01-03T10:00:00+00:00',
+            text: { data: 'Hi', 'mime-type': 'text/plain' },
+          },
+        ]),
+      ).toEqual([
+        {
+          id: '1',
+          parent: null,
+          author: 'jane',
+          created: '2026-01-01T10:00:00+00:00',
+          modified: '2026-01-01T10:00:00+00:00',
+          text: { data: 'Hello', 'mime-type': 'text/plain' },
+        },
+        {
+          id: '2',
+          parent: '1',
+          author: 'john',
+          created: '2026-01-02T10:00:00+00:00',
+          modified: '2026-01-03T10:00:00+00:00',
+          text: { data: 'Hi', 'mime-type': 'text/plain' },
         },
       ]);
     });
