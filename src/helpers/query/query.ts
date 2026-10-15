@@ -656,7 +656,46 @@ export const querystringToQuery = async (
 };
 
 /**
+ * Convert a parameter value to a typed list of values for an index.
+ * @method typedValues
+ * @param {string} type Index type.
+ * @param {any} value Parameter value.
+ * @returns {Array} List of typed values, invalid values are left out.
+ */
+const typedValues = (type: string, value: any): any[] =>
+  toArray(value)
+    .map((item: any) => {
+      switch (type) {
+        case 'integer':
+          return parseInt(item, 10);
+        case 'float':
+          return parseFloat(item);
+        case 'boolean':
+          return ['true', '1', 'yes', 'on'].includes(`${item}`.toLowerCase());
+        case 'date':
+          return parseDate(item);
+        case 'uuid':
+        case 'uuid[]':
+          return /^[0-9a-f]{8}-?([0-9a-f]{4}-?){3}[0-9a-f]{12}$/i.test(item)
+            ? item
+            : undefined;
+        default:
+          return `${item}`;
+      }
+    })
+    .filter(
+      (item: any) =>
+        item !== undefined && !(typeof item === 'number' && isNaN(item)),
+    );
+
+/**
  * Convert queryparam to query.
+ *
+ * Supports the ZCatalog query options as used by plone.restapi: an index
+ * can be queried with `index=value` (a list of values is an OR),
+ * `index.query`, `index.range` (`min`, `max` or `min:max`),
+ * `index.operator` (`and` or `or`) and `index.not`. The path index supports
+ * `path.query` (one or more physical paths) and `path.depth`.
  * @method queryparamToQuery
  * @param {Object} queryparam Querystring
  * @param {String} path Path to search
@@ -673,9 +712,6 @@ export const queryparamToQuery = async (
   const Index = models.get('Index');
   type IndexMap = Record<string, InstanceType<typeof Index>>;
 
-  // Get root url
-  const root = path.endsWith('/') ? path : `${path}/`;
-
   // Get indexes
   const indexes: IndexMap = {} as IndexMap;
   (await Index.fetchAll({ metadata: false }, {}, trx)).map(
@@ -684,10 +720,19 @@ export const queryparamToQuery = async (
     },
   );
 
-  // Set path search
-  const where: WhereClause = {
-    _path: ['~', `^${path}`],
-  };
+  // Group parameters by index and option
+  const params: Record<string, Record<string, any>> = {};
+  Object.keys(queryparam || {}).forEach((key: string) => {
+    const name = key.replace(/:(list|record|records|tuple)$/, '');
+    const match = name.match(/^(.+)\.(query|range|operator|depth|not)$/);
+    const [index, option] = match ? [match[1], match[2]] : [name, 'query'];
+    params[index] = {
+      ...params[index],
+      [option]: queryparam[key],
+    };
+  });
+
+  const where: WhereClause = {};
 
   // Default option
   const options: QueryOptions = {
@@ -700,84 +745,152 @@ export const queryparamToQuery = async (
     select: undefined,
   };
 
-  // Loop through query params
+  // Set path search, default to the context or the navigation root
+  const depth = parseInt(params.path?.depth, 10);
+  const paths = toArray(params.path?.query);
+  if (paths.length === 0) {
+    paths.push(
+      typedValues('boolean', params.use_site_search_settings?.query)[0] &&
+        req.navroot
+        ? req.navroot.path
+        : path,
+    );
+  }
+  where['_path'] = pathCondition(
+    paths.map((item: string) => ({
+      path: `${item}`.replace(getUrlByPath(req, '/'), '') || '/',
+      depth: isNaN(depth) ? undefined : depth,
+    })),
+  );
+
+  // Loop through indexes
   await Promise.all(
-    Object.keys(queryparam).map(async (key) => {
-      const value = queryparam[key];
+    Object.keys(params).map(async (key) => {
+      const index = indexes[key];
+      const param = params[key];
+      const value = param.query;
 
       // Check if key in indexes
-      if (indexes[key]) {
-        // Check if key is SearchableText and AI is enabled
-        if (
-          key === 'SearchableText' &&
-          config.settings.ai?.models?.embed?.enabled
-        ) {
-          // Get embedding vector
-          const embedding = await embed(value.replace(/\*/g, ''));
-
-          where['_embedding'] = [
-            'raw',
-            `1 - (_embedding <=> '${embedding}') > ${config.settings.ai.models.embed.minSimilarity}`,
-          ];
-          options.select = [
-            '*',
-            trx.raw(`1 - (_embedding <=> ?) AS similarity`, [embedding]),
-          ];
-          options.order.column = 'similarity';
-          options.order.reverse = true;
-        } else {
-          const field = `_${key}`;
-          switch (indexes[key].type) {
-            case 'string':
-            case 'integer':
-            case 'float':
-            case 'path':
-            case 'uuid':
-            case 'boolean':
-            case 'date':
-              where[field] = value;
-              break;
-            case 'string[]':
-            case 'uuid[]':
-              break;
-            case 'text':
-              where[field] = textCondition(field, value);
-              break;
-            default:
-              break;
-          }
-        }
+      if (!index || key === 'path' || value === undefined) {
+        return;
       }
 
-      // Check other query params
-      switch (key) {
-        case 'sort_on':
-          if (Object.keys(indexes).includes(value)) {
-            options.order.column = `_${value}`;
+      // Check if key is SearchableText and AI is enabled
+      if (
+        key === 'SearchableText' &&
+        config.settings.ai?.models?.embed?.enabled
+      ) {
+        // Get embedding vector
+        const embedding = await embed(value.replace(/\*/g, ''));
+
+        where['_embedding'] = [
+          'raw',
+          `1 - (_embedding <=> '${embedding}') > ${config.settings.ai.models.embed.minSimilarity}`,
+        ];
+        options.select = [
+          '*',
+          trx.raw(`1 - (_embedding <=> ?) AS similarity`, [embedding]),
+        ];
+        options.order.column = 'similarity';
+        options.order.reverse = true;
+        return;
+      }
+
+      const field = `_${key}`;
+      const values = typedValues(index.type, value);
+      switch (index.type) {
+        case 'string':
+        case 'integer':
+        case 'float':
+        case 'uuid':
+        case 'boolean':
+        case 'date':
+          if (param.range) {
+            const range = ['integer', 'float'].includes(index.type)
+              ? values.sort((a: number, b: number) => a - b)
+              : values.sort();
+            if (range.length === 0) {
+              break;
+            }
+            switch (param.range) {
+              case 'min':
+                where[field] = ['raw', `"${field}" >= ?`, [range[0]]];
+                break;
+              case 'max':
+                where[field] = [
+                  'raw',
+                  `"${field}" <= ?`,
+                  [range[range.length - 1]],
+                ];
+                break;
+              case 'min:max':
+              case 'minmax':
+                where[field] = [
+                  'raw',
+                  `"${field}" BETWEEN ? AND ?`,
+                  [range[0], range[range.length - 1]],
+                ];
+                break;
+              default:
+                break;
+            }
+          } else {
+            where[field] = ['raw', `"${field}" = any(?)`, [values]];
           }
           break;
-        case 'sort_order':
-          options.order.reverse = value !== 'ascending';
-          break;
-        case 'path.depth':
-          where['_path'] = [
-            '~',
-            `^${root}[^/]+${'(/[^/]+)?'.repeat(parseInt(value, 10) - 1)}$`,
+        case 'string[]':
+        case 'uuid[]':
+          where[field] = [
+            'raw',
+            `"${field}" ${`${param.operator}`.toLowerCase() === 'and' ? '@>' : '&&'} ?`,
+            [values],
           ];
           break;
-        case 'b_size':
-          options.limit = Math.min(
-            config.settings.requestLimit?.batch || 1000,
-            Math.max(1, parseInt(value, 10) || 1),
-          );
-          break;
-        case 'b_start':
-          options.offset = parseInt(value, 10) || 0;
+        case 'text':
+          where[field] = textCondition(field, value);
           break;
         default:
           break;
       }
+
+      // Check not option
+      if (param.not !== undefined && index.type !== 'text') {
+        const not = typedValues(index.type, param.not);
+        where[`${field}:not`] = [
+          'raw',
+          ['string[]', 'uuid[]'].includes(index.type)
+            ? `NOT (coalesce("${field}", '{}') && ?)`
+            : `("${field}" IS NULL OR NOT ("${field}" = any(?)))`,
+          [not],
+        ];
+      }
     }),
   );
+
+  // Check sort
+  if (params.sort_on && Object.keys(indexes).includes(params.sort_on.query)) {
+    options.order.column = `_${params.sort_on.query}`;
+  }
+
+  // Check sort order
+  if (params.sort_order) {
+    options.order.reverse = ['descending', 'reverse'].includes(
+      params.sort_order.query,
+    );
+  }
+
+  // Check batch size
+  if (params.b_size) {
+    options.limit = Math.min(
+      config.settings.requestLimit?.batch || 1000,
+      Math.max(1, parseInt(params.b_size.query, 10) || 1),
+    );
+  }
+
+  // Check batch start
+  if (params.b_start) {
+    options.offset = parseInt(params.b_start.query, 10) || 0;
+  }
+
   return [where, options];
 };

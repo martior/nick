@@ -165,6 +165,66 @@ This will return all content object:
 {% include_relative examples/search/get_depth.res %}
 ```
 
+## Searching on keywords
+
+Keyword indexes like `Subject` match when any of the given values is set. Use `Subject.operator=and` to require all values:
+
+```http
+{% include_relative examples/search/get_subject.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_subject.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_subject.res %}
+```
+
+## Searching on path
+
+By default the search is limited to the current context and its children. Use `path.query` to search one or more other paths and `path.depth` to limit the depth. A depth of `0` returns only the path itself, a depth of `1` its direct children and so on:
+
+```http
+{% include_relative examples/search/get_path.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_path.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_path.res %}
+```
+
+## Searching on date ranges
+
+Date (and number) indexes can be queried with a range by specifying `<index>.query` and `<index>.range`, the range being `min`, `max` or `min:max`:
+
+```http
+{% include_relative examples/search/get_range.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_range.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_range.res %}
+```
+
 ## Sorting using batching
 
 You can specify the batch size when searching:

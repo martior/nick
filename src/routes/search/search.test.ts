@@ -33,6 +33,15 @@ describe('Search', () => {
   it('should be able to filter on depth', () =>
     testRequest(app, 'search/get_depth'));
 
+  it('should be able to filter on a keyword index', () =>
+    testRequest(app, 'search/get_subject'));
+
+  it('should be able to filter on a path query', () =>
+    testRequest(app, 'search/get_path'));
+
+  it('should be able to filter on a date range', () =>
+    testRequest(app, 'search/get_range'));
+
   it('should be able to set batch size', () =>
     testRequest(app, 'search/get_batch'));
 
