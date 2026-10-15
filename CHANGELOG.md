@@ -242,6 +242,7 @@
 - Support fullobjects and metadata_fields in search and add description to the search results @martior
 - Add the GET variant of the querystring search endpoint @martior
 - Ignore accents in text search @martior
+- Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
 
 ### Internal
 
