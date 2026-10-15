@@ -308,6 +308,7 @@
 - Rename default profile to examplecontent @robgietema
 - Fix initialization for client @robgietema
 - Save controlpanel and userschema files as blobs @robgietema
+- Update locale source references @martior
 
 ### Documentation
 
