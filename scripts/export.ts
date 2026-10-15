@@ -105,7 +105,7 @@ const convertGroups = (groups: any[], path: string) => {
       id: group.id,
       'title:i18n': group.title,
       description: group.description,
-      email: group.email,
+      email: group.email || undefined, // Email is unique in Nick
       roles: mapPrincipalRoles(group.roles),
     }));
 
