@@ -234,6 +234,7 @@
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
+- Fix document urls in export and import of ids containing dots @martior
 
 ### Internal
 

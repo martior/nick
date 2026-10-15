@@ -6,6 +6,10 @@
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { v4 as uuid } from 'uuid';
+import {
+  getDocumentFilename,
+  getDocumentPath,
+} from '../src/helpers/export/export';
 import { mapAsync } from '../src/helpers/utils/utils';
 import { omit } from 'es-toolkit/object';
 
@@ -241,18 +245,16 @@ const convertDocuments = async (path: string, url: string, token: string) => {
 
   // Write documents
   await mapAsync(documents.items, async (document: any) => {
-    const doc_path = document['@id'].replace(base_url, '');
-    const filename =
-      doc_path === ''
-        ? '_root.json'
-        : `${doc_path.substring(1).replaceAll('/', '.')}.json`;
-    const json = await fetchFromApi(`${url}/++api++$${doc_path}`, 'GET', token);
+    const doc_path = getDocumentPath(document['@id'], base_url);
+    const filename = getDocumentFilename(doc_path);
+    const json = await fetchFromApi(document['@id'], 'GET', token);
 
     // Write files
     writeFileSync(
       `${path}/documents/${filename}`,
       JSON.stringify(
         {
+          path: doc_path,
           type: json['@type'],
           uuid: json.UID.replace(
             /^([\da-f]{8})([\da-f]{4})([\da-f]{4})([\da-f]{4})([\da-f]{12})$/i,
@@ -311,6 +313,7 @@ async function fetchFromApi(
   body?: any,
 ): Promise<any> {
   const headers: any = {
+    Accept: 'application/json',
     'Content-Type': 'application/json',
   };
   if (token) {

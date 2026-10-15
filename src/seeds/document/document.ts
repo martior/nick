@@ -66,21 +66,27 @@ export const seedDocument = async (
     const files = (await fs.readdir(`${profilePath}/documents`))
       .filter((file: string) => file.endsWith('.json'))
       .map((file: string) => dropRight(file.split('.'), 1).join('.'))
-      .sort();
+      .sort((a: string, b: string) =>
+        a === '_root' ? -1 : b === '_root' ? 1 : a < b ? -1 : a > b ? 1 : 0,
+      );
     await mapAsync(files, async (file: string) => {
       let document: any = stripI18n(
         (await import(`${profilePath}/documents/${file}`)).default,
       );
+
+      // Get the path from the document or else from the filename
       const slugs = file.split('.');
-      const id = last(slugs) === '_root' ? 'root' : last(slugs);
-      const path = last(slugs) === '_root' ? '/' : `/${slugs.join('/')}`;
+      const path =
+        document.path ||
+        (last(slugs) === '_root' ? '/' : `/${slugs.join('/')}`);
+      const id = path === '/' ? 'root' : last(path.split('/'));
       const parent =
-        last(slugs) === '_root'
+        path === '/'
           ? undefined
           : (
               await Document.fetchOne(
                 {
-                  path: `/${dropRight(slugs, 1).join('/')}`,
+                  path: path.substring(0, path.lastIndexOf('/')) || '/',
                 },
                 {},
                 trx,
