@@ -13,6 +13,7 @@ import {
   convertRedirects,
   convertRelations,
   convertSharing,
+  convertSiteSettings,
   convertUid,
   convertUserList,
   convertVersions,
@@ -777,6 +778,33 @@ describe('export', () => {
         '/b/y': 1,
         '/c': 2,
       });
+    });
+  });
+
+  describe('convertSiteSettings', () => {
+    it('converts the site and language settings', () => {
+      expect(
+        convertSiteSettings({
+          features: { multilingual: true },
+          'plone.site_title': 'Intranet',
+          'plone.robots_txt': 'User-agent: *',
+          'plone.available_languages': ['en', 'de'],
+          'plone.default_language': 'en',
+        }),
+      ).toEqual([
+        {
+          id: 'site',
+          data: { site_title: 'Intranet', robots_txt: 'User-agent: *' },
+        },
+        {
+          id: 'language',
+          data: {
+            default_language: 'en',
+            available_languages: ['en', 'de'],
+            multilingual: true,
+          },
+        },
+      ]);
     });
   });
 });

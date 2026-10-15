@@ -52,6 +52,7 @@ Each document is written to `documents/<path>.json`, where the path segments are
 | Redirects | Yes | Manual and automatic aliases (`@aliases` of the site root) with their date, for documents which are exported. |
 | Comments | Yes | Comments and replies (`@comments`) with id, author, dates and text, and the `allow_discussion` flag. The author full name and the review state of comments (`comment_review_workflow`) are not migrated. |
 | Folder order | Yes | The position of every document in its folder (from `@search` sorted on `getObjPositionInParent`). |
+| Site settings | Partly | Site title, `robots.txt`, default and available languages and the multilingual flag (`@site`) go to the `site` and `language` controlpanels. The site logo and other registry settings and controlpanels are not migrated. |
 
 ## Passwords
 

@@ -14,6 +14,7 @@ import {
   convertRedirects,
   convertRelations,
   convertSharing,
+  convertSiteSettings,
   convertUid,
   convertUserList,
   convertVersions,
@@ -268,6 +269,29 @@ const convertRedirectList = async (
   );
 
   console.log(`${output.length} done!`);
+};
+
+/**
+ * Convert site and language settings
+ * @param {string} path Path of the output folder.
+ * @param {string} url Url
+ * @param {string} token Auth token
+ */
+const convertSettings = async (path: string, url: string, token: string) => {
+  process.stdout.write('Converting site settings...');
+
+  const site = await fetchFromApi(`${url}/++api++/@site`, 'GET', token);
+
+  // Write files
+  mkdirSync(`${path}/controlpanels`, { recursive: true });
+  convertSiteSettings(site).map((controlpanel) =>
+    writeFileSync(
+      `${path}/controlpanels/${controlpanel.id}.json`,
+      JSON.stringify(controlpanel, null, 2),
+    ),
+  );
+
+  console.log('done!');
 };
 
 /**
@@ -616,6 +640,9 @@ async function main() {
 
   // Permissions are not exported: Zope permissions don't apply to Nick, the
   // permissions of Nick's core profile are kept.
+
+  // Convert site and language settings
+  await convertSettings(outputfolder, url, token);
 
   // Convert roles
   const roles = await fetchFromApi(`${url}/++api++/@roles`, 'GET', token);

@@ -151,6 +151,7 @@
 - Export translations of documents @martior
 - Export redirects @martior
 - Export comments of documents @martior
+- Export site title, robots.txt and language settings @martior
 
 ### Bugfix
 
