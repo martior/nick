@@ -32,7 +32,11 @@ import { DocumentCollection } from '../../collections/document/document';
 import languages from '../../constants/languages';
 import events from '../../events';
 import { generate, embed } from '../../helpers/ai/ai';
-import { groupToken, userToken } from '../../helpers/auth/auth';
+import {
+  groupToken,
+  principalTokens,
+  userToken,
+} from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { copyFile, removeFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
@@ -706,6 +710,99 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the permissions of a user on this document
+   * @method fetchUserPermissions
+   * @param {Object} user User object with roles and groups.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<string[]>} Array of permissions.
+   */
+  async fetchUserPermissions(
+    user: any,
+    trx: Knex.Transaction,
+  ): Promise<string[]> {
+    const self: InstanceType<typeof Document> = this;
+    const Role = models.get('Role');
+
+    // Get global, local and owner roles
+    const tokens = principalTokens(user);
+    const roles = uniq([
+      ...(await self.fetchLocalRoles(trx))
+        .filter((localRole) => tokens.includes(localRole.principal))
+        .map((localRole) => localRole.role),
+      ...user.getRoles(),
+      ...(user.id === self.owner ? ['Owner'] : []),
+    ]);
+
+    // Fetch type and workflow
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+
+    // Get permissions
+    return uniq([
+      ...(await Role.fetchPermissions(roles, trx)),
+      ...self._type._workflow.getPermissions(self.workflow_state, roles),
+    ]);
+  }
+
+  /**
+   * Check if a transition can be applied to this document
+   * @method checkTransition
+   * @param {string} transition Transition to check.
+   * @param {Object} actor Actor object.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} permissions Permissions of the actor, fetched if omitted.
+   * @returns {Promise<string>} `apply`, `same` when the document already is in
+   * the new state, `unknown`, `unavailable` in the current state or
+   * `unauthorized`.
+   */
+  async checkTransition(
+    transition: string,
+    actor: any,
+    trx: Knex.Transaction,
+    permissions?: string[],
+  ): Promise<'apply' | 'same' | 'unknown' | 'unavailable' | 'unauthorized'> {
+    const self: InstanceType<typeof Document> = this;
+
+    // Fetch type and workflow
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+    const workflow = self._type._workflow.json;
+    const definition = Object.hasOwn(workflow.transitions || {}, transition)
+      ? workflow.transitions[transition]
+      : undefined;
+
+    if (!definition) {
+      return 'unknown';
+    }
+    if (definition.new_state === self.workflow_state) {
+      return 'same';
+    }
+    if (
+      !(workflow.states?.[self.workflow_state]?.transitions || []).includes(
+        transition,
+      )
+    ) {
+      return 'unavailable';
+    }
+    if (
+      !(permissions || (await self.fetchUserPermissions(actor, trx))).includes(
+        definition.permission,
+      )
+    ) {
+      return 'unauthorized';
+    }
+    return 'apply';
+  }
+
+  /**
    * Change worksflow
    * @method changeWorkflow
    * @param {string} transition Transition to change to.
@@ -738,8 +835,8 @@ export class Document extends Model {
     const new_state =
       self._type._workflow.json.transitions[transition]?.new_state;
 
-    // Check if state is available
-    if (new_state) {
+    // Check if state is available and not the current state
+    if (new_state && new_state !== old_state) {
       // Add to workflow history
       const workflow_history = self.workflow_history;
       workflow_history.push({
