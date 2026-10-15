@@ -108,4 +108,28 @@ describe('seedDocument', () => {
       document._versions.map((version: any) => version.json.file.uuid),
     ).toEqual([document.json.file.uuid, document.json.file.uuid]);
   });
+
+  it('keeps the position of documents in their parent', async () => {
+    const Document = models.get('Document');
+    profile = writeProfile({
+      'news.a.json': {
+        uuid: '5b5e1c3e-2c6a-4f7e-9b1a-3f0d4a2c1e03',
+        type: 'Page',
+        title: 'A',
+        position_in_parent: 1,
+      },
+      'news.b.json': {
+        uuid: '5b5e1c3e-2c6a-4f7e-9b1a-3f0d4a2c1e04',
+        type: 'Page',
+        title: 'B',
+        position_in_parent: 0,
+      },
+    });
+
+    await seedDocument(global.txn!, profile);
+
+    const a = await Document.fetchOne({ path: '/news/a' }, {}, global.txn!);
+    const b = await Document.fetchOne({ path: '/news/b' }, {}, global.txn!);
+    expect([a.position_in_parent, b.position_in_parent]).toEqual([1, 0]);
+  });
 });

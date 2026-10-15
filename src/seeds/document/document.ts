@@ -131,7 +131,7 @@ export const seedDocument = async (
           id,
           path,
           parent,
-          position_in_parent: document.position_in_parent || position_in_parent,
+          position_in_parent: document.position_in_parent ?? position_in_parent,
           lock: document.lock || {
             locked: false,
             stealable: true,

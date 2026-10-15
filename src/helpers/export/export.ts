@@ -951,3 +951,24 @@ export function convertComments(comments: any[]): any[] {
     text: comment.text,
   }));
 }
+
+/**
+ * Get the position of documents in their parent from a listing sorted on
+ * position in parent: the position of a document is the number of its
+ * siblings listed before it.
+ * @method getPositions
+ * @param {string[]} paths Paths sorted on position in parent.
+ * @returns {Map} Positions by path.
+ */
+export function getPositions(paths: string[]): Map<string, number> {
+  const counters = new Map<string, number>();
+  const positions = new Map<string, number>();
+  paths.map((path) => {
+    const parent =
+      path === '/' ? '' : path.substring(0, path.lastIndexOf('/')) || '/';
+    const position = counters.get(parent) || 0;
+    positions.set(path, position);
+    counters.set(parent, position + 1);
+  });
+  return positions;
+}
