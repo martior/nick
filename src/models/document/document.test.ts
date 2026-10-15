@@ -52,15 +52,51 @@ describe('Document', () => {
       const allowed = await document.allowedUsersGroupsRoles(global.txn!);
 
       // Local Editor has View in the private state
-      expect(allowed).toContain('john');
+      expect(allowed).toContain('user:john');
       // The owner is not in the core workflow private state
-      expect(allowed).not.toContain('jane');
+      expect(allowed).not.toContain('user:jane');
 
       // Owner with View in the private state
       document._type._workflow.json.states.private.permissions.Owner = ['View'];
       expect(await document.allowedUsersGroupsRoles(global.txn!)).toContain(
-        'jane',
+        'user:jane',
       );
+    });
+  });
+
+  describe('fetchAllRestricted', () => {
+    it('does not match a user or group named like a role', async () => {
+      const Catalog = models.get('Catalog');
+      const Document = models.get('Document');
+      const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+      await news.fetchRelated('_type._workflow', global.txn!);
+      await news.update({ workflow_state: 'private' }, global.txn!);
+      news.workflow_state = 'private';
+      await news.reindex(global.txn!);
+
+      const req: any = {
+        user: {
+          id: 'Editor',
+          _groups: [{ id: 'Administrator' }],
+          getRoles: () => ['Authenticated'],
+        },
+      };
+      const items = await Catalog.fetchAllRestricted(
+        { _path: '/news' },
+        {},
+        global.txn!,
+        req,
+      );
+      expect(items.getLength()).toBe(0);
+
+      req.user.getRoles = () => ['Authenticated', 'Editor'];
+      const allowed = await Catalog.fetchAllRestricted(
+        { _path: '/news' },
+        {},
+        global.txn!,
+        req,
+      );
+      expect(allowed.getLength()).toBe(1);
     });
   });
 });

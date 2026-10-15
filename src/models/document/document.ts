@@ -32,6 +32,7 @@ import { DocumentCollection } from '../../collections/document/document';
 import languages from '../../constants/languages';
 import events from '../../events';
 import { generate, embed } from '../../helpers/ai/ai';
+import { groupToken, userToken } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { copyFile, removeFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
@@ -1149,7 +1150,7 @@ export class Document extends Model {
       ...localRoles
         .filter((localRole) => viewRoles.includes(localRole.role))
         .map((localRole) => localRole.principal),
-      ...(owner && viewRoles.includes('Owner') ? [owner] : []),
+      ...(owner && viewRoles.includes('Owner') ? [userToken(owner)] : []),
     ]);
   }
 
@@ -1178,13 +1179,13 @@ export class Document extends Model {
       users.map((row: any) => {
         localRoles[row.document] = [
           ...(localRoles[row.document] || []),
-          { principal: row.user, role: row.role },
+          { principal: userToken(row.user), role: row.role },
         ];
       });
       groups.map((row: any) => {
         localRoles[row.document] = [
           ...(localRoles[row.document] || []),
-          { principal: row.group, role: row.role },
+          { principal: groupToken(row.group), role: row.role },
         ];
       });
     }
