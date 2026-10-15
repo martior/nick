@@ -577,3 +577,30 @@ export function getAcquiredState(workflow: any, parentState?: string): string {
   }
   return parentState in states ? parentState : workflow.json.initial_state;
 }
+
+/**
+ * Convert the workflow history of a document (the `history` of the
+ * `@workflow` endpoint, oldest first) to Nick's workflow history. The
+ * transition titles are taken from the workflow, the creation entry has no
+ * action and the title `Create`.
+ * @method convertWorkflowHistory
+ * @param {Array} history Workflow history.
+ * @param {Object} workflow Nick workflow of the document.
+ * @returns {Array} Nick workflow history.
+ */
+export function convertWorkflowHistory(history: any[], workflow?: any): any[] {
+  return (history || []).map((entry) => ({
+    action: entry.action || null,
+    actor: typeof entry.actor === 'object' ? entry.actor?.id : entry.actor,
+    comments: entry.comments || '',
+    review_state: entry.review_state,
+    state_title:
+      entry.title ||
+      workflow?.json.states[entry.review_state]?.title ||
+      entry.review_state,
+    time: entry.time,
+    transition_title: entry.action
+      ? workflow?.json.transitions[entry.action]?.title || entry.action
+      : 'Create',
+  }));
+}

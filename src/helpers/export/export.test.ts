@@ -11,6 +11,7 @@ import {
   convertBehaviors,
   convertUserList,
   convertWorkflow,
+  convertWorkflowHistory,
   fetchAllBatches,
   forEachBatch,
   generatePassword,
@@ -396,6 +397,59 @@ describe('export', () => {
         default: ['simple_publication_workflow'],
         types: { Event: ['intranet_workflow'], File: [] },
       });
+    });
+  });
+
+  describe('convertWorkflowHistory', () => {
+    it('converts the workflow history with titles and comments', () => {
+      const workflow = {
+        json: {
+          states: { private: { title: 'Private' } },
+          transitions: { publish: { title: 'Publish' } },
+        },
+      };
+      expect(
+        convertWorkflowHistory(
+          [
+            {
+              action: null,
+              actor: 'jane',
+              comments: '',
+              review_state: 'private',
+              time: '2026-01-01T10:00:00+00:00',
+              title: 'Private',
+            },
+            {
+              action: 'publish',
+              actor: 'john',
+              comments: 'Approved',
+              review_state: 'published',
+              time: '2026-01-02T10:00:00+00:00',
+              title: 'Published',
+            },
+          ],
+          workflow,
+        ),
+      ).toEqual([
+        {
+          action: null,
+          actor: 'jane',
+          comments: '',
+          review_state: 'private',
+          state_title: 'Private',
+          time: '2026-01-01T10:00:00+00:00',
+          transition_title: 'Create',
+        },
+        {
+          action: 'publish',
+          actor: 'john',
+          comments: 'Approved',
+          review_state: 'published',
+          state_title: 'Published',
+          time: '2026-01-02T10:00:00+00:00',
+          transition_title: 'Publish',
+        },
+      ]);
     });
   });
 });
