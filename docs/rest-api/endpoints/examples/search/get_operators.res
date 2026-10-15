@@ -8,6 +8,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events",
       "@type": "Folder",
       "title": "Events",
+      "description": "",
       "Subject": null,
       "is_folderish": true,
       "exclude_from_nav": false,
@@ -49,6 +50,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/news",
       "@type": "Folder",
       "title": "News",
+      "description": "News Items",
       "Subject": null,
       "is_folderish": true,
       "exclude_from_nav": false,
@@ -90,6 +92,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events/event-1",
       "@type": "Event",
       "title": "Event 1",
+      "description": "",
       "Subject": [
         "event"
       ],
@@ -133,6 +136,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events/event-2",
       "@type": "Event",
       "title": "Event 2",
+      "description": "",
       "Subject": [
         "event"
       ],
