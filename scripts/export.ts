@@ -10,6 +10,7 @@ import { gunzipSync } from 'zlib';
 import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
+  convertRelations,
   convertSharing,
   convertUid,
   convertUserList,
@@ -28,6 +29,7 @@ import {
   omitFields,
   parseTar,
   parseWorkflowBindings,
+  relativizeUrls,
   virtualGroups,
 } from '../src/helpers/export/export';
 import { stripI18n } from '../src/helpers/i18n/i18n';
@@ -435,11 +437,17 @@ const convertDocument = async (
         ),
         language: json.language.token,
         position_in_parent: document.position_in_parent || 0,
-        ...fields,
+        ...relativizeUrls(convertRelations(fields), base_url),
         ...convertSharing(
           await fetchFromApi(`${document['@id']}/@sharing`, 'GET', token),
         ),
-        ...(versions.length > 0 ? { versions } : {}),
+        ...(versions.length > 0
+          ? {
+              versions: versions.map((version: any) =>
+                relativizeUrls(convertRelations(version), base_url),
+              ),
+            }
+          : {}),
       },
       null,
       2,

@@ -147,6 +147,7 @@
 - Export the versions of documents @martior
 - Export local roles and the inherit flag of documents @martior
 - Export files and images of documents and import profile files with filename and content type @martior
+- Export relations with uuids and make links in exported documents relative to the site root @martior
 
 ### Bugfix
 
