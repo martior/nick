@@ -97,6 +97,40 @@ export class Catalog extends Model {
   ): Promise<any> {
     if (!req) return this.fetchAll(where, options, trx);
 
+    // Fetch data
+    return this.fetchAll(this.restrictWhere(where, req), options, trx);
+  }
+
+  /**
+   * Count all items but take permissions into account.
+   * @method countRestricted
+   * @static
+   * @param {Object} where Where clause.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {Request} req Request object.
+   * @returns {Promise<number>} Number of items.
+   */
+  static async countRestricted(
+    where: any = {},
+    trx?: Knex.Transaction,
+    req?: Request,
+  ): Promise<number> {
+    return await this.buildQuery(
+      req ? this.restrictWhere(where, req) : where,
+      {},
+      trx,
+    ).resultSize();
+  }
+
+  /**
+   * Add the permission restrictions of the current user to a where clause.
+   * @method restrictWhere
+   * @static
+   * @param {Object} where Where clause.
+   * @param {Request} req Request object.
+   * @returns {Object} Restricted where clause.
+   */
+  static restrictWhere(where: any, req: Request): any {
     // Find user, groups and roles
     const userGroupsRoles = uniq([
       ...[req.user.id],
@@ -104,16 +138,11 @@ export class Catalog extends Model {
       ...req.user.getRoles(),
     ]);
 
-    // Fetch data
-    return this.fetchAll(
-      {
-        ...where,
-        _allowedUsersGroupsRoles: ['&&', userGroupsRoles],
-        _deleted: false,
-      },
-      options,
-      trx,
-    );
+    return {
+      ...where,
+      _allowedUsersGroupsRoles: ['&&', userGroupsRoles],
+      _deleted: false,
+    };
   }
 
   /**

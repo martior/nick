@@ -132,5 +132,12 @@ Content-Type: application/json
       "ModificationDate": "2022-04-02T20:24:00.000Z"
     }
   ],
-  "items_total": 3
+  "items_total": 6,
+  "batching": {
+    "@id": "http://localhost:8080/@search?b_size=3&b_start=2",
+    "first": "http://localhost:8080/@search?b_size=3&b_start=0",
+    "last": "http://localhost:8080/@search?b_size=3&b_start=3",
+    "next": "http://localhost:8080/@search?b_size=3&b_start=5",
+    "prev": "http://localhost:8080/@search?b_size=3&b_start=0"
+  }
 }

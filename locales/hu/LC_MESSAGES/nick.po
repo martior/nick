@@ -1103,7 +1103,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:106
+#: src/routes/search/search.ts:140
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1419,7 +1419,7 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:101
+#: src/routes/search/search.ts:135
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
