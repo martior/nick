@@ -34,6 +34,10 @@
       "title:i18n": "Modify"
     },
     {
+      "id": "Revert",
+      "title:i18n": "Revert"
+    },
+    {
       "id": "Register",
       "title:i18n": "Register"
     },
