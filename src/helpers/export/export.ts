@@ -604,3 +604,63 @@ export function convertWorkflowHistory(history: any[], workflow?: any): any[] {
       : 'Create',
   }));
 }
+
+/**
+ * Fields of the plone.restapi content serialization which are computed or
+ * stored elsewhere in Nick.
+ */
+export const omitFields = [
+  '@components',
+  '@id',
+  '@type',
+  'UID',
+  'creators',
+  'items',
+  'items_total',
+  'is_folderish',
+  'lock',
+  'allow_discussion',
+  'next_item',
+  'previous_item',
+  'type_title',
+  'version',
+  'versioning_enabled',
+  'working_copy',
+  'working_copy_of',
+  'review_state',
+  'language',
+  'changeNote',
+  'contributors',
+  'parent',
+];
+
+/**
+ * Convert the versions of a document. Only `versioning` entries of the
+ * `@history` endpoint are versions, workflow entries are exported with the
+ * workflow history.
+ * @method convertVersions
+ * @param {Array} history Entries of the `@history` endpoint.
+ * @param {Function} fetchVersion Function returning the json of a version.
+ * @returns {Promise<Array>} Nick versions, oldest first.
+ */
+export async function convertVersions(
+  history: any[],
+  fetchVersion: (version: number) => Promise<any>,
+): Promise<any[]> {
+  const entries = (history || [])
+    .filter((entry) => entry.type === 'versioning')
+    .sort((a, b) => a.version - b.version);
+  const versions: any[] = [];
+  for (const entry of entries) {
+    const json = await fetchVersion(entry.version);
+    versions.push({
+      ...omit(json, omitFields),
+      version: entry.version,
+      created: entry.time,
+      actor: typeof entry.actor === 'object' ? entry.actor?.id : entry.actor,
+      id: json.id,
+      changeNote: entry.comments || '',
+    });
+  }
+  return versions;
+}

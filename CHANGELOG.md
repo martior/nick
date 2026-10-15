@@ -144,6 +144,7 @@
 - Add custom upgrade code support via index.ts in upgrade steps @robgietema
 - Export workflow definitions, type workflows and the state of documents without workflow @martior
 - Export the workflow history of documents @martior
+- Export the versions of documents @martior
 
 ### Bugfix
 

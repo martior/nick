@@ -10,6 +10,7 @@ import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
   convertUserList,
+  convertVersions,
   convertWorkflow,
   convertWorkflowHistory,
   fetchAllBatches,
@@ -20,6 +21,7 @@ import {
   getDocumentPath,
   getItems,
   mapPrincipalRoles,
+  omitFields,
   parseTar,
   parseWorkflowBindings,
   virtualGroups,
@@ -382,6 +384,14 @@ const convertDocument = async (
   );
   history.map((entry: any) => addPrincipal(entry.actor));
 
+  // Get versions, oldest first
+  const versions = await convertVersions(
+    await fetchFromApi(`${document['@id']}/@history`, 'GET', token),
+    (version: number) =>
+      fetchFromApi(`${document['@id']}/@history/${version}`, 'GET', token),
+  );
+  versions.map((version: any) => addPrincipal(version.actor));
+
   // Keep type information
   typeInfo.types.add(json['@type']);
   if (json.is_folderish) {
@@ -410,30 +420,8 @@ const convertDocument = async (
         ),
         language: json.language.token,
         position_in_parent: document.position_in_parent || 0,
-        ...omit(json, [
-          '@components',
-          '@id',
-          '@type',
-          'UID',
-          'creators',
-          'items',
-          'items_total',
-          'is_folderish',
-          'lock',
-          'allow_discussion',
-          'next_item',
-          'previous_item',
-          'type_title',
-          'version',
-          'versioning_enabled',
-          'working_copy',
-          'working_copy_of',
-          'review_state',
-          'language',
-          'changeNote',
-          'contributors',
-          'parent',
-        ]),
+        ...omit(json, omitFields),
+        ...(versions.length > 0 ? { versions } : {}),
       },
       null,
       2,
