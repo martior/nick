@@ -350,7 +350,7 @@ export const textCondition = (
 ): ['raw', string, any[]] => {
   const tsquery = textToTsquery(text);
   return tsquery
-    ? ['raw', `"${field}" @@ to_tsquery(?)`, [tsquery]]
+    ? ['raw', `"${field}" @@ to_tsquery('nick', ?)`, [tsquery]]
     : ['raw', 'false', []];
 };
 

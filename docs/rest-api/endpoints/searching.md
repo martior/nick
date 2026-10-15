@@ -47,7 +47,7 @@ This will return all content object:
 
 ## Searching text with operators
 
-The `SearchableText` parameter follows the Plone query syntax: multiple terms are combined with `AND`, the `AND`, `OR` and `NOT` keywords and parentheses can be used to combine terms, `"quoted text"` searches for a phrase and a trailing `*` searches for words starting with the term. Any other character is treated as plain text, so a search never fails because of its input:
+The `SearchableText` parameter follows the Plone query syntax: multiple terms are combined with `AND`, the `AND`, `OR` and `NOT` keywords and parentheses can be used to combine terms, `"quoted text"` searches for a phrase and a trailing `*` searches for words starting with the term. Any other character is treated as plain text, so a search never fails because of its input. Accents are ignored when the `unaccent` extension is available in PostgreSQL, so `creme` will find `Crème`:
 
 ```http
 {% include_relative examples/search/get_operators.req %}
