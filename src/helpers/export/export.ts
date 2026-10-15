@@ -109,3 +109,71 @@ export async function fetchAllBatches(
   );
   return output;
 }
+
+/**
+ * Roles which exist in Nick's core profile.
+ */
+export const coreRoles = [
+  'Anonymous',
+  'Authenticated',
+  'Owner',
+  'Reader',
+  'Contributor',
+  'Editor',
+  'Reviewer',
+  'Administrator',
+];
+
+/**
+ * Plone roles which map to a different Nick role. Plone's `Member` role is
+ * given to every logged in user, which is `Authenticated` in Nick.
+ */
+export const roleMapping: Record<string, string> = {
+  Manager: 'Administrator',
+  'Site Administrator': 'Administrator',
+  Member: 'Authenticated',
+};
+
+/**
+ * Plone groups which are virtual and not exported.
+ */
+export const virtualGroups = ['AuthenticatedUsers'];
+
+/**
+ * Map a Plone role to a Nick role.
+ * @method mapRole
+ * @param {string} role Plone role.
+ * @returns {string} Nick role.
+ */
+export function mapRole(role: string): string {
+  return roleMapping[role] || role;
+}
+
+/**
+ * Map Plone roles of a principal to Nick roles. `Anonymous` and
+ * `Authenticated` are dropped, Nick adds them to every user.
+ * @method mapPrincipalRoles
+ * @param {string[]} roles Plone roles.
+ * @returns {string[]} Nick roles.
+ */
+export function mapPrincipalRoles(roles: string[]): string[] {
+  return [
+    ...new Set(
+      (roles || [])
+        .map(mapRole)
+        .filter((role) => !['Anonymous', 'Authenticated'].includes(role)),
+    ),
+  ];
+}
+
+/**
+ * Get the roles which have to be added to Nick.
+ * @method getCustomRoles
+ * @param {Array} roles Roles of the Plone site.
+ * @returns {Array} Roles not in Nick's core profile.
+ */
+export function getCustomRoles(roles: any[]): any[] {
+  return roles.filter(
+    (role) => !coreRoles.includes(role.id) && !(role.id in roleMapping),
+  );
+}
