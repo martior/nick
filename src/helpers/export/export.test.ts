@@ -10,14 +10,19 @@ import { describe, it, expect } from 'vitest';
 import {
   convertBehaviors,
   convertUserList,
+  convertWorkflow,
   fetchAllBatches,
   forEachBatch,
   generatePassword,
+  getAcquiredState,
   getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
   getItems,
   mapPrincipalRoles,
+  parseTar,
+  parseWorkflowBindings,
+  parseXml,
 } from './export';
 
 /**
@@ -264,6 +269,133 @@ describe('export', () => {
           { folderish: true, navroot: true },
         ),
       ).toEqual(['navigation_root', 'folderish']);
+    });
+  });
+
+  describe('parseTar', () => {
+    it('reads the files of a tar archive', () => {
+      const header = (name: string, size: number) => {
+        const block = Buffer.alloc(512);
+        block.write(name, 0);
+        block.write(`${size.toString(8).padStart(11, '0')}\0`, 124);
+        block.write('0', 156);
+        return block;
+      };
+      const content = Buffer.from('<object/>');
+      const archive = Buffer.concat([
+        header('workflows.xml', content.length),
+        content,
+        Buffer.alloc(512 - content.length),
+        Buffer.alloc(1024),
+      ]);
+      expect(parseTar(archive)).toEqual({ 'workflows.xml': '<object/>' });
+    });
+  });
+
+  describe('parseXml', () => {
+    it('parses elements, attributes and text', () => {
+      const root = parseXml(
+        '<?xml version="1.0"?><a x="1 &amp; 2"><!-- c --><b>T &lt;b&gt;</b><c/></a>',
+      );
+      expect(root.name).toBe('a');
+      expect(root.attributes.x).toBe('1 & 2');
+      expect(root.children.map((child) => child.name)).toEqual(['b', 'c']);
+      expect(root.children[0].text).toBe('T <b>');
+    });
+  });
+
+  describe('convertWorkflow', () => {
+    const xml = `<?xml version="1.0"?>
+<dc-workflow workflow_id="intranet" title="Intranet" description=" - Only for - members." initial_state="internal">
+ <permission>View</permission>
+ <state state_id="internal" title="Internal draft">
+  <description>Draft</description>
+  <exit-transition transition_id="publish"/>
+  <permission-map name="View" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Member</permission-role>
+   <permission-role>Owner</permission-role>
+  </permission-map>
+  <permission-map name="Access contents information" acquired="False">
+   <permission-role>Member</permission-role>
+  </permission-map>
+  <permission-map name="Modify portal content" acquired="False">
+   <permission-role>Site Administrator</permission-role>
+   <permission-role>Owner</permission-role>
+  </permission-map>
+ </state>
+ <state state_id="external" title="Externally visible">
+  <exit-transition transition_id="retract"/>
+  <permission-map name="View" acquired="False">
+   <permission-role>Anonymous</permission-role>
+  </permission-map>
+ </state>
+ <transition transition_id="publish" title="Reviewer publishes" new_state="external">
+  <action url="" category="workflow" icon="">Publish externally</action>
+  <guard><guard-permission>Review portal content</guard-permission></guard>
+ </transition>
+ <transition transition_id="retract" title="Retract" new_state="internal">
+  <guard><guard-role>Manager</guard-role></guard>
+ </transition>
+</dc-workflow>`;
+
+    it('converts states, permissions and transitions', () => {
+      const workflow = convertWorkflow(xml);
+      expect(workflow.id).toBe('intranet');
+      expect(workflow.description).toBe('Only for members.');
+      expect(workflow.json.initial_state).toBe('internal');
+      expect(workflow.json.states.internal).toEqual({
+        title: 'Internal draft',
+        description: 'Draft',
+        transitions: ['publish'],
+        permissions: {
+          Administrator: ['View', 'Modify'],
+          Authenticated: ['View'],
+          Owner: ['View', 'Modify'],
+        },
+      });
+      expect(workflow.json.states.external.permissions).toEqual({
+        Anonymous: ['View'],
+        Authenticated: ['View'],
+      });
+      expect(workflow.json.transitions).toEqual({
+        publish: {
+          title: 'Publish externally',
+          description: '',
+          new_state: 'external',
+          permission: 'Review',
+        },
+        retract: {
+          title: 'Retract',
+          description: '',
+          new_state: 'internal',
+          permission: 'Manage Site',
+        },
+      });
+    });
+
+    it('gets the state of documents without workflow', () => {
+      const workflow = convertWorkflow(xml);
+      expect(getAcquiredState(workflow)).toBe('external');
+      expect(getAcquiredState(workflow, 'external')).toBe('external');
+      expect(getAcquiredState(workflow, 'unknown')).toBe('internal');
+    });
+  });
+
+  describe('parseWorkflowBindings', () => {
+    it('reads the default chain and the chains by type', () => {
+      expect(
+        parseWorkflowBindings(`<object name="portal_workflow">
+ <bindings>
+  <default><bound-workflow workflow_id="simple_publication_workflow"/></default>
+  <type type_id="Event"><bound-workflow workflow_id="intranet_workflow"/></type>
+  <type type_id="File"/>
+ </bindings>
+</object>`),
+      ).toEqual({
+        default: ['simple_publication_workflow'],
+        types: { Event: ['intranet_workflow'], File: [] },
+      });
     });
   });
 });

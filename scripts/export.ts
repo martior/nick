@@ -5,23 +5,56 @@
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { gunzipSync } from 'zlib';
+import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
   convertUserList,
+  convertWorkflow,
   fetchAllBatches,
   forEachBatch,
+  getAcquiredState,
   getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
   getItems,
   mapPrincipalRoles,
+  parseTar,
+  parseWorkflowBindings,
   virtualGroups,
 } from '../src/helpers/export/export';
+import { stripI18n } from '../src/helpers/i18n/i18n';
 import { mapAsync } from '../src/helpers/utils/utils';
 import { omit } from 'es-toolkit/object';
 
 // Users referenced by content
 const principals = new Set<string>();
+
+// Workflows, workflow chains by type and states by path
+const workflowInfo: {
+  workflows: Record<string, any>;
+  default: string;
+  types: Record<string, string[]>;
+  states: Map<string, string>;
+} = {
+  workflows: Object.fromEntries(
+    stripI18n(coreWorkflows).workflows.map((workflow: any) => [
+      workflow.id,
+      workflow,
+    ]),
+  ),
+  default: 'simple_publication_workflow',
+  types: {},
+  states: new Map(),
+};
+
+/**
+ * Get the workflow of a type
+ * @param {string} type Id of the type.
+ * @returns {string} Id of the workflow.
+ */
+const getTypeWorkflow = (type: string): string =>
+  (workflowInfo.types[type] || [])[0] || workflowInfo.default;
 
 // Types of folderish documents and of the root document
 const typeInfo = {
@@ -143,6 +176,55 @@ const convertUsers = (
 };
 
 /**
+ * Convert workflows. Workflow definitions are not available in the REST api,
+ * they are read from the GenericSetup export of the workflow tool.
+ * @param {string} path Path of the output folder.
+ * @param {string} url Url
+ * @param {string} token Auth token
+ */
+const convertWorkflows = async (path: string, url: string, token: string) => {
+  process.stdout.write('Converting workflows...');
+
+  const response = await fetch(
+    `${url}/portal_setup/manage_exportSelectedSteps`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'ids:list=workflows',
+    },
+  );
+  if (!response.ok) {
+    console.log(
+      `not available (${response.status}), using the workflows of the core profile`,
+    );
+    return;
+  }
+  const files = parseTar(gunzipSync(Buffer.from(await response.arrayBuffer())));
+
+  // Get workflows and bindings
+  const workflows = Object.keys(files)
+    .filter((file) => file.endsWith('/definition.xml'))
+    .map((file) => convertWorkflow(files[file]));
+  const bindings = parseWorkflowBindings(files['workflows.xml']);
+  workflowInfo.workflows = Object.fromEntries(
+    workflows.map((workflow) => [workflow.id, workflow]),
+  );
+  workflowInfo.default = bindings.default[0] || workflowInfo.default;
+  workflowInfo.types = bindings.types;
+
+  // Write files
+  writeFileSync(
+    `${path}/workflows.json`,
+    JSON.stringify({ purge: false, replace: true, workflows }, null, 2),
+  );
+
+  console.log('done!');
+};
+
+/**
  * Convert types
  * @param {Array} types Types to export.
  * @param {string} path Path of the output folder.
@@ -203,7 +285,7 @@ const convertTypes = async (
               navroot: typeInfo.navroot.has(id),
             }),
           },
-          workflow: 'simple_publication_workflow', // TODO: Not available in API
+          workflow: getTypeWorkflow(id),
         },
         null,
         2,
@@ -248,6 +330,33 @@ const convertDocuments = async (
 };
 
 /**
+ * Get the workflow state of a document. Types without workflow get the
+ * state of the parent (see getAcquiredState).
+ * @param {Object} json Json data of the document.
+ * @param {string} path Path of the document.
+ * @returns {string} Workflow state.
+ */
+const getWorkflowState = (json: any, path: string): string => {
+  const type = json['@type'];
+  const workflow = workflowInfo.workflows[getTypeWorkflow(type)];
+  const state =
+    json.review_state &&
+    (workflowInfo.types[type] || [workflow.id]).length > 0 &&
+    json.review_state in workflow.json.states
+      ? json.review_state
+      : getAcquiredState(
+          workflow,
+          path === '/'
+            ? undefined
+            : workflowInfo.states.get(
+                path.substring(0, path.lastIndexOf('/')) || '/',
+              ),
+        );
+  workflowInfo.states.set(path, state);
+  return state;
+};
+
+/**
  * Convert document
  * @param {Object} document Search result of the document.
  * @param {string} path Path of the output folder.
@@ -285,7 +394,7 @@ const convertDocument = async (
           '$1-$2-$3-$4-$5',
         ),
         owner: addPrincipal(json.creators[0]),
-        workflow_state: json.review_state,
+        workflow_state: getWorkflowState(json, doc_path),
         language: json.language.token,
         position_in_parent: document.position_in_parent || 0,
         ...omit(json, [
@@ -401,11 +510,11 @@ async function main() {
   // Actions are not exported: Plone actions are user interface settings
   // with TALES conditions, the actions of Nick's core profile are kept.
 
-  // Convert workflow
-  // TODO: No API available
-
   // Convert content rules
   // TODO
+
+  // Convert workflows, before the documents which use the states
+  await convertWorkflows(outputfolder, url, token);
 
   // Convert documents
   const root = await fetchFromApi(`${url}/++api++`, 'GET', token);
