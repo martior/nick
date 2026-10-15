@@ -253,6 +253,7 @@
 - Allow descriptions longer than 255 characters for workflows, types and groups @martior
 - Return the comments of workflow transitions in @history @martior
 - Keep the folder order of exported documents and fix the import of position 0 @martior
+- Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
 
 ### Internal
 
