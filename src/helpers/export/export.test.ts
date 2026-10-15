@@ -8,6 +8,7 @@ import { describe, it, expect } from 'vitest';
 
 // Internal imports
 import {
+  convertBehaviors,
   convertUserList,
   fetchAllBatches,
   forEachBatch,
@@ -239,6 +240,30 @@ describe('export', () => {
       expect(getItems([{ id: 'a' }])).toEqual([{ id: 'a' }]);
       expect(getItems({ items: [{ id: 'b' }] })).toEqual([{ id: 'b' }]);
       expect(getItems({ message: 'error' })).toEqual([]);
+    });
+  });
+
+  describe('convertBehaviors', () => {
+    it('maps enabled Plone behaviors to Nick behaviors', () => {
+      expect(
+        convertBehaviors({
+          'plone.dublincore': true,
+          'plone.versioning': true,
+          'plone.locking': true,
+          'volto.blocks': true,
+          'plone.shortname': false,
+          title: 'Page',
+        }),
+      ).toEqual(['dublin_core', 'versioning', 'blocks']);
+    });
+
+    it('adds folderish and navigation root', () => {
+      expect(
+        convertBehaviors(
+          { 'plone.navigationroot': true },
+          { folderish: true, navroot: true },
+        ),
+      ).toEqual(['navigation_root', 'folderish']);
     });
   });
 });

@@ -264,3 +264,45 @@ export function convertUserList(
     );
   return output;
 }
+
+/**
+ * Plone behaviors which map to a Nick behavior. Fields of other behaviors
+ * are kept, because the exported schema contains all fields.
+ */
+export const behaviorMapping: Record<string, string> = {
+  'plone.basic': 'basic',
+  'plone.dublincore': 'dublin_core',
+  'plone.categorization': 'categorization',
+  'plone.publication': 'dates',
+  'plone.ownership': 'ownership',
+  'plone.excludefromnavigation': 'exclude_from_nav',
+  'plone.shortname': 'short_name',
+  'plone.namefromtitle': 'id_from_title',
+  'plone.versioning': 'versioning',
+  'plone.navigationroot': 'navigation_root',
+  'volto.blocks': 'blocks',
+  'volto.preview_image_link': 'preview_image_link',
+};
+
+/**
+ * Convert the behaviors of a type.
+ * @method convertBehaviors
+ * @param {Object} data Data of the `@controlpanels/dexterity-types/<type>` endpoint.
+ * @param {Object} options Is the type folderish or a navigation root.
+ * @returns {string[]} Nick behaviors.
+ */
+export function convertBehaviors(
+  data: Record<string, any>,
+  options: { folderish?: boolean; navroot?: boolean } = {},
+): string[] {
+  const behaviors = Object.keys(data || {})
+    .filter((key) => data[key] === true && key in behaviorMapping)
+    .map((key) => behaviorMapping[key]);
+  if (options.folderish) {
+    behaviors.push('folderish');
+  }
+  if (options.navroot) {
+    behaviors.push('navigation_root');
+  }
+  return [...new Set(behaviors)];
+}
