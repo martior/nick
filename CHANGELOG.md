@@ -234,6 +234,7 @@
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
+- Support plone.app.querystring operation names in querystring search @martior
 
 ### Internal
 
