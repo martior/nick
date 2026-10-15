@@ -261,6 +261,7 @@
 - Support keyword, path query and range parameters in search @martior
 - Fix search items total and add batching links with a default batch size of 25 @martior
 - Update the catalog paths of the children of a moved or renamed folder @martior
+- Support fullobjects and metadata_fields in search and add description to the search results @martior
 
 ### Internal
 

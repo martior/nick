@@ -42,6 +42,12 @@ describe('Search', () => {
   it('should be able to filter on a date range', () =>
     testRequest(app, 'search/get_range'));
 
+  it('should be able to select metadata fields', () =>
+    testRequest(app, 'search/get_metadata_fields'));
+
+  it('should be able to return full objects', () =>
+    testRequest(app, 'search/get_fullobjects'));
+
   it('should be able to set batch size', () =>
     testRequest(app, 'search/get_batch'));
 
