@@ -10,6 +10,7 @@ import { gunzipSync } from 'zlib';
 import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
+  convertRedirects,
   convertRelations,
   convertSharing,
   convertUid,
@@ -65,6 +66,9 @@ const workflowInfo: {
  */
 const getTypeWorkflow = (type: string): string =>
   (workflowInfo.types[type] || [])[0] || workflowInfo.default;
+
+// Uuids of the exported documents by path
+const uuids = new Map<string, string>();
 
 // Types of folderish documents and of the root document
 const typeInfo = {
@@ -232,6 +236,33 @@ const convertWorkflows = async (path: string, url: string, token: string) => {
   );
 
   console.log('done!');
+};
+
+/**
+ * Convert redirects
+ * @param {string} path Path of the output folder.
+ * @param {string} url Url
+ * @param {string} token Auth token
+ */
+const convertRedirectList = async (
+  path: string,
+  url: string,
+  token: string,
+) => {
+  process.stdout.write('Converting redirects...');
+
+  const aliases = await fetchAllBatches(`${url}/++api++/@aliases`, (batchUrl) =>
+    fetchFromApi(batchUrl, 'GET', token),
+  );
+  const output = convertRedirects(aliases, uuids);
+
+  // Write files
+  writeFileSync(
+    `${path}/redirects.json`,
+    JSON.stringify({ purge: false, redirects: output }, null, 2),
+  );
+
+  console.log(`${output.length} done!`);
 };
 
 /**
@@ -410,6 +441,7 @@ const convertDocument = async (
 
   // Download files and images
   const uuid = convertUid(json.UID);
+  uuids.set(doc_path, uuid);
   const { json: fields, versions } = await exportBlobs(
     omit(json, omitFields),
     plone_versions,
@@ -573,6 +605,9 @@ async function main() {
   // Convert documents
   const root = await fetchFromApi(`${url}/++api++`, 'GET', token);
   await convertDocuments(outputfolder, url, token, root['@id']);
+
+  // Convert redirects, after the documents they point to
+  await convertRedirectList(outputfolder, url, token);
 
   // Convert types, after the documents to know which types are folderish
   const types = await fetchFromApi(`${url}/++api++/@types`, 'GET', token);

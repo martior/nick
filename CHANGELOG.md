@@ -149,6 +149,7 @@
 - Export files and images of documents and import profile files with filename and content type @martior
 - Export relations with uuids and make links in exported documents relative to the site root @martior
 - Export translations of documents @martior
+- Export redirects @martior
 
 ### Bugfix
 

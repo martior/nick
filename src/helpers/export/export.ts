@@ -912,3 +912,25 @@ export function getTranslationGroup(
     hash.substring(20, 32),
   ].join('-');
 }
+
+/**
+ * Convert redirects (`@aliases` of the site root). Redirects to documents
+ * which are not exported are skipped.
+ * @method convertRedirects
+ * @param {Array} aliases Aliases.
+ * @param {Map} uuids Uuids of the exported documents by path.
+ * @returns {Array} Nick redirects.
+ */
+export function convertRedirects(
+  aliases: any[],
+  uuids: Map<string, string>,
+): any[] {
+  return aliases
+    .filter((alias) => uuids.has(alias['redirect-to']))
+    .map((alias) => ({
+      document: uuids.get(alias['redirect-to']),
+      path: alias.path,
+      manual: alias.manual === true,
+      datetime: alias.datetime,
+    }));
+}
