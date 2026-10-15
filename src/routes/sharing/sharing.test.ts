@@ -112,29 +112,29 @@ describe('Sharing', () => {
       'page',
       'Page',
     );
-    expect(await allowed(page.uuid)).not.toContain('jane');
+    expect(await allowed(page.uuid)).not.toContain('user:jane');
 
     // Grant a local role on a parent
     await share('/news', {
       entries: [{ id: 'jane', type: 'user', roles: { Editor: true } }],
       inherit: true,
     });
-    expect(await allowed(team.uuid)).toContain('jane');
-    expect(await allowed(page.uuid)).toContain('jane');
+    expect(await allowed(team.uuid)).toContain('user:jane');
+    expect(await allowed(page.uuid)).toContain('user:jane');
 
     // Block inheritance below the parent
     await share('/news/team', { entries: [], inherit: false });
-    expect(await allowed(team.uuid)).not.toContain('jane');
-    expect(await allowed(page.uuid)).not.toContain('jane');
+    expect(await allowed(team.uuid)).not.toContain('user:jane');
+    expect(await allowed(page.uuid)).not.toContain('user:jane');
 
     // Restore inheritance and revoke the role
     await share('/news/team', { entries: [], inherit: true });
-    expect(await allowed(page.uuid)).toContain('jane');
+    expect(await allowed(page.uuid)).toContain('user:jane');
     await share('/news', {
       entries: [{ id: 'jane', type: 'user', roles: { Editor: false } }],
       inherit: true,
     });
-    expect(await allowed(page.uuid)).not.toContain('jane');
+    expect(await allowed(page.uuid)).not.toContain('user:jane');
   });
 
   it('should reindex large subtrees in a job', async () => {

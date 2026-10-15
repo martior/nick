@@ -1,0 +1,7 @@
+{
+  "id": "@plone/nick:core",
+  "title": "Nick Core",
+  "description": "Core functionality of Nick",
+  "version": 1008,
+  "upgrade": "Prefix users and groups in the catalog permissions."
+}

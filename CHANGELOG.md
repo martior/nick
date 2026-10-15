@@ -269,6 +269,7 @@
 - Add description to navigation items and return a bad request on an invalid navigation depth @martior
 - Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
 - Reindex the search permissions of the item and its children after a change of local roles or inheritance in @sharing, in a job for large subtrees @martior
+- Prefix users and groups in the catalog permissions as `user:` and `group:`, so a user or group named like a role no longer sees items that role may view; run `pnpm seed:upgrade` to rebuild them @martior
 
 ### Internal
 

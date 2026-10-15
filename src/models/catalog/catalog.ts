@@ -15,6 +15,7 @@ import { pick } from 'es-toolkit/object';
 
 // Internal imports
 import { Model } from '../_model/_model';
+import { principalTokens } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { getRootUrl } from '../../helpers/url/url';
 
@@ -132,11 +133,7 @@ export class Catalog extends Model {
    */
   static restrictWhere(where: any, req: Request): any {
     // Find user, groups and roles
-    const userGroupsRoles = uniq([
-      ...[req.user.id],
-      ...req.user._groups.map((groups: any) => groups.id),
-      ...req.user.getRoles(),
-    ]);
+    const userGroupsRoles = uniq(principalTokens(req.user));
 
     return {
       ...where,
