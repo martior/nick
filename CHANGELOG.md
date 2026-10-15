@@ -257,6 +257,7 @@
 - Keep the folder order of exported documents and fix the import of position 0 @martior
 - Replace lists instead of merging them by index when seeding controlpanels @martior
 - Support plone.app.querystring operation names in querystring search @martior
+- Fix server error on searchable text with multiple words or operators @martior
 
 ### Internal
 
