@@ -263,6 +263,7 @@
 - Update the catalog paths of the children of a moved or renamed folder @martior
 - Support fullobjects and metadata_fields in search and add description to the search results @martior
 - Add the GET variant of the querystring search endpoint @martior
+- Ignore accents in text search @martior
 
 ### Internal
 

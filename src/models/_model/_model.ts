@@ -104,7 +104,7 @@ export class Model extends ObjectionModel {
           valueWrapper = 'all(?)';
         }
         if (operator === '@@') {
-          valueWrapper = 'to_tsquery(?)';
+          valueWrapper = "to_tsquery('nick', ?)";
         }
         if (values === null) {
           query =
