@@ -850,6 +850,31 @@ export function convertRelations(json: Record<string, any>): any {
 }
 
 /**
+ * Apply a function to all strings in a value.
+ * @method mapStrings
+ * @param {any} value Value to convert.
+ * @param {Function} callback Function converting a string.
+ * @returns {any} Converted value.
+ */
+export function mapStrings(
+  value: any,
+  callback: (value: string) => string,
+): any {
+  if (typeof value === 'string') {
+    return callback(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => mapStrings(item, callback));
+  }
+  if (typeof value === 'object' && value !== null) {
+    return Object.fromEntries(
+      Object.keys(value).map((key) => [key, mapStrings(value[key], callback)]),
+    );
+  }
+  return value;
+}
+
+/**
  * Make urls of the site relative to the site root, for example in links
  * and teasers in blocks: `http://host/plone/news` becomes `/news`.
  * @method relativizeUrls
@@ -858,24 +883,26 @@ export function convertRelations(json: Record<string, any>): any {
  * @returns {any} Converted value.
  */
 export function relativizeUrls(value: any, baseUrl: string): any {
-  if (typeof value === 'string') {
-    if (value === baseUrl || value === `${baseUrl}/`) {
-      return '/';
-    }
-    return value.split(`${baseUrl}/`).join('/');
-  }
-  if (Array.isArray(value)) {
-    return value.map((item) => relativizeUrls(item, baseUrl));
-  }
-  if (typeof value === 'object' && value !== null) {
-    return Object.fromEntries(
-      Object.keys(value).map((key) => [
-        key,
-        relativizeUrls(value[key], baseUrl),
-      ]),
-    );
-  }
-  return value;
+  return mapStrings(value, (text) =>
+    text === baseUrl || text === `${baseUrl}/`
+      ? '/'
+      : text.split(`${baseUrl}/`).join('/'),
+  );
+}
+
+/**
+ * Convert the querystring operations of collections and listing blocks:
+ * `plone.app.querystring.operation.selection.any` becomes `selection.any`.
+ * @method convertQueryOperations
+ * @param {any} value Value to convert.
+ * @returns {any} Converted value.
+ */
+export function convertQueryOperations(value: any): any {
+  return mapStrings(value, (text) =>
+    text.startsWith('plone.app.querystring.operation.')
+      ? text.substring('plone.app.querystring.operation.'.length)
+      : text,
+  );
 }
 
 /**

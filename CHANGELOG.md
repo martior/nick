@@ -152,6 +152,7 @@
 - Export redirects @martior
 - Export comments of documents @martior
 - Export site title, robots.txt and language settings @martior
+- Convert querystring operations of collections and listing blocks in export @martior
 
 ### Bugfix
 
