@@ -10,10 +10,12 @@ import { describe, it, expect } from 'vitest';
 import {
   convertBehaviors,
   convertSharing,
+  convertUid,
   convertUserList,
   convertVersions,
   convertWorkflow,
   convertWorkflowHistory,
+  exportBlobs,
   fetchAllBatches,
   forEachBatch,
   generatePassword,
@@ -548,6 +550,49 @@ describe('export', () => {
 
     it('inherits roles by default', () => {
       expect(convertSharing({ entries: [] }).inherit_roles).toBe(true);
+    });
+  });
+
+  describe('exportBlobs', () => {
+    it('downloads blobs and references them from the document and versions', async () => {
+      const written: Record<string, string> = {};
+      const file = {
+        'content-type': 'text/csv',
+        download: 'http://host/plone/data.csv/@@download/file',
+        filename: 'data.csv',
+        size: 5,
+      };
+      const { json, versions } = await exportBlobs(
+        { title: 'Data', file },
+        [
+          { version: 0, title: 'Old', file: { ...file, size: 3 } },
+          { version: 1, title: 'Data', file },
+        ],
+        'uuid-1',
+        async (field: string) => Buffer.from(`${field}!`),
+        (path: string, data: Buffer) => {
+          written[path] = data.toString();
+        },
+      );
+      const reference = {
+        path: '/blobs/uuid-1/file/data.csv',
+        filename: 'data.csv',
+        'content-type': 'text/csv',
+      };
+      expect(written).toEqual({ '/blobs/uuid-1/file/data.csv': 'file!' });
+      expect(json).toEqual({ title: 'Data', file: reference });
+      expect(versions).toEqual([
+        { version: 0, title: 'Old' },
+        { version: 1, title: 'Data', file: reference },
+      ]);
+    });
+  });
+
+  describe('convertUid', () => {
+    it('converts a Plone uid to a uuid', () => {
+      expect(convertUid('c85657a660db4199a181c594d95e65de')).toBe(
+        'c85657a6-60db-4199-a181-c594d95e65de',
+      );
     });
   });
 });

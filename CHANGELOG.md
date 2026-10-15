@@ -146,6 +146,7 @@
 - Export the workflow history of documents @martior
 - Export the versions of documents @martior
 - Export local roles and the inherit flag of documents @martior
+- Export files and images of documents and import profile files with filename and content type @martior
 
 ### Bugfix
 
