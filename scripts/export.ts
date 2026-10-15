@@ -27,6 +27,7 @@ import {
   getDocumentFilename,
   getDocumentPath,
   getItems,
+  getPositions,
   getTranslationGroup,
   mapPrincipalRoles,
   omitFields,
@@ -70,6 +71,9 @@ const getTypeWorkflow = (type: string): string =>
 
 // Uuids of the exported documents by path
 const uuids = new Map<string, string>();
+
+// Positions of the documents in their parent by path
+let positions = new Map<string, number>();
 
 // Types of folderish documents and of the root document
 const typeInfo = {
@@ -356,6 +360,21 @@ const convertDocuments = async (
   // Create types folder
   mkdirSync(`${path}/documents`, { recursive: true });
 
+  // Get the order of the documents in their folders
+  const paths: string[] = [];
+  await forEachBatch(
+    `${url}/++api++/@search?sort_on=getObjPositionInParent&sort_on=path`,
+    (batchUrl: string) => fetchFromApi(batchUrl, 'GET', token),
+    (items: any[]) => {
+      paths.push(
+        ...items
+          .filter((item: any) => item['@type'] !== 'Discussion Item')
+          .map((item: any) => getDocumentPath(item['@id'], base_url)),
+      );
+    },
+  );
+  positions = getPositions(paths);
+
   // Write documents batch by batch
   const count = await forEachBatch(
     `${url}/++api++/@search?sort_on=path`,
@@ -488,7 +507,7 @@ const convertDocument = async (
         ),
         language: json.language?.token ?? json.language,
         ...(translation_group ? { translation_group } : {}),
-        position_in_parent: document.position_in_parent || 0,
+        position_in_parent: positions.get(doc_path) || 0,
         ...relativizeUrls(convertRelations(fields), base_url),
         ...(comments.length > 0 ? { comments } : {}),
         ...convertSharing(

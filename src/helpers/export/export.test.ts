@@ -27,6 +27,7 @@ import {
   getDocumentFilename,
   getDocumentPath,
   getItems,
+  getPositions,
   getTranslationGroup,
   mapPrincipalRoles,
   parseTar,
@@ -762,6 +763,20 @@ describe('export', () => {
           text: { data: 'Hi', 'mime-type': 'text/plain' },
         },
       ]);
+    });
+  });
+
+  describe('getPositions', () => {
+    it('counts the position within each parent', () => {
+      const positions = getPositions(['/', '/b', '/b/z', '/a', '/b/y', '/c']);
+      expect(Object.fromEntries(positions)).toEqual({
+        '/': 0,
+        '/b': 0,
+        '/b/z': 0,
+        '/a': 1,
+        '/b/y': 1,
+        '/c': 2,
+      });
     });
   });
 });

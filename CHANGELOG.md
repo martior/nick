@@ -252,6 +252,7 @@
 - Fix import of exported groups without email @martior
 - Allow descriptions longer than 255 characters for workflows, types and groups @martior
 - Return the comments of workflow transitions in @history @martior
+- Keep the folder order of exported documents and fix the import of position 0 @martior
 
 ### Internal
 
