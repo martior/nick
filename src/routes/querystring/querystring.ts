@@ -21,16 +21,19 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Index = models.get('Index');
 
-      // Get all enabled indexes
+      // Get all enabled or sortable indexes
       const indexes = await Index.fetchAll(
-        { enabled: true, metadata: false },
+        {
+          metadata: false,
+          enabled: ['raw', '(enabled = true OR sortable = true)'],
+        },
         { order: 'title' },
         trx,
       );
 
-      // Get all enabled and sortable indexes
+      // Get all sortable indexes
       const sortableIndexes = await Index.fetchAll(
-        { sortable: true, enabled: true, metadata: false },
+        { sortable: true, metadata: false },
         { order: 'title' },
         trx,
       );
@@ -39,8 +42,8 @@ export default [
       return {
         json: {
           '@id': `${getUrl(req)}/@querystring`,
-          indexes: await indexes.toJson(req),
-          sortable_indexes: await sortableIndexes.toJson(req),
+          indexes: await indexes.toJson(req, trx),
+          sortable_indexes: await sortableIndexes.toJson(req, trx),
         },
       };
     },
