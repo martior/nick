@@ -133,6 +133,81 @@ const serializeItems = async (
   });
 };
 
+/**
+ * Querystring search.
+ * @method querystringSearch
+ * @param {Request} req Request object.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @param {Object} data Querystring search data.
+ * @returns {Promise<Object>} Response.
+ */
+const querystringSearch = async (
+  req: Request,
+  trx: Knex.Transaction,
+  data: any,
+): Promise<any> => {
+  const Catalog = models.get('Catalog');
+  const Index = models.get('Index');
+
+  // Check if a valid query is supplied
+  if (!Array.isArray(data?.query) || data.query.length === 0) {
+    throw new RequestException(400, {
+      message: req.i18n('No query supplied.'),
+    });
+  }
+  if (data.query.some((row: any) => !row || !isValidOperation(row.o))) {
+    throw new RequestException(400, {
+      message: req.i18n('Invalid query.'),
+    });
+  }
+
+  const query = await querystringToQuery(data, req.document.path, req, trx);
+
+  // Exclude the context itself from the results
+  if (req.document.path !== '/') {
+    query[0]['_UID:context'] = ['raw', '"_UID" <> ?', [req.document.uuid]];
+  }
+  // Get batch, the limit caps the total number of results
+  const { start, size } = getBatchParams(data.b_start, data.b_size);
+  const limit = parseInt(data.limit, 10);
+  const count = await Catalog.countRestricted(query[0], trx, req);
+  const total = isNaN(limit) || limit < 0 ? count : Math.min(count, limit);
+  const items =
+    size > 0 && start < total
+      ? await Catalog.fetchAllRestricted(
+          query[0],
+          {
+            ...query[1],
+            offset: start,
+            limit: Math.min(size, total - start),
+          },
+          trx,
+          req,
+        )
+      : [];
+
+  // Fetch indexes
+  if (!req.indexes) {
+    req.indexes = await Index.fetchAll({}, {}, trx);
+  }
+
+  // Return JSON response
+  return {
+    json: {
+      '@id': `${getUrl(req)}/@search`,
+      items: await serializeItems(
+        req,
+        trx,
+        items,
+        data.fullobjects,
+        data.metadata_fields,
+      ),
+      items_total: total,
+      ...batching(`${getUrl(req)}/@querystring-search`, {}, total, start, size),
+    },
+  };
+};
+
 export default [
   {
     op: 'get',
@@ -213,78 +288,26 @@ export default [
     client: 'querystringSearch',
     cache: 'dynamic',
     middleware: apiLimiter,
+    handler: async (req: Request, trx: Knex.Transaction) =>
+      querystringSearch(req, trx, req.body),
+  },
+  {
+    op: 'get',
+    view: '/@querystring-search',
+    permission: 'View',
+    client: 'getQuerystringSearch',
+    cache: 'dynamic',
+    middleware: apiLimiter,
     handler: async (req: Request, trx: Knex.Transaction) => {
-      const Catalog = models.get('Catalog');
-      const Index = models.get('Index');
-
-      // Check if a valid query is supplied
-      if (!Array.isArray(req.body?.query) || req.body.query.length === 0) {
-        throw new RequestException(400, {
-          message: req.i18n('No query supplied.'),
-        });
-      }
-      if (req.body.query.some((row: any) => !row || !isValidOperation(row.o))) {
+      let data = {};
+      try {
+        data = JSON.parse(req.query.query || '{}');
+      } catch {
         throw new RequestException(400, {
           message: req.i18n('Invalid query.'),
         });
       }
-
-      const query = await querystringToQuery(
-        req.body,
-        req.document.path,
-        req,
-        trx,
-      );
-
-      // Exclude the context itself from the results
-      if (req.document.path !== '/') {
-        query[0]['_UID:context'] = ['raw', '"_UID" <> ?', [req.document.uuid]];
-      }
-      // Get batch, the limit caps the total number of results
-      const { start, size } = getBatchParams(req.body.b_start, req.body.b_size);
-      const limit = parseInt(req.body.limit, 10);
-      const count = await Catalog.countRestricted(query[0], trx, req);
-      const total = isNaN(limit) || limit < 0 ? count : Math.min(count, limit);
-      const items =
-        size > 0 && start < total
-          ? await Catalog.fetchAllRestricted(
-              query[0],
-              {
-                ...query[1],
-                offset: start,
-                limit: Math.min(size, total - start),
-              },
-              trx,
-              req,
-            )
-          : [];
-
-      // Fetch indexes
-      if (!req.indexes) {
-        req.indexes = await Index.fetchAll({}, {}, trx);
-      }
-
-      // Return JSON response
-      return {
-        json: {
-          '@id': `${getUrl(req)}/@search`,
-          items: await serializeItems(
-            req,
-            trx,
-            items,
-            req.body.fullobjects,
-            req.body.metadata_fields,
-          ),
-          items_total: total,
-          ...batching(
-            `${getUrl(req)}/@querystring-search`,
-            {},
-            total,
-            start,
-            size,
-          ),
-        },
-      };
+      return querystringSearch(req, trx, data);
     },
   },
 ];
