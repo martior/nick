@@ -55,6 +55,14 @@ describe('Query', () => {
       expect(textToTsquery(undefined)).toBe('');
     });
 
+    it('should fold accents', async () => {
+      const result = await global.txn!.raw(
+        "SELECT to_tsvector('nick', ?) @@ to_tsquery('nick', ?) AS match",
+        ['Crème brûlée naïve café', textToTsquery('creme brulee naive cafe')],
+      );
+      expect(result.rows[0].match).toBe(true);
+    });
+
     it('should always produce a valid tsquery', async () => {
       const terms = [
         'alpha zebra',
@@ -87,7 +95,7 @@ describe('Query', () => {
         const tsquery = textToTsquery(term);
         if (tsquery) {
           await expect(
-            global.txn!.raw('SELECT to_tsquery(?)', [tsquery]),
+            global.txn!.raw("SELECT to_tsquery('nick', ?)", [tsquery]),
           ).resolves.toBeDefined();
         }
       }
