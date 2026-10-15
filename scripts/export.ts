@@ -10,6 +10,7 @@ import { gunzipSync } from 'zlib';
 import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
+  convertComments,
   convertRedirects,
   convertRelations,
   convertSharing,
@@ -439,6 +440,14 @@ const convertDocument = async (
   );
   plone_versions.map((version: any) => addPrincipal(version.actor));
 
+  // Get comments, the endpoint is missing without plone.app.discussion
+  const comments = convertComments(
+    await fetchAllBatches(`${document['@id']}/@comments`, (batchUrl) =>
+      fetchFromApi(batchUrl, 'GET', token, undefined, true),
+    ),
+  );
+  comments.map((comment: any) => addPrincipal(comment.author));
+
   // Download files and images
   const uuid = convertUid(json.UID);
   uuids.set(doc_path, uuid);
@@ -481,6 +490,7 @@ const convertDocument = async (
         ...(translation_group ? { translation_group } : {}),
         position_in_parent: document.position_in_parent || 0,
         ...relativizeUrls(convertRelations(fields), base_url),
+        ...(comments.length > 0 ? { comments } : {}),
         ...convertSharing(
           await fetchFromApi(`${document['@id']}/@sharing`, 'GET', token),
         ),
@@ -504,6 +514,7 @@ const convertDocument = async (
  * @param {string} method Http method
  * @param {string} token Auth token
  * @param {any} body Body
+ * @param {boolean} optional Return nothing instead of failing on not found
  * @returns {Promise<any>} Response data
  */
 async function fetchFromApi(
@@ -511,6 +522,7 @@ async function fetchFromApi(
   method: string,
   token?: string,
   body?: any,
+  optional: boolean = false,
 ): Promise<any> {
   const headers: any = {
     Accept: 'application/json',
@@ -524,6 +536,9 @@ async function fetchFromApi(
     headers,
     body: body ? JSON.stringify(body) : undefined,
   });
+  if (optional && response.status === 404) {
+    return undefined;
+  }
   if (!response.ok) {
     throw new Error(
       `${method} ${url} failed: ${response.status} ${await response.text()}`,

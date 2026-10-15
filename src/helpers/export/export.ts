@@ -632,7 +632,6 @@ export const omitFields = [
   'items_total',
   'is_folderish',
   'lock',
-  'allow_discussion',
   'next_item',
   'previous_item',
   'type_title',
@@ -933,4 +932,22 @@ export function convertRedirects(
       manual: alias.manual === true,
       datetime: alias.datetime,
     }));
+}
+
+/**
+ * Convert the comments of a document (`@comments` endpoint) to the comments
+ * Nick stores in the document.
+ * @method convertComments
+ * @param {Array} comments Comments.
+ * @returns {Array} Nick comments.
+ */
+export function convertComments(comments: any[]): any[] {
+  return (comments || []).map((comment) => ({
+    id: comment.comment_id,
+    parent: comment.in_reply_to || null,
+    author: comment.author_username,
+    created: comment.creation_date,
+    modified: comment.modification_date,
+    text: comment.text,
+  }));
 }

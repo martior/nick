@@ -50,6 +50,7 @@ Each document is written to `documents/<path>.json`, where the path segments are
 | Relations | Yes | Relation lists (like `relatedItems`) are stored as uuids, relation choices (like `preview_image_link`) as a list with one summary. Plone uids are converted to uuids. Urls of the site in field values and blocks (links, teasers, images) become paths relative to the site root. Relations to content outside the site are not migrated. |
 | Translations | Yes | Language and translation links (`?expand=translations`). Plone does not expose its translation group, so a uuid derived from the paths of all translations of a document is used as `translation_group`. |
 | Redirects | Yes | Manual and automatic aliases (`@aliases` of the site root) with their date, for documents which are exported. |
+| Comments | Yes | Comments and replies (`@comments`) with id, author, dates and text, and the `allow_discussion` flag. The author full name and the review state of comments (`comment_review_workflow`) are not migrated. |
 
 ## Passwords
 
