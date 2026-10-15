@@ -25,6 +25,7 @@ import {
   getDocumentFilename,
   getDocumentPath,
   getItems,
+  getTranslationGroup,
   mapPrincipalRoles,
   parseTar,
   parseWorkflowBindings,
@@ -656,6 +657,36 @@ describe('export', () => {
         href: [{ '@id': '/news' }],
         count: 3,
       });
+    });
+  });
+
+  describe('getTranslationGroup', () => {
+    it('returns the same uuid for all translations', () => {
+      const en = getTranslationGroup(
+        '/en/about',
+        {
+          items: [{ '@id': 'http://host/plone/de/ueber-uns', language: 'de' }],
+        },
+        'http://host/plone',
+      );
+      const de = getTranslationGroup(
+        '/de/ueber-uns',
+        { items: [{ '@id': 'http://host/plone/en/about', language: 'en' }] },
+        'http://host/plone',
+      );
+      expect(en).toBe(de);
+      expect(en).toMatch(
+        /^[\da-f]{8}-[\da-f]{4}-5[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/,
+      );
+    });
+
+    it('returns undefined without translations', () => {
+      expect(
+        getTranslationGroup('/en/about', { items: [] }, 'http://host/plone'),
+      ).toBeUndefined();
+      expect(
+        getTranslationGroup('/en/about', undefined, 'http://host/plone'),
+      ).toBeUndefined();
     });
   });
 });

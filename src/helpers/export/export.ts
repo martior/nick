@@ -4,7 +4,7 @@
  */
 
 // External imports
-import { randomBytes } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 import { omit } from 'es-toolkit/object';
 
 /**
@@ -877,4 +877,38 @@ export function relativizeUrls(value: any, baseUrl: string): any {
     );
   }
   return value;
+}
+
+/**
+ * Get the translation group of a document. Plone doesn't expose its
+ * translation group over the REST api, so a uuid is derived from the sorted
+ * paths of the document and its translations, which is the same for all
+ * documents of the group.
+ * @method getTranslationGroup
+ * @param {string} path Path of the document.
+ * @param {Object} translations The `translations` component of the document.
+ * @param {string} baseUrl Url of the site root.
+ * @returns {string|undefined} Translation group, undefined without translations.
+ */
+export function getTranslationGroup(
+  path: string,
+  translations: any,
+  baseUrl: string,
+): string | undefined {
+  const items = translations?.items || [];
+  if (items.length === 0) {
+    return undefined;
+  }
+  const paths = [
+    path,
+    ...items.map((item: any) => getDocumentPath(item['@id'], baseUrl)),
+  ].sort();
+  const hash = createHash('sha1').update(paths.join('\n')).digest('hex');
+  return [
+    hash.substring(0, 8),
+    hash.substring(8, 12),
+    `5${hash.substring(13, 16)}`,
+    `${((parseInt(hash[16], 16) & 0x3) | 0x8).toString(16)}${hash.substring(17, 20)}`,
+    hash.substring(20, 32),
+  ].join('-');
 }
