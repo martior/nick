@@ -44,3 +44,68 @@ export function getDocumentFilename(path: string): string {
     );
   return `${slugs.join('.')}.json`;
 }
+
+/**
+ * Call a batched listing endpoint page by page. Uses `batching.next` when
+ * available and falls back to `b_start` when only `items_total` is returned.
+ * Endpoints returning a plain array are treated as a single batch.
+ * @method forEachBatch
+ * @param {string} url Url of the listing, may already contain a query string.
+ * @param {Function} fetch Function fetching an url and returning the json.
+ * @param {Function} callback Function called with the items of each batch.
+ * @param {number} size Batch size.
+ * @returns {Promise<number>} Number of items.
+ */
+export async function forEachBatch(
+  url: string,
+  fetch: (url: string) => Promise<any>,
+  callback: (items: any[]) => Promise<void> | void,
+  size: number = 100,
+): Promise<number> {
+  const separator = url.includes('?') ? '&' : '?';
+  let next: string | undefined = `${url}${separator}b_size=${size}&b_start=0`;
+  let count = 0;
+
+  while (next) {
+    const result: any = await fetch(next);
+    const items: any[] = Array.isArray(result) ? result : result.items || [];
+    await callback(items);
+    count += items.length;
+
+    if (Array.isArray(result) || items.length === 0) {
+      next = undefined;
+    } else if (result.batching) {
+      next = result.batching.next;
+    } else if (result.items_total && count < result.items_total) {
+      next = `${url}${separator}b_size=${size}&b_start=${count}`;
+    } else {
+      next = undefined;
+    }
+  }
+  return count;
+}
+
+/**
+ * Fetch all items of a batched listing endpoint.
+ * @method fetchAllBatches
+ * @param {string} url Url of the listing.
+ * @param {Function} fetch Function fetching an url and returning the json.
+ * @param {number} size Batch size.
+ * @returns {Promise<any[]>} All items.
+ */
+export async function fetchAllBatches(
+  url: string,
+  fetch: (url: string) => Promise<any>,
+  size: number = 100,
+): Promise<any[]> {
+  const output: any[] = [];
+  await forEachBatch(
+    url,
+    fetch,
+    (items) => {
+      output.push(...items);
+    },
+    size,
+  );
+  return output;
+}

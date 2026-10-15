@@ -34,3 +34,4 @@ Each document is written to `documents/<path>.json`, where the path segments are
 | Data | Migrated | Notes |
 | ---- | -------- | ----- |
 | Content tree | Yes | Paths, ids (including ids with dots), types, uuids and field values. |
+| Listing | Yes | `@search`, `@users` and `@groups` are read in batches of 100 (`batching.next`), so large sites are not loaded in one response. |

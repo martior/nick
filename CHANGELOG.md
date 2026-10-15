@@ -235,6 +235,7 @@
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
 - Fix document urls in export and import of ids containing dots @martior
+- Paginate search, users and groups in export, plone.restapi 10 batches users @martior
 
 ### Internal
 
