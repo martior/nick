@@ -240,6 +240,7 @@
 - Give every exported user its own random password instead of one shared password @martior
 - Stop the export on failed requests, read groups unbatched and skip comments in the document listing @martior
 - Export type behaviors, allowed content types and unlisted types, so exported documents can be traversed @martior
+- Fix import of exported groups without email @martior
 
 ### Internal
 
