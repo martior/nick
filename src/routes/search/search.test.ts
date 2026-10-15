@@ -15,6 +15,9 @@ describe('Search', () => {
 
   it('should find the news folder', () => testRequest(app, 'search/get_news'));
 
+  it('should support operators in the searchable text', () =>
+    testRequest(app, 'search/get_operators'));
+
   it('should be able to sort results on title', () =>
     testRequest(app, 'search/get_sort_title'));
 

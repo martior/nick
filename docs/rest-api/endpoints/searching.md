@@ -45,6 +45,26 @@ This will return all content object:
 {% include_relative examples/search/get_news.res %}
 ```
 
+## Searching text with operators
+
+The `SearchableText` parameter follows the Plone query syntax: multiple terms are combined with `AND`, the `AND`, `OR` and `NOT` keywords and parentheses can be used to combine terms, `"quoted text"` searches for a phrase and a trailing `*` searches for words starting with the term. Any other character is treated as plain text, so a search never fails because of its input:
+
+```http
+{% include_relative examples/search/get_operators.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_operators.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_operators.res %}
+```
+
 ## Sorting on title
 
 You can also sort the search results on title:
