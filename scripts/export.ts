@@ -25,6 +25,7 @@ import {
   getDocumentFilename,
   getDocumentPath,
   getItems,
+  getTranslationGroup,
   mapPrincipalRoles,
   omitFields,
   parseTar,
@@ -380,7 +381,16 @@ const convertDocument = async (
 ) => {
   const doc_path = getDocumentPath(document['@id'], base_url);
   const filename = getDocumentFilename(doc_path);
-  const json = await fetchFromApi(document['@id'], 'GET', token);
+  const json = await fetchFromApi(
+    `${document['@id']}?expand=translations`,
+    'GET',
+    token,
+  );
+  const translation_group = getTranslationGroup(
+    doc_path,
+    json['@components']?.translations,
+    base_url,
+  );
 
   // Get workflow history, oldest first
   const { history } = await fetchFromApi(
@@ -435,7 +445,8 @@ const convertDocument = async (
           history,
           workflowInfo.workflows[getTypeWorkflow(json['@type'])],
         ),
-        language: json.language.token,
+        language: json.language?.token ?? json.language,
+        ...(translation_group ? { translation_group } : {}),
         position_in_parent: document.position_in_parent || 0,
         ...relativizeUrls(convertRelations(fields), base_url),
         ...convertSharing(
