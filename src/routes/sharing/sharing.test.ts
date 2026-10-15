@@ -11,49 +11,11 @@ import { describe, expect, it, vi } from 'vitest';
 import app from '../../app';
 import config from '../../helpers/config/config';
 import jobs from '../../helpers/jobs/jobs';
-import { testRequest } from '../../helpers/tests/tests';
+import { createDocument, testRequest } from '../../helpers/tests/tests';
 import models from '../../models';
 
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
-
-/**
- * Create and index a private document
- * @method createDocument
- * @param {string} uuid Uuid of the document.
- * @param {Object} parent Parent document.
- * @param {string} id Id of the document.
- * @param {string} type Type of the document.
- * @returns {Promise<Object>} Document.
- */
-async function createDocument(
-  uuid: string,
-  parent: any,
-  id: string,
-  type: string,
-): Promise<any> {
-  const Document = models.get('Document');
-  const document: any = await Document.create(
-    {
-      uuid,
-      parent: parent.uuid,
-      id,
-      path: `${parent.path === '/' ? '' : parent.path}/${id}`,
-      position_in_parent: 99,
-      version: 0,
-      owner: 'admin',
-      type,
-      workflow_state: 'private',
-      workflow_history: JSON.stringify([]),
-      lock: { locked: false, stealable: true },
-      json: { title: id },
-    },
-    {},
-    global.txn!,
-  );
-  await document.index(global.txn!);
-  return document;
-}
 
 /**
  * Get the allowed users, groups and roles from the catalog
