@@ -10,6 +10,7 @@ import type { Knex } from 'knex';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { dropRight, last } from 'es-toolkit/array';
+import { isEqual } from 'es-toolkit/predicate';
 import { omit } from 'es-toolkit/object';
 import { promises as fs } from 'fs';
 import { v4 as uuid } from 'uuid';
@@ -22,6 +23,7 @@ import {
   handleRelationLists,
 } from '../../helpers/content/content';
 import { dirExists } from '../../helpers/fs/fs';
+import { getFactoryFields } from '../../helpers/schema/schema';
 import { stripI18n } from '../../helpers/i18n/i18n';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -103,6 +105,7 @@ export const seedDocument = async (
       // Handle files and images
       const type = await Type.fetchById(document.type || 'Page', {}, trx);
       const schema = type._schema;
+      const original = document;
       document = await handleBlocks(document);
       document = await handleFiles(
         document,
@@ -151,6 +154,39 @@ export const seedDocument = async (
 
       // Save uuid
       uuids.push(insert.uuid);
+
+      // Handle files and images of versions, unchanged files are shared
+      // with the document
+      const blobFields = [
+        ...getFactoryFields(schema, 'File'),
+        ...getFactoryFields(schema, 'Image'),
+      ];
+      if ('versions' in document) {
+        document.versions = await mapAsync(
+          document.versions,
+          async (version: any) => {
+            const unchanged = blobFields.filter(
+              (field) =>
+                field in version && isEqual(version[field], original[field]),
+            );
+            let json: any = omit(version, unchanged);
+            json = await handleFiles(
+              json,
+              schema,
+              trx,
+              `${profilePath}/documents`,
+            );
+            json = await handleImages(
+              json,
+              schema,
+              trx,
+              `${profilePath}/documents`,
+            );
+            unchanged.map((field) => (json[field] = document[field]));
+            return json;
+          },
+        );
+      }
 
       // Create versions
       const versions =

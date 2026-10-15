@@ -8,6 +8,19 @@ import { randomBytes } from 'crypto';
 import { omit } from 'es-toolkit/object';
 
 /**
+ * Convert a Plone uid (32 hex characters) to a uuid.
+ * @method convertUid
+ * @param {string} uid Plone uid.
+ * @returns {string} Uuid.
+ */
+export function convertUid(uid: string): string {
+  return uid.replace(
+    /^([\da-f]{8})([\da-f]{4})([\da-f]{4})([\da-f]{4})([\da-f]{12})$/i,
+    '$1-$2-$3-$4-$5',
+  );
+}
+
+/**
  * Get the path of a document relative to the site root from its url.
  * @method getDocumentPath
  * @param {string} url Url of the document.
@@ -698,5 +711,94 @@ export function convertSharing(sharing: any): {
   return {
     inherit_roles: sharing?.inherit !== false,
     sharing: { users: principals('user'), groups: principals('group') },
+  };
+}
+
+/**
+ * Check if a field value is a file or image of the plone.restapi
+ * serialization.
+ * @method isBlob
+ * @param {any} value Field value.
+ * @returns {boolean} True if the value is a file or image.
+ */
+export function isBlob(value: any): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof value.download === 'string' &&
+    'filename' in value &&
+    'content-type' in value
+  );
+}
+
+/**
+ * Get the profile path of a blob, relative to the documents folder.
+ * @method getBlobPath
+ * @param {string} uuid Uuid of the document.
+ * @param {string} field Name of the field.
+ * @param {string} filename Filename of the blob.
+ * @returns {string} Path of the blob.
+ */
+export function getBlobPath(
+  uuid: string,
+  field: string,
+  filename: string,
+): string {
+  const name = (filename || field).replace(/[/\\\0]/g, '_');
+  return `/blobs/${uuid}/${field}/${name}`;
+}
+
+/**
+ * Download the files and images of a document into the profile. The field
+ * values are replaced by a reference to the downloaded file with the
+ * original filename and content type. File and image fields of versions
+ * refer to the same file when they are unchanged; other versions of files
+ * can't be downloaded over the REST api and are dropped.
+ * @method exportBlobs
+ * @param {Object} json Json data of the document.
+ * @param {Array} versions Versions of the document.
+ * @param {string} uuid Uuid of the document.
+ * @param {Function} download Function downloading a field, returns the data.
+ * @param {Function} write Function writing data to a profile path.
+ * @returns {Promise<Object>} Json data and versions with file references.
+ */
+export async function exportBlobs(
+  json: Record<string, any>,
+  versions: any[],
+  uuid: string,
+  download: (field: string) => Promise<Buffer>,
+  write: (path: string, data: Buffer) => void,
+): Promise<{ json: Record<string, any>; versions: any[] }> {
+  const output = { ...json };
+  const fields = Object.keys(json).filter((field) => isBlob(json[field]));
+
+  for (const field of fields) {
+    const path = getBlobPath(uuid, field, json[field].filename);
+    write(path, await download(field));
+    output[field] = {
+      path,
+      filename: json[field].filename,
+      'content-type': json[field]['content-type'],
+    };
+  }
+
+  return {
+    json: output,
+    versions: versions.map((version) =>
+      Object.fromEntries(
+        Object.keys(version)
+          .filter(
+            (field) =>
+              !isBlob(version[field]) ||
+              (field in output &&
+                version[field].filename === json[field]?.filename &&
+                version[field].size === json[field]?.size),
+          )
+          .map((field) => [
+            field,
+            isBlob(version[field]) ? output[field] : version[field],
+          ]),
+      ),
+    ),
   };
 }

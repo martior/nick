@@ -5,15 +5,18 @@
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { dirname } from 'path';
 import { gunzipSync } from 'zlib';
 import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
   convertSharing,
+  convertUid,
   convertUserList,
   convertVersions,
   convertWorkflow,
   convertWorkflowHistory,
+  exportBlobs,
   fetchAllBatches,
   forEachBatch,
   getAcquiredState,
@@ -386,12 +389,26 @@ const convertDocument = async (
   history.map((entry: any) => addPrincipal(entry.actor));
 
   // Get versions, oldest first
-  const versions = await convertVersions(
+  const plone_versions = await convertVersions(
     await fetchFromApi(`${document['@id']}/@history`, 'GET', token),
     (version: number) =>
       fetchFromApi(`${document['@id']}/@history/${version}`, 'GET', token),
   );
-  versions.map((version: any) => addPrincipal(version.actor));
+  plone_versions.map((version: any) => addPrincipal(version.actor));
+
+  // Download files and images
+  const uuid = convertUid(json.UID);
+  const { json: fields, versions } = await exportBlobs(
+    omit(json, omitFields),
+    plone_versions,
+    uuid,
+    (field: string) =>
+      fetchBlob(`${document['@id']}/@@download/${field}`, token),
+    (blob: string, data: Buffer) => {
+      mkdirSync(`${path}/documents${dirname(blob)}`, { recursive: true });
+      writeFileSync(`${path}/documents${blob}`, data);
+    },
+  );
 
   // Keep type information
   typeInfo.types.add(json['@type']);
@@ -409,10 +426,7 @@ const convertDocument = async (
       {
         path: doc_path,
         type: json['@type'],
-        uuid: json.UID.replace(
-          /^([\da-f]{8})([\da-f]{4})([\da-f]{4})([\da-f]{4})([\da-f]{12})$/i,
-          '$1-$2-$3-$4-$5',
-        ),
+        uuid,
         owner: addPrincipal(json.creators[0]),
         workflow_state: getWorkflowState(json, doc_path),
         workflow_history: convertWorkflowHistory(
@@ -421,7 +435,7 @@ const convertDocument = async (
         ),
         language: json.language.token,
         position_in_parent: document.position_in_parent || 0,
-        ...omit(json, omitFields),
+        ...fields,
         ...convertSharing(
           await fetchFromApi(`${document['@id']}/@sharing`, 'GET', token),
         ),
@@ -465,6 +479,22 @@ async function fetchFromApi(
     );
   }
   return response.json();
+}
+
+/**
+ * Fetch a blob
+ * @param {string} url Url
+ * @param {string} token Auth token
+ * @returns {Promise<Buffer>} Data
+ */
+async function fetchBlob(url: string, token: string): Promise<Buffer> {
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    throw new Error(`GET ${url} failed: ${response.status}`);
+  }
+  return Buffer.from(await response.arrayBuffer());
 }
 
 /**
