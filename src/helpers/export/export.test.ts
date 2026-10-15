@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest';
 import {
   convertBehaviors,
   convertUserList,
+  convertVersions,
   convertWorkflow,
   convertWorkflowHistory,
   fetchAllBatches,
@@ -448,6 +449,60 @@ describe('export', () => {
           state_title: 'Published',
           time: '2026-01-02T10:00:00+00:00',
           transition_title: 'Publish',
+        },
+      ]);
+    });
+  });
+
+  describe('convertVersions', () => {
+    it('converts the versions of the history', async () => {
+      const versions = await convertVersions(
+        [
+          {
+            type: 'workflow',
+            action: 'publish',
+            time: '2026-01-03T10:00:00+00:00',
+          },
+          {
+            type: 'versioning',
+            version: 1,
+            actor: { id: 'john' },
+            comments: 'Changed title',
+            time: '2026-01-02T10:00:00+00:00',
+          },
+          {
+            type: 'versioning',
+            version: 0,
+            actor: { id: 'jane' },
+            comments: 'Initial version',
+            time: '2026-01-01T10:00:00+00:00',
+          },
+        ],
+        async (version: number) => ({
+          '@id': 'http://host/plone/page',
+          '@type': 'Document',
+          UID: 'abc',
+          id: 'page',
+          title: `Title ${version}`,
+          review_state: 'published',
+        }),
+      );
+      expect(versions).toEqual([
+        {
+          version: 0,
+          created: '2026-01-01T10:00:00+00:00',
+          actor: 'jane',
+          id: 'page',
+          title: 'Title 0',
+          changeNote: 'Initial version',
+        },
+        {
+          version: 1,
+          created: '2026-01-02T10:00:00+00:00',
+          actor: 'john',
+          id: 'page',
+          title: 'Title 1',
+          changeNote: 'Changed title',
         },
       ]);
     });
