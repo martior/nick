@@ -9,6 +9,7 @@ import { describe, it, expect } from 'vitest';
 // Internal imports
 import {
   convertBehaviors,
+  convertRelations,
   convertSharing,
   convertUid,
   convertUserList,
@@ -28,6 +29,7 @@ import {
   parseTar,
   parseWorkflowBindings,
   parseXml,
+  relativizeUrls,
 } from './export';
 
 /**
@@ -593,6 +595,67 @@ describe('export', () => {
       expect(convertUid('c85657a660db4199a181c594d95e65de')).toBe(
         'c85657a6-60db-4199-a181-c594d95e65de',
       );
+    });
+  });
+
+  describe('convertRelations', () => {
+    it('converts relation lists and relation choices', () => {
+      expect(
+        convertRelations({
+          title: 'Team',
+          relatedItems: [
+            {
+              '@id': 'http://host/plone/history',
+              UID: '8d00cf7b5bd84e479a8f1dc64e68aa61',
+              title: 'History',
+            },
+          ],
+          preview_image_link: {
+            '@id': 'http://host/plone/logo.png',
+            UID: 'c85657a660db4199a181c594d95e65de',
+            title: 'Logo',
+          },
+          subjects: ['a'],
+          empty: [],
+        }),
+      ).toEqual({
+        title: 'Team',
+        relatedItems: ['8d00cf7b-5bd8-4e47-9a8f-1dc64e68aa61'],
+        preview_image_link: [
+          {
+            '@id': 'http://host/plone/logo.png',
+            UID: 'c85657a6-60db-4199-a181-c594d95e65de',
+            title: 'Logo',
+          },
+        ],
+        subjects: ['a'],
+        empty: [],
+      });
+    });
+  });
+
+  describe('relativizeUrls', () => {
+    it('makes urls of the site relative to the site root', () => {
+      expect(
+        relativizeUrls(
+          {
+            url: 'http://host/plone/files/report.pdf',
+            root: 'http://host/plone',
+            other: 'http://host/plone2/page',
+            text: 'See http://host/plone/news and http://example.org.',
+            href: [{ '@id': 'http://host/plone/news' }],
+            count: 3,
+          },
+          'http://host/plone',
+        ),
+      ).toEqual({
+        url: '/files/report.pdf',
+        root: '/',
+        other: 'http://host/plone2/page',
+        text: 'See /news and http://example.org.',
+        href: [{ '@id': '/news' }],
+        count: 3,
+      });
     });
   });
 });

@@ -802,3 +802,79 @@ export async function exportBlobs(
     ),
   };
 }
+
+/**
+ * Check if a value is a summary of a related document.
+ * @method isRelation
+ * @param {any} value Value.
+ * @returns {boolean} True if the value is a summary with an uid.
+ */
+function isRelation(value: any): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof value.UID === 'string' &&
+    typeof value['@id'] === 'string'
+  );
+}
+
+/**
+ * Convert relation fields. Relation lists (arrays of summaries) become
+ * arrays of uuids, relation choices (a summary) become an array with one
+ * summary, which is how Nick stores them. Plone uids are converted to uuids.
+ * @method convertRelations
+ * @param {Object} json Json data of a document.
+ * @returns {Object} Json data with converted relations.
+ */
+export function convertRelations(json: Record<string, any>): any {
+  return Object.fromEntries(
+    Object.keys(json).map((field) => {
+      const value = json[field];
+      if (Array.isArray(value) && value.length > 0 && value.every(isRelation)) {
+        return [field, value.map((item: any) => convertUid(item.UID))];
+      }
+      if (isRelation(value)) {
+        return [
+          field,
+          [
+            {
+              '@id': value['@id'],
+              UID: convertUid(value.UID),
+              title: value.title,
+            },
+          ],
+        ];
+      }
+      return [field, value];
+    }),
+  );
+}
+
+/**
+ * Make urls of the site relative to the site root, for example in links
+ * and teasers in blocks: `http://host/plone/news` becomes `/news`.
+ * @method relativizeUrls
+ * @param {any} value Value to convert.
+ * @param {string} baseUrl Url of the site root.
+ * @returns {any} Converted value.
+ */
+export function relativizeUrls(value: any, baseUrl: string): any {
+  if (typeof value === 'string') {
+    if (value === baseUrl || value === `${baseUrl}/`) {
+      return '/';
+    }
+    return value.split(`${baseUrl}/`).join('/');
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => relativizeUrls(item, baseUrl));
+  }
+  if (typeof value === 'object' && value !== null) {
+    return Object.fromEntries(
+      Object.keys(value).map((key) => [
+        key,
+        relativizeUrls(value[key], baseUrl),
+      ]),
+    );
+  }
+  return value;
+}
