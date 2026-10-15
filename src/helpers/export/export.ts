@@ -50,6 +50,17 @@ export function getDocumentFilename(path: string): string {
 }
 
 /**
+ * Get the items of a listing, which is either an array or an object with
+ * items.
+ * @method getItems
+ * @param {any} result Result of a listing endpoint.
+ * @returns {Array} Items.
+ */
+export function getItems(result: any): any[] {
+  return Array.isArray(result) ? result : result?.items || [];
+}
+
+/**
  * Call a batched listing endpoint page by page. Uses `batching.next` when
  * available and falls back to `b_start` when only `items_total` is returned.
  * Endpoints returning a plain array are treated as a single batch.
@@ -72,7 +83,7 @@ export async function forEachBatch(
 
   while (next) {
     const result: any = await fetch(next);
-    const items: any[] = Array.isArray(result) ? result : result.items || [];
+    const items = getItems(result);
     await callback(items);
     count += items.length;
 

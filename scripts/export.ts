@@ -12,6 +12,7 @@ import {
   getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
+  getItems,
   mapPrincipalRoles,
   virtualGroups,
 } from '../src/helpers/export/export';
@@ -205,8 +206,10 @@ const convertDocuments = async (
     `${url}/++api++/@search?sort_on=path`,
     (batchUrl: string) => fetchFromApi(batchUrl, 'GET', token),
     (items: any[]) =>
-      mapAsync(items, (document: any) =>
-        convertDocument(document, path, token, base_url),
+      mapAsync(
+        // Comments are cataloged but they are not documents
+        items.filter((item: any) => item['@type'] !== 'Discussion Item'),
+        (document: any) => convertDocument(document, path, token, base_url),
       ),
   );
 
@@ -302,6 +305,11 @@ async function fetchFromApi(
     headers,
     body: body ? JSON.stringify(body) : undefined,
   });
+  if (!response.ok) {
+    throw new Error(
+      `${method} ${url} failed: ${response.status} ${await response.text()}`,
+    );
+  }
   return response.json();
 }
 
@@ -344,9 +352,9 @@ async function main() {
   const roles = await fetchFromApi(`${url}/++api++/@roles`, 'GET', token);
   convertRoles(roles, outputfolder);
 
-  // Convert groups
-  const groups = await fetchAllBatches(`${url}/++api++/@groups`, (batchUrl) =>
-    fetchFromApi(batchUrl, 'GET', token),
+  // Convert groups, the groups endpoint is not batched
+  const groups = getItems(
+    await fetchFromApi(`${url}/++api++/@groups`, 'GET', token),
   );
   convertGroups(groups, outputfolder);
 
