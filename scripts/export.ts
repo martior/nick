@@ -11,6 +11,7 @@ import {
   convertBehaviors,
   convertUserList,
   convertWorkflow,
+  convertWorkflowHistory,
   fetchAllBatches,
   forEachBatch,
   getAcquiredState,
@@ -373,6 +374,14 @@ const convertDocument = async (
   const filename = getDocumentFilename(doc_path);
   const json = await fetchFromApi(document['@id'], 'GET', token);
 
+  // Get workflow history, oldest first
+  const { history } = await fetchFromApi(
+    `${document['@id']}/@workflow`,
+    'GET',
+    token,
+  );
+  history.map((entry: any) => addPrincipal(entry.actor));
+
   // Keep type information
   typeInfo.types.add(json['@type']);
   if (json.is_folderish) {
@@ -395,6 +404,10 @@ const convertDocument = async (
         ),
         owner: addPrincipal(json.creators[0]),
         workflow_state: getWorkflowState(json, doc_path),
+        workflow_history: convertWorkflowHistory(
+          history,
+          workflowInfo.workflows[getTypeWorkflow(json['@type'])],
+        ),
         language: json.language.token,
         position_in_parent: document.position_in_parent || 0,
         ...omit(json, [
