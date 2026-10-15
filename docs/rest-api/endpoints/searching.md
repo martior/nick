@@ -227,7 +227,7 @@ This will return the matching content objects:
 
 ## Sorting using batching
 
-You can specify the batch size when searching:
+Results are batched with a default batch size of 25. You can specify the batch size (`b_size`) and the batch start (`b_start`) when searching. `items_total` is the total number of results; when there is more than one batch a `batching` object with links to the current, first, last, next and previous batch is added:
 
 ```http
 {% include_relative examples/search/get_batch.req %}
@@ -323,6 +323,24 @@ This will return the matching content objects:
 
 ```http
 {% include_relative examples/search/post_operations.res %}
+```
+
+The querystring search supports the same batching parameters in the body and a `limit` to cap the total number of results:
+
+```http
+{% include_relative examples/search/post_batch.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/post_batch.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/post_batch.res %}
 ```
 
 When no query is supplied or an operation is unknown a bad request is returned:

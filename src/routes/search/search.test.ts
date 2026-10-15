@@ -57,6 +57,9 @@ describe('Search', () => {
   it('should support plone.app.querystring operation names', () =>
     testRequest(app, 'search/post_operations'));
 
+  it('should be able to batch and limit a querystring search', () =>
+    testRequest(app, 'search/post_batch'));
+
   it('should return a bad request on an invalid querystring operation', () =>
     testRequest(app, 'search/post_invalid'));
 });

@@ -13,6 +13,8 @@ import config from '../../helpers/config/config';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import { RequestException } from '../../helpers/error/error';
 import {
+  getBatching,
+  getBatchParams,
   isValidOperation,
   querystringToQuery,
   queryparamToQuery,
@@ -25,6 +27,27 @@ interface ChatResult {
     content: string;
   };
 }
+
+/**
+ * Get the batching property of a result.
+ * @method batching
+ * @param {string} url Url of the current call.
+ * @param {Object} params Query parameters of the current call.
+ * @param {number} total Total number of items.
+ * @param {number} start Batch start.
+ * @param {number} size Batch size.
+ * @returns {Object} Object with the batching links or an empty object.
+ */
+const batching = (
+  url: string,
+  params: Record<string, any>,
+  total: number,
+  start: number,
+  size: number,
+): Record<string, any> => {
+  const links = getBatching(url, params, total, start, size);
+  return links ? { batching: links } : {};
+};
 
 export default [
   {
@@ -43,12 +66,22 @@ export default [
         req,
         trx,
       );
-      const items = await Catalog.fetchAllRestricted(
-        query[0],
-        query[1],
-        trx,
-        req,
+
+      // Get batch
+      const { start, size } = getBatchParams(
+        req.query.b_start,
+        req.query.b_size,
       );
+      const total = await Catalog.countRestricted(query[0], trx, req);
+      const items =
+        size > 0 && start < total
+          ? await Catalog.fetchAllRestricted(
+              query[0],
+              { ...query[1], offset: start, limit: size },
+              trx,
+              req,
+            )
+          : [];
 
       // Fetch indexes
       if (!req.indexes) {
@@ -78,7 +111,8 @@ export default [
           items: items.map((item: InstanceType<typeof Catalog>) =>
             item.toJson(req),
           ),
-          items_total: items.getLength(),
+          items_total: total,
+          ...batching(`${getUrl(req)}/@search`, req.query, total, start, size),
           ...(ai ? { ai: ai.message.content } : {}),
         },
       };
@@ -118,12 +152,24 @@ export default [
       if (req.document.path !== '/') {
         query[0]['_UID:context'] = ['raw', '"_UID" <> ?', [req.document.uuid]];
       }
-      const items = await Catalog.fetchAllRestricted(
-        query[0],
-        query[1],
-        trx,
-        req,
-      );
+      // Get batch, the limit caps the total number of results
+      const { start, size } = getBatchParams(req.body.b_start, req.body.b_size);
+      const limit = parseInt(req.body.limit, 10);
+      const count = await Catalog.countRestricted(query[0], trx, req);
+      const total = isNaN(limit) || limit < 0 ? count : Math.min(count, limit);
+      const items =
+        size > 0 && start < total
+          ? await Catalog.fetchAllRestricted(
+              query[0],
+              {
+                ...query[1],
+                offset: start,
+                limit: Math.min(size, total - start),
+              },
+              trx,
+              req,
+            )
+          : [];
 
       // Fetch indexes
       if (!req.indexes) {
@@ -137,7 +183,14 @@ export default [
           items: items.map((item: InstanceType<typeof Catalog>) =>
             item.toJson(req),
           ),
-          items_total: items.getLength(),
+          items_total: total,
+          ...batching(
+            `${getUrl(req)}/@querystring-search`,
+            {},
+            total,
+            start,
+            size,
+          ),
         },
       };
     },

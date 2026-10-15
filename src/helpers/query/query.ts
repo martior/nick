@@ -894,3 +894,71 @@ export const queryparamToQuery = async (
 
   return [where, options];
 };
+
+/**
+ * Get the batch start and size from the request parameters.
+ * Invalid or negative values fall back to the defaults.
+ * @method getBatchParams
+ * @param {any} bStart Batch start parameter.
+ * @param {any} bSize Batch size parameter.
+ * @returns {Object} Batch start and size.
+ */
+export const getBatchParams = (
+  bStart: any,
+  bSize: any,
+): { start: number; size: number } => {
+  const start = parseInt(bStart, 10);
+  const size = parseInt(bSize, 10);
+  return {
+    start: isNaN(start) || start < 0 ? 0 : start,
+    size: Math.min(
+      config.settings.requestLimit?.batch || 1000,
+      isNaN(size) || size < 0 ? 25 : size,
+    ),
+  };
+};
+
+/**
+ * Get the batching links (as in plone.restapi) of a result set.
+ * @method getBatching
+ * @param {string} url Url of the current call without query string.
+ * @param {Object} params Query parameters of the current call.
+ * @param {number} total Total number of items.
+ * @param {number} start Batch start.
+ * @param {number} size Batch size.
+ * @returns {Object | undefined} Batching links, undefined if one page.
+ */
+export const getBatching = (
+  url: string,
+  params: Record<string, any>,
+  total: number,
+  start: number,
+  size: number,
+): Record<string, string> | undefined => {
+  if (size <= 0 || total <= size) {
+    return undefined;
+  }
+
+  // Build a link to a batch
+  const link = (bStart: number): string => {
+    const search = new URLSearchParams();
+    Object.keys(params)
+      .filter((key: string) => key !== 'b_start')
+      .forEach((key: string) =>
+        toArray(params[key]).forEach((value: any) =>
+          search.append(key, `${value}`),
+        ),
+      );
+    search.append('b_start', `${bStart}`);
+    return `${url}?${search.toString()}`;
+  };
+
+  const last = Math.floor((total - 1) / size) * size;
+  return {
+    '@id': link(start),
+    first: link(0),
+    last: link(last),
+    ...(start + size < total ? { next: link(start + size) } : {}),
+    ...(start > 0 ? { prev: link(Math.max(0, start - size)) } : {}),
+  };
+};
