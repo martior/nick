@@ -265,6 +265,7 @@
 - Add the GET variant of the querystring search endpoint @martior
 - Ignore accents in text search @martior
 - Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
+- Return the navigation root url as the breadcrumbs root @martior
 
 ### Internal
 

@@ -11,7 +11,12 @@ import type { Request } from '../../types';
 import { compact, drop, head, last } from 'es-toolkit/array';
 
 // Internal imports
-import { getPath, getRootUrl, getUrl } from '../../helpers/url/url';
+import {
+  getPath,
+  getRootUrl,
+  getUrl,
+  getUrlByPath,
+} from '../../helpers/url/url';
 import models from '../../models';
 
 /**
@@ -88,7 +93,7 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
     json: {
       '@id': `${getUrl(req)}/@breadcrumbs`,
       items: drop(items, 1),
-      root: req.navroot.path,
+      root: getUrlByPath(req, req.navroot.path),
     },
   };
 };
