@@ -11,6 +11,7 @@ import coreWorkflows from '../src/profiles/core/workflows.json';
 import {
   convertBehaviors,
   convertComments,
+  convertQueryOperations,
   convertRedirects,
   convertRelations,
   convertSharing,
@@ -532,7 +533,9 @@ const convertDocument = async (
         language: json.language?.token ?? json.language,
         ...(translation_group ? { translation_group } : {}),
         position_in_parent: positions.get(doc_path) || 0,
-        ...relativizeUrls(convertRelations(fields), base_url),
+        ...convertQueryOperations(
+          relativizeUrls(convertRelations(fields), base_url),
+        ),
         ...(comments.length > 0 ? { comments } : {}),
         ...convertSharing(
           await fetchFromApi(`${document['@id']}/@sharing`, 'GET', token),
@@ -540,7 +543,9 @@ const convertDocument = async (
         ...(versions.length > 0
           ? {
               versions: versions.map((version: any) =>
-                relativizeUrls(convertRelations(version), base_url),
+                convertQueryOperations(
+                  relativizeUrls(convertRelations(version), base_url),
+                ),
               ),
             }
           : {}),

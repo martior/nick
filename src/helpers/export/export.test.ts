@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest';
 import {
   convertBehaviors,
   convertComments,
+  convertQueryOperations,
   convertRedirects,
   convertRelations,
   convertSharing,
@@ -805,6 +806,40 @@ describe('export', () => {
           },
         },
       ]);
+    });
+  });
+
+  describe('convertQueryOperations', () => {
+    it('strips the plone.app.querystring prefix of operations', () => {
+      expect(
+        convertQueryOperations({
+          blocks: {
+            a: {
+              '@type': 'listing',
+              querystring: {
+                query: [
+                  {
+                    i: 'portal_type',
+                    o: 'plone.app.querystring.operation.selection.any',
+                    v: ['News Item'],
+                  },
+                ],
+              },
+            },
+          },
+        }),
+      ).toEqual({
+        blocks: {
+          a: {
+            '@type': 'listing',
+            querystring: {
+              query: [
+                { i: 'portal_type', o: 'selection.any', v: ['News Item'] },
+              ],
+            },
+          },
+        },
+      });
     });
   });
 });
