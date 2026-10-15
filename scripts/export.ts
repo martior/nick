@@ -7,6 +7,8 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { v4 as uuid } from 'uuid';
 import {
+  fetchAllBatches,
+  forEachBatch,
   getDocumentFilename,
   getDocumentPath,
 } from '../src/helpers/export/export';
@@ -227,75 +229,93 @@ const convertTypes = async (
  * @param {string} path Path of the output folder.
  * @param {string} url Url
  * @param {string} token Auth token
+ * @param {string} base_url Url of the site root
  */
-const convertDocuments = async (path: string, url: string, token: string) => {
+const convertDocuments = async (
+  path: string,
+  url: string,
+  token: string,
+  base_url: string,
+) => {
   process.stdout.write('Converting documents...');
 
   // Create types folder
   mkdirSync(`${path}/documents`, { recursive: true });
 
-  const documents = await fetchFromApi(
-    `${url}/++api++/@search?sort_on=path&b_size=100000`,
-    'GET',
-    token,
+  // Write documents batch by batch
+  const count = await forEachBatch(
+    `${url}/++api++/@search?sort_on=path`,
+    (batchUrl: string) => fetchFromApi(batchUrl, 'GET', token),
+    (items: any[]) =>
+      mapAsync(items, (document: any) =>
+        convertDocument(document, path, token, base_url),
+      ),
   );
 
-  // Get base url
-  const base_url = documents['@id'].split('/++api++')[0];
+  console.log(`${count} done!`);
+};
 
-  // Write documents
-  await mapAsync(documents.items, async (document: any) => {
-    const doc_path = getDocumentPath(document['@id'], base_url);
-    const filename = getDocumentFilename(doc_path);
-    const json = await fetchFromApi(document['@id'], 'GET', token);
+/**
+ * Convert document
+ * @param {Object} document Search result of the document.
+ * @param {string} path Path of the output folder.
+ * @param {string} token Auth token
+ * @param {string} base_url Url of the site root
+ */
+const convertDocument = async (
+  document: any,
+  path: string,
+  token: string,
+  base_url: string,
+) => {
+  const doc_path = getDocumentPath(document['@id'], base_url);
+  const filename = getDocumentFilename(doc_path);
+  const json = await fetchFromApi(document['@id'], 'GET', token);
 
-    // Write files
-    writeFileSync(
-      `${path}/documents/${filename}`,
-      JSON.stringify(
-        {
-          path: doc_path,
-          type: json['@type'],
-          uuid: json.UID.replace(
-            /^([\da-f]{8})([\da-f]{4})([\da-f]{4})([\da-f]{4})([\da-f]{12})$/i,
-            '$1-$2-$3-$4-$5',
-          ),
-          owner: json.creators[0],
-          workflow_state: json.review_state,
-          language: json.language.token,
-          position_in_parent: document.position_in_parent || 0,
-          ...omit(json, [
-            '@components',
-            '@id',
-            '@type',
-            'UID',
-            'creators',
-            'items',
-            'items_total',
-            'is_folderish',
-            'lock',
-            'allow_discussion',
-            'next_item',
-            'previous_item',
-            'type_title',
-            'version',
-            'versioning_enabled',
-            'working_copy',
-            'working_copy_of',
-            'review_state',
-            'language',
-            'changeNote',
-            'contributors',
-            'parent',
-          ]),
-        },
-        null,
-        2,
-      ),
-    );
-  });
-
-  console.log('done!');
+  // Write files
+  writeFileSync(
+    `${path}/documents/${filename}`,
+    JSON.stringify(
+      {
+        path: doc_path,
+        type: json['@type'],
+        uuid: json.UID.replace(
+          /^([\da-f]{8})([\da-f]{4})([\da-f]{4})([\da-f]{4})([\da-f]{12})$/i,
+          '$1-$2-$3-$4-$5',
+        ),
+        owner: json.creators[0],
+        workflow_state: json.review_state,
+        language: json.language.token,
+        position_in_parent: document.position_in_parent || 0,
+        ...omit(json, [
+          '@components',
+          '@id',
+          '@type',
+          'UID',
+          'creators',
+          'items',
+          'items_total',
+          'is_folderish',
+          'lock',
+          'allow_discussion',
+          'next_item',
+          'previous_item',
+          'type_title',
+          'version',
+          'versioning_enabled',
+          'working_copy',
+          'working_copy_of',
+          'review_state',
+          'language',
+          'changeNote',
+          'contributors',
+          'parent',
+        ]),
+      },
+      null,
+      2,
+    ),
+  );
 };
 
 /**
@@ -372,11 +392,15 @@ async function main() {
   convertRoles(roles, outputfolder);
 
   // Convert groups
-  const groups = await fetchFromApi(`${url}/++api++/@groups`, 'GET', token);
+  const groups = await fetchAllBatches(`${url}/++api++/@groups`, (batchUrl) =>
+    fetchFromApi(batchUrl, 'GET', token),
+  );
   convertGroups(groups, outputfolder);
 
   // Convert users
-  const users = await fetchFromApi(`${url}/++api++/@users`, 'GET', token);
+  const users = await fetchAllBatches(`${url}/++api++/@users`, (batchUrl) =>
+    fetchFromApi(batchUrl, 'GET', token),
+  );
   convertUsers(users, outputfolder);
 
   // Convert actions
@@ -394,7 +418,8 @@ async function main() {
   await convertTypes(types, outputfolder, url, token);
 
   // Convert documents
-  await convertDocuments(outputfolder, url, token);
+  const root = await fetchFromApi(`${url}/++api++`, 'GET', token);
+  await convertDocuments(outputfolder, url, token, root['@id']);
 }
 
 main();
