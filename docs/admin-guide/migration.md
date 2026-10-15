@@ -58,3 +58,18 @@ Each document is written to `documents/<path>.json`, where the path segments are
 ## Passwords
 
 Password hashes are not available over the REST api. The generated `users.json` contains a random password per user in clear text, because the seed hashes them on import. Treat the profile as a secret and remove `users.json` (or the passwords) after the import. Users set a new password with the password reset of `Nick`.
+
+## Not migrated
+
+These parts of a Plone site can not be read over the REST api or have no equivalent in `Nick`:
+
+- Password hashes. plone.restapi never returns them. A lossless password migration needs a Plone side export of the hashes (for example `collective.exportimport`) and support for the Zope `AuthEncoding` schemes (SSHA, BCRYPT) in the `Nick` login, rehashing on the first login.
+- Older versions of files and images. `@history/<version>` refers to the current file, there is no endpoint for the file of an older version.
+- Workflow guards with roles or expressions, workflow scripts, variables and worklists, permissions which are not in the mapping above, acquisition of permissions (types without workflow get the state of their parent once, at export) and more than one workflow per type.
+- Local roles of the virtual `AuthenticatedUsers` group, local roles from adapters (`borg.localrole`) and groups in groups.
+- Portraits, the site logo, other registry settings and controlpanels, content rules, portlets, working copies, locks, placeful workflow policies and permission settings outside workflows.
+- The review state and author full name of comments.
+
+## Verify a migration
+
+The plonex `restapi-suite` has an opt-in round trip test (`tests/test_migration_roundtrip.py`, marker `migration`). It seeds a Plone 6.2 site, and after `pnpm export` and an import into an empty `Nick` it compares the content tree, states, local roles, workflow history, versions, files (byte for byte), relations, translations, redirects, comments and the search results for anonymous and several users.
