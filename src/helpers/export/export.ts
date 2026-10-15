@@ -972,3 +972,30 @@ export function getPositions(paths: string[]): Map<string, number> {
   });
   return positions;
 }
+
+/**
+ * Convert the site settings (`@site` endpoint) to the `site` and `language`
+ * controlpanels.
+ * @method convertSiteSettings
+ * @param {Object} site Data of the `@site` endpoint.
+ * @returns {Array} Controlpanels.
+ */
+export function convertSiteSettings(site: any): any[] {
+  return [
+    {
+      id: 'site',
+      data: {
+        site_title: site['plone.site_title'],
+        robots_txt: site['plone.robots_txt'],
+      },
+    },
+    {
+      id: 'language',
+      data: {
+        default_language: site['plone.default_language'],
+        available_languages: site['plone.available_languages'],
+        multilingual: site.features?.multilingual === true,
+      },
+    },
+  ];
+}
