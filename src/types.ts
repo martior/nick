@@ -263,7 +263,7 @@ export interface QueryOptions {
   select: (string | Knex.Raw)[] | undefined;
 }
 
-export type WhereClause = Record<string, string | [string, string]>;
+export type WhereClause = Record<string, string | any[]>;
 
 export interface QueryString {
   query: QueryFilter[];
