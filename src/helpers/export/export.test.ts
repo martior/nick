@@ -9,6 +9,7 @@ import { describe, it, expect } from 'vitest';
 // Internal imports
 import {
   convertBehaviors,
+  convertRedirects,
   convertRelations,
   convertSharing,
   convertUid,
@@ -687,6 +688,37 @@ describe('export', () => {
       expect(
         getTranslationGroup('/en/about', undefined, 'http://host/plone'),
       ).toBeUndefined();
+    });
+  });
+
+  describe('convertRedirects', () => {
+    it('converts aliases to redirects of exported documents', () => {
+      expect(
+        convertRedirects(
+          [
+            {
+              path: '/en/about-us',
+              'redirect-to': '/en/about',
+              manual: true,
+              datetime: '2026-01-01T10:00:00+00:00',
+            },
+            {
+              path: '/old',
+              'redirect-to': '/removed',
+              manual: false,
+              datetime: '2026-01-01T10:00:00+00:00',
+            },
+          ],
+          new Map([['/en/about', 'uuid-1']]),
+        ),
+      ).toEqual([
+        {
+          document: 'uuid-1',
+          path: '/en/about-us',
+          manual: true,
+          datetime: '2026-01-01T10:00:00+00:00',
+        },
+      ]);
     });
   });
 });
