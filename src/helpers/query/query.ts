@@ -187,6 +187,174 @@ const parseDate = (value: any): string | undefined => {
 };
 
 /**
+ * Quote a term for use in a tsquery.
+ * @method quoteTerm
+ * @param {string} term Term to quote.
+ * @returns {string} Quoted term.
+ */
+const quoteTerm = (term: string): string =>
+  `'${term.replace(/\\/g, '\\\\').replace(/'/g, "''")}'`;
+
+/**
+ * Convert a single search term to a tsquery expression.
+ * A `*` or `?` wildcard turns the term into a prefix search.
+ * @method termToTsquery
+ * @param {string} term Search term.
+ * @returns {string | null} Tsquery expression or null if empty.
+ */
+const termToTsquery = (term: string): string | null => {
+  const value = term.replace(/^[*?]+/, '');
+  if (!/[*?]/.test(value)) {
+    return value ? quoteTerm(value) : null;
+  }
+  const words = value
+    .split(/[*?]/)[0]
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((word: string) => word !== '');
+  if (words.length === 0) {
+    return null;
+  }
+  return words
+    .map((word: string, index: number) =>
+      index === words.length - 1 ? `${quoteTerm(word)}:*` : quoteTerm(word),
+    )
+    .join(' & ');
+};
+
+/**
+ * Combine tsquery expressions with an operator.
+ * @method combine
+ * @param {Array} items Tsquery expressions.
+ * @param {string} operator Operator (`&` or `|`).
+ * @returns {string | null} Combined expression or null if empty.
+ */
+const combine = (items: (string | null)[], operator: string): string | null => {
+  const terms = items.filter((item) => item !== null) as string[];
+  if (terms.length === 0) {
+    return null;
+  }
+  return terms.length === 1 ? terms[0] : `(${terms.join(` ${operator} `)})`;
+};
+
+/**
+ * Convert a search text to a safe tsquery string.
+ *
+ * Follows the ZCTextIndex query syntax used by Plone: terms are combined
+ * with AND, the AND, OR and NOT keywords (case insensitive) and parentheses
+ * are supported, "quoted text" is a phrase and a trailing `*` (or `?`) is a
+ * prefix search. Any other input is treated as plain text, so the result is
+ * always a valid argument for `to_tsquery`.
+ * @method textToTsquery
+ * @param {string} text Search text.
+ * @returns {string} Tsquery string, empty if there are no terms.
+ */
+export const textToTsquery = (text: any): string => {
+  const tokens: string[] =
+    `${Array.isArray(text) ? text.join(' ') : (text ?? '')}`
+      .replace(/\0/g, '')
+      .match(/\(|\)|-?"[^"]*"|[^()\s]+/g) || [];
+  let pos = 0;
+  const keyword = (token?: string): string | undefined =>
+    token !== undefined && ['AND', 'OR', 'NOT'].includes(token.toUpperCase())
+      ? token.toUpperCase()
+      : undefined;
+
+  const parsePrimary = (): string | null => {
+    if (pos >= tokens.length) {
+      return null;
+    }
+    const token = tokens[pos++];
+    if (token === '(') {
+      const result = parseOr();
+      if (tokens[pos] === ')') {
+        pos++;
+      }
+      return result;
+    }
+    if (token === ')' || keyword(token)) {
+      return null;
+    }
+    const phrase = token.match(/^(-?)"(.*)"$/);
+    if (phrase) {
+      const value = phrase[2].trim();
+      if (!value) {
+        return null;
+      }
+      return phrase[1] ? `!${quoteTerm(value)}` : quoteTerm(value);
+    }
+    return termToTsquery(token);
+  };
+
+  const parseNot = (): string | null => {
+    if (keyword(tokens[pos]) === 'NOT') {
+      pos++;
+      if (pos >= tokens.length) {
+        return null;
+      }
+      const result = parseNot();
+      return result ? `!${result}` : null;
+    }
+    return parsePrimary();
+  };
+
+  const parseAnd = (): string | null => {
+    const items = [parseNot()];
+    while (
+      pos < tokens.length &&
+      tokens[pos] !== ')' &&
+      keyword(tokens[pos]) !== 'OR'
+    ) {
+      if (keyword(tokens[pos]) === 'AND') {
+        pos++;
+        if (pos >= tokens.length) {
+          break;
+        }
+      }
+      items.push(parseNot());
+    }
+    return combine(items, '&');
+  };
+
+  const parseOr = (): string | null => {
+    const items = [parseAnd()];
+    while (keyword(tokens[pos]) === 'OR') {
+      pos++;
+      if (pos < tokens.length && tokens[pos] !== ')') {
+        items.push(parseAnd());
+      }
+    }
+    return combine(items, '|');
+  };
+
+  // Parse all tokens, stray closing parentheses are skipped
+  const items: (string | null)[] = [];
+  while (pos < tokens.length) {
+    items.push(parseOr());
+    if (tokens[pos] === ')') {
+      pos++;
+    }
+  }
+  return combine(items, '&') || '';
+};
+
+/**
+ * Get a where condition for a full text search.
+ * @method textCondition
+ * @param {string} field Column name.
+ * @param {string} text Search text.
+ * @returns {Array} Raw where condition.
+ */
+export const textCondition = (
+  field: string,
+  text: any,
+): ['raw', string, any[]] => {
+  const tsquery = textToTsquery(text);
+  return tsquery
+    ? ['raw', `"${field}" @@ to_tsquery(?)`, [tsquery]]
+    : ['raw', 'false', []];
+};
+
+/**
  * Convert querystring to query.
  * @method querystringToQuery
  * @param {Object} querystring Querystring
@@ -380,14 +548,20 @@ export const querystringToQuery = async (
             break;
           case 'string.is':
             if (index.type === 'text') {
-              add(query.i, `${field} @@ to_tsquery(?)`, [query.v]);
+              where[`_${query.i}:${Object.keys(where).length}`] = textCondition(
+                `_${query.i}`,
+                query.v,
+              );
             } else {
               add(query.i, `${field} = ?`, [query.v]);
             }
             break;
           case 'string.contains':
             if (index.type === 'text') {
-              add(query.i, `${field} @@ to_tsquery(?)`, [query.v]);
+              where[`_${query.i}:${Object.keys(where).length}`] = textCondition(
+                `_${query.i}`,
+                query.v,
+              );
             } else if (`${query.v}`.length >= 2) {
               add(query.i, `${field} ILIKE ?`, [`%${query.v}%`]);
             }
@@ -567,7 +741,7 @@ export const queryparamToQuery = async (
             case 'uuid[]':
               break;
             case 'text':
-              where[field] = ['@@', value.replace(/\*/g, '')];
+              where[field] = textCondition(field, value);
               break;
             default:
               break;
