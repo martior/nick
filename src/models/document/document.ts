@@ -1111,11 +1111,27 @@ export class Document extends Model {
       ),
     );
 
-    // Get users and groups from local roles with 'View' permission
-    const localUsersGroups = await this.fetchLocalUsersGroups(globalRoles, trx);
+    // Get users and groups from local roles with 'View' permission, given
+    // globally or by the workflow state
+    const localUsersGroups = await this.fetchLocalUsersGroups(
+      uniq([...globalRoles, ...workflowRoles]),
+      trx,
+    );
+
+    // Add the owner if the owner role has 'View' permission
+    const owner =
+      self.owner &&
+      (globalRoles.includes('Owner') || workflowRoles.includes('Owner'))
+        ? [self.owner]
+        : [];
 
     // Return allowed
-    return uniq([...globalRoles, ...workflowRoles, ...localUsersGroups]);
+    return uniq([
+      ...globalRoles,
+      ...workflowRoles,
+      ...localUsersGroups,
+      ...owner,
+    ]);
   }
 
   /**

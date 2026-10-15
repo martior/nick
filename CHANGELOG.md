@@ -234,6 +234,7 @@
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
+- Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
 
 ### Internal
 
