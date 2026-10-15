@@ -6,6 +6,7 @@
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import {
+  convertBehaviors,
   convertUserList,
   fetchAllBatches,
   forEachBatch,
@@ -21,6 +22,13 @@ import { omit } from 'es-toolkit/object';
 
 // Users referenced by content
 const principals = new Set<string>();
+
+// Types of folderish documents and of the root document
+const typeInfo = {
+  types: new Set<string>(),
+  folderish: new Set<string>(),
+  navroot: new Set<string>(),
+};
 
 /**
  * Add a user referenced by content
@@ -152,26 +160,49 @@ const convertTypes = async (
   // Create types folder
   mkdirSync(`${path}/types`, { recursive: true });
 
+  // Add types which are used but not listed, like the type of the root
+  const listed = types.map((type) =>
+    decodeURIComponent(type['@id'].split('/').pop()),
+  );
+  const all = [
+    ...types.map((type, index) => ({ ...type, id: listed[index] })),
+    ...[...typeInfo.types]
+      .filter((id) => !listed.includes(id))
+      .map((id) => ({ id, title: id, addable: false })),
+  ];
+
   // Write types
-  await mapAsync(types, async (type) => {
+  await mapAsync(all, async (type) => {
+    const id = type.id;
     const schema = await fetchFromApi(
-      `${url}/++api++/@types/${type.id}`,
+      `${url}/++api++/@types/${encodeURIComponent(id)}`,
+      'GET',
+      token,
+    );
+    const settings = await fetchFromApi(
+      `${url}/++api++/@controlpanels/dexterity-types/${encodeURIComponent(id)}`,
       'GET',
       token,
     );
 
     // Write files
     writeFileSync(
-      `${path}/types/${type.id.toLowerCase()}.json`,
+      `${path}/types/${id.toLowerCase()}.json`,
       JSON.stringify(
         {
-          id: type.id,
-          'title:i18n': type.title,
-          'description:i18n': '', // TODO: Not available in API
-          global_allow: type.immediately_addable,
-          filter_content_types: false, // TODO: Not available in API
-          allowed_content_types: [], // TODO: Not available in API
-          schema, // TODO: Set fields title and description to use :i18n
+          id,
+          'title:i18n': settings.data?.title || type.title,
+          'description:i18n': settings.data?.description || '',
+          global_allow: type.addable,
+          filter_content_types: settings.data?.filter_content_types || false,
+          allowed_content_types: settings.data?.allowed_content_types || [],
+          schema: {
+            ...schema, // TODO: Set fields title and description to use :i18n
+            behaviors: convertBehaviors(settings.data, {
+              folderish: typeInfo.folderish.has(id),
+              navroot: typeInfo.navroot.has(id),
+            }),
+          },
           workflow: 'simple_publication_workflow', // TODO: Not available in API
         },
         null,
@@ -232,6 +263,15 @@ const convertDocument = async (
   const doc_path = getDocumentPath(document['@id'], base_url);
   const filename = getDocumentFilename(doc_path);
   const json = await fetchFromApi(document['@id'], 'GET', token);
+
+  // Keep type information
+  typeInfo.types.add(json['@type']);
+  if (json.is_folderish) {
+    typeInfo.folderish.add(json['@type']);
+  }
+  if (doc_path === '/') {
+    typeInfo.navroot.add(json['@type']);
+  }
 
   // Write files
   writeFileSync(
@@ -367,13 +407,13 @@ async function main() {
   // Convert content rules
   // TODO
 
-  // Convert types
-  const types = await fetchFromApi(`${url}/++api++/@types`, 'GET', token);
-  await convertTypes(types, outputfolder, url, token);
-
   // Convert documents
   const root = await fetchFromApi(`${url}/++api++`, 'GET', token);
   await convertDocuments(outputfolder, url, token, root['@id']);
+
+  // Convert types, after the documents to know which types are folderish
+  const types = await fetchFromApi(`${url}/++api++/@types`, 'GET', token);
+  await convertTypes(types, outputfolder, url, token);
 
   // Convert users, including users referenced by content
   const users = await fetchAllBatches(`${url}/++api++/@users`, (batchUrl) =>

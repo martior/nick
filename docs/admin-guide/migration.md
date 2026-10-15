@@ -40,6 +40,7 @@ Each document is written to `documents/<path>.json`, where the path segments are
 | Permissions | No | Zope permissions don't apply to Nick. Nick's own permissions are kept. |
 | Actions | No | Plone actions are user interface settings with TALES conditions. Nick's own actions are kept. |
 | Users | Partly | Id, full name, email, global roles, groups and other member properties (`description`, `location`, `home_page`). Portraits are not migrated. Password hashes are not available over the REST api, so every user gets its own random password and has to reset it. The user running the export keeps the password used for the export and is added as `Administrator` when it is not a site user (for example the Zope root `admin`). Users referenced by content (owners, actors) which no longer exist are added without roles, so history stays attributed. |
+| Types | Yes | Schema, title, description, allowed content types and behaviors (from `@controlpanels/dexterity-types`). Plone behaviors with a Nick equivalent are mapped (for example `plone.dublincore` to `dublin_core`, `volto.blocks` to `blocks`), the fields of other behaviors stay in the schema. Types with folderish content get `folderish`, the type of the site root gets `navigation_root`. Types which are used but not listed in `@types` (like `Plone Site`) are exported too. |
 
 ## Passwords
 
