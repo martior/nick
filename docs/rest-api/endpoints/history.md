@@ -53,7 +53,7 @@ Or use the client directly:
 
 ## Revert to a Historical Version
 
-Reverting to an older versions of a resource can be done by sending a PATCH request to the `@history` endpoint and appending the version you want to revert to.
+Reverting to an older versions of a resource can be done by sending a PATCH request to the `@history` endpoint and appending the version you want to revert to. Reverting requires the `Revert` permission, which the core profile gives to the `Owner`, `Editor`, `Reviewer` and `Administrator` roles (like `CMFEditions: Revert to previous versions` in Plone). Other users get `401 Unauthorized` or `403 Forbidden`, and `may_revert` is `false` for them in the history listing. An unknown version returns `404 Not Found`. The reverted content is reindexed in the catalog.
 
 ```http
 {% include_relative examples/history/patch.req %}
