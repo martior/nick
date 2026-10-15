@@ -1,0 +1,14 @@
+import { Client } from '@plone/nick';
+
+const cli = Client.initialize({ apiPath: 'http://localhost:8080' });
+const login = await cli.login({
+  data: { login: 'admin', password: 'admin' },
+});
+
+const { data } = await cli.getNavigation({
+  token: login.data.token,
+  path: '/news',
+  query: {
+    'expand.navigation.depth': 'x',
+  },
+});

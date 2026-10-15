@@ -266,6 +266,7 @@
 - Ignore accents in text search @martior
 - Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
 - Return the navigation root url as the breadcrumbs root @martior
+- Add description to navigation items and return a bad request on an invalid navigation depth @martior
 
 ### Internal
 
