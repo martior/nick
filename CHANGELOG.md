@@ -235,6 +235,7 @@
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
 - Return the navigation root url as the breadcrumbs root @martior
+- Add description to navigation items and return a bad request on an invalid navigation depth @martior
 
 ### Internal
 
