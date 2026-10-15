@@ -225,6 +225,44 @@ This will return all content object:
 {% include_relative examples/search/post.res %}
 ```
 
+## Querystring operations
+
+The operations can be specified by their full `plone.app.querystring` name, which is what Volto sends, or by their short name (for example `selection.any`). Path operations accept a depth suffix (`.::1`), multiple path rows are combined with `OR`, and the context itself is excluded from the results:
+
+```http
+{% include_relative examples/search/post_operations.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/post_operations.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/post_operations.res %}
+```
+
+When no query is supplied or an operation is unknown a bad request is returned:
+
+```http
+{% include_relative examples/search/post_invalid.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/post_invalid.ts %}
+```
+
+Example response:
+
+```http
+{% include_relative examples/search/post_invalid.res %}
+```
+
 ## Searching using an embedding model
 
 When AI is enabled in the config you can search based on `embeddings`. When you provide a `SearchableText` parameter it will be converted to an `embedding` and compared with all other embeddings in the site. You can set the similarity cut off in the config by specifying `minSimilarity` in the embed model settings. Results are automatically ordered by similarity but can be ordered differently when specified.

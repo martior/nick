@@ -11,7 +11,9 @@ import type { Knex } from 'knex';
 import { chat } from '../../helpers/ai/ai';
 import config from '../../helpers/config/config';
 import { apiLimiter } from '../../helpers/limiter/limiter';
+import { RequestException } from '../../helpers/error/error';
 import {
+  isValidOperation,
   querystringToQuery,
   queryparamToQuery,
 } from '../../helpers/query/query';
@@ -92,12 +94,30 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Catalog = models.get('Catalog');
       const Index = models.get('Index');
+
+      // Check if a valid query is supplied
+      if (!Array.isArray(req.body?.query) || req.body.query.length === 0) {
+        throw new RequestException(400, {
+          message: req.i18n('No query supplied.'),
+        });
+      }
+      if (req.body.query.some((row: any) => !row || !isValidOperation(row.o))) {
+        throw new RequestException(400, {
+          message: req.i18n('Invalid query.'),
+        });
+      }
+
       const query = await querystringToQuery(
         req.body,
         req.document.path,
         req,
         trx,
       );
+
+      // Exclude the context itself from the results
+      if (req.document.path !== '/') {
+        query[0]['_UID:context'] = ['raw', '"_UID" <> ?', [req.document.uuid]];
+      }
       const items = await Catalog.fetchAllRestricted(
         query[0],
         query[1],
