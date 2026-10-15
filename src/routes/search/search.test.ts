@@ -66,6 +66,9 @@ describe('Search', () => {
   it('should be able to batch and limit a querystring search', () =>
     testRequest(app, 'search/post_batch'));
 
+  it('should be able to do a querystring search using a get call', () =>
+    testRequest(app, 'search/get_querystring'));
+
   it('should return a bad request on an invalid querystring operation', () =>
     testRequest(app, 'search/post_invalid'));
 });
