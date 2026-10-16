@@ -213,4 +213,30 @@ describe('Workflow', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${token}`)
       .expect(400));
+
+  it('should let the owner view and edit a private item', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const owner = await createUser('owner');
+    await createDocument(
+      '0123abcd-0000-4000-8000-000000000501',
+      news,
+      'mine',
+      'Page',
+      { owner: 'owner' },
+    );
+    const page = (method: 'get' | 'patch') =>
+      request(app)
+        [method]('/news/mine')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${owner}`);
+
+    await page('get').expect(200);
+    await page('patch').send({ title: 'Mine' }).expect(204);
+
+    // Pending: the owner may view but not edit
+    await transition('/news/mine', 'submit').expect(200);
+    await page('get').expect(200);
+    await page('patch').send({ title: 'Changed' }).expect(403);
+  });
 });
