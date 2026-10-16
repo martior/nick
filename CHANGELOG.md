@@ -4,6 +4,7 @@
 
 ### Breaking
 
+- Require the Manage Users permission for @roles, like Plone @martior
 ### Feature
 
 - Add support for multiple profiles @robgietema
