@@ -928,6 +928,7 @@ export class Document extends Model {
   async fetchUserPermissions(
     user: any,
     trx?: Knex.Transaction,
+    _roles?: string[],
   ): Promise<string[]> {
     const self: InstanceType<typeof Document> = this;
     const Role = models.get('Role');
@@ -1016,12 +1017,57 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the roles of a user on this document: global, local (including
+   * the inherited ones) and Owner.
+   * @method fetchUserRoles
+   * @param {Object} user User object with roles and groups.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<string[]>} Array of roles.
+   */
+  async fetchUserRoles(user: any, trx: Knex.Transaction): Promise<string[]> {
+    const self: InstanceType<typeof Document> = this;
+    const tokens = principalTokens(user);
+    return uniq([
+      ...(await self.fetchLocalRoles(trx))
+        .filter((localRole) => tokens.includes(localRole.principal))
+        .map((localRole) => localRole.role),
+      ...user.getRoles(),
+      ...(user.id === self.owner ? ['Owner'] : []),
+    ]);
+  }
+
+  /**
+   * Get a workflow variable of this document, like `getInfoFor` of the
+   * Plone workflow tool: the state (`review_state`) and the history
+   * (`review_history`) of the workflow.
+   * @method getWorkflowInfo
+   * @param {string} name Name of the variable.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<any>} Value, undefined if no workflow provides it.
+   */
+  async getWorkflowInfo(name: string, trx?: Knex.Transaction): Promise<any> {
+    const self: InstanceType<typeof Document> = this;
+    void trx;
+    switch (name) {
+      case 'review_state':
+        return self.workflow_state;
+      case 'review_history':
+        return (self.workflow_history || []).filter(
+          (item: any) => !item.type || item.type === 'workflow',
+        );
+    }
+    return undefined;
+  }
+
+  /**
    * Check if a transition can be applied to this document
    * @method checkTransition
    * @param {string} transition Transition to check.
    * @param {Object} actor Actor object.
    * @param {Knex.Transaction} trx Transaction object.
    * @param {string[]} permissions Permissions of the actor, fetched if omitted.
+   * @param {Request} req Request object, for guard expressions.
+   * @param {string[]} roles Roles of the actor, fetched if omitted.
    * @returns {Promise<string>} `apply`, `same` when the document already is in
    * the new state, `unknown`, `unavailable` in the current state or
    * `unauthorized`.
@@ -1031,6 +1077,8 @@ export class Document extends Model {
     actor: any,
     trx: Knex.Transaction,
     permissions?: string[],
+    req?: Request,
+    roles?: string[],
   ): Promise<'apply' | 'same' | 'unknown' | 'unavailable' | 'unauthorized'> {
     const self: InstanceType<typeof Document> = this;
 
@@ -1053,6 +1101,7 @@ export class Document extends Model {
       return 'same';
     }
     if (
+      definition.trigger === 'automatic' ||
       !(workflow.states?.[self.workflow_state]?.transitions || []).includes(
         transition,
       )
@@ -1060,9 +1109,14 @@ export class Document extends Model {
       return 'unavailable';
     }
     if (
-      !(permissions || (await self.fetchUserPermissions(actor, trx))).includes(
-        definition.permission,
-      )
+      !(await self._type._workflow.checkTransitionGuard(transition, {
+        document: self,
+        user: actor,
+        trx,
+        req,
+        roles,
+        permissions,
+      }))
     ) {
       return 'unauthorized';
     }
@@ -1100,10 +1154,11 @@ export class Document extends Model {
       await self._type.fetchRelated('_workflow', trx);
     }
 
-    // Get prev state
+    // Get prev state, a transition with an empty new state stays
     const old_state = self.workflow_state;
-    const new_state =
-      self._type._workflow.json.transitions[transition]?.new_state;
+    const definition = self._type._workflow.json.transitions[transition];
+    const stay = definition !== undefined && !definition.new_state;
+    const new_state = stay ? old_state : definition?.new_state;
 
     // Set the publication dates; the effective date is set when the item
     // is published (viewable by anonymous) the first time
@@ -1127,7 +1182,7 @@ export class Document extends Model {
     }
 
     // Check if state is available and not the current state
-    if (new_state && new_state !== old_state) {
+    if (new_state && (new_state !== old_state || stay)) {
       // Add to workflow history
       const workflow_history = self.workflow_history;
       workflow_history.push({

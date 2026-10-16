@@ -36,7 +36,13 @@ async function checkChildren(
 ): Promise<void> {
   await document.fetchChildren({}, trx, false);
   await mapAsync(document._children, async (child: any) => {
-    const check = await child.checkTransition(transition, req.user, trx);
+    const check = await child.checkTransition(
+      transition,
+      req.user,
+      trx,
+      undefined,
+      req,
+    );
     if (check !== 'apply' && check !== 'same') {
       throw new RequestException(400, {
         error: {
@@ -54,8 +60,19 @@ async function checkChildren(
 
 export const handler = async (req: Request, trx: Knex.Transaction) => {
   await req.type.fetchRelated('_workflow', trx);
+  const transitions = await req.type._workflow.getAvailableTransitions(
+    req.document.workflow_state,
+    {
+      document: req.document,
+      user: req.user,
+      trx,
+      req,
+      roles: req.roles,
+      permissions: req.permissions,
+    },
+  );
   return {
-    json: req.type._workflow.toJson(req),
+    json: req.type._workflow.toJson(req, transitions),
   };
 };
 
@@ -93,6 +110,8 @@ export default [
         req.user,
         trx,
         req.permissions,
+        req,
+        req.roles,
       );
       if (check === 'unknown' || check === 'unavailable') {
         throw new RequestException(400, {
@@ -147,9 +166,10 @@ export default [
         };
       }
 
-      // Get new state and modified timestamp
+      // Get new state (an empty new state stays) and modified timestamp
       const new_state =
-        req.type._workflow.json.transitions[req.params.transition].new_state;
+        req.type._workflow.json.transitions[req.params.transition].new_state ||
+        req.document.workflow_state;
       const modified = dayjs.utc().format();
 
       // Change workflow

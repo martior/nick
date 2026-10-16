@@ -73,4 +73,40 @@ describe('seedWorkflow', () => {
     expect(workflow.json).toEqual(json);
     expect(workflow.description.length).toBeGreaterThan(255);
   });
+
+  it('refuses unsupported guard expressions', async () => {
+    const guarded = (guard: any) => ({
+      purge: false,
+      workflows: [
+        {
+          id: 'guarded_workflow',
+          title: 'Guarded',
+          json: {
+            ...json,
+            transitions: {
+              hide: { title: 'Hide', new_state: 'private', guard },
+            },
+          },
+        },
+      ],
+    });
+    await expect(
+      seed(guarded({ expr: "python:here.guard_handler('hide')" })),
+    ).rejects.toThrow(/unsupported expression/);
+
+    // An expression marked unsupported by the loader is kept, it denies
+    await seed(
+      guarded({
+        expr: "python:here.guard_handler('hide')",
+        unsupported: 'Method "guard_handler" is not registered.',
+      }),
+    );
+    const Workflow = models.get('Workflow');
+    const workflow = await Workflow.fetchById(
+      'guarded_workflow',
+      {},
+      global.txn!,
+    );
+    expect(workflow.json.transitions.hide.guard.unsupported).toBeDefined();
+  });
 });

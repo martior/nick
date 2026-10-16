@@ -78,6 +78,8 @@ export interface User extends Model {
 
 export interface Request extends express.Request {
   permissions: string[];
+  // Roles of the user on the document: global, local and Owner
+  roles?: string[];
   apiPath: string;
   document: any;
   documentPath: string;
@@ -116,12 +118,32 @@ export interface WorkflowState {
 
 export type WorkflowPermission = string[];
 
+/**
+ * Guard of a transition (or worklist, variable), like DCWorkflow: one of
+ * the permissions, one of the roles, one of the groups and a true
+ * expression. Empty or missing parts are not checked.
+ */
+export interface WorkflowGuard {
+  permissions?: string[];
+  roles?: string[];
+  groups?: string[];
+  expr?: string;
+  // Set by the definition.xml loader when the expression is not supported
+  unsupported?: string;
+}
+
 export interface WorkflowTransition {
-  [key: string]: {
-    title: string;
-    new_state: string;
-    permission: string;
-  };
+  title: string;
+  description?: string;
+  // An empty new state stays in the current state
+  new_state: string;
+  // Shorthand for a guard with one permission
+  permission?: string;
+  guard?: WorkflowGuard;
+  // Automatic transitions are taken when their guard passes
+  trigger?: 'user' | 'automatic';
+  // Hidden transitions are not offered in @workflow (no action in DCWorkflow)
+  hidden?: boolean;
 }
 
 export type PermissionModel = 'additive' | 'acquire';
@@ -129,6 +151,7 @@ export type PermissionModel = 'additive' | 'acquire';
 export interface WorkflowType {
   permission_model?: PermissionModel;
   managed_permissions?: string[];
+  manager_bypass?: boolean;
   initial_state?: string;
   states: { [key: string]: WorkflowState };
   transitions: { [key: string]: WorkflowTransition };

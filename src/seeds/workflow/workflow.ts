@@ -28,6 +28,16 @@ export const seedWorkflow = async (
       await Workflow.delete({}, trx);
     }
     await mapAsync(profile.workflows, async (workflow: any) => {
+      // Refuse expressions which are not supported, unless the loader
+      // marked them unsupported (they deny at runtime)
+      Workflow.checkExpressions(workflow.json).map((problem: any) => {
+        const message = `Workflow ${workflow.id}, ${problem.where}: unsupported expression "${problem.expr}" (${problem.reason})`;
+        if (!problem.acknowledged) {
+          throw new Error(message);
+        }
+        console.warn(`${message}, it denies`);
+      });
+
       // Check if type exists
       const current: any = await Workflow.fetchById(workflow.id, {}, trx);
 

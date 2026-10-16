@@ -99,6 +99,53 @@ describe('Workflow', () => {
     }
   });
 
+  it('should check the guard of a transition', async () => {
+    const Workflow = models.get('Workflow');
+    const workflow = await Workflow.fetchById(
+      'simple_publication_workflow',
+      {},
+      global.txn!,
+    );
+    await workflow.update(
+      {
+        json: {
+          ...workflow.json,
+          transitions: {
+            ...workflow.json.transitions,
+            publish: {
+              ...workflow.json.transitions.publish,
+              guard: {
+                permissions: ['Review'],
+                expr: "python:request.get('confirm') == 'yes'",
+              },
+            },
+          },
+        },
+      },
+      global.txn!,
+    );
+    await testRequest(app, 'content/post');
+    const list = async (query: string) =>
+      (
+        await request(app)
+          .get(`/news/my-news-item/@workflow${query}`)
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+      ).body.transitions.map((item: any) => item['@id'].split('/').pop());
+
+    // The guard expression decides if the transition is offered and taken
+    expect(await list('')).toEqual(['submit']);
+    expect(await list('?confirm=yes')).toEqual(['publish', 'submit']);
+    expect((await transition('/news/my-news-item', 'publish')).status).toBe(
+      401,
+    );
+    const res = await transition('/news/my-news-item', 'publish', {
+      confirm: 'yes',
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.review_state).toBe('published');
+  });
+
   it('should refuse an unknown transition', async () => {
     const res = await transition('/news', 'no-such-transition');
     expect(res.status).toBe(400);

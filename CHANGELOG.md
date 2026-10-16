@@ -35,6 +35,7 @@
 
 ### Feature
 
+- Add DCWorkflow guards to workflow transitions: one of a list of permissions, roles or groups and an expression, plus `manager_bypass`, `hidden` and automatic transitions. Expressions use a safe evaluator for the TALES subset of DCWorkflow definitions (`python:`, path, `not:`, `exists:`, `string:`); add-ons can provide content methods with `registerExpressionMethod`, and unsupported expressions are refused when a workflow is seeded @martior
 - Add the `host` setting (`BIND_HOST`) to listen on one address, for example `127.0.0.1` behind a reverse proxy, instead of on every interface @mpalomaki
 - Support range requests on `@@download`, so audio and video players can seek without downloading the file from the start @mpalomaki
 - Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1017 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
