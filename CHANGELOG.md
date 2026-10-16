@@ -339,6 +339,7 @@
 - Save controlpanel and userschema files as blobs @robgietema
 - Update locale source references @martior
 - Move the dependabot configuration out of the workflows folder, where it failed as a workflow on every push @martior
+- Fix TypeScript type errors @martior
 
 ### Documentation
 
