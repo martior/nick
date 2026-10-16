@@ -282,6 +282,7 @@
 - Run a request again, up to three times, when its transaction hits a database deadlock or serialization failure instead of returning 500 @martior
 - Accept @sharing posts without entries or inherit, ignore unknown roles and return 400 instead of 500 for invalid sharing data @martior
 - List users and groups with local or acquired roles in the @sharing entries and search principals by id too @martior
+- Unlock content on DELETE @lock and let a forced unlock steal a stealable lock of another user @martior
 
 ### Internal
 

@@ -4,15 +4,68 @@
  */
 
 // External imports
-import { afterEach, beforeEach, describe, it, vi } from 'vitest';
+import { createHmac } from 'crypto';
+import request from 'supertest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
+import { addToken } from '../../helpers/auth/auth';
+import config from '../../helpers/config/config';
 import * as lock from '../../helpers/lock/lock';
 import { testRequest } from '../../helpers/tests/tests';
+import { User } from '../../models/user/user';
 
 // Mock lockExpired
 vi.spyOn(lock, 'lockExpired').mockReturnValue(false);
+
+const path = '/news/my-news-item';
+const adminToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
+
+/**
+ * Create an editor with a valid token
+ * @method editorToken
+ * @returns {Promise<string>} Token of the editor
+ */
+async function editorToken(): Promise<string> {
+  const encode = (data: object) =>
+    Buffer.from(JSON.stringify(data)).toString('base64url');
+  const unsigned = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({
+    sub: 'editor',
+    fullname: 'Editor',
+    iat: 1649312449,
+  })}`;
+  const token = `${unsigned}.${createHmac('sha256', config.settings.secret)
+    .update(unsigned)
+    .digest('base64url')}`;
+  const user = await User.create(
+    {
+      id: 'editor',
+      fullname: 'Editor',
+      email: 'editor@example.com',
+      password: '',
+      _roles: ['Editor'],
+    },
+    { related: ['_roles'] },
+    global.txn,
+  );
+  await addToken(user, token, global.txn as any);
+  return token;
+}
+
+/**
+ * Get the lock of the test document
+ * @method getLock
+ * @returns {Promise<any>} Lock information
+ */
+async function getLock(): Promise<any> {
+  const res = await request(app)
+    .get(`${path}/@lock`)
+    .set('Authorization', `Bearer ${adminToken}`)
+    .expect(200);
+  return res.body;
+}
 
 describe('Locking', () => {
   beforeEach(async () => {
@@ -29,12 +82,51 @@ describe('Locking', () => {
 
   it('should delete a lock', async () => {
     await testRequest(app, 'locking/post');
-    return testRequest(app, 'locking/delete');
+    await testRequest(app, 'locking/delete');
+    return testRequest(app, 'locking/get_unlocked');
   });
 
   it('should delete a lock with force', async () => {
     await testRequest(app, 'locking/post');
     return testRequest(app, 'locking/delete_force');
+  });
+
+  it('should steal a stealable lock of another user with force', async () => {
+    const token = await editorToken();
+    await request(app)
+      .post(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    await testRequest(app, 'locking/delete_force');
+    expect((await getLock()).locked).toBe(false);
+  });
+
+  it('should not unlock a lock of another user without force', async () => {
+    const token = await editorToken();
+    await request(app)
+      .post(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    await request(app)
+      .delete(`${path}/@lock`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(401);
+    expect((await getLock()).locked).toBe(true);
+  });
+
+  it('should not steal a non-stealable lock', async () => {
+    const token = await editorToken();
+    await request(app)
+      .post(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ stealable: false })
+      .expect(200);
+    await request(app)
+      .delete(`${path}/@lock`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ force: true })
+      .expect(401);
+    expect((await getLock()).locked).toBe(true);
   });
 
   it('should refresh a lock', async () => {

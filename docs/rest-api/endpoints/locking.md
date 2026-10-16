@@ -80,7 +80,9 @@ The server responds with status 200 OK and returns the lock information.
 {% include_relative examples/locking/delete.res %}
 ```
 
-To unlock an object locked by another user send a force `DELETE` request to the `/@lock` endpoint.
+Only the user who created the lock can unlock the object this way. Other users get a `401 Unauthorized` and the lock stays in place.
+
+To unlock an object locked by another user send a force `DELETE` request to the `/@lock` endpoint. This only works for stealable locks; a non-stealable lock can only be removed by its creator or expires after its timeout.
 
 ```http
 {% include_relative examples/locking/delete_force.req %}
