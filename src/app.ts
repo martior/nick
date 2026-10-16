@@ -15,12 +15,17 @@ import helmet from 'helmet';
 // Internal imports
 import { applyCache } from './helpers/cache/cache';
 import config from './helpers/config/config';
-import { isRetryableError, RequestException } from './helpers/error/error';
+import {
+  errorBody,
+  isRetryableError,
+  RequestException,
+} from './helpers/error/error';
 import { getTokenFromRequest } from './helpers/auth/auth';
 import { callHandler } from './helpers/handler/handler';
 import { initI18n } from './helpers/i18n/i18n';
 import { log } from './helpers/log/log';
 import { initProfiles } from './helpers/profiles/profiles';
+import { getRootUrl } from './helpers/url/url';
 import { regExpEscape } from './helpers/utils/utils';
 import models from './models';
 import routes from './routes';
@@ -244,10 +249,15 @@ routes.routes.map((route: Route) => {
               }`,
             );
 
-            // Set location header in redirect
+            // Set absolute location header in redirect
             if (err.status === 301 || err.status === 302) {
               if (typeof err.message === 'string') {
-                res.setHeader('Location', err.message);
+                res.setHeader(
+                  'Location',
+                  err.message.startsWith('/')
+                    ? `${getRootUrl(req)}${err.message}`
+                    : err.message,
+                );
               }
               return res.status(err.status).send();
             }
@@ -257,7 +267,7 @@ routes.routes.map((route: Route) => {
               process.env.NODE_ENV === 'production' && err.status >= 500
                 ? { message: req.i18n('Internal server error') }
                 : err.message;
-            return res.status(err.status).send(message);
+            return res.status(err.status).send(errorBody(err.status, message));
           } else {
             // Log error
             log.error(err);
@@ -266,12 +276,29 @@ routes.routes.map((route: Route) => {
             // Return internal server error
             return res
               .status(500)
-              .send({ message: req.i18n('Internal server error') });
+              .send(
+                errorBody(500, { message: req.i18n('Internal server error') }),
+              );
           }
         }
       }
     },
   );
+});
+
+// Return errors of the body parsers, like invalid json, as json
+app.use((err: any, req: any, res: Response, next: NextFunction): any => {
+  if (res.headersSent || !err?.status || err.status >= 500) {
+    return next(err);
+  }
+  // The i18n middleware hasn't run if the global body parser failed
+  const message =
+    err.type === 'entity.parse.failed'
+      ? req.i18n
+        ? req.i18n('The request body is not valid JSON.')
+        : 'The request body is not valid JSON.'
+      : err.message;
+  return res.status(err.status).send(errorBody(err.status, { message }));
 });
 
 // Export app

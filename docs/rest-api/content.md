@@ -91,6 +91,8 @@ If a resource could not be found, the server will respond with `404 Not Found`:
 {% include_relative endpoints/examples/content/get_notfound.res %}
 ```
 
+Like in plone.restapi, error responses are JSON objects with a `type` (`BadRequest`, `Unauthorized`, `Forbidden`, `NotFound` or `InternalServerError`) and a `message`. This includes a request body that is not valid JSON (`400 Bad Request`). Redirects of moved or renamed content have an absolute `Location` header.
+
 ### GET Responses
 
 Possible server reponses for a `GET` request are:
