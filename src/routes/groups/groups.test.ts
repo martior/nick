@@ -33,6 +33,15 @@ describe('Groups', () => {
 
   it('should add a new group', () => testRequest(app, 'groups/post'));
 
+  it('should not add a group without a group name', () =>
+    testRequest(app, 'groups/post_without_groupname'));
+
+  it('should not add a group which already exists', () =>
+    testRequest(app, 'groups/post_duplicate'));
+
+  it('should not add a group with an unknown role', () =>
+    testRequest(app, 'groups/post_unknown_role'));
+
   it('should update a group', async () => {
     await testRequest(app, 'groups/post');
     return testRequest(app, 'groups/patch');

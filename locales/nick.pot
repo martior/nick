@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T00:53:08.021Z\n"
+"POT-Creation-Date: 2026-10-16T00:55:04.680Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -312,6 +312,16 @@ msgstr ""
 #: src/profiles/core/controlpanels/language.json:27
 msgctxt "Profiles|Core|Controlpanels|Language"
 msgid "Available languages"
+msgstr ""
+
+#. Default: "Bad request"
+#: src/routes/groups/groups.ts:84
+#: src/routes/groups/groups.ts:92
+#: src/routes/groups/groups.ts:104
+#: src/routes/groups/groups.ts:118
+#: src/routes/groups/groups.ts:134
+msgctxt "Routes|Groups"
+msgid "Bad request"
 msgstr ""
 
 #. Default: "Basic metadata"
@@ -1671,6 +1681,12 @@ msgctxt "Profiles|Ai|Controlpanels"
 msgid "Prompts"
 msgstr ""
 
+#. Default: "Property “groupname” is required."
+#: src/routes/groups/groups.ts:85
+msgctxt "Routes|Groups"
+msgid "Property “groupname” is required."
+msgstr ""
+
 #. Default: "Provided block id is not valid."
 #: src/routes/form/form.ts:48
 #: src/routes/form/form.ts:99
@@ -1860,6 +1876,12 @@ msgstr ""
 #: src/content_rules/conditions/user_role.ts:45
 msgctxt "Content rules|Conditions|User role"
 msgid "Roles"
+msgstr ""
+
+#. Default: "Roles and users must be lists."
+#: src/routes/groups/groups.ts:105
+msgctxt "Routes|Groups"
+msgid "Roles and users must be lists."
 msgstr ""
 
 #. Default: "Roles are: {roles}"
@@ -2100,7 +2122,7 @@ msgid "Successfully enabled rules {rules} to subfolders"
 msgstr ""
 
 #. Default: "System group"
-#: src/routes/groups/groups.ts:142
+#: src/routes/groups/groups.ts:207
 msgctxt "Routes|Groups"
 msgid "System group"
 msgstr ""
@@ -2261,6 +2283,12 @@ msgstr ""
 #: src/routes/users/users.ts:355
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
+msgstr ""
+
+#. Default: "The group name you entered already exists."
+#: src/routes/groups/groups.ts:93
+msgctxt "Routes|Groups"
+msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"
@@ -2512,6 +2540,18 @@ msgstr ""
 #: src/routes/content/content.ts:598
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
+msgstr ""
+
+#. Default: "Unknown roles: {roles}"
+#: src/routes/groups/groups.ts:119
+msgctxt "Routes|Groups"
+msgid "Unknown roles: {roles}"
+msgstr ""
+
+#. Default: "Unknown users: {users}"
+#: src/routes/groups/groups.ts:135
+msgctxt "Routes|Groups"
+msgid "Unknown users: {users}"
 msgstr ""
 
 #. Default: "Use '../' to navigate to parent objects."
@@ -2770,7 +2810,7 @@ msgid "You can only change your own password."
 msgstr ""
 
 #. Default: "You can’t delete system groups."
-#: src/routes/groups/groups.ts:141
+#: src/routes/groups/groups.ts:206
 msgctxt "Routes|Groups"
 msgid "You can’t delete system groups."
 msgstr ""

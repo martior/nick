@@ -74,16 +74,81 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Group = models.get('Group');
+      const Role = models.get('Role');
+      const User = models.get('User');
+
+      // Check group name
+      if (typeof req.body?.groupname !== 'string' || !req.body.groupname) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Property “groupname” is required.'),
+          },
+        });
+      }
+      if (await Group.fetchById(req.body.groupname, {}, trx)) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('The group name you entered already exists.'),
+          },
+        });
+      }
+
+      // Check roles and users
+      const roles = req.body.roles ?? [];
+      const users = req.body.users ?? [];
+      if (!Array.isArray(roles) || !Array.isArray(users)) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Roles and users must be lists.'),
+          },
+        });
+      }
+      const knownRoles = (
+        await Role.fetchAll({ id: ['=', roles] }, {}, trx)
+      ).map((role: any) => role.id);
+      const unknownRoles = roles.filter(
+        (role: string) => !knownRoles.includes(role),
+      );
+      if (unknownRoles.length > 0) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Unknown roles: {roles}', {
+              roles: unknownRoles.join(', '),
+            }),
+          },
+        });
+      }
+      const knownUsers = (
+        await User.fetchAll({ id: ['=', users] }, {}, trx)
+      ).map((user: any) => user.id);
+      const unknownUsers = users.filter(
+        (user: string) => !knownUsers.includes(user),
+      );
+      if (unknownUsers.length > 0) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Unknown users: {users}', {
+              users: unknownUsers.join(', '),
+            }),
+          },
+        });
+      }
+
       const group = await Group.create(
         {
           id: req.body.groupname,
           title: req.body.title,
           description: req.body.description,
           email: req.body.email,
-          _roles: req.body.roles,
-          _users: req.body.users,
+          _roles: roles,
+          _users: users,
         },
-        { related: 'roles' },
+        {},
         trx,
       );
 
