@@ -169,6 +169,7 @@
 - Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
 - Add the `AuthenticatedUsers` group of all authenticated users, like Plone's: it is always listed in @sharing, and local roles given to it apply to every logged-in user, also in search @martior
 - Add field and fieldset lookup (`@types/<type>/<name>`) and through-the-web schema changes to @types: POST adds a field or a fieldset, PATCH changes it and DELETE removes it, like plone.restapi @martior
+- Run jobs from a Postgres queue: workers claim the oldest job with `FOR UPDATE SKIP LOCKED`, hold a lease renewed by a heartbeat (jobs of a crashed worker are retried), retry failed jobs with exponential backoff up to `jobs.maxAttempts` and support idempotency keys. Jobs run in the worker process by default (`jobs.isolation`) @martior
 
 ### Bugfix
 
@@ -330,6 +331,8 @@
 - Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
 - @types is only available to authenticated users, list items have `id` and `immediately_addable`, and the schema has `type: object` and the content type `application/json+schema`, like plone.restapi @martior
 - Sort the @types list on the translated title, like Plone @martior
+- Record failed jobs as `failed` instead of `completed`, add the result location to completed jobs and return 404 when aborting an unknown job @martior
+- Fix scheduled jobs reusing the committed request transaction after they were created, changed or deleted through the API @martior
 
 ### Internal
 
@@ -405,6 +408,7 @@
 - Add documentation about profiles @robgietema
 - Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 - Fix the url of the update scheduled job example @martior
+- Add the jobs admin guide @martior
 
 ## 2.8.0 (2022-07-17)
 

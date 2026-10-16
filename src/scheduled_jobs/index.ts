@@ -13,18 +13,14 @@ import type {
 } from '../types';
 
 // External imports
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import cron from 'node-cron';
-import { v4 as uuid } from 'uuid';
 
 // Internal imports
 import { stripI18n } from '../helpers/i18n/i18n';
 import { translateSchema } from '../helpers/schema/schema';
 import jobs from '../helpers/jobs/jobs';
+import { log } from '../helpers/log/log';
 import models from '../models';
-
-dayjs.extend(utc);
 
 /**
  * A scheduled job registry.
@@ -87,7 +83,7 @@ class ScheduledJobs {
 
   /**
    * Refresh all tasks.
-   * @param {Knex.Transaction} trx The transaction object.
+   * @param {Knex.Transaction} trx The transaction to read the scheduled jobs with.
    * @returns {Promise<void>} A promise that resolves when the tasks have been reregistered.
    */
   async refreshTasks(trx?: Knex.Transaction) {
@@ -99,42 +95,48 @@ class ScheduledJobs {
 
     // Reregister tasks
     const ScheduledJob = models.get('ScheduledJob');
-    const Job = models.get('Job');
     const scheduledJobs = await ScheduledJob.fetchAll({}, {}, trx);
 
-    // Register new tasks
+    // Register new tasks; they must not use the transaction, which is
+    // finished when they fire
     scheduledJobs.map((scheduledJob: any) => {
       if (scheduledJob.enabled) {
-        const task = cron.schedule(scheduledJob.schedule, async () => {
-          const newUuid = uuid();
-          const created = dayjs.utc().format();
-          await Job.create(
-            {
-              uuid: newUuid,
-              title: scheduledJob.title,
-              description: scheduledJob.description,
-              params: {
+        const task = cron.schedule(scheduledJob.schedule, () =>
+          jobs
+            .add(
+              scheduledJob.title,
+              scheduledJob.description,
+              {
                 scheduled_job: scheduledJob.id,
                 action: scheduledJob.action,
                 ...scheduledJob.params,
               },
-              actor: 'admin',
-              created,
-              started: null,
-              finished: null,
-              status: 'created',
-              result: {},
-            },
-            {},
-            trx,
-          );
-
-          // Check if job needs to be ran
-          await jobs.check(trx);
-        });
+              'admin',
+              undefined,
+            )
+            .catch((err) =>
+              log.error(
+                `Scheduling job ${scheduledJob.id} failed: ${err.message}`,
+              ),
+            ),
+        );
         self.tasks.push(task);
       }
     });
+  }
+
+  /**
+   * Refresh all tasks when a transaction is committed.
+   * @param {Knex.Transaction} trx The transaction object.
+   */
+  refreshTasksAfter(trx: Knex.Transaction) {
+    trx.executionPromise.then(
+      () =>
+        this.refreshTasks().catch((err) =>
+          log.error(`Refreshing scheduled jobs failed: ${err.message}`),
+        ),
+      () => undefined,
+    );
   }
 }
 

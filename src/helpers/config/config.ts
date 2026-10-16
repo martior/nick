@@ -32,6 +32,11 @@ const {
   TRUST_PROXY,
   BLOBS_DIR,
   LOCALES_DIR,
+  JOBS_ISOLATION,
+  JOBS_LEASE,
+  JOBS_MAX_ATTEMPTS,
+  JOBS_POLL_INTERVAL,
+  JOBS_API_PATH,
 } = process.env;
 
 let config: any = {};
@@ -193,6 +198,23 @@ class Config {
             enabled: false,
           },
         },
+      },
+      jobs: {
+        isolation: (JOBS_ISOLATION || config.jobs?.isolation || 'inline') as
+          'inline' | 'process',
+        lease: parseInt(JOBS_LEASE || config.jobs?.lease || '60'),
+        maxAttempts: parseInt(
+          JOBS_MAX_ATTEMPTS || config.jobs?.maxAttempts || '3',
+        ),
+        backoff: parseInt(config.jobs?.backoff || '10'),
+        maxBackoff: parseInt(config.jobs?.maxBackoff || '3600'),
+        pollInterval: parseInt(
+          JOBS_POLL_INTERVAL || config.jobs?.pollInterval || '2',
+        ),
+        apiPath:
+          JOBS_API_PATH ||
+          config.jobs?.apiPath ||
+          `http://localhost:${config.port || 8080}`,
       },
       userschema: config.userschema || userschema,
     };

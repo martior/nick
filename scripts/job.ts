@@ -1,5 +1,5 @@
 /**
- * Job runner
+ * Job runner, used when jobs run in a child process (jobs.isolation 'process').
  * @module scripts/job
  */
 
@@ -16,71 +16,74 @@ import models from '../src/models';
 // Init profiles
 await initProfiles();
 
+/**
+ * Send a message to the parent and exit
+ * @method reply
+ * @param {any} message Message to send.
+ */
+function reply(message: any) {
+  if (process.send) {
+    process.send(message, () => process.exit(0));
+  } else {
+    process.exit(0);
+  }
+}
+
 // Read message
 process.on('message', async (data: any) => {
   // Check if process should be exited
   if (data && data.exit) {
     process.exit(0);
-  } else {
-    if (data.action) {
-      // Create transaction
-      const Document = models.get('Document');
-      const trx = await Document.startTransaction();
+  } else if (data.action) {
+    // Create transaction
+    const Document = models.get('Document');
+    const trx = await Document.startTransaction();
 
-      // Run job
-      try {
-        const result = await scheduled_jobs
-          .getAction(data.action)
-          .handler(omit(data, ['scheduled_job', 'action']), 'admin', trx);
-
-        // Commit transaction
-        await trx.commit();
-
-        // Send result
-        if (process.send) {
-          process.send({ result });
-          process.exit(0);
-        }
-      } catch (err) {
-        // Rollback transaction
-        await trx.rollback();
-
-        // Send error
-        if (process.send) {
-          process.send({ error: err });
-          process.exit(0);
-        }
-      }
-    } else {
-      try {
-        const cli = Client.initialize({
-          apiPath: `http://localhost:${config.settings.port}`,
-        });
-        const result = cli[data.method](
-          omit(
-            {
-              ...data,
-              params: {
-                ...data.params,
-                job: true,
-              },
-            },
-            ['method'],
-          ),
+    // Run job
+    try {
+      const result = await scheduled_jobs
+        .getAction(data.action)
+        .handler(
+          omit(data, ['scheduled_job', 'action', 'actor']),
+          data.actor || 'admin',
+          trx,
         );
 
-        // Send result
-        if (process.send) {
-          process.send({ result: result.data });
-          process.exit(0);
-        }
-      } catch (err) {
-        // Send error
-        if (process.send) {
-          process.send({ error: err });
-          process.exit(0);
-        }
-      }
+      // Commit transaction
+      await trx.commit();
+
+      // Send result
+      reply({ result: { result } });
+    } catch (err: any) {
+      // Rollback transaction
+      await trx.rollback();
+
+      // Send error
+      reply({ error: err?.message || String(err) });
+    }
+  } else {
+    try {
+      const cli = Client.initialize({
+        apiPath: config.settings.jobs.apiPath,
+      });
+      const result = await cli[data.method](
+        omit(
+          {
+            ...data,
+            params: {
+              ...data.params,
+              job: true,
+            },
+          },
+          ['method', 'actor'],
+        ),
+      );
+
+      // Send result
+      reply({ result: { result: result.data } });
+    } catch (err: any) {
+      // Send error
+      reply({ error: err?.message || String(err) });
     }
   }
 });
