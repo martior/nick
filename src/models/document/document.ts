@@ -703,72 +703,134 @@ export class Document extends Model {
 
   /**
    * Traverse path.
+   *
+   * The documents along the path, their local roles and their types are
+   * fetched with a constant number of queries, independent of the depth.
    * @method traverse
    * @param {Array} slugs Array of slugs.
    * @param {Object} user Current user object.
-   * @param {Array} roles Array of roles.
+   * @param {Array} roles Array of roles, fetched for this document if
+   * undefined.
+   * @param {Object} navroot Navigation root.
    * @param {Object} trx Transaction object.
+   * @param {Array} documents Documents along the path, fetched if undefined.
    * @returns {Promise<Object>} A Promise that resolves to an object.
    */
   async traverse(
     slugs: string[],
     user: any,
-    roles: string[],
+    roles: string[] | undefined,
     navroot: any,
     trx?: Knex.Transaction,
+    documents?: any[],
   ): Promise<any> {
     const self: InstanceType<typeof Document> = this;
-    // Check if at leaf node
-    if (slugs.length === 0) {
-      // Add owner to roles if current document owned by user
-      const extendedRoles = uniq([
-        ...roles,
-        ...(user.id === self.owner ? ['Owner'] : []),
-      ]);
+    const Type = models.get('Type');
 
-      // Return document and authorization data
-      return {
-        document: self,
-        localRoles: extendedRoles,
-        navroot,
-      };
-    } else {
-      // Fetch child matching the id
-      const child: any = await Document.fetchOne(
-        {
-          parent: self.uuid,
-          id: head(slugs),
-        },
-        {},
-        trx,
-      );
+    // Fetch the documents with the paths along the slugs, unless given
+    const paths = Document.getTraversalPaths(self.path, slugs);
+    const candidates: any[] =
+      documents ||
+      (paths.length > 0
+        ? await Document.query(trx).whereIn('path', paths)
+        : []);
+
+    // Walk down the slugs by parent and id
+    const chain: any[] = [];
+    let current: any = self;
+    for (const slug of slugs) {
+      const child =
+        candidates.find(
+          (candidate: any) =>
+            candidate.parent === current.uuid && candidate.id === slug,
+        ) ||
+        // Fall back to the parent and id if the path doesn't match
+        (await Document.fetchOne({ parent: current.uuid, id: slug }, {}, trx));
 
       // Check if child not found
       if (!child) {
         return false;
       }
-
-      // Fetch roles based on user and group from child
-      const childRoles = await user.fetchUserGroupRolesByDocument(
-        child.uuid,
-        trx,
-      );
-
-      // Fetch navroot
-      await child.fetchRelated('_type', trx);
-      const is_navroot = child._type
-        ? child._type._schema.behaviors.includes('navigation_root')
-        : false;
-
-      // Recursively call the traverse on child
-      return child.traverse(
-        drop(slugs, 1),
-        user,
-        child.inherit_roles ? uniq([...roles, ...childRoles]) : childRoles,
-        is_navroot ? child : navroot,
-        trx,
-      );
+      chain.push(child);
+      current = child;
     }
+
+    // Fetch the local roles of the user and the types of all documents
+    const localRoles = await user.fetchUserGroupRolesByDocuments(
+      [...(roles ? [] : [self.uuid]), ...chain.map((child) => child.uuid)],
+      trx,
+    );
+    const typeIds = uniq(chain.map((child) => child.type));
+    const types: any[] =
+      typeIds.length > 0 ? await Type.query(trx).whereIn('id', typeIds) : [];
+
+    // Merge the roles and find the navigation root top down
+    let mergedRoles: string[] = roles || localRoles[self.uuid];
+    chain.forEach((child: any) => {
+      child._type = types.find((type: any) => type.id === child.type);
+      mergedRoles = child.inherit_roles
+        ? uniq([...mergedRoles, ...localRoles[child.uuid]])
+        : localRoles[child.uuid];
+      if (child._type?._schema.behaviors.includes('navigation_root')) {
+        navroot = child;
+      }
+    });
+
+    // Add owner to roles if current document owned by user
+    const document = chain.length > 0 ? chain[chain.length - 1] : self;
+    return {
+      document,
+      localRoles: uniq([
+        ...mergedRoles,
+        ...(user.id === document.owner ? ['Owner'] : []),
+      ]),
+      navroot,
+    };
+  }
+
+  /**
+   * Get the paths of the documents along the slugs below a path.
+   * @method getTraversalPaths
+   * @static
+   * @param {string} path Path to start from.
+   * @param {Array} slugs Array of slugs.
+   * @returns {string[]} Paths.
+   */
+  static getTraversalPaths(path: string, slugs: string[]): string[] {
+    const base = path === '/' ? '' : path;
+    return slugs.map(
+      (_slug: string, index: number) =>
+        `${base}/${slugs.slice(0, index + 1).join('/')}`,
+    );
+  }
+
+  /**
+   * Traverse path from the root, fetching the root together with the
+   * documents along the path.
+   * @method traverseFromRoot
+   * @static
+   * @param {Array} slugs Array of slugs.
+   * @param {Object} user Current user object.
+   * @param {Object} trx Transaction object.
+   * @returns {Promise<Object>} Traversal result, false if not found.
+   */
+  static async traverseFromRoot(
+    slugs: string[],
+    user: any,
+    trx?: Knex.Transaction,
+  ): Promise<any> {
+    const documents: any[] = await Document.query(trx)
+      .whereNull('parent')
+      .orWhereIn('path', Document.getTraversalPaths('/', slugs));
+    const root = documents.find((document: any) => document.parent === null);
+    return root.traverse(
+      slugs,
+      user,
+      undefined,
+      root,
+      trx,
+      documents.filter((document: any) => document !== root),
+    );
   }
 
   /**

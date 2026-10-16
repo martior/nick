@@ -357,6 +357,7 @@
 - Index the keyword catalog columns (Subject, isReferencing, block_types, ...) with GIN instead of btree, so keyword queries such as a listing by Subject can use their index on large sites; the permission tokens keep their btree index. Run `pnpm migrate` @martior
 - Index the paths of documents and the catalog with the pattern operator class and query subtrees with `LIKE` prefixes instead of `starts_with` and regular expressions, so path and `path.depth` queries use an index. Run `pnpm migrate` @martior
 - Moving, renaming or deleting (with the recycle bin) an item no longer touches siblings whose id starts with the same text (`/news` and `/newsletter`), paths with quotes no longer break the move, and subtree queries in moves, deletes, sharing and link integrity use the path index instead of regular expressions @martior
+- Resolve a path with a constant number of queries instead of four per level (one query for the documents along the path, one or two for the local roles and one for the types), and stop fetching the anonymous user twice per request @martior
 
 ### Internal
 

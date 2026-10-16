@@ -4,7 +4,7 @@
  */
 
 // External imports
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Internal imports
 import '../../app';
@@ -214,6 +214,129 @@ describe('Document', () => {
         global.txn!,
       );
       expect(sibling.path).toBe("/it's-1000");
+    });
+  });
+
+  describe('traverse', () => {
+    const uuid = (n: number) => `c2000000-0000-4000-8000-00000000010${n}`;
+
+    /**
+     * Create /t1/t2/t3/t4 with local roles for jane: Editor on t2 (blocked
+     * on t3) and Reader on t4, and Contributor for her group on t1.
+     * @returns {Promise<Object>} Root and user.
+     */
+    const setup = async () => {
+      const Document = models.get('Document');
+      const User = models.get('User');
+      const root = await Document.fetchOne({ path: '/' }, {}, global.txn!);
+      await User.create(
+        { id: 'jane', fullname: 'Jane', password: 'secret' },
+        {},
+        global.txn!,
+      );
+      await global.txn!('group').insert({ id: 'janes', title: 'Janes' });
+      await global.txn!('user_group').insert({ user: 'jane', group: 'janes' });
+      let parent = root;
+      for (const n of [1, 2, 3, 4]) {
+        parent = await createDocument(uuid(n), parent, `t${n}`, 'Folder', {
+          inherit_roles: n !== 3,
+        });
+      }
+      await global.txn!('user_role_document').insert([
+        { user: 'jane', role: 'Editor', document: uuid(2) },
+        { user: 'jane', role: 'Reader', document: uuid(4) },
+      ]);
+      await global.txn!('group_role_document').insert({
+        group: 'janes',
+        role: 'Contributor',
+        document: uuid(1),
+      });
+      const user = await User.fetchById(
+        'jane',
+        { related: '[_roles, _groups._roles]' },
+        global.txn!,
+      );
+      return { Document, root, user };
+    };
+
+    it('merges the local roles along the path', async () => {
+      const { root, user } = await setup();
+      const two = await root.traverse(
+        ['t1', 't2'],
+        user,
+        undefined,
+        root,
+        global.txn!,
+      );
+      expect(two.document.uuid).toBe(uuid(2));
+      expect(two.localRoles.sort()).toEqual(['Contributor', 'Editor']);
+      expect(two.document._type.id).toBe('Folder');
+
+      const four = await root.traverse(
+        ['t1', 't2', 't3', 't4'],
+        user,
+        undefined,
+        root,
+        global.txn!,
+      );
+      expect(four.document.uuid).toBe(uuid(4));
+      expect(four.localRoles).toEqual(['Reader']);
+      expect(four.navroot.uuid).toBe(root.uuid);
+
+      expect(
+        await root.traverse(['t1', 'nope'], user, [], root, global.txn!),
+      ).toBe(false);
+    });
+
+    it('fetches the documents with one query for any depth', async () => {
+      const { Document, root, user } = await setup();
+      const fetchOne = vi.spyOn(Document, 'fetchOne');
+      const query = vi.spyOn(Document, 'query');
+      const result = await root.traverse(
+        ['t1', 't2', 't3', 't4'],
+        user,
+        undefined,
+        root,
+        global.txn!,
+      );
+      expect(result.document.uuid).toBe(uuid(4));
+      expect(fetchOne).not.toHaveBeenCalled();
+      expect(query).toHaveBeenCalledTimes(1);
+      fetchOne.mockRestore();
+      query.mockRestore();
+    });
+
+    it('fetches the root with the documents along the path', async () => {
+      const { Document, user } = await setup();
+      const query = vi.spyOn(Document, 'query');
+      const result = await Document.traverseFromRoot(
+        ['t1', 't2'],
+        user,
+        global.txn!,
+      );
+      expect(result.document.uuid).toBe(uuid(2));
+      expect(result.navroot.path).toBe('/');
+      expect(result.localRoles.sort()).toEqual(['Contributor', 'Editor']);
+      expect(query).toHaveBeenCalledTimes(1);
+      query.mockRestore();
+
+      const root = await Document.traverseFromRoot([], user, global.txn!);
+      expect(root.document.path).toBe('/');
+    });
+
+    it('falls back to parent and id when a path is out of date', async () => {
+      const { root, user } = await setup();
+      await global.txn!('document')
+        .where({ uuid: uuid(3) })
+        .update({ path: '/stale' });
+      const result = await root.traverse(
+        ['t1', 't2', 't3', 't4'],
+        user,
+        undefined,
+        root,
+        global.txn!,
+      );
+      expect(result.document.uuid).toBe(uuid(4));
     });
   });
 });
