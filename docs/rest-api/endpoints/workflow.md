@@ -61,3 +61,5 @@ A `comment` in the body is stored with the transition and returned in the respon
 A transition to the state the object is already in is accepted and does nothing: the response is `200 OK` with the last transition and no new history entry is recorded.
 
 With `include_children: true`, the transition is checked for every object below the object first, with the permissions the user has on that object. If it can't be applied to one of them, nothing is changed and `400 Bad Request` is returned. Children that already are in the new state are skipped.
+
+Content of a type with several workflows ([workflow chains](/developer-guide/workflows#workflow-chains)) gets the transitions of all workflows in `transitions`, like plone.restapi. `state` is the review state (the state of the first workflow) and `history` the history of the first workflow. A transition is taken in the first workflow where it is available; the response has the new state of that workflow.

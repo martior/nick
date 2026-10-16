@@ -47,28 +47,42 @@ export class Workflow extends Model {
    * Returns JSON data.
    * @method toJson
    * @param {Request} req Request object
-   * @param {string[]} transitions Ids of the available transitions.
-   * @param {boolean} showHistory False when the user may not see the
-   * history (the info guard of `review_history`).
+   * @param {Object[]} transitions Ids and titles of the available
+   * transitions.
+   * @param {Object} history Which history is shown: `show` false when the
+   * user may not see it (the info guard of `review_history`), `workflow`
+   * the workflow of the history and `primary` the id of the first workflow
+   * of the chain.
    * @returns {Json} JSON object.
    */
   toJson(
     req: Request,
-    transitions: string[] = [],
-    showHistory: boolean = true,
+    transitions: { id: string; title: string }[] = [],
+    history: { show?: boolean; workflow?: any; primary?: string } = {},
   ): Json {
     const self: InstanceType<typeof Workflow> = this;
     const current_state_id = req.document.workflow_state;
     const current_state = (self.json.states || {})[current_state_id] || {};
+    const workflow = history.workflow || self;
+    const primary = history.primary || self.id;
 
     // Workflow history, the creation is the first entry (without action)
     const stateTitle = (state?: string) =>
-      req.i18n(self.json.states?.[state || '']?.title || state || '');
+      req.i18n(workflow.json.states?.[state || '']?.title || state || '');
     const variables = Object.keys(
-      pickBy(self.json.variables || {}, (variable: any) => variable.for_status),
+      pickBy(
+        workflow.json.variables || {},
+        (variable: any) => variable.for_status,
+      ),
     );
-    const history = (showHistory ? req.document.workflow_history || [] : [])
-      .filter((item: any) => !item.type || item.type === 'workflow')
+    const entries = (
+      history.show === false ? [] : req.document.workflow_history || []
+    )
+      .filter(
+        (item: any) =>
+          (!item.type || item.type === 'workflow') &&
+          (item.workflow || primary) === workflow.id,
+      )
       .map((item: any) => ({
         ...pick(item, variables),
         action: item.action || null,
@@ -81,14 +95,14 @@ export class Workflow extends Model {
 
     return {
       '@id': `${getUrl(req)}/@workflow`,
-      history,
+      history: entries,
       state: {
         id: current_state_id,
         title: req.i18n(current_state.title),
       },
       transitions: transitions.map((transition) => ({
-        '@id': `${getUrl(req)}/@workflow/${transition}`,
-        title: req.i18n(self.json.transitions[transition].title),
+        '@id': `${getUrl(req)}/@workflow/${transition.id}`,
+        title: req.i18n(transition.title),
       })),
     } as Json;
   }
@@ -360,6 +374,30 @@ export class Workflow extends Model {
       ),
       ...self.getPermissions(state, roles),
     ]);
+  }
+
+  /**
+   * Get the effective permissions of a document with a workflow chain:
+   * every workflow of the chain applies its state's permissions in turn,
+   * so the last workflow which manages a permission decides, like the role
+   * mappings DCWorkflow sets per workflow.
+   * @method applyChainPermissions
+   * @static
+   * @param {Object[]} chain Workflows with the state of the document.
+   * @param {string[]} roles Array of roles.
+   * @param {string[]} globalPermissions Permissions of the roles globally.
+   * @returns {string[]} Array of permissions.
+   */
+  static applyChainPermissions(
+    chain: { workflow: any; state: string }[],
+    roles: string[],
+    globalPermissions: string[],
+  ): string[] {
+    return chain.reduce(
+      (permissions: string[], { workflow, state }) =>
+        workflow.applyPermissions(state, roles, permissions),
+      globalPermissions,
+    );
   }
 
   /**

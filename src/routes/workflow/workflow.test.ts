@@ -278,6 +278,112 @@ describe('Workflow', () => {
     expect(await history()).toEqual([]);
   });
 
+  it('should support a chain of workflows', async () => {
+    const Type = models.get('Type');
+    const Workflow = models.get('Workflow');
+    await Workflow.create(
+      {
+        id: 'flag_workflow',
+        title: 'Flag',
+        json: {
+          initial_state: 'unflagged',
+          managed_permissions: ['View', 'Modify'],
+          states: {
+            unflagged: {
+              title: 'Unflagged',
+              transitions: ['flag'],
+              permissions: {},
+              acquire: ['View', 'Modify'],
+            },
+            flagged: {
+              title: 'Flagged',
+              transitions: ['unflag'],
+              permissions: { Administrator: ['View', 'Modify'] },
+            },
+          },
+          transitions: {
+            flag: { title: 'Flag', new_state: 'flagged', permission: 'Review' },
+            unflag: {
+              title: 'Unflag',
+              new_state: 'unflagged',
+              permission: 'Review',
+            },
+          },
+        },
+      },
+      {},
+      global.txn!,
+    );
+    const page = await Type.fetchById('Page', {}, global.txn!);
+    await page.setChain(
+      ['simple_publication_workflow', 'flag_workflow'],
+      global.txn!,
+    );
+    const editor = await createUser('editor', ['Editor', 'Reader']);
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'chained', title: 'Chained' })
+      .expect(201);
+    const document = await fetch('/news/chained');
+    expect((await document.fetchWorkflowStatus('flag_workflow')).state).toBe(
+      'unflagged',
+    );
+    const workflow = async (auth: string = token) =>
+      (
+        await request(app)
+          .get('/news/chained/@workflow')
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${auth}`)
+      ).body;
+    const ids = (body: any) =>
+      body.transitions.map((item: any) => item['@id'].split('/').pop());
+
+    // The transitions of both workflows, the state of the first
+    expect(ids(await workflow())).toEqual(['publish', 'submit', 'flag']);
+    expect((await workflow()).state.id).toBe('private');
+
+    // A transition of the second workflow changes its state only
+    const res = await transition('/news/chained', 'flag', { comment: 'Spam' });
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({
+      action: 'flag',
+      review_state: 'flagged',
+      comments: 'Spam',
+    });
+    const flagged = await fetch('/news/chained');
+    expect(flagged.workflow_state).toBe('private');
+    expect((await flagged.fetchWorkflowStatus('flag_workflow')).state).toBe(
+      'flagged',
+    );
+    expect(flagged.workflow_history.at(-1)).toMatchObject({
+      action: 'flag',
+      workflow: 'flag_workflow',
+    });
+
+    // The history of @workflow is the history of the first workflow
+    const body = await workflow();
+    expect(ids(body)).toEqual(['publish', 'submit', 'unflag']);
+    expect(body.history.map((item: any) => item.action)).toEqual([null]);
+
+    // The second workflow takes View and Modify from the editor
+    expect(await workflow(editor)).toEqual({
+      message: 'You are not authorized to access this resource.',
+      type: 'Unauthorized',
+    });
+    const catalog = await global.txn!('catalog')
+      .where({ document: flagged.uuid })
+      .first();
+    expect(catalog._allowedUsersGroupsRoles).not.toContain('Editor');
+    expect(catalog._allowedUsersGroupsRoles).toContain('Administrator');
+    expect(catalog._review_state).toBe('private');
+
+    // Unknown transitions are refused for the whole chain
+    expect((await transition('/news/chained', 'flag')).status).toBe(200);
+    expect((await transition('/news/chained', 'nothing')).status).toBe(400);
+  });
+
   it('should refuse an unknown transition', async () => {
     const res = await transition('/news', 'no-such-transition');
     expect(res.status).toBe(400);

@@ -1010,10 +1010,10 @@ export class Document extends Model {
     }
 
     // Get permissions
-    return self._type._workflow.applyPermissions(
-      self.workflow_state,
+    return await self.applyWorkflowPermissions(
       userRoles,
       await Role.fetchPermissions(userRoles, trx),
+      trx,
     );
   }
 
@@ -1034,6 +1034,74 @@ export class Document extends Model {
       .select('state', 'variables')
       .where({ document: self.uuid, workflow })
       .first();
+  }
+
+  /**
+   * Fetch the workflow chain of this document with the state of every
+   * workflow: the first workflow has the review state, the others the
+   * state of their workflow status (their initial state if none is stored).
+   * @method fetchWorkflowChain
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<Object[]>} Workflows with their state.
+   */
+  async fetchWorkflowChain(
+    trx?: Knex.Transaction,
+  ): Promise<{ workflow: any; state: string }[]> {
+    const self: InstanceType<typeof Document> = this;
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    const [primary, ...others] = await self._type.fetchChain(trx);
+    const states: Record<string, string> =
+      others.length > 0
+        ? Object.fromEntries(
+            (
+              await (trx || Document.knex())('document_workflow_status')
+                .select('workflow', 'state')
+                .where({ document: self.uuid })
+            ).map((row: any) => [row.workflow, row.state]),
+          )
+        : {};
+    return [
+      { workflow: primary, state: self.workflow_state },
+      ...others.map((workflow: any) => ({
+        workflow,
+        state: states[workflow.id] || workflow.json.initial_state,
+      })),
+    ];
+  }
+
+  /**
+   * Apply the permissions of the workflows of this document to the global
+   * permissions of the roles of a user.
+   * @method applyWorkflowPermissions
+   * @param {string[]} roles Roles of the user on the document.
+   * @param {string[]} globalPermissions Permissions of the roles globally.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<string[]>} Array of permissions.
+   */
+  async applyWorkflowPermissions(
+    roles: string[],
+    globalPermissions: string[],
+    trx?: Knex.Transaction,
+  ): Promise<string[]> {
+    const self: InstanceType<typeof Document> = this;
+    const Workflow = models.get('Workflow');
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if ((await self._type.fetchChain(trx)).length === 1) {
+      return self._type._workflow.applyPermissions(
+        self.workflow_state,
+        roles,
+        globalPermissions,
+      );
+    }
+    return Workflow.applyChainPermissions(
+      await self.fetchWorkflowChain(trx),
+      roles,
+      globalPermissions,
+    );
   }
 
   /**
@@ -1063,9 +1131,10 @@ export class Document extends Model {
   }
 
   /**
-   * Set the initial workflow status of a new document when its workflow
-   * has variables: compute them and store them with the creation entry of
-   * the history.
+   * Set the initial workflow status of a new document: the further
+   * workflows of the chain start in their initial state, and when the
+   * workflow has variables they are computed and stored with the creation
+   * entry of the history.
    * @method initWorkflowStatus
    * @param {Object} actor Actor object.
    * @param {Knex.Transaction} trx Transaction object.
@@ -1083,19 +1152,31 @@ export class Document extends Model {
     if (!self._type._workflow) {
       await self._type.fetchRelated('_workflow', trx);
     }
-    const workflow = self._type._workflow;
+    const [workflow, ...others] = await self._type.fetchChain(trx);
+    const compute = async (item: any, state: string) =>
+      await item.computeStatus({
+        document: self,
+        user: actor,
+        trx,
+        req,
+        newState: state,
+        kwargs: {},
+        date: self.created,
+      });
+
+    // The further workflows of the chain start in their initial state
+    await mapAsync(others, async (item: any) =>
+      self.saveWorkflowStatus(
+        item.id,
+        item.json.initial_state,
+        item.json.variables ? await compute(item, item.json.initial_state) : {},
+        trx,
+      ),
+    );
     if (!workflow.json.variables) {
       return;
     }
-    const status = await workflow.computeStatus({
-      document: self,
-      user: actor,
-      trx,
-      req,
-      newState: self.workflow_state,
-      kwargs: {},
-      date: self.created,
-    });
+    const status = await compute(workflow, self.workflow_state);
     const history = self.workflow_history.map((item: any, index: number) =>
       index === 0 ? { ...item, ...omit(status, builtinVariables) } : item,
     );
@@ -1227,6 +1308,75 @@ export class Document extends Model {
   }
 
   /**
+   * Find the workflow of the chain which provides a transition, like
+   * `doActionFor` of the Plone workflow tool: the first workflow where the
+   * transition can be applied. Otherwise the best answer of the workflows:
+   * `same` when the document already is in the new state, `unauthorized`
+   * when the guard doesn't pass, `unavailable` in the current state or
+   * `unknown`.
+   * @method findTransition
+   * @param {string} transition Transition to check.
+   * @param {Object} actor Actor object.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} permissions Permissions of the actor, fetched if omitted.
+   * @param {Request} req Request object, for guard expressions.
+   * @param {string[]} roles Roles of the actor, fetched if omitted.
+   * @returns {Promise<Object>} Check, the workflow and its state.
+   */
+  async findTransition(
+    transition: string,
+    actor: any,
+    trx: Knex.Transaction,
+    permissions?: string[],
+    req?: Request,
+    roles?: string[],
+  ): Promise<{
+    check: 'apply' | 'same' | 'unknown' | 'unavailable' | 'unauthorized';
+    workflow?: any;
+    state?: string;
+  }> {
+    const self: InstanceType<typeof Document> = this;
+    const order = ['apply', 'same', 'unauthorized', 'unavailable', 'unknown'];
+    let best: any = { check: 'unknown' };
+    for (const { workflow, state } of await self.fetchWorkflowChain(trx)) {
+      const definition = Object.hasOwn(
+        workflow.json.transitions || {},
+        transition,
+      )
+        ? workflow.json.transitions[transition]
+        : undefined;
+      let check: string;
+      if (!definition) {
+        check = 'unknown';
+      } else if (definition.new_state === state) {
+        check = 'same';
+      } else if (
+        definition.trigger === 'automatic' ||
+        !(workflow.json.states?.[state]?.transitions || []).includes(transition)
+      ) {
+        check = 'unavailable';
+      } else if (
+        !(await workflow.checkTransitionGuard(transition, {
+          document: self,
+          user: actor,
+          trx,
+          req,
+          roles,
+          permissions,
+        }))
+      ) {
+        check = 'unauthorized';
+      } else {
+        return { check: 'apply', workflow, state };
+      }
+      if (order.indexOf(check) < order.indexOf(best.check)) {
+        best = { check, workflow, state };
+      }
+    }
+    return best;
+  }
+
+  /**
    * Check if a transition can be applied to this document
    * @method checkTransition
    * @param {string} transition Transition to check.
@@ -1248,46 +1398,9 @@ export class Document extends Model {
     roles?: string[],
   ): Promise<'apply' | 'same' | 'unknown' | 'unavailable' | 'unauthorized'> {
     const self: InstanceType<typeof Document> = this;
-
-    // Fetch type and workflow
-    if (!self._type) {
-      await self.fetchRelated('_type', trx);
-    }
-    if (!self._type._workflow) {
-      await self._type.fetchRelated('_workflow', trx);
-    }
-    const workflow = self._type._workflow.json;
-    const definition = Object.hasOwn(workflow.transitions || {}, transition)
-      ? workflow.transitions[transition]
-      : undefined;
-
-    if (!definition) {
-      return 'unknown';
-    }
-    if (definition.new_state === self.workflow_state) {
-      return 'same';
-    }
-    if (
-      definition.trigger === 'automatic' ||
-      !(workflow.states?.[self.workflow_state]?.transitions || []).includes(
-        transition,
-      )
-    ) {
-      return 'unavailable';
-    }
-    if (
-      !(await self._type._workflow.checkTransitionGuard(transition, {
-        document: self,
-        user: actor,
-        trx,
-        req,
-        roles,
-        permissions,
-      }))
-    ) {
-      return 'unauthorized';
-    }
-    return 'apply';
+    return (
+      await self.findTransition(transition, actor, trx, permissions, req, roles)
+    ).check;
   }
 
   /**
@@ -1321,9 +1434,24 @@ export class Document extends Model {
       await self._type.fetchRelated('_workflow', trx);
     }
 
+    // Get the workflow of the chain with the transition (the first where
+    // it leaves the current state), the review state is the state of the
+    // first workflow
+    const chain = await self.fetchWorkflowChain(trx);
+    const current =
+      chain.find(({ workflow, state }) =>
+        (workflow.json.states?.[state]?.transitions || []).includes(transition),
+      ) ||
+      chain.find(({ workflow }) =>
+        Object.hasOwn(workflow.json.transitions || {}, transition),
+      ) ||
+      chain[0];
+    const workflow = current.workflow;
+    const primary = workflow.id === chain[0].workflow.id;
+
     // Get prev state, a transition with an empty new state stays
-    const old_state = self.workflow_state;
-    const definition = self._type._workflow.json.transitions[transition];
+    const old_state = current.state;
+    const definition = workflow.json.transitions?.[transition];
     const stay = definition !== undefined && !definition.new_state;
     const new_state = stay ? old_state : definition?.new_state;
 
@@ -1331,13 +1459,12 @@ export class Document extends Model {
     // is published (viewable by anonymous) the first time
     const dates = pick(options, ['effective', 'expires']);
     if (
+      primary &&
       new_state &&
       new_state !== old_state &&
       !self.json.effective &&
       !dates.effective &&
-      self._type._workflow
-        .getPermissions(new_state, ['Anonymous'])
-        .includes('View')
+      workflow.getPermissions(new_state, ['Anonymous']).includes('View')
     ) {
       dates.effective = modified;
     }
@@ -1351,7 +1478,6 @@ export class Document extends Model {
     // Check if state is available and not the current state
     if (new_state && (new_state !== old_state || stay)) {
       // Compute the variables of the workflow
-      const workflow = self._type._workflow;
       const status = workflow.json.variables
         ? await workflow.computeStatus({
             document: self,
@@ -1374,15 +1500,21 @@ export class Document extends Model {
         time: modified,
         actor: actor.id,
         action: transition,
-        state_title: self._type._workflow.json.states[new_state].title,
+        state_title: workflow.json.states[new_state].title,
         review_state: new_state,
-        transition_title:
-          self._type._workflow.json.transitions[transition].title,
+        transition_title: workflow.json.transitions[transition].title,
         ...(options.comment ? { comments: options.comment } : {}),
         ...(status ? omit(status, builtinVariables) : {}),
+        // Entries of further workflows name their workflow
+        ...(primary ? {} : { workflow: workflow.id }),
       });
-      if (status) {
-        await self.saveWorkflowStatus(workflow.id, new_state, status, trx);
+      if (status || !primary) {
+        await self.saveWorkflowStatus(
+          workflow.id,
+          new_state,
+          status || {},
+          trx,
+        );
       }
 
       // Trigger on before change workflow
@@ -1395,11 +1527,11 @@ export class Document extends Model {
         new_state,
       );
 
-      // Update document
+      // Update document, the review state is the state of the first workflow
       await self.updateAndFetch(
         {
           modified: modified,
-          workflow_state: new_state,
+          ...(primary ? { workflow_state: new_state } : {}),
           workflow_history: JSON.stringify(workflow_history),
         },
         trx,
@@ -1767,6 +1899,105 @@ export class Document extends Model {
   }
 
   /**
+   * Get the roles which have the 'View' permission with a workflow chain:
+   * every workflow of the chain applies its state in turn.
+   * @method getChainViewRoles
+   * @static
+   * @param {Object[]} chain Workflow json and state of every workflow.
+   * @param {string[]} globalRoles Roles with the global 'View' permission.
+   * @return {string[]} List of roles.
+   */
+  static getChainViewRoles(
+    chain: { json: any; state: string }[],
+    globalRoles: string[],
+  ): string[] {
+    return chain.reduce(
+      (roles: string[], { json, state }) =>
+        Document.getViewRoles(json, state, roles),
+      globalRoles,
+    );
+  }
+
+  /**
+   * Fetch the states of the further workflows of documents (the workflow
+   * status, by document uuid and workflow).
+   * @method fetchWorkflowStates
+   * @static
+   * @param {string[]} uuids Uuids of the documents.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<Object>} States by document uuid and workflow id.
+   */
+  static async fetchWorkflowStates(
+    uuids: string[],
+    trx?: Knex.Transaction,
+  ): Promise<Record<string, Record<string, string>>> {
+    const states: Record<string, Record<string, string>> = {};
+    for (let i = 0; i < uuids.length; i += 1000) {
+      (
+        await (trx || Document.knex())('document_workflow_status')
+          .select('document', 'workflow', 'state')
+          .whereIn('document', uuids.slice(i, i + 1000))
+      ).map((row: any) => {
+        states[row.document] = {
+          ...(states[row.document] || {}),
+          [row.workflow]: row.state,
+        };
+      });
+    }
+    return states;
+  }
+
+  /**
+   * Get the roles with 'View' of a document of a type, from the chains of
+   * the types and the states of the further workflows.
+   * @method getDocumentViewRoles
+   * @static
+   * @param {Object} document Document row (type, uuid, workflow_state).
+   * @param {Object} chains Workflow chains by type id.
+   * @param {Object} states States of further workflows by document uuid.
+   * @param {string[]} globalRoles Roles with the global 'View' permission.
+   * @return {string[]} List of roles.
+   */
+  static getDocumentViewRoles(
+    document: any,
+    chains: Record<string, any[]>,
+    states: Record<string, Record<string, string>>,
+    globalRoles: string[],
+  ): string[] {
+    const [primary, ...others] = chains[document.type] || [];
+    return Document.getChainViewRoles(
+      [
+        { json: primary?.json, state: document.workflow_state },
+        ...others.map((workflow: any) => ({
+          json: workflow.json,
+          state:
+            states[document.uuid]?.[workflow.id] || workflow.json.initial_state,
+        })),
+      ],
+      globalRoles,
+    );
+  }
+
+  /**
+   * Fetch the workflow chains of all types.
+   * @method fetchChains
+   * @static
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<Object>} Workflows by type id.
+   */
+  static async fetchChains(
+    trx?: Knex.Transaction,
+  ): Promise<Record<string, any[]>> {
+    const Type = models.get('Type');
+    const types = await Type.fetchAll({}, { related: '_workflow' }, trx);
+    const chains: Record<string, any[]> = {};
+    for (const type of types.models || types) {
+      chains[type.id] = await type.fetchChain(trx);
+    }
+    return chains;
+  }
+
+  /**
    * Get the allowed users, groups and roles
    * @method getAllowed
    * @static
@@ -1869,11 +2100,13 @@ export class Document extends Model {
     const self: InstanceType<typeof Document> = this;
 
     // Get the roles with 'View' permission, given globally or by the
-    // workflow state, and the local roles of the document
+    // workflow states, and the local roles of the document
     return Document.getAllowed(
-      Document.getViewRoles(
-        self._type._workflow.json,
-        self.workflow_state,
+      Document.getChainViewRoles(
+        (await self.fetchWorkflowChain(trx)).map(({ workflow, state }) => ({
+          json: workflow.json,
+          state,
+        })),
         await Document.fetchGlobalViewRoles(trx),
       ),
       await self.fetchLocalRoles(trx),
@@ -1913,11 +2146,16 @@ export class Document extends Model {
       return 0;
     }
 
-    // Get the workflows by type and the global view roles
-    const types = await Type.fetchAll({}, { related: '_workflow' }, trx);
-    const workflows: Record<string, any> = Object.fromEntries(
-      types.map((type: any) => [type.id, type._workflow?.json]),
-    );
+    // Get the workflow chains by type, the states of further workflows
+    // and the global view roles
+    const chains = await Document.fetchChains(trx);
+    const chained = documents
+      .filter((document) => (chains[document.type] || []).length > 1)
+      .map((document) => document.uuid);
+    const states =
+      chained.length > 0
+        ? await Document.fetchWorkflowStates(chained, trx)
+        : {};
     const globalRoles = await Document.fetchGlobalViewRoles(trx);
 
     // Get the local roles inherited from above the subtree
@@ -1947,11 +2185,7 @@ export class Document extends Model {
       return {
         document: document.uuid,
         allowed: Document.getAllowed(
-          Document.getViewRoles(
-            workflows[document.type],
-            document.workflow_state,
-            globalRoles,
-          ),
+          Document.getDocumentViewRoles(document, chains, states, globalRoles),
           localRoles[document.uuid],
           document.owner,
         ),
@@ -2004,6 +2238,7 @@ export class Document extends Model {
         type,
       ]),
     );
+    const chains = await Document.fetchChains();
     const globalRoles = await Document.fetchGlobalViewRoles();
     const columns: Record<string, string> = Object.fromEntries(
       (
@@ -2078,6 +2313,13 @@ export class Document extends Model {
         break;
       }
 
+      // Get the states of further workflows
+      const chained = documents
+        .filter((document: any) => (chains[document.type] || []).length > 1)
+        .map((document: any) => document.uuid);
+      const states =
+        chained.length > 0 ? await Document.fetchWorkflowStates(chained) : {};
+
       // Get the catalog fields of the documents
       const kinds: Record<string, { type: string; metadata: boolean }> = {};
       const rows = await mapAsync(documents, async (document: any) => {
@@ -2086,9 +2328,10 @@ export class Document extends Model {
           indexes,
           values: {
             allowedUsersGroupsRoles: Document.getAllowed(
-              Document.getViewRoles(
-                document._type?._workflow?.json,
-                document.workflow_state,
+              Document.getDocumentViewRoles(
+                document,
+                chains,
+                states,
                 globalRoles,
               ),
               localRoles(document),

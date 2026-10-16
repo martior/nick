@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T10:06:15.745Z\n"
+"POT-Creation-Date: 2026-10-16T10:26:58.128Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -206,7 +206,7 @@ msgid "After today"
 msgstr ""
 
 #. Default: "Allowed Content Types"
-#: src/models/type/type.ts:158
+#: src/models/type/type.ts:211
 msgctxt "Models|Type"
 msgid "Allowed Content Types"
 msgstr ""
@@ -429,7 +429,7 @@ msgid "Before today"
 msgstr ""
 
 #. Default: "Behaviors"
-#: src/models/type/type.ts:141
+#: src/models/type/type.ts:194
 msgctxt "Models|Type"
 msgid "Behaviors"
 msgstr ""
@@ -769,7 +769,7 @@ msgid "Delete the triggering item"
 msgstr ""
 
 #. Default: "Description"
-#: src/models/type/type.ts:165
+#: src/models/type/type.ts:218
 #: src/profiles/core/catalog.json:233
 #: src/profiles/core/behaviors/basic.json:16
 #: src/profiles/ai/controlpanels/ai.json:33
@@ -816,7 +816,7 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/workflow/workflow.ts:156
+#: src/routes/workflow/workflow.ts:168
 #: src/routes/history/history.ts:84
 #: src/routes/content/content.ts:1096
 #: src/routes/content/content.ts:1267
@@ -1093,7 +1093,7 @@ msgid "File extension is {extension}"
 msgstr ""
 
 #. Default: "Filter Contained Types"
-#: src/models/type/type.ts:171
+#: src/models/type/type.ts:224
 msgctxt "Models|Type"
 msgid "Filter Contained Types"
 msgstr ""
@@ -1274,7 +1274,7 @@ msgid "Invalid credentials"
 msgstr ""
 
 #. Default: "Invalid date for {field}."
-#: src/routes/workflow/workflow.ts:112
+#: src/routes/workflow/workflow.ts:122
 msgctxt "Routes|Workflow"
 msgid "Invalid date for {field}."
 msgstr ""
@@ -1325,7 +1325,7 @@ msgid "Is"
 msgstr ""
 
 #. Default: "Items of this type can act as a folder containing other items. What content types should be allowed inside?"
-#: src/models/type/type.ts:172
+#: src/models/type/type.ts:225
 msgctxt "Models|Type"
 msgid "Items of this type can act as a folder containing other items. What content types should be allowed inside?"
 msgstr ""
@@ -1732,7 +1732,7 @@ msgid "No query supplied."
 msgstr ""
 
 #. Default: "No transition specified."
-#: src/routes/workflow/workflow.ts:223
+#: src/routes/workflow/workflow.ts:239
 msgctxt "Routes|Workflow"
 msgid "No transition specified."
 msgstr ""
@@ -2234,7 +2234,7 @@ msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/workflow/workflow.ts:155
+#: src/routes/workflow/workflow.ts:167
 #: src/routes/content/content.ts:1095
 msgctxt "Routes|Workflow"
 msgid "Resource is locked."
@@ -3066,7 +3066,7 @@ msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:136
+#: src/routes/workflow/workflow.ts:148
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -3090,7 +3090,7 @@ msgid "Type"
 msgstr ""
 
 #. Default: "Type Name"
-#: src/models/type/type.ts:180
+#: src/models/type/type.ts:233
 msgctxt "Models|Type"
 msgid "Type Name"
 msgstr ""
@@ -3385,7 +3385,7 @@ msgid "You are not allowed to set roles or groups."
 msgstr ""
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:145
+#: src/routes/workflow/workflow.ts:157
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr ""
@@ -3409,7 +3409,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:193
 #: src/routes/history/history.ts:59
 #: src/routes/content/content.ts:148
-#: src/helpers/handler/handler.ts:121
+#: src/helpers/handler/handler.ts:122
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""

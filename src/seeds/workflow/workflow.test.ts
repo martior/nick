@@ -131,7 +131,7 @@ describe('seedWorkflow', () => {
       `${path}/workflows.xml`,
       `<object name="portal_workflow">
  <bindings>
-  <type type_id="Page"><bound-workflow workflow_id="my_intranet_workflow"/></type>
+  <type type_id="Page"><bound-workflow workflow_id="my_intranet_workflow"/><bound-workflow workflow_id="simple_publication_workflow"/></type>
   <type type_id="NoSuchType"><bound-workflow workflow_id="my_intranet_workflow"/></type>
  </bindings>
 </object>`,
@@ -160,8 +160,10 @@ describe('seedWorkflow', () => {
     expect(workflow.json.transitions.submit.guard).toEqual({
       permissions: ['Submit'],
     });
-    expect((await Type.fetchById('Page', {}, global.txn!)).workflow).toBe(
-      'my_intranet_workflow',
-    );
+    const page = await Type.fetchById('Page', {}, global.txn!);
+    expect(page.workflow).toBe('my_intranet_workflow');
+    expect(
+      (await page.fetchChain(global.txn!)).map((item: any) => item.id),
+    ).toEqual(['my_intranet_workflow', 'simple_publication_workflow']);
   });
 });
