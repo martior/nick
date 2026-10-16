@@ -24,6 +24,7 @@
 
 ### Feature
 
+- Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1015) @martior
 - Add support for multiple profiles @robgietema
 - Add yeoman generator to create a Nick project @robgietema
 - Add vocabularies based on profiles @robgietema

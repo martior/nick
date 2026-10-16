@@ -73,6 +73,26 @@ describe('Search', () => {
   it('should return a bad request on an invalid querystring operation', () =>
     testRequest(app, 'search/post_invalid'));
 
+  it('should filter on isFolderish like Plone', async () => {
+    const folderish = await request(app)
+      .get('/@search?isFolderish=true')
+      .set('Accept', 'application/json')
+      .expect(200);
+    const legacy = await request(app)
+      .get('/@search?is_folderish=true')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(folderish.body.items_total).toBeGreaterThan(0);
+    expect(folderish.body.items_total).toBe(legacy.body.items_total);
+    const indexes = await request(app)
+      .get('/@querystring')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(indexes.body.indexes.isFolderish.operations).toContain(
+      'plone.app.querystring.operation.boolean.isTrue',
+    );
+  });
+
   it('should return a bad request on invalid parameters', async () => {
     for (const query of [
       'b_size=abc',
