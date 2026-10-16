@@ -14,7 +14,7 @@ export default [
   {
     op: 'get',
     view: '/@roles',
-    permission: 'View',
+    permission: 'Manage Users',
     client: 'getRoles',
     cache: 'static',
     handler: async (req: Request, trx: Knex.Transaction) => {

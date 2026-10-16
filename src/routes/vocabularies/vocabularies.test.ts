@@ -4,7 +4,8 @@
  */
 
 // External imports
-import { describe, it } from 'vitest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
@@ -16,6 +17,15 @@ describe('Vocabularies', () => {
 
   it('should return a single vocabulary', () =>
     testRequest(app, 'vocabularies/get'));
+
+  it('should filter a vocabulary by title', () =>
+    testRequest(app, 'vocabularies/get_title'));
+
+  it('should filter a vocabulary by token', () =>
+    testRequest(app, 'vocabularies/get_token'));
+
+  it('should batch a vocabulary', () =>
+    testRequest(app, 'vocabularies/get_batched'));
 
   it('should return a actions vocabulary', () =>
     testRequest(app, 'vocabularies/get_actions'));
@@ -70,6 +80,55 @@ describe('Vocabularies', () => {
 
   it('should return a available languages vocabulary', () =>
     testRequest(app, 'vocabularies/get_available_languages'));
+
+  it('should return a plone.app.vocabularies vocabulary', () =>
+    testRequest(app, 'vocabularies/get_plone_weekdays'));
+
+  it('should support the plone.app.vocabularies names used by Volto', async () => {
+    for (const name of [
+      'AvailableContentLanguages',
+      'Groups',
+      'ImagesScales',
+      'Keywords',
+      'MetadataFields',
+      'Month',
+      'MonthAbbr',
+      'PortalTypes',
+      'Principals',
+      'ReallyUserFriendlyTypes',
+      'Roles',
+      'SupportedContentLanguages',
+      'Timezones',
+      'UserFriendlyTypes',
+      'Users',
+      'Weekdays',
+      'WeekdaysAbbr',
+      'Workflows',
+      'WorkflowStates',
+      'WorkflowTransitions',
+    ]) {
+      const res = await request(app)
+        .get(`/@vocabularies/plone.app.vocabularies.${name}`)
+        .set(
+          'Authorization',
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk',
+        )
+        .expect(200);
+      expect(res.body.items_total).toBe(res.body.items.length);
+      if (!['Keywords'].includes(name)) {
+        expect(res.body.items.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should not return the users vocabulary to anonymous', () =>
+    testRequest(app, 'vocabularies/get_users_anonymous'));
+
+  it('should not return the subjects vocabulary to anonymous', () =>
+    request(app)
+      .get('/@vocabularies/subjects')
+      .set('Accept', 'application/json')
+      .expect(401));
 
   it('should return a 404 if the vocabulary does not exist', () =>
     testRequest(app, 'vocabularies/get_notfound'));

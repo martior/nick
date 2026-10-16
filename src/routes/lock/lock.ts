@@ -108,12 +108,18 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const lock = req.document.lock;
 
-      // Check if lock already exists
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.user.id !== lock.creator
-      ) {
+      // Nothing to refresh if not locked
+      if (!lock.locked || lockExpired(req.document)) {
+        return {
+          json: {
+            locked: false,
+            stealable: true,
+          },
+        };
+      }
+
+      // Check if lock from another user
+      if (req.user.id !== lock.creator) {
         // Send error
         throw new RequestException(401, {
           error: {
@@ -123,32 +129,23 @@ export default [
             type: req.i18n('Already locked'),
           },
         });
-      } else {
-        const newLock = {
-          created: dayjs.utc().format(),
-          creator: req.user.id,
-          creator_name: req.user.fullname,
-          creator_url: `${getRootUrl(req)}/@users/${req.user.id}`,
-          locked: true,
-          stealable:
-            typeof req.body?.stealable === 'undefined'
-              ? true
-              : req.body.stealable,
-          time: dayjs.utc().format(),
-          timeout: req.body?.timeout || 600,
-          token: uuid(),
-        };
-        // Create new lock
-        await req.document.update(
-          {
-            lock: newLock,
-          },
-          trx,
-        );
-        return {
-          json: newLock,
-        };
       }
+
+      // Refresh the lock and keep token, timeout and stealable
+      const refreshedLock = {
+        ...lock,
+        created: dayjs.utc().format(),
+        time: dayjs.utc().format(),
+      };
+      await req.document.update(
+        {
+          lock: refreshedLock,
+        },
+        trx,
+      );
+      return {
+        json: refreshedLock,
+      };
     },
   },
   {
@@ -157,29 +154,40 @@ export default [
     permission: 'Modify',
     client: 'deleteLock',
     cache: 'alter',
-    handler: async (req: Request, _trx: Knex.Transaction) => {
+    handler: async (req: Request, trx: Knex.Transaction) => {
       const lock = req.document.lock;
 
-      // If not locked just send lock status
-      if (
-        (lock.locked && lock.creator !== req.user.id) ||
-        (req.body?.force && lock.stealable === false)
-      ) {
-        // Send error
-        throw new RequestException(401, {
-          error: {
-            message: req.i18n(
-              'You don’t have permission to unlock this document.',
-            ),
-            type: req.i18n('Not allowed'),
+      // Unlock if locked by the current user or a stealable lock is forced
+      if (lock.locked && !lockExpired(req.document)) {
+        const owner = lock.creator === req.user.id;
+        if (!owner && !(req.body?.force && lock.stealable !== false)) {
+          // Send error
+          throw new RequestException(401, {
+            error: {
+              message: req.i18n(
+                'You don’t have permission to unlock this document.',
+              ),
+              type: req.i18n('Not allowed'),
+            },
+          });
+        }
+      }
+
+      // Remove lock
+      const unlocked = {
+        locked: false,
+        stealable: true,
+      };
+      if (lock.locked) {
+        await req.document.update(
+          {
+            lock: unlocked,
           },
-        });
+          trx,
+        );
       }
       return {
-        json: {
-          locked: false,
-          stealable: true,
-        },
+        json: unlocked,
       };
     },
   },

@@ -8,6 +8,9 @@
 - Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
 - Workflows use the `acquire` permission model by default: for the permissions a workflow manages (default: those used in its states), the roles a state lists replace the global role permissions instead of being added to them, like in Plone. Run `pnpm permissions:dry-run` before upgrading to list the content whose permissions change, then `pnpm seed:upgrade`; set `"permission_model": "additive"` on a workflow to keep the old behaviour. The core workflow now lists Reader in the private and pending states @martior
 - Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
+- Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
+- Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
+- Require the Manage Users permission for @roles, like Plone @martior
 
 ### Feature
 
@@ -159,6 +162,8 @@
 - Export comments of documents @martior
 - Export site title, robots.txt and language settings @martior
 - Convert querystring operations of collections and listing blocks in export @martior
+- Support the title and token filters and batching in the vocabularies endpoint @martior
+- Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
 
 ### Bugfix
 
@@ -286,6 +291,25 @@
 - Run a request again, up to three times, when its transaction hits a database deadlock or serialization failure instead of returning 500 @martior
 - Accept @sharing posts without entries or inherit, ignore unknown roles and return 400 instead of 500 for invalid sharing data @martior
 - List users and groups with local or acquired roles in the @sharing entries and search principals by id too @martior
+- Unlock content on DELETE @lock and let a forced unlock steal a stealable lock of another user @martior
+- Keep the token, timeout and stealable setting when refreshing a lock and don't lock unlocked content on refresh @martior
+- Keep the lock when locked content is saved with the lock token @martior
+- Return 403 "Resource is locked." when locked content is saved without the lock token @martior
+- Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
+- Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
+- Treat the token of a deleted user as anonymous instead of failing with a server error @martior
+- Set the password of a user on PATCH @users and apply the password policy @martior
+- Answer 400 instead of 401 or 500 when a password is missing or too short on @users @martior
+- Answer 403 when resetting a password with a wrong old password or for another user instead of a silent 200 @martior
+- Answer 400 instead of 500 when a group is created without a name, with an existing name or with unknown roles or users @martior
+- List the members of a group in GET @groups/<id> @martior
+- Search groups case insensitive and support the limit parameter on @groups @martior
+- Answer 404 when deleting or updating a user or group that doesn't exist @martior
+- Let users update their own properties with PATCH @users @martior
+- Refuse an invalid email address when creating a user @martior
+- Return the Location header when creating a user or group @martior
+- Support the categories:list parameter of @actions @martior
+- Refuse aliases which are relative or the path of existing content or of another alias @martior
 
 ### Internal
 
@@ -358,6 +382,7 @@
 - Add documentation on how to setup caching @robgietema
 - Add documentation about profiles @robgietema
 - Document what the Plone migration migrates, what it doesn't and how to verify it @martior
+- Fix the url of the update scheduled job example @martior
 
 ## 2.8.0 (2022-07-17)
 

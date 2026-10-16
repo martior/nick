@@ -25,9 +25,11 @@ import {
 } from '../../helpers/content/content';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import { sendMail } from '../../helpers/mail/mail';
+import { getRootUrl } from '../../helpers/url/url';
 import models from '../../models';
 
 const userFields = ['id', 'fullname', 'email'];
+const defaultLimit = 25;
 
 export default [
   {
@@ -46,7 +48,7 @@ export default [
 
       // Check min password length
       if (req.body?.new_password && req.body.new_password.length < 8) {
-        throw new RequestException(401, {
+        throw new RequestException(400, {
           message: req.i18n('Password should be at least 8 characters long.'),
         });
       }
@@ -76,20 +78,32 @@ export default [
           });
         }
       } else if (req.body?.old_password && req.body?.new_password && user) {
+        // Only the user itself can set a password with the old password
+        if (req.user.id !== user.id) {
+          throw new RequestException(403, {
+            message: req.i18n('You can only change your own password.'),
+          });
+        }
+
+        // Check old password
         const same = await bcrypt.compare(
           req.body?.old_password,
           user.password,
         );
-        if (req.user.id === user.id && same) {
-          const password = await bcrypt.hash(req.body?.new_password, 10);
-          await User.update(
-            user.id,
-            {
-              password,
-            },
-            trx,
-          );
+        if (!same) {
+          throw new RequestException(403, {
+            message: req.i18n('Wrong password.'),
+          });
         }
+
+        const password = await bcrypt.hash(req.body?.new_password, 10);
+        await User.update(
+          user.id,
+          {
+            password,
+          },
+          trx,
+        );
       } else if (user) {
         // Create token
         const token = jwt.sign(
@@ -170,18 +184,60 @@ export default [
       const User = models.get('User');
       const query =
         typeof req.query.query === 'string' ? req.query.query : undefined;
-      if (query && query.length < 2) {
+      const search =
+        typeof req.query.search === 'string' ? req.query.search : undefined;
+      const groupsFilter = [
+        req.query['groups-filter:list'] || req.query['groups-filter'] || [],
+      ].flat() as string[];
+      const filtered =
+        query || search || groupsFilter.length > 0 || req.query.limit;
+
+      // Check query length
+      if ((query && query.length < 2) || (search && search.length < 2)) {
         throw new RequestException(400, {
           error: req.i18n('Query must be at least 2 characters long.'),
         });
       }
-      const users = await User.fetchAll(
-        query ? { id: ['like', `%${query}%`] } : {},
-        { order: 'fullname', related: '[_roles, _groups]' },
+
+      // Check limit
+      const limit = filtered
+        ? parseInt(String(req.query.limit || defaultLimit), 10)
+        : undefined;
+      if (typeof limit !== 'undefined' && (isNaN(limit) || limit < 1)) {
+        throw new RequestException(400, {
+          error: req.i18n('Limit must be a positive number.'),
+        });
+      }
+
+      // Build query
+      const like = (value: string) => `%${value.replace(/[\\%_]/g, '\\$&')}%`;
+      let users = User.buildQuery(
+        query ? { id: ['ilike', like(query)] } : {},
+        { order: 'fullname', related: '[_roles, _groups]', limit },
         trx,
       );
+      if (search) {
+        users = users.where((builder: Knex.QueryBuilder) =>
+          builder
+            .whereILike('id', like(search))
+            .orWhereILike('fullname', like(search))
+            .orWhereILike('email', like(search)),
+        );
+      }
+      if (groupsFilter.length > 0) {
+        users = users.whereIn(
+          'id',
+          trx('user_group').select('user').whereIn('group', groupsFilter),
+        );
+      }
+      const items = await new User.collection(await users).toJson(req);
+
       return {
-        json: await users.toJson(req),
+        json: {
+          '@id': `${getRootUrl(req)}/@users`,
+          items,
+          items_total: items.length,
+        },
         xkeys: ['users', 'groups'],
       };
     },
@@ -202,9 +258,31 @@ export default [
         });
       }
 
-      // Check min password length
-      if (req.body?.password.length < 8) {
-        throw new RequestException(401, {
+      // Check email
+      if (
+        typeof req.body?.email !== 'undefined' &&
+        (typeof req.body.email !== 'string' ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.body.email))
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n('You must enter a valid email address.'),
+        });
+      }
+
+      // Check password
+      if (typeof req.body?.password === 'undefined') {
+        if (manageUsers && !req.body?.sendPasswordReset) {
+          throw new RequestException(400, {
+            message: req.i18n(
+              'Either a password or sendPasswordReset must be provided.',
+            ),
+          });
+        }
+      } else if (
+        typeof req.body.password !== 'string' ||
+        req.body.password.length < 8
+      ) {
+        throw new RequestException(400, {
           message: req.i18n('Password should be at least 8 characters long.'),
         });
       }
@@ -300,6 +378,9 @@ export default [
       // Send created
       return {
         status: 201,
+        headers: {
+          Location: `${getRootUrl(req)}/@users/${user.id}`,
+        },
         json: await user.toJson(req),
       };
     },
@@ -307,11 +388,18 @@ export default [
   {
     op: 'patch',
     view: '/@users/:id',
-    permission: 'Manage Users',
     client: 'updateUser',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const User = models.get('User');
+
+      // Check permissions, users can update their own properties
+      const manageUsers = req.permissions.includes('Manage Users');
+      if (!manageUsers && req.user.id !== req.params.id) {
+        throw new RequestException(req.user.id === 'anonymous' ? 401 : 403, {
+          message: req.i18n('You are not authorized to access this resource.'),
+        });
+      }
 
       // Make a copy
       let json: any = omit(req.body, [
@@ -325,6 +413,20 @@ export default [
       ]);
 
       const curUser = await User.fetchById(req.params.id, {}, trx);
+      if (!curUser) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
+
+      // Check min password length
+      if (
+        manageUsers &&
+        typeof req.body.password !== 'undefined' &&
+        (typeof req.body.password !== 'string' || req.body.password.length < 8)
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n('Password should be at least 8 characters long.'),
+        });
+      }
 
       // Handle images
       const schema = config.settings.userschema(req);
@@ -336,12 +438,16 @@ export default [
       const user = await User.update(
         req.params.id,
         {
-          id: req.body.username,
+          id: manageUsers ? req.body.username : undefined,
           fullname: req.body.fullname,
           email: req.body.email,
+          password:
+            manageUsers && req.body.password
+              ? await bcrypt.hash(req.body.password, 10)
+              : undefined,
           json: { ...curUser.json, ...json },
-          _roles: req.body.roles,
-          _groups: req.body.groups,
+          _roles: manageUsers ? req.body.roles : undefined,
+          _groups: manageUsers ? req.body.groups : undefined,
         },
         trx,
       );
@@ -374,6 +480,9 @@ export default [
 
       // Fetch user
       const user = await User.fetchById(req.params.id, {}, trx);
+      if (!user) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
 
       // Check if user exists
       if (user) {
