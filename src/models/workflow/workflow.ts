@@ -37,35 +37,19 @@ export class Workflow extends Model {
     const current_state_id = req.document.workflow_state;
     const current_state = (self.json.states || {})[current_state_id] || {};
 
-    // Workflow history with the initial state first, like plone.restapi.
-    // Migrated content may have the initial state in the history already.
+    // Workflow history, the creation is the first entry (without action)
     const stateTitle = (state?: string) =>
       req.i18n(self.json.states?.[state || '']?.title || state || '');
-    const entries = (req.document.workflow_history || []).filter(
-      (item: any) => !item.type || item.type === 'workflow',
-    );
-    const history = [
-      ...(entries.length > 0 && !entries[0].action
-        ? []
-        : [
-            {
-              action: null,
-              actor: req.document.owner,
-              comments: '',
-              review_state: self.json.initial_state,
-              time: req.document.created,
-              title: stateTitle(self.json.initial_state),
-            },
-          ]),
-      ...entries.map((item: any) => ({
+    const history = (req.document.workflow_history || [])
+      .filter((item: any) => !item.type || item.type === 'workflow')
+      .map((item: any) => ({
         action: item.action || null,
         actor: item.actor,
         comments: item.comments || '',
         review_state: item.review_state,
         time: item.time,
         title: stateTitle(item.review_state),
-      })),
-    ];
+      }));
 
     return {
       '@id': `${getUrl(req)}/@workflow`,

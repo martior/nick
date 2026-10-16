@@ -39,7 +39,7 @@ This following fields are returned:
 - `type`: 'workflow' for workflow changes, or 'versioning' for editing
 - `version`: identifier for this specific version of the resource.
 
-The last entry is the creation of the resource ('Create', with the initial workflow state).
+Like in Plone, the creation of a resource is the first entry of its workflow history, without an action; `@history` lists it last as 'Create', with the initial workflow state. Content created before this was recorded and migrated content without such an entry have no 'Create' entry.
 
 ## Get a Historical Version
 

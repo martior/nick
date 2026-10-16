@@ -52,7 +52,7 @@ Like in plone.restapi, the body can contain the publication dates `effective` an
 
 A `POST` to `@workflow` without a transition returns `400 Bad Request`.
 
-A `comment` in the body is stored with the transition and returned in the response, in the `history` of `@workflow` and in `@history`. The `history` of `@workflow` lists the transitions like in plone.restapi, starting with the initial state.
+A `comment` in the body is stored with the transition and returned in the response, in the `history` of `@workflow` and in `@history`. The `history` of `@workflow` lists the workflow history like in plone.restapi; for content created through the API it starts with the creation in the initial state (`"action": null`).
 
 A transition to the state the object is already in is accepted and does nothing: the response is `200 OK` with the last transition and no new history entry is recorded.
 

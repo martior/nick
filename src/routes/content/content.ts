@@ -802,7 +802,18 @@ export default [
             : req.document._children.length,
         lock: { locked: false, stealable: true },
         workflow_state: type._workflow.json.initial_state,
-        workflow_history: JSON.stringify([]),
+        // The creation is the first entry of the history, like in Plone
+        workflow_history: JSON.stringify([
+          {
+            time: created,
+            actor: req.user.id,
+            action: null,
+            review_state: type._workflow.json.initial_state,
+            state_title:
+              type._workflow.json.states?.[type._workflow.json.initial_state]
+                ?.title,
+          },
+        ]),
         owner: req.user.id,
         json,
       }) as any;
