@@ -4,6 +4,8 @@
 
 ### Breaking
 
+- Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
+
 ### Feature
 
 - Add support for multiple profiles @robgietema

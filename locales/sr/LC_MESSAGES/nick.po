@@ -230,7 +230,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Субјект одговоран за доступност ове ставке."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:284
+#: src/routes/users/users.ts:328
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -772,7 +772,7 @@ msgid "Effective date"
 msgstr "Датум важења"
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:221
+#: src/routes/users/users.ts:265
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -1165,6 +1165,12 @@ msgctxt "Profiles|Core|Types|File"
 msgid "Lets you upload a file to the site."
 msgstr "Омогућава вам да отпремите датотеку на сајт."
 
+#. Default: "Limit must be a positive number."
+#: src/routes/users/users.ts:208
+msgctxt "Routes|Users"
+msgid "Limit must be a positive number."
+msgstr ""
+
 #. Default: "List of attendees."
 #: src/profiles/core/types/event.json:73
 msgctxt "Profiles|Core|Types|Event"
@@ -1444,7 +1450,7 @@ msgstr "Није дозвољено"
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:166
+#: src/routes/users/users.ts:168
 #: src/routes/types/types.ts:45
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
@@ -1528,16 +1534,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:126
-#: src/routes/users/users.ts:310
+#: src/routes/users/users.ts:128
+#: src/routes/users/users.ts:354
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Захтев за ресетовање лозинке"
 
 #. Default: "Password should be at least 8 characters long."
-#: src/routes/users/users.ts:50
-#: src/routes/users/users.ts:231
-#: src/routes/users/users.ts:358
+#: src/routes/users/users.ts:52
+#: src/routes/users/users.ts:275
+#: src/routes/users/users.ts:402
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1706,7 +1712,7 @@ msgid "Query"
 msgstr ""
 
 #. Default: "Query must be at least 2 characters long."
-#: src/routes/users/users.ts:187
+#: src/routes/users/users.ts:198
 #: src/routes/principals/principals.ts:30
 #: src/routes/groups/groups.ts:55
 msgctxt "Routes|Users"
@@ -2103,7 +2109,7 @@ msgid "System group"
 msgstr "Системска група"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:406
+#: src/routes/users/users.ts:450
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Системски корисници"
@@ -2254,8 +2260,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:127
-#: src/routes/users/users.ts:311
+#: src/routes/users/users.ts:129
+#: src/routes/users/users.ts:355
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2538,7 +2544,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:75
+#: src/routes/users/users.ts:77
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "Корисник не постоји или су акредитиви неважећи."
@@ -2728,7 +2734,7 @@ msgid "Wrong login and/or password."
 msgstr "Погрешно корисничко име и/или лозинка."
 
 #. Default: "Wrong password."
-#: src/routes/users/users.ts:93
+#: src/routes/users/users.ts:95
 msgctxt "Routes|Users"
 msgid "Wrong password."
 msgstr ""
@@ -2761,7 +2767,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You can only change your own password."
-#: src/routes/users/users.ts:82
+#: src/routes/users/users.ts:84
 msgctxt "Routes|Users"
 msgid "You can only change your own password."
 msgstr ""
@@ -2773,7 +2779,7 @@ msgid "You can’t delete system groups."
 msgstr "Не можете брисати системске групе."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:405
+#: src/routes/users/users.ts:449
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Не можете брисати системске кориснике."
@@ -2803,13 +2809,13 @@ msgid "You don’t have permission to unlock this document."
 msgstr "Немате дозволу да откључате овај документ."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:213
+#: src/routes/users/users.ts:257
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Немате дозволу да додате корисника."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:154
+#: src/routes/users/users.ts:156
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""

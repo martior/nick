@@ -21,7 +21,7 @@ Or use the client directly:
 {% include_relative examples/users/list.ts %}
 ```
 
-The server will respond with a list of all users in the portal:
+The server will respond with all users in the portal in `items`, and their number in `items_total`:
 
 ```http
 {% include_relative examples/users/list.res %}
@@ -57,11 +57,41 @@ Or use the client directly:
 {% include_relative examples/users/list_query.ts %}
 ```
 
-The server will respond with a list the filtered users in the portal with username starts with the query.
+The server will respond with the users whose username contains the query.
 
 ```http
 {% include_relative examples/users/list_query.res %}
 ```
+
+To search users by username, full name or email address use the `search` parameter:
+
+```http
+{% include_relative examples/users/list_search.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/users/list_search.ts %}
+```
+
+```http
+{% include_relative examples/users/list_search.res %}
+```
+
+The `groups-filter:list` parameter (which can be repeated) only returns members of one of the given groups:
+
+```http
+{% include_relative examples/users/list_groups_filter.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/users/list_groups_filter.ts %}
+```
+
+When `query`, `search`, `groups-filter:list` or `limit` is used, at most `limit` users are returned, 25 by default. The `query` and `search` values must be at least 2 characters long.
 
 ## Create User
 

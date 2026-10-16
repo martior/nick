@@ -5,13 +5,16 @@
 
 // External imports
 import request from 'supertest';
-import { describe, it, afterEach } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
 import { addToken } from '../../helpers/auth/auth';
 import { testRequest } from '../../helpers/tests/tests';
 import { User } from '../../models/user/user';
+
+const adminToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
 
 /**
  * Add the user of the examples and log it in with the token of the examples
@@ -36,6 +39,41 @@ describe('User', () => {
 
   it('should get a list of users by query', () =>
     testRequest(app, 'users/list_query'));
+
+  it('should search users by fullname', async () => {
+    await testRequest(app, 'users/post');
+    return testRequest(app, 'users/list_search');
+  });
+
+  it('should filter users by group and limit the results', async () => {
+    const auth = `Bearer ${adminToken}`;
+    for (const id of ['groupuser1', 'groupuser2', 'groupuser3']) {
+      await request(app)
+        .post('/@users')
+        .set('Authorization', auth)
+        .send({
+          username: id,
+          email: `${id}@example.com`,
+          password: 'secret123',
+          groups: id === 'groupuser3' ? [] : ['Administrators'],
+        })
+        .expect(201);
+    }
+    const all = await request(app)
+      .get('/@users?groups-filter:list=Administrators')
+      .set('Authorization', auth)
+      .expect(200);
+    expect(all.body.items.map((user: any) => user.id)).toEqual([
+      'groupuser1',
+      'groupuser2',
+    ]);
+    expect(all.body.items_total).toBe(2);
+    const limited = await request(app)
+      .get('/@users?groups-filter:list=Administrators&limit=1')
+      .set('Authorization', auth)
+      .expect(200);
+    expect(limited.body.items).toHaveLength(1);
+  });
 
   it('should get an error when not logged in', () =>
     testRequest(app, 'users/list_anonymous'));
