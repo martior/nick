@@ -10,6 +10,7 @@ import type { Knex } from 'knex';
 // External imports
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import { pick } from 'es-toolkit/object';
 
 // Internal imports
 import { hasPermission } from '../../helpers/auth/auth';
@@ -68,6 +69,17 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const recursive = req.body?.include_children === true ? true : false;
       await req.type.fetchRelated('_workflow', trx);
+
+      // Check the publication dates
+      const dates = pick(req.body || {}, ['effective', 'expires']);
+      Object.keys(dates).forEach((field: string) => {
+        const value = (dates as any)[field];
+        if (typeof value !== 'string' || !dayjs(value).isValid()) {
+          throw new RequestException(400, {
+            message: req.i18n('Invalid date for {field}.', { field }),
+          });
+        }
+      });
 
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
@@ -136,6 +148,7 @@ export default [
         recursive,
         trx,
         req,
+        dates,
       );
 
       // Return workflow state
@@ -150,6 +163,17 @@ export default [
         },
         xkeys: [req.document.uuid],
       };
+    },
+  },
+  {
+    op: 'post',
+    view: '/@workflow',
+    permission: 'View',
+    cache: 'alter',
+    handler: async (req: Request) => {
+      throw new RequestException(400, {
+        message: req.i18n('No transition specified.'),
+      });
     },
   },
   {
