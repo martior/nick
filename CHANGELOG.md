@@ -191,6 +191,7 @@
 
 ### Bugfix
 
+- Answer `@history` requests with a version that is not a number with 404 and a revert without a valid version with 400 instead of 500 @martior
 - Change behavior to snake case @robgietema
 - Remove authentication header from breadcrumbs call in docs @robgietema
 - Read config file from working directory @robgietema

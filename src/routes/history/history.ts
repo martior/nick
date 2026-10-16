@@ -52,6 +52,17 @@ export default [
     client: 'revertHistory',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // Check the version, a non-negative integer (or a string of one)
+      const versionNumber = req.body?.version;
+      if (!(
+        (Number.isInteger(versionNumber) && versionNumber >= 0) ||
+        (typeof versionNumber === 'string' && /^[0-9]+$/.test(versionNumber))
+      )) {
+        throw new RequestException(400, {
+          message: req.i18n('The version is missing or invalid.'),
+        });
+      }
+
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
 
@@ -72,7 +83,7 @@ export default [
       const version = await Version.fetchOne(
         {
           document: req.document.uuid,
-          version: req.body.version,
+          version: parseInt(versionNumber, 10),
         },
         {},
         trx,
@@ -112,7 +123,7 @@ export default [
       // Create new version
       const json = omit(version.json, ['changeNote']);
       const modified = dayjs.utc().format();
-      const versionNumber = req.document.version + 1;
+      const newVersion = req.document.version + 1;
       await req.document.createRelated(
         '_versions',
         {
@@ -120,7 +131,7 @@ export default [
           id: newId,
           created: modified,
           actor: req.user.id,
-          version: versionNumber,
+          version: newVersion,
           json: {
             ...json,
             changeNote: `Reverted to revision ${version.version}`,
@@ -140,7 +151,7 @@ export default [
         {
           id: newId,
           path: newPath,
-          version: versionNumber,
+          version: newVersion,
           modified,
           json,
           lock: {

@@ -244,6 +244,12 @@ export default [
     client: 'getHistoryVersion',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // A version is a non-negative integer, there is no other version
+      if (!/^[0-9]+$/.test(req.params.version)) {
+        throw new RequestException(404, {
+          message: req.i18n('Version not found.'),
+        });
+      }
       await req.document.fetchChildren({}, trx);
       const version = parseInt(req.params.version, 10);
       await req.document.fetchVersion(version, trx);
