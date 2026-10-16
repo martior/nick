@@ -450,6 +450,17 @@ class Jobs {
   ): Promise<any> {
     const params = job.params || {};
 
+    // Run a data migration in batches
+    if (params.data_migration) {
+      const { runDataMigration } = await import('../batches/batches');
+      return {
+        result: await runDataMigration(
+          params.data_migration,
+          running.controller.signal,
+        ),
+      };
+    }
+
     // Run a registered action
     if (params.action) {
       const { default: scheduledJobs } = await import('../../scheduled_jobs');
