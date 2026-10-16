@@ -1256,8 +1256,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Bu öğe üzerinde sahip olunan haklara ilişkin bilgiler."
 
 #. Default: "Internal server error"
-#: src/app.ts:264
-#: src/app.ts:276
+#: src/app.ts:265
+#: src/app.ts:285
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Dahili sunucu hatası"
@@ -2756,6 +2756,12 @@ msgctxt "Routes|Groups"
 msgid "The group name you entered already exists."
 msgstr ""
 
+#. Default: "The id is already in use in this folder."
+#: src/app.ts:273
+msgctxt "App"
+msgid "The id is already in use in this folder."
+msgstr ""
+
 #. Default: "The id “{id}” is invalid - it is already in use."
 #: src/routes/content/content.ts:805
 msgctxt "Routes|Content"
@@ -2842,7 +2848,7 @@ msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "Yerel SMTP (giden e-posta) sunucunuzun bağlantı noktası. Genellikle '25' olur."
 
 #. Default: "The request body is not valid JSON."
-#: src/app.ts:294
+#: src/app.ts:303
 msgctxt "App"
 msgid "The request body is not valid JSON."
 msgstr ""
@@ -3029,8 +3035,8 @@ msgstr "Bugün"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:168
-#: src/app.ts:185
+#: src/app.ts:169
+#: src/app.ts:186
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "İşlem hatası."
