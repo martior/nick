@@ -1090,8 +1090,8 @@ msgid "Internal server error"
 msgstr "आंतरिक सर्वर त्रुटि"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "अमान्य क्रेडेंशियल"
@@ -1104,7 +1104,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "अमान्य सत्र"
@@ -1228,7 +1228,7 @@ msgid "Login"
 msgstr "लॉगिन"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "लॉगिन और पासवर्ड बॉडी में प्रदान किया जाना चाहिए।"
@@ -1307,7 +1307,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "लापता क्रेडेंशियल"
@@ -2537,7 +2537,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "उपयोगकर्ता मौजूद नहीं है या अमान्य क्रेडेंशियल है।"
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "उपयोगकर्ता लॉग इन नहीं है।"
@@ -2714,8 +2714,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "गलत लॉगिन और/या पासवर्ड।"

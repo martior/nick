@@ -239,6 +239,7 @@
 - Keep the lock when locked content is saved with the lock token @martior
 - Return 403 "Resource is locked." when locked content is saved without the lock token @martior
 - Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
+- Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
 
 ### Internal
 

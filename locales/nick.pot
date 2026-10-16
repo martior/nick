@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T00:46:32.690Z\n"
+"POT-Creation-Date: 2026-10-16T00:47:52.387Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1087,8 +1087,8 @@ msgid "Internal server error"
 msgstr ""
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr ""
@@ -1101,7 +1101,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr ""
@@ -1225,7 +1225,7 @@ msgid "Login"
 msgstr ""
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr ""
@@ -1304,7 +1304,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr ""
@@ -2534,7 +2534,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr ""
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr ""
@@ -2711,8 +2711,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr ""

@@ -1090,8 +1090,8 @@ msgid "Internal server error"
 msgstr "অভ্যন্তরীণ সার্ভার ত্রুটি"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "অবৈধ পরিচয়পত্র"
@@ -1104,7 +1104,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "অবৈধ সেশন"
@@ -1228,7 +1228,7 @@ msgid "Login"
 msgstr "লগইন"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "লগইন ও পাসওয়ার্ড বডিতে প্রদান করতে হবে।"
@@ -1307,7 +1307,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "পরিচয়পত্র অনুপস্থিত"
@@ -2537,7 +2537,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "ব্যবহারকারীর অস্তিত্ব নেই বা অবৈধ পরিচয়পত্র।"
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "ব্যবহারকারী লগইন করেননি।"
@@ -2714,8 +2714,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "ভুল লগইন এবং/অথবা পাসওয়ার্ড।"

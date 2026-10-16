@@ -1090,8 +1090,8 @@ msgid "Internal server error"
 msgstr "Gwall mewnol y gweinydd"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Manylion dilysu annilys"
@@ -1104,7 +1104,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Sesiwn annilys"
@@ -1228,7 +1228,7 @@ msgid "Login"
 msgstr "Mewngofnodi"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "Rhaid darparu mewngofnod a chyfrinair yn y corff."
@@ -1307,7 +1307,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Manylion dilysu ar goll"
@@ -2537,7 +2537,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "Nid yw'r defnyddiwr yn bodoli neu mae'r manylion dilysu'n annilys."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "Nid yw'r defnyddiwr wedi mewngofnodi."
@@ -2714,8 +2714,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Mewngofnod a/neu gyfrinair anghywir."
