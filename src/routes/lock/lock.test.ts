@@ -159,4 +159,10 @@ describe('Locking', () => {
     await testRequest(app, 'locking/post');
     return testRequest(app, 'locking/update');
   });
+
+  it('should keep the lock after an update with the lock token', async () => {
+    await testRequest(app, 'locking/post');
+    await testRequest(app, 'locking/update');
+    expect((await getLock()).locked).toBe(true);
+  });
 });

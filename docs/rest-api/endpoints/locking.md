@@ -153,3 +153,5 @@ Or use the client directly:
 ```ts
 {% include_relative examples/locking/update.ts %}
 ```
+
+The object stays locked after the update, so the client can keep editing with the same token. Send a `DELETE` request to the `@lock` endpoint to unlock it when done.

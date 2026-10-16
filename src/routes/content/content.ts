@@ -889,10 +889,6 @@ export default [
           version,
           modified,
           json,
-          lock: {
-            locked: false,
-            stealable: true,
-          },
         },
         trx,
       );
