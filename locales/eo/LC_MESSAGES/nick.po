@@ -240,7 +240,7 @@ msgid "An error occurred while creating the user."
 msgstr ""
 
 #. Default: "An item can’t be moved into itself."
-#: src/routes/content/content.ts:160
+#: src/routes/content/content.ts:161
 msgctxt "Routes|Content"
 msgid "An item can’t be moved into itself."
 msgstr ""
@@ -444,7 +444,7 @@ msgid "Change Note"
 msgstr "Ŝanĝonoto"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:995
+#: src/routes/content/content.ts:996
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -764,7 +764,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:1039
+#: src/routes/content/content.ts:1040
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokumento ŝlosita"
@@ -1146,7 +1146,7 @@ msgid "Internal server error"
 msgstr "Interna servileraro"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:742
+#: src/routes/content/content.ts:743
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1157,6 +1157,12 @@ msgstr ""
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Nevalidaj akreditaĵoj"
+
+#. Default: "Invalid date for {field}."
+#: src/routes/workflow/workflow.ts:79
+msgctxt "Routes|Workflow"
+msgid "Invalid date for {field}."
+msgstr ""
 
 #. Default: "Invalid depth."
 #: src/routes/navigation/navigation.ts:79
@@ -1502,6 +1508,12 @@ msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
 
+#. Default: "No transition specified."
+#: src/routes/workflow/workflow.ts:175
+msgctxt "Routes|Workflow"
+msgid "No transition specified."
+msgstr ""
+
 #. Default: "None"
 #: src/scheduled_jobs/actions/reindex.ts:24
 #: src/content_rules/conditions/workflow_state.ts:18
@@ -1773,7 +1785,7 @@ msgid "Prompts"
 msgstr "Instigaj tekstoj"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:726
+#: src/routes/content/content.ts:727
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -1935,7 +1947,7 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:756
+#: src/routes/content/content.ts:757
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
@@ -2401,14 +2413,14 @@ msgid "The following link takes you to a page where you can reset your password:
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:784
+#: src/routes/content/content.ts:785
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:773
-#: src/routes/content/content.ts:1057
+#: src/routes/content/content.ts:774
+#: src/routes/content/content.ts:1058
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2540,13 +2552,13 @@ msgid "The user viewing the querystring results"
 msgstr "La uzanto rigardanta la serĉrezultojn"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:819
+#: src/routes/content/content.ts:820
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:814
+#: src/routes/content/content.ts:815
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -2662,13 +2674,13 @@ msgid "Transition workflow state"
 msgstr ""
 
 #. Default: "Transition {transition} is not available for {path}."
-#: src/routes/workflow/workflow.ts:43
+#: src/routes/workflow/workflow.ts:44
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:87
+#: src/routes/workflow/workflow.ts:99
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -2934,7 +2946,7 @@ msgid "Yes"
 msgstr "Jes"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:96
+#: src/routes/workflow/workflow.ts:108
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Vi ne estas rajtigita aliri ĉi tiun rimedon."
@@ -2948,14 +2960,14 @@ msgstr "Vi ne estas rajtigita aliri ĉi tiun rimedon."
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:147
+#: src/routes/content/content.ts:148
 #: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Recyclebin"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:805
+#: src/routes/content/content.ts:806
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -2986,7 +2998,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:1036
+#: src/routes/content/content.ts:1037
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Vi ne rajtas konservi ĉi tiun dokumenton ĉar ĝi estas ŝlosita de alia uzanto."
