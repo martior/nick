@@ -1488,10 +1488,11 @@ msgid "Name of a person to contact about this event."
 msgstr ""
 
 #. Default: "Navigation"
+#: src/routes/contextnavigation/contextnavigation.ts:216
 #: src/profiles/core/controlpanels/navigation.json:3
-msgctxt "Profiles|Core|Controlpanels|Navigation"
+msgctxt "Routes|Contextnavigation"
 msgid "Navigation"
-msgstr "Navigacija"
+msgstr ""
 
 #. Default: "Navigation path"
 #: src/profiles/core/catalog.json:20

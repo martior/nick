@@ -13,6 +13,7 @@
 - A @sharing entry is the complete set of the principal's delegatable local roles, like in Plone: roles not named in the entry are revoked. Clients that sent only the changed roles must send all roles @martior
 - The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1015) @martior
 - A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
+- @contextnavigation has the shape and the tree of plone.restapi's: an envelope with `available`, `has_custom_name`, `title` and `url`, items with `href`, `type`, `normalized_id`, `is_current`, `is_in_path` and `is_folderish` instead of catalog metadata, and the `topLevel`, `currentFolderOnly` and `name` parameters @martior
 
 ### Feature
 
