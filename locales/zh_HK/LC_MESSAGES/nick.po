@@ -240,7 +240,7 @@ msgid "An error occurred while creating the user."
 msgstr ""
 
 #. Default: "An item can’t be moved into itself."
-#: src/routes/content/content.ts:150
+#: src/routes/content/content.ts:155
 msgctxt "Routes|Content"
 msgid "An item can’t be moved into itself."
 msgstr ""
@@ -798,8 +798,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:898
-#: src/routes/content/content.ts:1035
+#: src/routes/content/content.ts:903
+#: src/routes/content/content.ts:1040
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "文件已鎖定"
@@ -1231,8 +1231,8 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:160
-#: src/routes/search/search.ts:307
+#: src/routes/search/search.ts:178
+#: src/routes/search/search.ts:325
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1630,7 +1630,7 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:155
+#: src/routes/search/search.ts:173
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
@@ -1711,7 +1711,7 @@ msgid "Not found."
 msgstr "找不到。"
 
 #. Default: "Not found: {url}"
-#: src/helpers/handler/handler.ts:79
+#: src/helpers/handler/handler.ts:75
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
 msgstr ""
@@ -1729,7 +1729,7 @@ msgid "November"
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1032
+#: src/routes/content/content.ts:1037
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2110,13 +2110,13 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:700
+#: src/routes/content/content.ts:705
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "必填欄位缺失。"
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:897
+#: src/routes/content/content.ts:902
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2907,13 +2907,13 @@ msgid "Type Name"
 msgstr "類型名稱"
 
 #. Default: "Type of the current document is not found."
-#: src/helpers/handler/handler.ts:98
+#: src/helpers/handler/handler.ts:94
 msgctxt "Helpers|Handler"
 msgid "Type of the current document is not found."
 msgstr "找不到目前文件的類型。"
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:689
+#: src/routes/content/content.ts:694
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -3206,14 +3206,14 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:131
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
-#: src/routes/content/content.ts:137
-#: src/helpers/handler/handler.ts:121
+#: src/routes/content/content.ts:142
+#: src/helpers/handler/handler.ts:119
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:716
+#: src/routes/content/content.ts:721
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
