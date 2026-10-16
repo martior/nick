@@ -40,6 +40,7 @@ import {
   bytesToNumber,
   isValidId,
   mapAsync,
+  pasteId,
   uniqueId,
 } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -104,7 +105,7 @@ export default [
 
           // Calculate new id and path
           const path = req.document.path;
-          const newId = uniqueId(document.id, childIds);
+          const newId = pasteId(document.id, childIds);
           const newPath = `${path}${path === '/' ? '' : '/'}${newId}`;
 
           // Add new id to list of taken ids
@@ -187,7 +188,7 @@ export default [
 
         // Calculate new id and path
         const path = req.document.path;
-        const newId = uniqueId(document.id, childIds);
+        const newId = pasteId(document.id, childIds);
         const newPath = `${path}${path === '/' ? '' : '/'}${newId}`;
 
         // Add new id to list of taken ids

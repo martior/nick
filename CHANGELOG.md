@@ -316,6 +316,7 @@
 - Accept the uuid of new content as `UID` like plone.restapi, and answer an invalid or used uuid with a 400 instead of a 500 @martior
 - Add the `parent` summary to content (also to `fullobjects` items), the `Location` header on create and `Prefer: return=representation` on update, like plone.restapi; folder items always have a `description` @martior
 - Support `subset_ids` and `sort` when ordering content, ignore an unknown `obj_id` instead of moving another item, keep a negative delta in range, and apply other fields sent with the ordering in the same PATCH @martior
+- Name copies and moved items whose id is taken `copy_of_<id>` like Plone instead of `<id>-1` @martior
 
 ### Internal
 

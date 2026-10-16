@@ -11,6 +11,8 @@ import {
   mapAsync,
   mapSync,
   uniqueId,
+  isValidId,
+  pasteId,
   removeUndefined,
   arrayToVocabulary,
   objectToVocabulary,
@@ -133,6 +135,32 @@ describe('utils', () => {
 
     it('returns value for unknown unit', () => {
       expect(bytesToNumber('5 xb')).toBe(5);
+    });
+  });
+
+  describe('isValidId', () => {
+    it('accepts ids Zope accepts', () => {
+      ['news', 'has space', 'UPPER.case~ok', 'index_html', '@search'].forEach(
+        (id) => expect(isValidId(id)).toBe(true),
+      );
+    });
+
+    it('refuses ids Zope refuses', () => {
+      ['', 'a/b', '_a', '.', '..', 'aq_parent', 'a__', 'ü', 12].forEach((id) =>
+        expect(isValidId(id)).toBe(false),
+      );
+    });
+  });
+
+  describe('pasteId', () => {
+    it('keeps a free id', () => {
+      expect(pasteId('src', ['other'])).toBe('src');
+    });
+
+    it('prefixes the id like Zope', () => {
+      expect(pasteId('src', ['src'])).toBe('copy_of_src');
+      expect(pasteId('src', ['src', 'copy_of_src'])).toBe('copy2_of_src');
+      expect(pasteId('copy_of_src', ['copy_of_src'])).toBe('copy2_of_src');
     });
   });
 });
