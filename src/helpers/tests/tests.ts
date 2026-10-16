@@ -10,8 +10,14 @@ import type { AllMethods } from 'supertest/types';
 import { indexOf, isEmpty } from 'es-toolkit/compat';
 import { Application } from 'express';
 import fs from 'fs';
+import { createHmac } from 'node:crypto';
 import request, { Response } from 'supertest';
 import { expect } from 'vitest';
+
+// Internal imports
+import { addToken } from '../auth/auth';
+import config from '../config/config';
+import models from '../../models';
 
 interface FileData {
   request: string;
@@ -132,4 +138,40 @@ export function testRequest(app: Application, filename: string): request.Test {
   } else {
     return result.expect(status);
   }
+}
+
+/**
+ * Create a user with global roles and return a valid token for the user
+ * @method createUser
+ * @param {string} id Id of the user.
+ * @param {string[]} roles Global roles of the user.
+ * @returns {Promise<string>} Token of the user.
+ */
+export async function createUser(
+  id: string,
+  roles: string[] = [],
+): Promise<string> {
+  const User = models.get('User');
+  const user = await User.create(
+    { id, fullname: id, password: 'secret', email: `${id}@example.com` },
+    {},
+    global.txn!,
+  );
+  await Promise.all(
+    roles.map((role) => user.$relatedQuery('_roles', global.txn!).relate(role)),
+  );
+
+  // Sign a token, jwt.sign is mocked in the tests
+  const encode = (data: any) =>
+    Buffer.from(JSON.stringify(data)).toString('base64url');
+  const content = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({
+    sub: id,
+    fullname: id,
+    iat: 1649312449,
+  })}`;
+  const token = `${content}.${createHmac('sha256', config.settings.secret)
+    .update(content)
+    .digest('base64url')}`;
+  await addToken(user, token, global.txn!);
+  return token;
 }
