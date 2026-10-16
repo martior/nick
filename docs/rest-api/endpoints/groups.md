@@ -39,7 +39,7 @@ Or use the client directly:
 {% include_relative examples/groups/list_query.ts %}
 ```
 
-The server will respond with a list the filtered groups in the portal with groupname starts with the query.
+The server will respond with the groups whose groupname contains the query, ignoring case. At most `limit` groups are returned, 25 by default.
 
 ```http
 {% include_relative examples/groups/list_query.res %}
