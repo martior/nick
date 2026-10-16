@@ -4,11 +4,17 @@
  * to every role. The reference answers were captured from Plone 6.2 over
  * HTTP (GET @workflow per role) by the restapi-suite's
  * tests/test_workflow_matrix.py.
+ *
+ * The definitions are part of Products.CMFPlone and plone.app.discussion
+ * (GPL-2.0) and are not included in Nick: set `PLONE_WORKFLOWS_DIR` to
+ * their `profiles/default/workflows` directories (separated by `:`) to run
+ * these tests, see docs/developer-guide/workflows.md.
  * @module helpers/dcworkflow/conformance.test
  */
 
 // External imports
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
+import { delimiter } from 'path';
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
@@ -21,10 +27,49 @@ import page from '../../profiles/core/types/page.json';
 import { importWorkflows } from '../../seeds/workflow/workflow';
 import { convertDefinition } from './dcworkflow';
 
-const fixtures = `${import.meta.dirname}/fixtures`;
 const reference = JSON.parse(
-  readFileSync(`${fixtures}/workflow_matrix_plone62.json`, 'utf8'),
+  readFileSync(
+    `${import.meta.dirname}/fixtures/workflow_matrix_plone62.json`,
+    'utf8',
+  ),
 );
+
+// Directories with the Plone workflow definitions (`<id>/definition.xml`)
+const directories = (process.env.PLONE_WORKFLOWS_DIR || '')
+  .split(delimiter)
+  .filter((directory) => directory !== '');
+
+/**
+ * Find the definition.xml of a Plone workflow in `PLONE_WORKFLOWS_DIR`.
+ * @method findDefinition
+ * @param {string} workflow Id of the workflow.
+ * @returns {string | undefined} Path of the definition, if found.
+ */
+function findDefinition(workflow: string): string | undefined {
+  return directories
+    .map((directory) => `${directory}/${workflow}/definition.xml`)
+    .find((path) => existsSync(path));
+}
+
+/**
+ * Read the definition.xml of a Plone workflow, skip the test without it.
+ * @method readDefinition
+ * @param {string} workflow Id of the workflow.
+ * @param {Object} context Test context.
+ * @returns {string} Definition.
+ */
+function readDefinition(
+  workflow: string,
+  context: { skip: (note?: string) => never },
+): string {
+  const path = findDefinition(workflow);
+  if (!path) {
+    context.skip(
+      `${workflow}/definition.xml is not in PLONE_WORKFLOWS_DIR (${directories.join(delimiter)})`,
+    );
+  }
+  return readFileSync(path!, 'utf8');
+}
 
 // Roles of the matrix: how the user of each role is set up in Nick
 const roles: Record<string, { global?: string[]; local?: string }> = {
@@ -50,20 +95,19 @@ interface Cell {
  * transitions offered by GET @workflow (none without View).
  * @method computeMatrix
  * @param {string} workflow Id of the workflow.
+ * @param {string} xml Definition of the workflow.
  * @returns {Promise<Object>} Transitions by state and role.
  */
 async function computeMatrix(
   workflow: string,
+  xml: string,
 ): Promise<Record<string, Record<string, Cell>>> {
   const Document = models.get('Document');
   const Type = models.get('Type');
   const id = `wfmatrix_${workflow}`;
 
   // Load the definition and bind it to a type
-  const { workflow: definition } = convertDefinition(
-    readFileSync(`${fixtures}/workflows/${workflow}/definition.xml`, 'utf8'),
-    id,
-  );
+  const { workflow: definition } = convertDefinition(xml, id);
   await importWorkflows(global.txn!, [definition], true);
   const type = stripI18n(page);
   const typeModel = await Type.create(
@@ -182,34 +226,52 @@ function compare(
 describe('Workflow conformance', () => {
   const generated: string[] = reference.generated?.workflows || [];
 
-  it.each(
-    Object.keys(reference.workflows).filter((id) => !generated.includes(id)),
-  )('offers the transitions of Plone 6.2 in %s', async (workflow: string) => {
-    const { cells, diffs } = compare(workflow, await computeMatrix(workflow));
-    expect(cells).toBeGreaterThan(0);
-    expect(diffs).toEqual([]);
-  });
+  // Without the definitions the tests are skipped, this entry says why
+  if (directories.length === 0) {
+    it.skip('needs PLONE_WORKFLOWS_DIR: the workflows directories of Products.CMFPlone and plone.app.discussion (see docs/developer-guide/workflows.md)', () => {});
+  }
 
-  // Generated from DCWorkflow semantics (not installed on the reference
-  // site). Their items acquire View from the parent in some states, Nick
-  // acquires from the global role permissions, so only the other states
-  // are compared.
-  it.each(generated)(
-    'offers the transitions of DCWorkflow in %s where View is not acquired',
-    async (workflow: string) => {
-      const { workflow: definition } = convertDefinition(
-        readFileSync(
-          `${fixtures}/workflows/${workflow}/definition.xml`,
-          'utf8',
+  describe.skipIf(directories.length === 0)(
+    'with the Plone definitions',
+    () => {
+      it.for(
+        Object.keys(reference.workflows).filter(
+          (id) => !generated.includes(id),
         ),
+      )(
+        'offers the transitions of Plone 6.2 in %s',
+        async (workflow: string, context) => {
+          const xml = readDefinition(workflow, context);
+          const { cells, diffs } = compare(
+            workflow,
+            await computeMatrix(workflow, xml),
+          );
+          expect(cells).toBeGreaterThan(0);
+          expect(diffs).toEqual([]);
+        },
       );
-      const acquired = Object.keys(definition.json.states).filter((state) =>
-        (definition.json.states[state].acquire || []).includes('View'),
+
+      // Generated from DCWorkflow semantics (not installed on the reference
+      // site). Their items acquire View from the parent in some states, Nick
+      // acquires from the global role permissions, so only the other states
+      // are compared.
+      it.for(generated)(
+        'offers the transitions of DCWorkflow in %s where View is not acquired',
+        async (workflow: string, context) => {
+          const xml = readDefinition(workflow, context);
+          const { workflow: definition } = convertDefinition(xml);
+          const acquired = Object.keys(definition.json.states).filter((state) =>
+            (definition.json.states[state].acquire || []).includes('View'),
+          );
+          const { diffs } = compare(
+            workflow,
+            await computeMatrix(workflow, xml),
+          );
+          expect(
+            diffs.filter((diff) => !acquired.includes(diff.split('/')[0])),
+          ).toEqual([]);
+        },
       );
-      const { diffs } = compare(workflow, await computeMatrix(workflow));
-      expect(
-        diffs.filter((diff) => !acquired.includes(diff.split('/')[0])),
-      ).toEqual([]);
     },
   );
 });
