@@ -35,13 +35,15 @@ Each item in the `workflows` array has:
 
 ### The `json` object
 
-| Field                 | Type     | Description                                                                                                    |
-| --------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
-| `initial_state`       | `string` | The state ID that content starts in when first created.                                                        |
-| `states`              | `object` | A map of state IDs to their definitions.                                                                       |
-| `transitions`         | `object` | A map of transition IDs to their definitions.                                                                  |
-| `permission_model`    | `string` | `additive` or `acquire`, see [Permission models](#permission-models).                                          |
-| `managed_permissions` | `array`  | Permissions managed by the workflow with the `acquire` model. Defaults to every permission used in the states. |
+| Field                 | Type      | Description                                                                                                    |
+| --------------------- | --------- | -------------------------------------------------------------------------------------------------------------- |
+| `initial_state`       | `string`  | The state ID that content starts in when first created.                                                        |
+| `states`              | `object`  | A map of state IDs to their definitions.                                                                       |
+| `transitions`         | `object`  | A map of transition IDs to their definitions.                                                                  |
+| `permission_model`    | `string`  | `additive` or `acquire`, see [Permission models](#permission-models).                                          |
+| `managed_permissions` | `array`   | Permissions managed by the workflow with the `acquire` model. Defaults to every permission used in the states. |
+| `variables`           | `object`  | Workflow variables by id, see [Variables](#variables).                                                         |
+| `manager_bypass`      | `boolean` | Administrators pass every guard.                                                                               |
 
 #### State definition
 
@@ -52,6 +54,7 @@ Each item in the `workflows` array has:
 | `transitions`      | `array`  | Transition IDs available from this state.                                                         |
 | `permissions`      | `object` | A map of role IDs to arrays of permission IDs granted in this state.                              |
 | `acquire`          | `array`  | Managed permissions that also keep their global role grants in this state (`acquire` model only). |
+| `variables`        | `object` | Values of workflow variables set when the state is entered.                                       |
 
 #### Transition definition
 
@@ -63,6 +66,7 @@ Each item in the `workflows` array has:
 | `guard`      | `object`  | Who may take the transition, see [Guards](#guards).                                                          |
 | `trigger`    | `string`  | `user` (default) or `automatic`. Automatic transitions are not offered in `@workflow`.                       |
 | `hidden`     | `boolean` | Not offered in `@workflow` (a DCWorkflow transition without an action), it can still be posted.              |
+| `variables`  | `object`  | Expressions setting workflow variables, by variable id.                                                      |
 
 The workflow json can also set `manager_bypass: true`: users with the `Administrator` role then pass every guard, like DCWorkflow's "Manager role bypasses guards".
 
@@ -91,6 +95,35 @@ A guard decides if a user may take a transition, like a DCWorkflow guard. Every 
 ```
 
 `GET @workflow` offers the exit transitions of the current state whose guard passes, `POST @workflow/<transition>` answers `401 Unauthorized` when the guard doesn't.
+
+## Variables
+
+Workflow variables work like DCWorkflow's. A variable with `for_status` is computed on every transition (and on creation) and stored with the history entry and in the workflow status of the document (`document_workflow_status`): the value the new state sets, else the expression the transition sets, else the former value (unless `update_always`), else `default_expr`, else `default_value`.
+
+| Field           | Type      | Description                                                                           |
+| --------------- | --------- | ------------------------------------------------------------------------------------- |
+| `description`   | `string`  | Description.                                                                          |
+| `default_value` | `any`     | Value when nothing else sets it.                                                      |
+| `default_expr`  | `string`  | [Expression](#expressions) for the value when nothing else sets it.                   |
+| `for_status`    | `boolean` | Stored with every transition.                                                         |
+| `update_always` | `boolean` | Computed again on every transition instead of keeping the former value.               |
+| `info_guard`    | `object`  | [Guard](#guards) for reading the variable (`getInfoFor`, the history of `@workflow`). |
+| `for_catalog`   | `boolean` | Kept from DCWorkflow definitions; Nick doesn't index variables yet.                   |
+
+```json
+"variables": {
+  "reviewed_by": { "for_status": true, "default_value": "" },
+  "review_history": {
+    "default_expr": "state_change/getHistory",
+    "info_guard": { "permissions": ["Submit", "Review"] }
+  }
+},
+"transitions": {
+  "publish": { "title": "Publish", "new_state": "published", "variables": { "reviewed_by": "user/getId" } }
+}
+```
+
+`action`, `actor`, `comments`, `time` and `review_state` are always in a history entry. Other variables are added to the entries of the `history` of `@workflow`. When the workflow defines `review_history` with an `info_guard`, users who don't pass it get an empty `history`, like in Plone (the standard Plone workflows require `Request review` or `Review portal content`). Expressions read variables with `here.portal_workflow.getInfoFor(here, 'reviewed_by', '')`.
 
 ## Expressions
 
@@ -165,7 +198,7 @@ src/profiles/default/
 | `guard-permission`, `guard-role`, `guard-group`, `guard-expression` | the transition's `guard`                                                                                                                         |
 | `manager_bypass="True"`                                             | `manager_bypass`                                                                                                                                 |
 
-Scripts, group maps and permissions without a Nick equivalent are not converted; the loader prints a warning for each. Unsupported guard expressions are kept with `"unsupported": "<reason>"` and deny.
+Variables (`variable`, `assignment` of states and transitions) are converted too. Scripts, group maps and permissions without a Nick equivalent are not converted; the loader prints a warning for each. Unsupported guard expressions are kept with `"unsupported": "<reason>"` and deny.
 
 ### Conformance
 

@@ -196,12 +196,82 @@ function convertGuard(
 }
 
 /**
+ * Convert a typed value of a DCWorkflow variable or state assignment.
+ * @method convertValue
+ * @param {string} value Value.
+ * @param {string} type Type (`string`, `int`, `float`, `bool`, ...).
+ * @returns {any} Value.
+ */
+function convertValue(value: string, type?: string): any {
+  switch (type) {
+    case 'int':
+    case 'long':
+      return parseInt(value, 10);
+    case 'float':
+      return parseFloat(value);
+    case 'bool':
+      return ['true', '1', 'yes'].includes(value.trim().toLowerCase());
+    case 'none':
+      return null;
+    default:
+      return value;
+  }
+}
+
+/**
+ * Convert the variables of a DCWorkflow definition.
+ * @method convertVariables
+ * @param {XmlElement} definition Definition.
+ * @param {string} workflowId Id of the workflow.
+ * @param {string[]} warnings Warnings, added to.
+ * @returns {Object} Variables by id.
+ */
+function convertVariables(
+  definition: XmlElement,
+  workflowId: string,
+  warnings: string[],
+): Record<string, any> {
+  const variables: Record<string, any> = {};
+  children(definition, 'variable').map((element) => {
+    const id = element.attributes.variable_id;
+    const fallback = children(element, 'default')[0];
+    const value = children(fallback, 'value')[0];
+    const expr = childText(fallback, 'expression');
+    const infoGuard = convertGuard(
+      element,
+      `${workflowId}, variable ${id}`,
+      warnings,
+    );
+    const reason = expr ? checkExpression(expr) : undefined;
+    if (reason) {
+      warnings.push(
+        `${workflowId}, variable ${id}: unsupported expression "${expr}" (${reason}), it is null`,
+      );
+    }
+    variables[id] = {
+      description: childText(element, 'description'),
+      ...(value && value.text.trim() !== ''
+        ? { default_value: convertValue(value.text, value.attributes.type) }
+        : {}),
+      ...(expr ? { default_expr: expr } : {}),
+      for_catalog: element.attributes.for_catalog === 'True',
+      for_status: element.attributes.for_status === 'True',
+      update_always: element.attributes.update_always === 'True',
+      ...(infoGuard ? { info_guard: infoGuard } : {}),
+      ...(reason ? { unsupported: reason } : {}),
+    };
+  });
+  return variables;
+}
+
+/**
  * Convert a DCWorkflow definition (GenericSetup `definition.xml`). The
  * permission maps of the states become Nick's role to permissions mapping
  * (only permissions with a Nick equivalent, see `permissionMapping`),
  * `acquired` permission maps the state's `acquire` list, and the guards of
- * the transitions Nick guards. Scripts and group maps are not converted,
- * they are listed in the warnings.
+ * the transitions Nick guards, the variables and their assignments Nick
+ * variables. Scripts and group maps are not converted, they are listed in
+ * the warnings.
  * @method convertDefinition
  * @param {string} xml Workflow definition.
  * @param {string} id Id of the workflow, defaults to the `workflow_id`.
@@ -276,6 +346,12 @@ export function convertDefinition(
         `${workflowId}, state ${stateId}: group maps (local roles of groups by state) are not converted`,
       );
     }
+    const assignments = Object.fromEntries(
+      children(state, 'assignment').map((assignment) => [
+        assignment.attributes.name,
+        convertValue(assignment.text, assignment.attributes.type),
+      ]),
+    );
     states[stateId] = {
       title: state.attributes.title || stateId,
       description: childText(state, 'description'),
@@ -284,6 +360,9 @@ export function convertDefinition(
       ),
       permissions,
       ...(acquire.length > 0 ? { acquire: [...new Set(acquire)] } : {}),
+      ...(Object.keys(assignments).length > 0
+        ? { variables: assignments }
+        : {}),
     };
   });
 
@@ -304,7 +383,27 @@ export function convertDefinition(
         );
       }
     });
+    // Unsupported expressions are left out, the variable gets its default
+    const assignments = Object.fromEntries(
+      children(transition, 'assignment')
+        .map((assignment) => [
+          assignment.attributes.name,
+          assignment.text.trim(),
+        ])
+        .filter(([name, expr]) => {
+          const reason = checkExpression(expr);
+          if (reason) {
+            warnings.push(
+              `${workflowId}, transition ${transitionId}: unsupported expression "${expr}" for ${name} (${reason}), not converted`,
+            );
+          }
+          return !reason;
+        }),
+    );
     transitions[transitionId] = {
+      ...(Object.keys(assignments).length > 0
+        ? { variables: assignments }
+        : {}),
       title: actionName || transition.attributes.title || transitionId,
       description: childText(transition, 'description'),
       new_state: transition.attributes.new_state || '',
@@ -342,6 +441,9 @@ export function convertDefinition(
               .map(mapPermission),
           ),
         ],
+        ...(children(definition, 'variable').length > 0
+          ? { variables: convertVariables(definition, workflowId, warnings) }
+          : {}),
         states,
         transitions,
       },

@@ -146,6 +146,138 @@ describe('Workflow', () => {
     expect(res.body.review_state).toBe('published');
   });
 
+  it('should keep the variables of a workflow', async () => {
+    const Workflow = models.get('Workflow');
+    const workflow = await Workflow.fetchById(
+      'simple_publication_workflow',
+      {},
+      global.txn!,
+    );
+    await workflow.update(
+      {
+        json: {
+          ...workflow.json,
+          variables: {
+            action: {
+              default_expr: 'transition/getId|nothing',
+              for_status: true,
+              update_always: true,
+            },
+            actor: {
+              default_expr: 'user/getId',
+              for_status: true,
+              update_always: true,
+            },
+            comments: {
+              default_expr: "python:state_change.kwargs.get('comment', '')",
+              for_status: true,
+              update_always: true,
+            },
+            time: {
+              default_expr: 'state_change/getDateTime',
+              for_status: true,
+              update_always: true,
+            },
+            review_history: {
+              default_expr: 'state_change/getHistory',
+              info_guard: { permissions: ['Submit', 'Review'] },
+            },
+            reviewed_by: { default_value: '', for_status: true },
+            submissions: { default_value: 0, for_status: true },
+            stage: { default_value: 'draft', for_status: true },
+          },
+          states: {
+            ...workflow.json.states,
+            published: {
+              ...workflow.json.states.published,
+              variables: { stage: 'live' },
+            },
+          },
+          transitions: {
+            ...workflow.json.transitions,
+            submit: {
+              ...workflow.json.transitions.submit,
+              variables: {
+                submissions:
+                  "python:here.portal_workflow.getInfoFor(here, 'submissions', 0) + 1",
+              },
+            },
+            publish: {
+              ...workflow.json.transitions.publish,
+              guard: {
+                permissions: ['Review'],
+                expr: "python:here.portal_workflow.getInfoFor(here, 'submissions') > 0",
+              },
+              variables: { reviewed_by: 'user/getId' },
+            },
+          },
+        },
+      },
+      global.txn!,
+    );
+    await testRequest(app, 'content/post');
+    const document = await fetch('/news/my-news-item');
+    expect(
+      (await document.fetchWorkflowStatus('simple_publication_workflow'))
+        .variables,
+    ).toEqual({
+      action: null,
+      actor: 'admin',
+      comments: '',
+      time: '2022-04-08T16:00:00.000Z',
+      reviewed_by: '',
+      submissions: 0,
+      stage: 'draft',
+    });
+
+    // The guard reads a variable, publish needs a submission first
+    expect((await transition('/news/my-news-item', 'publish')).status).toBe(
+      401,
+    );
+    await transition('/news/my-news-item', 'submit', { comment: 'Please' });
+    expect((await transition('/news/my-news-item', 'publish')).status).toBe(
+      200,
+    );
+    const status = await (
+      await fetch('/news/my-news-item')
+    ).fetchWorkflowStatus('simple_publication_workflow');
+    expect(status).toEqual({
+      state: 'published',
+      variables: {
+        action: 'publish',
+        actor: 'admin',
+        comments: '',
+        time: '2022-04-08T16:00:00.000Z',
+        reviewed_by: 'admin',
+        submissions: 1,
+        stage: 'live',
+      },
+    });
+
+    // The history has the variables, users without Submit or Review don't
+    // see it (the info guard of review_history)
+    const history = async (auth?: string) => {
+      const req = request(app)
+        .get('/news/my-news-item/@workflow')
+        .set('Accept', 'application/json');
+      return (await (auth ? req.set('Authorization', `Bearer ${auth}`) : req))
+        .body.history;
+    };
+    const entries = await history(token);
+    expect(entries.map((item: any) => item.action)).toEqual([
+      null,
+      'submit',
+      'publish',
+    ]);
+    expect(entries[1]).toMatchObject({
+      comments: 'Please',
+      submissions: 1,
+      stage: 'draft',
+    });
+    expect(entries[2]).toMatchObject({ reviewed_by: 'admin', stage: 'live' });
+    expect(await history()).toEqual([]);
+  });
+
   it('should refuse an unknown transition', async () => {
     const res = await transition('/news', 'no-such-transition');
     expect(res.status).toBe(400);

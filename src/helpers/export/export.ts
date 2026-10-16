@@ -396,7 +396,8 @@ export function getAcquiredState(workflow: any, parentState?: string): string {
  * Convert the workflow history of a document (the `history` of the
  * `@workflow` endpoint, oldest first) to Nick's workflow history. The
  * transition titles are taken from the workflow, the creation entry has no
- * action and the title `Create`.
+ * action and the title `Create`. Other workflow variables of the entries
+ * are kept.
  * @method convertWorkflowHistory
  * @param {Array} history Workflow history.
  * @param {Object} workflow Nick workflow of the document.
@@ -404,6 +405,16 @@ export function getAcquiredState(workflow: any, parentState?: string): string {
  */
 export function convertWorkflowHistory(history: any[], workflow?: any): any[] {
   return (history || []).map((entry) => ({
+    // Other workflow variables of the entry
+    ...omit(entry, [
+      'action',
+      'actor',
+      'comments',
+      'review_state',
+      'time',
+      'title',
+      'type',
+    ]),
     action: entry.action || null,
     actor: typeof entry.actor === 'object' ? entry.actor?.id : entry.actor,
     comments: entry.comments || '',
