@@ -92,6 +92,17 @@ export const seedCatalog = async (
             break;
         }
       });
+      // Better estimates for rare words and keywords, see the
+      // catalog_statistics migration
+      if (
+        ['text', 'string[]', 'uuid[]'].includes(index.type) &&
+        index.name !== 'allowedUsersGroupsRoles'
+      ) {
+        await trx.raw(
+          'ALTER TABLE catalog ALTER COLUMN ?? SET STATISTICS 1000',
+          [`_${index.name}`],
+        );
+      }
       // Prefix queries on paths need the pattern operator class
       if (index.type === 'path') {
         await trx.raw('CREATE INDEX ?? ON catalog (?? varchar_pattern_ops)', [

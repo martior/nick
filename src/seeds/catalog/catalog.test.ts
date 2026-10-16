@@ -12,6 +12,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import '../../app';
 import { seedCatalog } from './catalog';
 import * as catalogGin from '../../migrations/202610190900_catalog_gin';
+import * as catalogStatistics from '../../migrations/202610190920_catalog_statistics';
 
 /**
  * Get the definition of a catalog index.
@@ -79,5 +80,30 @@ describe('catalog gin migration', () => {
       [['news']],
     );
     expect(JSON.stringify(plan.rows)).toContain('catalog__subject_index');
+  });
+});
+
+describe('catalog statistics migration', () => {
+  /**
+   * Get the statistics target of a catalog column.
+   * @param {string} column Column name.
+   * @returns {Promise<number|null>} Statistics target, null for the default.
+   */
+  const target = async (column: string) =>
+    (
+      await global.txn!.raw(
+        `SELECT attstattarget FROM pg_attribute WHERE attrelid = 'catalog'::regclass AND attname = ?`,
+        [column],
+      )
+    ).rows[0].attstattarget;
+
+  it('should collect more statistics for text and keyword columns', async () => {
+    await catalogStatistics.down(global.txn!);
+    expect(await target('_SearchableText')).toBeNull();
+
+    await catalogStatistics.up(global.txn!);
+    expect(await target('_SearchableText')).toBe(1000);
+    expect(await target('_Subject')).toBe(1000);
+    expect(await target('_allowedUsersGroupsRoles')).toBeNull();
   });
 });

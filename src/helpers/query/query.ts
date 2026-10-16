@@ -404,8 +404,10 @@ export const querystringToQuery = async (
   const options: QueryOptions = {
     offset: 0,
     limit: 100,
+    // Without sort_on order by the primary key: the same order as by UID,
+    // but a limited query can walk the index instead of sorting all matches
     order: {
-      column: 'UID',
+      column: 'document',
       reverse: false,
     },
     select: undefined,
@@ -771,8 +773,10 @@ export const queryparamToQuery = async (
   const options: QueryOptions = {
     offset: 0,
     limit: 100,
+    // Without sort_on order by the primary key: the same order as by UID,
+    // but a limited query can walk the index instead of sorting all matches
     order: {
-      column: 'UID',
+      column: 'document',
       reverse: false,
     },
     select: undefined,
