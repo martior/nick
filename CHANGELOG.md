@@ -235,6 +235,7 @@
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
 - Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
+- Treat the token of a deleted user as anonymous instead of failing with a server error @martior
 
 ### Internal
 
