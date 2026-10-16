@@ -17,6 +17,15 @@ describe('Vocabularies', () => {
   it('should return a single vocabulary', () =>
     testRequest(app, 'vocabularies/get'));
 
+  it('should filter a vocabulary by title', () =>
+    testRequest(app, 'vocabularies/get_title'));
+
+  it('should filter a vocabulary by token', () =>
+    testRequest(app, 'vocabularies/get_token'));
+
+  it('should batch a vocabulary', () =>
+    testRequest(app, 'vocabularies/get_batched'));
+
   it('should return a actions vocabulary', () =>
     testRequest(app, 'vocabularies/get_actions'));
 
