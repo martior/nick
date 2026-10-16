@@ -59,9 +59,6 @@ importers:
       nodemailer:
         specifier: 9.0.5
         version: 9.0.5
-      nodemon:
-        specifier: 3.1.14
-        version: 3.1.14
       objection:
         specifier: 3.1.5
         version: 3.1.5(knex@3.3.0(pg@8.23.0)(supports-color@5.5.0))
@@ -150,6 +147,9 @@ importers:
       jiti:
         specifier: 2.7.0
         version: 2.7.0
+      nodemon:
+        specifier: 3.1.14
+        version: 3.1.14
       pofile:
         specifier: 1.1.4
         version: 1.1.4

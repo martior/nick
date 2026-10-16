@@ -174,6 +174,7 @@
 - Add the `nick` command with `--modules=migrate,api,worker` (default: all) to run the API, the job worker and migrations in one process or split over several; `migrate` runs the knex migrations, installs new profiles and runs profile upgrades under an advisory lock and exits non-zero on errors @martior
 - Read the port from the `PORT` environment variable @martior
 - Run every profile upgrade step in its own transaction and record it as the profile version, so a failed upgrade keeps the steps before it and resumes at the failed step @martior
+- Add a production Dockerfile: multi-stage, production dependencies only, non-root, `nick` as entrypoint and a health check on @health @martior
 
 ### Bugfix
 
@@ -395,6 +396,8 @@
 - Remove the unused `Document.fetchLocalUsersGroups` @martior
 - Add a `typecheck` script and run it in CI @martior
 - Check in CI that the previous version migrates and upgrades to the pushed version @martior
+- Move nodemon to the development dependencies @martior
+- Run the development docker-compose service from the node image @martior
 
 ### Documentation
 
