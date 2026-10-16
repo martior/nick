@@ -120,19 +120,19 @@ describe('seedWorkflow', () => {
     const Type = models.get('Type');
     const Workflow = models.get('Workflow');
     const path = mkdtempSync(`${tmpdir()}/nick-seed-`);
-    mkdirSync(`${path}/workflows/my_intranet_workflow`, { recursive: true });
+    mkdirSync(`${path}/workflows/my_team_workflow`, { recursive: true });
     writeFileSync(
-      `${path}/workflows/my_intranet_workflow/definition.xml`,
+      `${path}/workflows/my_team_workflow/definition.xml`,
       readFileSync(
-        `${import.meta.dirname}/../../helpers/dcworkflow/fixtures/workflows/intranet_workflow/definition.xml`,
+        `${import.meta.dirname}/../../helpers/dcworkflow/fixtures/workflows/team_space_workflow/definition.xml`,
       ),
     );
     writeFileSync(
       `${path}/workflows.xml`,
       `<object name="portal_workflow">
  <bindings>
-  <type type_id="Page"><bound-workflow workflow_id="my_intranet_workflow"/><bound-workflow workflow_id="simple_publication_workflow"/></type>
-  <type type_id="NoSuchType"><bound-workflow workflow_id="my_intranet_workflow"/></type>
+  <type type_id="Page"><bound-workflow workflow_id="my_team_workflow"/><bound-workflow workflow_id="simple_publication_workflow"/></type>
+  <type type_id="NoSuchType"><bound-workflow workflow_id="my_team_workflow"/></type>
  </bindings>
 </object>`,
     );
@@ -145,25 +145,28 @@ describe('seedWorkflow', () => {
 
     // The id is the name of the directory
     const workflow = await Workflow.fetchById(
-      'my_intranet_workflow',
+      'my_team_workflow',
       {},
       global.txn!,
     );
-    expect(workflow.title).toBe('Intranet/Extranet Workflow');
+    expect(workflow.title).toBe('Team Space');
     expect(Object.keys(workflow.json.states).sort()).toEqual([
-      'external',
-      'internal',
-      'internally_published',
-      'pending',
-      'private',
+      'closed',
+      'open',
+      'team',
     ]);
-    expect(workflow.json.transitions.submit.guard).toEqual({
+    expect(workflow.json.manager_bypass).toBe(true);
+    expect(workflow.json.transitions.share.guard).toEqual({
       permissions: ['Submit'],
     });
+    expect(workflow.json.transitions.open_up.guard).toEqual({
+      roles: ['Administrator'],
+      groups: ['Administrators'],
+    });
     const page = await Type.fetchById('Page', {}, global.txn!);
-    expect(page.workflow).toBe('my_intranet_workflow');
+    expect(page.workflow).toBe('my_team_workflow');
     expect(
       (await page.fetchChain(global.txn!)).map((item: any) => item.id),
-    ).toEqual(['my_intranet_workflow', 'simple_publication_workflow']);
+    ).toEqual(['my_team_workflow', 'simple_publication_workflow']);
   });
 });
