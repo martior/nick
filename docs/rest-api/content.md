@@ -61,7 +61,7 @@ An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()#
 
 ### Server managed fields
 
-The server sets the owner, the creation and modification dates, the workflow state and the workflow history of a new resource; values sent for them are ignored. A `uuid` can only be chosen by users with the `Manage Site` permission, other users get `403 Forbidden`.
+The server sets the owner, the creation and modification dates, the workflow state and the workflow history of a new resource; values sent for them are ignored. The uuid can be chosen as `UID` (like in plone.restapi) or `uuid`, with or without dashes, only by users with the `Manage Site` permission; other users get `403 Forbidden`. An invalid uuid or one which is already in use gives `400 Bad Request`.
 
 ## Reading a Resource with GET
 

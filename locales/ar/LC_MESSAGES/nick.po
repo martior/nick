@@ -758,7 +758,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:948
+#: src/routes/content/content.ts:965
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "تم قفل المستند"
@@ -2402,7 +2402,7 @@ msgstr ""
 
 #. Default: "The id “{id}” is invalid."
 #: src/routes/content/content.ts:733
-#: src/routes/content/content.ts:966
+#: src/routes/content/content.ts:983
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2532,6 +2532,18 @@ msgstr "موضوع هذا العنصر."
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr "المستخدم الذي يعرض نتائج الاستعلام"
+
+#. Default: "The uuid is already in use."
+#: src/routes/content/content.ts:779
+msgctxt "Routes|Content"
+msgid "The uuid is already in use."
+msgstr ""
+
+#. Default: "The uuid is invalid."
+#: src/routes/content/content.ts:774
+msgctxt "Routes|Content"
+msgid "The uuid is invalid."
+msgstr ""
 
 #. Default: "The workflow states to check for."
 #: src/content_rules/conditions/workflow_state.ts:31
@@ -2937,7 +2949,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:763
+#: src/routes/content/content.ts:765
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -2968,7 +2980,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:945
+#: src/routes/content/content.ts:962
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "ليس لديك صلاحية لحفظ هذا المستند لأنه مقفل بواسطة مستخدم آخر."

@@ -272,6 +272,20 @@ describe('Content', () => {
     expect(res.body.title).toBe('\u00e9 acute');
   });
 
+  it('should accept the uuid as UID', async () => {
+    const post = (UID: any) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ '@type': 'Page', title: 'With UID', UID });
+
+    const res = await post('0123456789abcdef0123456789abcdef').expect(201);
+    expect(res.body.UID).toBe('01234567-89ab-cdef-0123-456789abcdef');
+    await post('0123456789abcdef0123456789abcdef').expect(400);
+    await post('not-a-uuid').expect(400);
+  });
+
   it('should require the delete permission', async () => {
     const Document = models.get('Document');
     const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
