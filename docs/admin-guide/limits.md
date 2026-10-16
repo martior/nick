@@ -53,11 +53,12 @@ export const config = {
 };
 ```
 
-| Key          | Default | Environment Variable | Description                                      |
-| ------------ | ------- | -------------------- | ------------------------------------------------ |
-| `api`        | `100`   | `API_RATE_LIMIT`     | Max requests per 15-minute window on API routes  |
-| `auth`       | `5`     | `AUTH_RATE_LIMIT`    | Max requests per 15-minute window on auth routes |
-| `trustProxy` | `1`     | `TRUST_PROXY`        | Express trust proxy setting (number of hops)     |
+| Key          | Default  | Environment Variable | Description                                         |
+| ------------ | -------- | -------------------- | --------------------------------------------------- |
+| `api`        | `100`    | `API_RATE_LIMIT`     | Max requests per 15-minute window on API routes     |
+| `auth`       | `5`      | `AUTH_RATE_LIMIT`    | Max requests per 15-minute window on auth routes    |
+| `trustProxy` | `1`      | `TRUST_PROXY`        | Express trust proxy setting (number of hops)        |
+| `store`      | `memory` | `RATE_LIMIT_STORE`   | Where the counters are kept: `memory` or `postgres` |
 
 ### Where Rate Limits Apply
 
@@ -87,6 +88,10 @@ export const config = {
 | `/@scheduled-jobs/:id`          | GET    | Get scheduled job           |
 | `/@scheduled-jobs`              | GET    | List scheduled jobs         |
 | `/@recyclebin`                  | GET    | List recycle bin items      |
+
+### Several API processes
+
+With the default `memory` store, every process counts its own requests, so with N API replicas behind a load balancer a client can make up to N times the limit. Set `store` to `postgres` (or `RATE_LIMIT_STORE=postgres`) to keep the counters in the `rate_limit` table, shared by all processes. That costs one small write per rate-limited request.
 
 ### Trust Proxy
 

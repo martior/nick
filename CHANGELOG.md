@@ -170,6 +170,7 @@
 - Run every profile upgrade step in its own transaction and record it as the profile version, so a failed upgrade keeps the steps before it and resumes at the failed step @martior
 - Add a production Dockerfile: multi-stage, production dependencies only, non-root, `nick` as entrypoint and a health check on @health @martior
 - Support S3-compatible blob storage (MinIO, R2, Ceph) with the `s3.endpoint` and `s3.forcePathStyle` settings, read the blob and S3 settings from `BLOBS` and `S3_*` environment variables, use the default AWS credential chain without static keys and reuse one S3 client @martior
+- Add a Postgres rate limit store (`rateLimit.store: postgres` or `RATE_LIMIT_STORE=postgres`), so rate limits count across API processes; the default stays in memory per process @martior
 
 ### Bugfix
 
@@ -398,6 +399,7 @@
 - Fix the url of the update scheduled job example @martior
 - Add the jobs admin guide @martior
 - Add the deployment admin guide @martior
+- Document which state is per process when Nick runs several API processes @martior
 
 ## 2.8.0 (2022-07-17)
 

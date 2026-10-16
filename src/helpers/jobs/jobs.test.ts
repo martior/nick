@@ -198,4 +198,16 @@ describe('Jobs', () => {
     expect(await jobs.run(job, global.txn!)).toBe('lost');
     expect((await getJob(first)).status).toBe('aborted');
   });
+
+  it('should notice an abort by another process at the heartbeat', async () => {
+    await insertJob(first);
+    await jobs.claim(global.txn!);
+    expect(await jobs.heartbeat(first, global.txn!)).toBe(true);
+
+    // Another process (an API replica) aborts the job in the database
+    await global.txn!('job')
+      .where({ uuid: first })
+      .update({ status: 'aborted' });
+    expect(await jobs.heartbeat(first, global.txn!)).toBe(false);
+  });
 });

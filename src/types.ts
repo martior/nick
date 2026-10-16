@@ -362,6 +362,7 @@ export type ConfigSettings = {
     api: number;
     auth: number;
     trustProxy: number;
+    store?: 'memory' | 'postgres';
   };
   recyclebin: boolean;
   cache: {
