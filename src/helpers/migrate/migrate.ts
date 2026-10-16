@@ -95,44 +95,62 @@ export async function installProfiles(): Promise<string[]> {
 }
 
 /**
- * Run the upgrade steps of the installed profiles
+ * Run the upgrade steps of the installed profiles. Every step runs in its
+ * own transaction, which also records the step as the profile version, so
+ * an interrupted upgrade resumes with the step that failed.
  * @method upgradeProfiles
+ * @param {Knex} db Knex instance (or transaction) to start transactions on.
+ * @param {string[]} profilePaths Profile directories (default: configured).
  * @returns {Promise<string[]>} The upgrade steps that ran.
  */
-export async function upgradeProfiles(): Promise<string[]> {
+export async function upgradeProfiles(
+  db: Knex = knex,
+  profilePaths?: string[],
+): Promise<string[]> {
   const Profile = models.get('Profile');
   const steps: string[] = [];
-  const trx = await knex.transaction();
-  try {
-    await mapProfiles(async (profilePath) => {
-      const metadata = await readMetadata(profilePath);
-      const profile = metadata
-        ? await Profile.fetchById(metadata.id, {}, trx)
-        : undefined;
-      if (!profile) {
-        return;
-      }
-      for (
-        let version = parseInt(profile.version) + 1;
-        version <= metadata.version;
-        version++
-      ) {
-        const upgradePath = `${profilePath}/upgrades/${version}`;
-        console.log(`Upgrading ${metadata.id} to ${version}`);
-        await seeds.run(trx, upgradePath);
+  const paths =
+    profilePaths || (await mapProfiles(async (profilePath) => profilePath));
 
-        // Run custom upgrade code if available
-        if (await fileExists(`${upgradePath}/index`)) {
-          const upgrade = await import(`${upgradePath}/index`);
-          await upgrade.init(trx);
-        }
-        steps.push(`${metadata.id}:${version}`);
+  for (const profilePath of paths) {
+    const metadata = await readMetadata(profilePath);
+    const profile = metadata
+      ? await Profile.fetchById(metadata.id, {}, db as Knex.Transaction)
+      : undefined;
+    if (!profile) {
+      continue;
+    }
+    for (
+      let version = parseInt(profile.version) + 1;
+      version <= metadata.version;
+      version++
+    ) {
+      const step = `${metadata.id}:${version}`;
+      const upgradePath = `${profilePath}/upgrades/${version}`;
+      console.log(`Upgrading ${metadata.id} to ${version}`);
+      try {
+        await db.transaction(async (trx) => {
+          await seeds.run(trx, upgradePath);
+
+          // Run custom upgrade code if available
+          if (await fileExists(`${upgradePath}/index`)) {
+            const upgrade = await import(`${upgradePath}/index`);
+            await upgrade.init(trx);
+          }
+
+          // Record the step
+          await trx('profile')
+            .where({ id: metadata.id })
+            .update({ version: `${version}` });
+        });
+      } catch (err: any) {
+        throw new Error(
+          `Upgrade step ${step} failed, ${metadata.id} stays at ${version - 1}: ${err?.message || err}`,
+          { cause: err },
+        );
       }
-    });
-    await trx.commit();
-  } catch (err) {
-    await trx.rollback();
-    throw err;
+      steps.push(step);
+    }
   }
   return steps;
 }
