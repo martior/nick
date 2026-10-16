@@ -55,6 +55,10 @@ If the resource could not be created, for instance because the title was missing
 
 The response body can contain information about why the request failed.
 
+### Server managed fields
+
+The server sets the owner, the creation and modification dates, the workflow state and the workflow history of a new resource; values sent for them are ignored. A `uuid` can only be chosen by users with the `Manage Site` permission, other users get `403 Forbidden`.
+
 ## Reading a Resource with GET
 
 After a successful POST, we can access the resource by sending a GET request to the resource URL:
@@ -139,9 +143,12 @@ A successful response will be indicated by a `204 No Content` response:
 {% include_relative endpoints/examples/content/delete.res %}
 ```
 
+Deleting requires the `Delete` permission on the resource. The core profile gives it to the `Owner`, `Editor` and `Administrator` roles, like `Delete objects` in Plone, so for example a `Reviewer` who may edit a pending item can't delete it.
+
 ### DELETE Repsonses
 
 - 204 No Content
+- 401 Unauthorized or 403 Forbidden (without the `Delete` permission)
 - 404 Not Found (if the resource does not exist)
 - 405 Method Not Allowed (if deleting the resource is not allowed)
 - 500 Internal Server Error

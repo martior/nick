@@ -29,6 +29,41 @@ export function hasPermission(
 }
 
 /**
+ * Get the catalog permission token of a user.
+ * @method userToken
+ * @param {string} id User id.
+ * @returns {string} Token.
+ */
+export function userToken(id: string): string {
+  return `user:${id}`;
+}
+
+/**
+ * Get the catalog permission token of a group.
+ * @method groupToken
+ * @param {string} id Group id.
+ * @returns {string} Token.
+ */
+export function groupToken(id: string): string {
+  return `group:${id}`;
+}
+
+/**
+ * Get the catalog permission tokens of a user: the user, its groups and its
+ * roles. Users and groups are prefixed so they can't match a role.
+ * @method principalTokens
+ * @param {User} user User object.
+ * @returns {string[]} Tokens.
+ */
+export function principalTokens(user: any): string[] {
+  return [
+    userToken(user.id),
+    ...(user._groups || []).map((group: any) => groupToken(group.id)),
+    ...user.getRoles(),
+  ];
+}
+
+/**
  * Extract the auth token from a request either the Authorization header
  * or the auth_token cookie.
  * @method getTokenFromRequest

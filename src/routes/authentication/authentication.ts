@@ -39,6 +39,7 @@ async function storeToken(user: any, trx: Knex.Transaction): Promise<string> {
   );
 
   // Add token to user
+  await user.lockTokens(trx);
   await addToken(user, token, trx);
 
   // Return token
@@ -158,6 +159,7 @@ export default [
 
       // Remove token from user
       if (req.token) {
+        await req.user.lockTokens(trx);
         await removeToken(req.user, req.token, trx);
       }
 

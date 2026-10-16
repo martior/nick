@@ -63,6 +63,7 @@ export interface User extends Model {
   fullname: string;
   tokens: string[];
   update: (data: any, trx: Knex.Transaction) => Promise<void>;
+  lockTokens: (trx: Knex.Transaction) => Promise<void>;
   _groups: string[];
   getRoles: () => string[];
   fetchUserGroupRolesByDocument: (
@@ -105,6 +106,7 @@ export interface WorkflowState {
   title: string;
   description: string;
   permissions: { [key: string]: WorkflowPermission };
+  acquire?: string[];
   transitions: string[];
 }
 
@@ -118,7 +120,12 @@ export interface WorkflowTransition {
   };
 }
 
+export type PermissionModel = 'additive' | 'acquire';
+
 export interface WorkflowType {
+  permission_model?: PermissionModel;
+  managed_permissions?: string[];
+  initial_state?: string;
   states: { [key: string]: WorkflowState };
   transitions: { [key: string]: WorkflowTransition };
 }
@@ -392,6 +399,7 @@ export type ConfigSettings = {
     chunk: string;
     batch: number;
   };
+  reindexSecurityLimit?: number;
   userschema: (req: Request) => Schema;
   [key: string]: unknown;
 };

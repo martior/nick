@@ -49,6 +49,43 @@ function getDisposition(req: Request, filename: string): string {
   return `${type}; filename="${filename}"`;
 }
 
+/**
+ * Get the source document of a copy or move by url, path or uuid. Returns
+ * undefined when not found or not viewable by the current user.
+ * @method fetchSource
+ * @param {Request} req The request object.
+ * @param {string} source Url, path or uuid of the source.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @returns {Promise<Object>} Source document and permissions.
+ */
+async function fetchSource(
+  req: Request,
+  source: string,
+  trx: Knex.Transaction,
+): Promise<{ document: any; permissions: string[] } | undefined> {
+  const Document = models.get('Document');
+  const root = getRootUrl(req);
+  let document;
+  if (typeof source !== 'string') {
+    return undefined;
+  } else if (source.startsWith(`${root}/`) || source === root) {
+    document = await Document.fetchOne(
+      { path: source.slice(root.length) || '/' },
+      {},
+      trx,
+    );
+  } else if (source.startsWith('/')) {
+    document = await Document.fetchOne({ path: source }, {}, trx);
+  } else if (/^[0-9a-f-]{32,36}$/i.test(source)) {
+    document = await Document.fetchById(source, {}, trx);
+  }
+  if (!document) {
+    return undefined;
+  }
+  const permissions = await document.fetchUserPermissions(req.user, trx);
+  return permissions.includes('View') ? { document, permissions } : undefined;
+}
+
 export default [
   {
     op: 'post',
@@ -58,6 +95,9 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
+
+      // Lock the target to serialize changes of its children
+      await req.document.lockForUpdate(trx);
 
       // Get children
       await req.document.fetchRelated('_children', trx);
@@ -72,15 +112,52 @@ export default [
       const sources = Array.isArray(req.body.source)
         ? req.body.source
         : [req.body.source];
+      const documents = [] as any[];
       await mapAsync(sources, async (source: string) => {
-        // Get item to be moved
-        const document = await Document.fetchOne({ path: source }, {}, trx);
+        // Get item to be moved, skip if not found or not viewable
+        const found = await fetchSource(req, source, trx);
+        if (!found) {
+          return;
+        }
 
-        // If moved to same folder or subfolder do nothing
+        // Moving requires the delete permission on the item or its parent
+        if (!found.permissions.includes('Delete')) {
+          const parent = await Document.fetchById(
+            found.document.parent,
+            {},
+            trx,
+          );
+          if (
+            !parent ||
+            !(await parent.fetchUserPermissions(req.user, trx)).includes(
+              'Delete',
+            )
+          ) {
+            throw new RequestException(403, {
+              message: req.i18n(
+                'You are not authorized to access this resource.',
+              ),
+            });
+          }
+        }
+
+        // An item can't be moved into itself or its children
         if (
-          req.document.uuid === document.parent ||
-          req.document.path.includes(document.path)
+          req.document.uuid === found.document.uuid ||
+          req.document.path.startsWith(`${found.document.path}/`)
         ) {
+          throw new RequestException(400, {
+            message: req.i18n('An item can’t be moved into itself.'),
+          });
+        }
+        documents.push(found.document);
+      });
+
+      await mapAsync(documents, async (document: any) => {
+        const source = document.path;
+
+        // If moved to same folder do nothing
+        if (req.document.uuid === document.parent) {
           items.push({
             source,
             target: source,
@@ -109,6 +186,9 @@ export default [
             },
             trx,
           );
+
+          // Reindex the permissions inherited from the new parent
+          await document.reindexSecurity(trx);
 
           // Fetch children of previous parent
           await parent.fetchChildren({}, trx, false);
@@ -152,6 +232,9 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
 
+      // Lock the target to serialize changes of its children
+      await req.document.lockForUpdate(trx);
+
       // Get children
       await req.document.fetchChildren({}, trx, false);
       const childIds = req.document._children.map(
@@ -165,9 +248,14 @@ export default [
       const sources = Array.isArray(req.body.source)
         ? req.body.source
         : [req.body.source];
-      await mapAsync(sources, async (source: string) => {
-        // Get item to be copied
-        const document = await Document.fetchOne({ path: source }, {}, trx);
+      await mapAsync(sources, async (key: string) => {
+        // Get item to be copied, skip if not found or not viewable
+        const found = await fetchSource(req, key, trx);
+        if (!found) {
+          return;
+        }
+        const document = found.document;
+        const source = document.path;
 
         // Calculate new id and path
         const path = req.document.path;
@@ -223,7 +311,7 @@ export default [
   {
     op: 'get',
     view: '/@history/:version',
-    permission: 'View',
+    permission: 'View History',
     client: 'getHistoryVersion',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
@@ -583,6 +671,9 @@ export default [
       const Type = models.get('Type');
       const Document = models.get('Document');
 
+      // Lock the parent to serialize the creation of its children
+      await req.document.lockForUpdate(trx);
+
       // Get content type date
       const type = await Type.fetchById(
         req.body['@type'],
@@ -618,6 +709,13 @@ export default [
 
       // Get json data
       const properties = type._schema.properties;
+
+      // Only site managers may choose the uuid
+      if (req.body.uuid && !req.permissions.includes('Manage Site')) {
+        throw new RequestException(403, {
+          message: req.i18n('You are not authorized to set the uuid.'),
+        });
+      }
 
       // Set uuid
       const newUuid = req.body.uuid || uuid();
@@ -666,7 +764,7 @@ export default [
             : req.document._children.length,
         lock: { locked: false, stealable: true },
         workflow_state: type._workflow.json.initial_state,
-        workflow_history: JSON.stringify(req.body.workflow_history || []),
+        workflow_history: JSON.stringify([]),
         owner: req.user.id,
         json,
       }) as any;
@@ -764,6 +862,9 @@ export default [
     }),
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
+
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
 
       // Check if ordering request
       if (typeof req.body?.ordering !== 'undefined') {
@@ -912,15 +1013,18 @@ export default [
   {
     op: 'delete',
     view: '',
-    permission: 'Modify',
+    permission: 'Delete',
     client: 'deleteContent',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
 
-      // Get parent
+      // Get parent and lock parent before the document, as all changes of
+      // the children of a parent lock the parent first
       await req.document.fetchRelated('_parent', trx);
       const parent = req.document._parent;
+      await parent?.lockForUpdate(trx);
+      await req.document.lockForUpdate(trx);
 
       // Trigger onBeforeDelete
       await events.trigger(

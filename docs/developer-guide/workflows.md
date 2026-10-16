@@ -35,20 +35,23 @@ Each item in the `workflows` array has:
 
 ### The `json` object
 
-| Field           | Type     | Description                                             |
-| --------------- | -------- | ------------------------------------------------------- |
-| `initial_state` | `string` | The state ID that content starts in when first created. |
-| `states`        | `object` | A map of state IDs to their definitions.                |
-| `transitions`   | `object` | A map of transition IDs to their definitions.           |
+| Field                 | Type     | Description                                                                                                    |
+| --------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| `initial_state`       | `string` | The state ID that content starts in when first created.                                                        |
+| `states`              | `object` | A map of state IDs to their definitions.                                                                       |
+| `transitions`         | `object` | A map of transition IDs to their definitions.                                                                  |
+| `permission_model`    | `string` | `additive` or `acquire`, see [Permission models](#permission-models).                                          |
+| `managed_permissions` | `array`  | Permissions managed by the workflow with the `acquire` model. Defaults to every permission used in the states. |
 
 #### State definition
 
-| Field              | Type     | Description                                                          |
-| ------------------ | -------- | -------------------------------------------------------------------- |
-| `title:i18n`       | `string` | Display label for the state.                                         |
-| `description:i18n` | `string` | Description of the state.                                            |
-| `transitions`      | `array`  | Transition IDs available from this state.                            |
-| `permissions`      | `object` | A map of role IDs to arrays of permission IDs granted in this state. |
+| Field              | Type     | Description                                                                                       |
+| ------------------ | -------- | ------------------------------------------------------------------------------------------------- |
+| `title:i18n`       | `string` | Display label for the state.                                                                      |
+| `description:i18n` | `string` | Description of the state.                                                                         |
+| `transitions`      | `array`  | Transition IDs available from this state.                                                         |
+| `permissions`      | `object` | A map of role IDs to arrays of permission IDs granted in this state.                              |
+| `acquire`          | `array`  | Managed permissions that also keep their global role grants in this state (`acquire` model only). |
 
 #### Transition definition
 
@@ -59,6 +62,30 @@ Each item in the `workflows` array has:
 | `permission` | `string` | The permission required to execute this transition.                 |
 
 If a workflow with the same `id` already exists, it is updated (merged) with the new definition.
+
+## Permission models
+
+The permissions of a user on a content object combine the permissions of the user's roles (global roles, local roles from `@sharing` and `Owner`) from `roles.json` with the permissions the workflow state gives those roles.
+
+- `additive`: the state's permissions are added to the global role permissions. A state can't take a permission away from a role that has it globally, for example a user with the global `Reader` role can view content in every state. This was the only model before Nick 2.9.
+- `acquire` (default): works like Plone's DCWorkflow. For every managed permission the roles listed in the state replace the global role permissions, unless the state lists the permission in `acquire` (the "acquire" checkbox in Plone). Permissions the workflow doesn't manage keep their global role permissions.
+
+```json
+{
+  "permission_model": "acquire",
+  "managed_permissions": ["View", "Modify"],
+  "states": {
+    "internal": {
+      "permissions": { "Editor": ["View", "Modify"], "Reader": ["View"] },
+      "acquire": ["Modify"]
+    }
+  }
+}
+```
+
+In the `internal` state only `Editor` and `Reader` can view the content, whatever roles have `View` globally, while `Modify` is still given to roles that have it globally.
+
+The permissions are stored in the catalog for search, so after changing the permission model or the permissions of a workflow, run a `reindex_security` job on `/` to rebuild them.
 
 ## Example
 
@@ -113,3 +140,14 @@ Place a file like `src/profiles/default/workflows.json`:
 ```
 
 The file is picked up automatically during seeding — no manual registration is required. When `purge` is `false` or omitted, new workflows are added and existing ones are merged.
+
+### Upgrading from the additive model
+
+Workflows that don't set `permission_model` use the `acquire` model since Nick 2.9. Before upgrading, run the dry run on the existing database to list the content whose permissions would change; it changes nothing:
+
+```
+pnpm permissions:dry-run
+role Reader loses View on 12 items (simple_publication_workflow/private: 9, simple_publication_workflow/pending: 3)
+```
+
+`--json` prints the same as JSON. For every line, either add the role to the state's `permissions` (or the permission to the state's `acquire`), or set `"permission_model": "additive"` on the workflow to keep the old behaviour. Then run `pnpm seed:upgrade`: upgrade `1011` of the core profile gives `Reader` `View` in the `private` and `pending` states of `simple_publication_workflow`, as in Plone, so the core workflow keeps its permissions, and rebuilds the permissions in the catalog.

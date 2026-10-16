@@ -14,8 +14,42 @@ import utc from 'dayjs/plugin/utc';
 // Internal imports
 import { hasPermission } from '../../helpers/auth/auth';
 import { RequestException } from '../../helpers/error/error';
+import { mapAsync } from '../../helpers/utils/utils';
 
 dayjs.extend(utc);
+
+/**
+ * Check a transition on all children of a document
+ * @method checkChildren
+ * @param {Request} req Request object.
+ * @param {Object} document Document object.
+ * @param {string} transition Transition id.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @returns {Promise<void>} Throws when the transition can't be applied.
+ */
+async function checkChildren(
+  req: Request,
+  document: any,
+  transition: string,
+  trx: Knex.Transaction,
+): Promise<void> {
+  await document.fetchChildren({}, trx, false);
+  await mapAsync(document._children, async (child: any) => {
+    const check = await child.checkTransition(transition, req.user, trx);
+    if (check !== 'apply' && check !== 'same') {
+      throw new RequestException(400, {
+        error: {
+          type: 'WorkflowException',
+          message: req.i18n(
+            'Transition {transition} is not available for {path}.',
+            { transition, path: child.path },
+          ),
+        },
+      });
+    }
+    await checkChildren(req, child, transition, trx);
+  });
+}
 
 export const handler = async (req: Request, trx: Knex.Transaction) => {
   await req.type.fetchRelated('_workflow', trx);
@@ -28,24 +62,65 @@ export default [
   {
     op: 'post',
     view: '/@workflow/:transition',
+    permission: 'View',
     client: 'changeWorkflow',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const recursive = req.body?.include_children === true ? true : false;
       await req.type.fetchRelated('_workflow', trx);
 
-      // Check permission
-      if (
-        !hasPermission(
-          req.permissions,
-          req.type._workflow.json.transitions[req.params.transition].permission,
-        )
-      ) {
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
+      const transition = req.params.transition;
+
+      // Check the transition against the current state and the permissions
+      const check = await req.document.checkTransition(
+        transition,
+        req.user,
+        trx,
+        req.permissions,
+      );
+      if (check === 'unknown' || check === 'unavailable') {
+        throw new RequestException(400, {
+          error: {
+            type: 'WorkflowException',
+            message: req.i18n(
+              'Transition {transition} is not available in the current state.',
+              { transition },
+            ),
+          },
+        });
+      }
+      if (check === 'unauthorized') {
         throw new RequestException(401, {
           message: req.i18n(
             'You are not authorization to access this resource.',
           ),
         });
+      }
+
+      // Check the transition on all children, it is applied to all or none
+      if (recursive) {
+        await checkChildren(req, req.document, transition, trx);
+      }
+
+      // Return the last transition if the document is already in the new state
+      if (check === 'same' && !recursive) {
+        const last: any = req.document.workflow_history
+          .filter((item: any) => !item.type || item.type === 'workflow')
+          .pop();
+        const state = req.document.workflow_state;
+        return {
+          json: {
+            action: last?.action || null,
+            actor: last?.actor || null,
+            comments: last?.comments || '',
+            review_state: state,
+            time: last?.time || req.document.modified,
+            title: req.i18n(req.type._workflow.json.states[state]?.title),
+          },
+          xkeys: [req.document.uuid],
+        };
       }
 
       // Get new state and modified timestamp

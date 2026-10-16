@@ -78,7 +78,11 @@ class Jobs {
       trx,
     );
 
-    await jobs.check(trx);
+    // Start the job when the transaction is committed, so it sees the data
+    trx.executionPromise.then(
+      () => jobs.check(),
+      () => undefined,
+    );
 
     return newUuid;
   }

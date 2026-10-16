@@ -109,10 +109,11 @@ export async function callHandler(
   req.document = document;
   req.navroot = result.navroot;
   req.type = type;
-  req.permissions = uniq([
-    ...permissions,
-    ...type._workflow.getPermissions(document.workflow_state, mergedRoles),
-  ]);
+  req.permissions = type._workflow.applyPermissions(
+    document.workflow_state,
+    mergedRoles,
+    permissions,
+  );
 
   // Check permission
   if (!hasPermission(req.permissions, route.permission)) {

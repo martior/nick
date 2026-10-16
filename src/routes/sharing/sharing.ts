@@ -7,7 +7,14 @@
 import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
+// External imports
+import { uniq } from 'es-toolkit/array';
+import { isObject } from 'es-toolkit/compat';
+
 // Internal imports
+import config from '../../helpers/config/config';
+import { RequestException } from '../../helpers/error/error';
+import jobs from '../../helpers/jobs/jobs';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -35,23 +42,42 @@ async function fetchPrincipals(
 ) {
   const Document = models.get('Document');
 
-  // Get principals
+  // Get the principals with local roles on the document or its parents and,
+  // with a search query, the principals matching it by id or title
+  const prefix = `${type}:`;
+  const ids = uniq(
+    (await document.fetchLocalRoles(trx))
+      .filter((localRole: any) => localRole.principal.startsWith(prefix))
+      .map((localRole: any) => localRole.principal.slice(prefix.length)),
+  );
+  const search =
+    query && query.length >= 2 ? `%${query.toLowerCase()}%` : undefined;
   const principals =
-    query && query.length >= 2
-      ? await Model.fetchAll(
-          {
-            [`LOWER(${title})`]: ['like', `%${query.toLowerCase()}%`],
-          },
-          { related: '_roles' },
-          trx,
-        )
+    ids.length > 0 || search
+      ? await Model.query(trx)
+          .withGraphFetched('_roles')
+          .where((builder: any) => {
+            if (ids.length > 0) {
+              builder.whereIn('id', ids);
+            }
+            if (search) {
+              builder.orWhereRaw(`LOWER(id) LIKE ? OR LOWER(${title}) LIKE ?`, [
+                search,
+                search,
+              ]);
+            }
+          })
+          .orderBy('id')
       : [];
 
   // Return principal data
   return await Promise.all(
     principals.map(async (principal: any) => {
       // Get local roles
-      const localRoles = await principal.fetchRolesByDocument(document.uuid);
+      const localRoles = await principal.fetchRolesByDocument(
+        document.uuid,
+        trx,
+      );
 
       // Get acquired roles
       let acquiredRoles = [] as string[];
@@ -60,7 +86,7 @@ async function fetchPrincipals(
         traverse = await Document.fetchById(traverse.parent, {}, trx);
         acquiredRoles = [
           ...acquiredRoles,
-          ...(await principal.fetchRolesByDocument(traverse.uuid)),
+          ...(await principal.fetchRolesByDocument(traverse.uuid, trx)),
         ];
       }
 
@@ -90,6 +116,26 @@ async function fetchPrincipals(
   );
 }
 
+/**
+ * Fetch the roles the current user may delegate: the roles with a
+ * `Delegate <role>` permission the user has on the document, like the
+ * "Sharing page: Delegate <role> role" permissions of Plone.
+ * @method fetchDelegatableRoles
+ * @param {Request} req Request object.
+ * @param {Object} trx transaction object.
+ * @returns {Promise<Object[]>} Roles sorted by id.
+ */
+async function fetchDelegatableRoles(
+  req: Request,
+  trx: Knex.Transaction,
+): Promise<any[]> {
+  const Role = models.get('Role');
+  const roles = await Role.fetchAll({}, { order: 'id' }, trx);
+  return roles
+    .map((role: any) => role)
+    .filter((role: any) => req.permissions.includes(`Delegate ${role.id}`));
+}
+
 export default [
   {
     op: 'get',
@@ -99,12 +145,11 @@ export default [
     cache: 'manage',
     middleware: apiLimiter,
     handler: async (req: Request, trx: Knex.Transaction) => {
-      const Role = models.get('Role');
       const User = models.get('User');
       const Group = models.get('Group');
 
-      // Get roles
-      const roles = await Role.fetchAll({}, { order: 'order' }, trx);
+      // Get the roles the user may delegate
+      const roles = await fetchDelegatableRoles(req, trx);
 
       // Get user roles
       const users = await fetchPrincipals(
@@ -154,23 +199,56 @@ export default [
       const User = models.get('User');
       const Group = models.get('Group');
 
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
+
+      // Validate input
+      const body = req.body || {};
+      const entries = body.entries ?? [];
+      if (
+        (body.inherit !== undefined && typeof body.inherit !== 'boolean') ||
+        !Array.isArray(entries) ||
+        !entries.every(
+          (entry: any) =>
+            isObject(entry) &&
+            typeof (entry as any).id === 'string' &&
+            ['user', 'group'].includes((entry as any).type) &&
+            isObject((entry as any).roles),
+        )
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n(
+            'Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles.',
+          ),
+        });
+      }
+
       // Update inherit
-      if (req.document.inherit_roles !== req.body.inherit) {
+      if (
+        typeof body.inherit === 'boolean' &&
+        req.document.inherit_roles !== body.inherit
+      ) {
         await req.document.update(
           {
-            inherit_roles: req.body.inherit,
+            inherit_roles: body.inherit,
           },
           trx,
         );
       }
 
+      // Get the roles the user may delegate, other roles are ignored
+      const roles = (await fetchDelegatableRoles(req, trx)).map(
+        (role: any) => role.id,
+      );
+
       // Update local roles
-      await Promise.all(
-        req.body.entries.map(async (entry: any) => {
-          const Model = entry.type === 'user' ? User : Group;
-          const principal = await Model.fetchById(entry.id, {}, trx);
-          if (principal) {
-            await mapAsync(Object.keys(entry.roles), async (role: any) => {
+      await mapAsync(entries, async (entry: any) => {
+        const Model = entry.type === 'user' ? User : Group;
+        const principal = await Model.fetchById(entry.id, {}, trx);
+        if (principal) {
+          await mapAsync(
+            Object.keys(entry.roles).filter((role) => roles.includes(role)),
+            async (role: any) => {
               // If should relate
               if (entry.roles[role] === true) {
                 const existing = await principal
@@ -189,10 +267,33 @@ export default [
                   .unrelate()
                   .where({ role, document: req.document.uuid });
               }
-            });
-          }
-        }),
-      );
+            },
+          );
+        }
+      });
+
+      // Reindex the permissions of the document and the documents below it,
+      // in a job if the subtree is large
+      const Document = models.get('Document');
+      const limit = config.settings.reindexSecurityLimit ?? 1000;
+      const [{ count }] = await Document.knex()('document')
+        .count('uuid')
+        .whereRaw('starts_with(path, ?)', [
+          req.document.path === '/' ? '/' : `${req.document.path}/`,
+        ])
+        .transacting(trx);
+      if (parseInt(count as string) < limit) {
+        await req.document.reindexSecurity(trx);
+      } else {
+        await jobs.add(
+          req.i18n('Reindex security'),
+          req.i18n('Reindex security of {path}', { path: req.document.path }),
+          { action: 'reindex_security', path: req.document.path },
+          req.user.id,
+          trx,
+        );
+      }
+
       return {
         status: 204,
       };

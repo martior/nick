@@ -20,7 +20,17 @@
     {
       "id": "Owner",
       "title:i18n": "Owner",
-      "permissions": ["Add", "Submit", "Modify Comments"]
+      "permissions": [
+        "Add",
+        "Submit",
+        "Modify Comments",
+        "Revert",
+        "Delete",
+        "View History",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor"
+      ]
     },
     {
       "id": "Reader",
@@ -30,17 +40,24 @@
     {
       "id": "Contributor",
       "title:i18n": "Contributor",
-      "permissions": ["Add"]
+      "permissions": ["Add", "View History"]
     },
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Submit"]
+      "permissions": [
+        "Submit",
+        "Revert",
+        "Delete",
+        "View History",
+        "Delegate Reader",
+        "Delegate Editor"
+      ]
     },
     {
       "id": "Reviewer",
       "title:i18n": "Reviewer",
-      "permissions": ["Review", "Modify Comments"]
+      "permissions": ["Review", "Modify Comments", "Revert", "View History"]
     },
     {
       "id": "Administrator",
@@ -51,7 +68,14 @@
         "Submit",
         "Manage Users",
         "Manage Site",
-        "Modify Comments"
+        "Modify Comments",
+        "Revert",
+        "Delete",
+        "View History",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor",
+        "Delegate Reviewer"
       ]
     }
   ]

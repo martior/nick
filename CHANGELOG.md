@@ -4,8 +4,14 @@
 
 ### Breaking
 
+- @sharing only lists and changes the roles the user may delegate, with the new Delegate Reader, Delegate Contributor, Delegate Editor and Delegate Reviewer permissions, so a local Editor can no longer grant Reviewer or Administrator. Roles without a Delegate permission (Anonymous, Authenticated, Owner, Administrator) are no longer offered. Run `pnpm seed:upgrade` @martior
+- Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
+- Workflows use the `acquire` permission model by default: for the permissions a workflow manages (default: those used in its states), the roles a state lists replace the global role permissions instead of being added to them, like in Plone. Run `pnpm permissions:dry-run` before upgrading to list the content whose permissions change, then `pnpm seed:upgrade`; set `"permission_model": "additive"` on a workflow to keep the old behaviour. The core workflow now lists Reader in the private and pending states @martior
+- Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
+
 ### Feature
 
+- Add an `acquire` permission model to workflows (`permission_model`, `managed_permissions` and per state `acquire`), where the roles of a state replace the global role permissions like in Plone @martior
 - Add support for multiple profiles @robgietema
 - Add yeoman generator to create a Nick project @robgietema
 - Add vocabularies based on profiles @robgietema
@@ -268,6 +274,18 @@
 - Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
 - Return the navigation root url as the breadcrumbs root @martior
 - Add description to navigation items and return a bad request on an invalid navigation depth @martior
+- Reindex the search permissions of the item and its children after a change of local roles or inheritance in @sharing, in a job for large subtrees @martior
+- Prefix users and groups in the catalog permissions as `user:` and `group:`, so a user or group named like a role no longer sees items that role may view; run `pnpm seed:upgrade` to rebuild them @martior
+- Check workflow transitions against the current state and the permissions on every child with `include_children`, return 400 for unknown or unavailable transitions and require View @martior
+- Require the new Revert permission to revert to a previous version, report it in `may_revert`, reindex after a revert and keep the path of top level items; run `pnpm seed:upgrade` to add it @martior
+- Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
+- Check View on the sources of @copy and @move and Delete on the sources of @move, accept urls and uuids as sources and reindex the permissions of moved content @martior
+- Keep the content, children, versions and jobs of a deleted user instead of deleting them, the owner and actor are set to null @martior
+- Lock the user while storing or removing a token, so concurrent logins of one user no longer invalidate each other's tokens @martior
+- Lock the document for changes and the parent for changes of its children, so concurrent edits no longer fail on duplicate versions and concurrent creates and deletes in one folder no longer deadlock @martior
+- Run a request again, up to three times, when its transaction hits a database deadlock or serialization failure instead of returning 500 @martior
+- Accept @sharing posts without entries or inherit, ignore unknown roles and return 400 instead of 500 for invalid sharing data @martior
+- List users and groups with local or acquired roles in the @sharing entries and search principals by id too @martior
 
 ### Internal
 

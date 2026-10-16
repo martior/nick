@@ -34,6 +34,18 @@
       "title:i18n": "Modify"
     },
     {
+      "id": "Delete",
+      "title:i18n": "Delete"
+    },
+    {
+      "id": "View History",
+      "title:i18n": "View History"
+    },
+    {
+      "id": "Revert",
+      "title:i18n": "Revert"
+    },
+    {
       "id": "Register",
       "title:i18n": "Register"
     },
@@ -60,6 +72,22 @@
     {
       "id": "Modify Own Comments",
       "title:i18n": "Modify Own Comments"
+    },
+    {
+      "id": "Delegate Contributor",
+      "title:i18n": "Delegate Contributor"
+    },
+    {
+      "id": "Delegate Editor",
+      "title:i18n": "Delegate Editor"
+    },
+    {
+      "id": "Delegate Reader",
+      "title:i18n": "Delegate Reader"
+    },
+    {
+      "id": "Delegate Reviewer",
+      "title:i18n": "Delegate Reviewer"
     }
   ]
 }
