@@ -769,14 +769,19 @@ export const queryparamToQuery = async (
     new RequestException(400, {
       message: req.i18n('Invalid value for {name}.', { name }),
     });
-  (['b_start', 'b_size'] as const).forEach((name) => {
-    if (
-      params[name] !== undefined &&
-      !/^[0-9]+$/.test(`${params[name].query}`)
-    ) {
-      throw invalid(name);
-    }
-  });
+  // A negative batch start is the start, like in Plone
+  if (
+    params.b_start !== undefined &&
+    !/^-?[0-9]+$/.test(`${params.b_start.query}`)
+  ) {
+    throw invalid('b_start');
+  }
+  if (
+    params.b_size !== undefined &&
+    !/^[0-9]+$/.test(`${params.b_size.query}`)
+  ) {
+    throw invalid('b_size');
+  }
   if (
     params.path?.depth !== undefined &&
     !/^-?[0-9]+$/.test(`${params.path.depth}`)

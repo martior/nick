@@ -132,7 +132,7 @@ describe('Search', () => {
       expect(res.body.type).toBe('BadRequest');
     }
     await request(app)
-      .get('/@search?b_size=2&b_start=0&path.depth=-1')
+      .get('/@search?b_size=2&b_start=-1&path.depth=-1')
       .set('Accept', 'application/json')
       .expect(200);
   });
