@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Informacione mbi të drejtat e mbajtura në dhe mbi këtë element."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Gabim i brendshëm i serverit"
@@ -2449,8 +2449,8 @@ msgstr "Sot"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Gabim transaksioni."

@@ -142,6 +142,17 @@
 - Read auth token from either the header or from a cookie @robgietema
 - Make the search batch size limit configurable via requestLimit.batch @robgietema
 - Add custom upgrade code support via index.ts in upgrade steps @robgietema
+- Export workflow definitions, type workflows and the state of documents without workflow @martior
+- Export the workflow history of documents @martior
+- Export the versions of documents @martior
+- Export local roles and the inherit flag of documents @martior
+- Export files and images of documents and import profile files with filename and content type @martior
+- Export relations with uuids and make links in exported documents relative to the site root @martior
+- Export translations of documents @martior
+- Export redirects @martior
+- Export comments of documents @martior
+- Export site title, robots.txt and language settings @martior
+- Convert querystring operations of collections and listing blocks in export @martior
 
 ### Bugfix
 
@@ -234,6 +245,18 @@
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
+- Fix document urls in export and import of ids containing dots @martior
+- Paginate search, users and groups in export, plone.restapi 10 batches users @martior
+- Keep core users, roles, permissions and actions when importing an exported profile and map Plone roles to Nick roles @martior
+- Give every exported user its own random password instead of one shared password @martior
+- Stop the export on failed requests, read groups unbatched and skip comments in the document listing @martior
+- Export type behaviors, allowed content types and unlisted types, so exported documents can be traversed @martior
+- Fix import of exported groups without email @martior
+- Allow descriptions longer than 255 characters for workflows, types and groups @martior
+- Return the comments of workflow transitions in @history @martior
+- Keep the folder order of exported documents and fix the import of position 0 @martior
+- Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
+- Replace lists instead of merging them by index when seeding controlpanels @martior
 
 ### Internal
 
@@ -285,6 +308,7 @@
 - Rename default profile to examplecontent @robgietema
 - Fix initialization for client @robgietema
 - Save controlpanel and userschema files as blobs @robgietema
+- Update locale source references @martior
 
 ### Documentation
 
@@ -303,6 +327,7 @@
 - Add documentation on how to setup limits @robgietema
 - Add documentation on how to setup caching @robgietema
 - Add documentation about profiles @robgietema
+- Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 
 ## 2.8.0 (2022-07-17)
 
