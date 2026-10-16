@@ -186,6 +186,7 @@
 - Add periodic tasks declared in code (`scheduledJobs.registerTask`): the workers schedule them like scheduled jobs, once per time slot, and a scheduled job with the same id overrides them @martior
 - `@plone/nick` exports a typed public API for add-ons and projects: the registries (behaviors, blocks, blobs, content rules, events, middleware, models, routes, scheduled jobs and periodic tasks, seeds, vocabularies), `Model`, configuration, request, job, profile and migration helpers and their types, with an `exports` map. Deep imports like `@plone/nick/src/routes` still work but are deprecated @martior
 - Add `enable_self_reg` and `enable_user_pwd_choice` to the security control panel: anonymous users can register themselves when self-registration is enabled, and their password is kept when they may choose it, like in Plone. Run `pnpm seed:upgrade` (upgrade 1016) @martior
+- Add `pnpm migrate:check`: it migrates a scratch database from scratch, installs the profiles and fails when migrate fails, when a second run changes the schema, when a model has no table or when the schema differs from the committed snapshot `src/migrations/schema.snapshot.txt` (which includes the catalog columns profiles create). `nick --modules=migrate --check-schema` compares a live database with the snapshot. CI runs the check @martior
 
 ### Bugfix
 

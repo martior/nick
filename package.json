@@ -64,6 +64,7 @@
     "knex": "tsx ./node_modules/knex/bin/cli.js",
     "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}'",
     "migrate": "pnpm knex migrate:latest",
+    "migrate:check": "tsx scripts/migrate-check.ts",
     "nick": "tsx scripts/nick.ts",
     "migrate:list": "pnpm knex migrate:list",
     "permissions:dry-run": "tsx scripts/permissions.ts",
