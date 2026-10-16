@@ -4,6 +4,7 @@
  */
 
 // External imports
+import request from 'supertest';
 import { describe, it, afterEach } from 'vitest';
 
 // Internal imports
@@ -36,6 +37,24 @@ describe('User', () => {
   it('should update a user', async () => {
     await testRequest(app, 'users/post');
     return testRequest(app, 'users/patch');
+  });
+
+  it('should set the password of a user', async () => {
+    await testRequest(app, 'users/post');
+    await testRequest(app, 'users/patch_password');
+    await request(app)
+      .post('/@login')
+      .send({ login: 'headlessnick', password: 'nearlyheadless' })
+      .expect(401);
+    return request(app)
+      .post('/@login')
+      .send({ login: 'headlessnick', password: 'headlessnick' })
+      .expect(200);
+  });
+
+  it('should not set a password which is too short', async () => {
+    await testRequest(app, 'users/post');
+    return testRequest(app, 'users/patch_password_short');
   });
 
   it('should delete a user', async () => {

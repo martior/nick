@@ -326,6 +326,16 @@ export default [
 
       const curUser = await User.fetchById(req.params.id, {}, trx);
 
+      // Check min password length
+      if (
+        typeof req.body.password !== 'undefined' &&
+        (typeof req.body.password !== 'string' || req.body.password.length < 8)
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n('Password should be at least 8 characters long.'),
+        });
+      }
+
       // Handle images
       const schema = config.settings.userschema(req);
       json = await handleBlocks(json);
@@ -339,6 +349,9 @@ export default [
           id: req.body.username,
           fullname: req.body.fullname,
           email: req.body.email,
+          password: req.body.password
+            ? await bcrypt.hash(req.body.password, 10)
+            : undefined,
           json: { ...curUser.json, ...json },
           _roles: req.body.roles,
           _groups: req.body.groups,

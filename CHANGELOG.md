@@ -234,6 +234,7 @@
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
+- Set the password of a user on PATCH @users and apply the password policy @martior
 
 ### Internal
 
