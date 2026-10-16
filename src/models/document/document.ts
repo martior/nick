@@ -768,7 +768,11 @@ export class Document extends Model {
     );
     const typeIds = uniq(chain.map((child) => child.type));
     const types: any[] =
-      typeIds.length > 0 ? await Type.query(trx).whereIn('id', typeIds) : [];
+      typeIds.length > 0
+        ? await Type.query(trx)
+            .withGraphJoined('_workflow')
+            .whereIn('type.id', typeIds)
+        : [];
 
     // Merge the roles and find the navigation root top down
     let mergedRoles: string[] = roles || localRoles[self.uuid];
