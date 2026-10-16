@@ -159,6 +159,24 @@ A successful response to a `PATCH` request will be indicated by a `204 No Conten
 {% include_relative examples/users/patch.res %}
 ```
 
+A user with the `Manage Users` permission can also set the password of a user:
+
+```http
+{% include_relative examples/users/patch_password.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/users/patch_password.ts %}
+```
+
+The password must be at least 8 characters long. A shorter password is refused with a `400 Bad Request`:
+
+```http
+{% include_relative examples/users/patch_password_short.res %}
+```
+
 ## Delete User
 
 Deleting a user never deletes content. The content the user owned, its children and the versions the user made are kept; their owner or actor is cleared, and history entries still show the id of the deleted user. Local roles, group memberships and tokens of the user are removed.
