@@ -235,6 +235,8 @@ A successful response will be indicated by a `204 No Content` response:
 {% include_relative examples/users/delete.res %}
 ```
 
+If the user doesn't exist, the server responds with a `404 Not Found`.
+
 ## User Registration
 
 If user registration it is enabled, then an anonymous user can register a new user using the user creation endpoint.

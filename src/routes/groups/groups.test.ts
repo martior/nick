@@ -16,7 +16,8 @@ const auth =
 
 describe('Groups', () => {
   afterEach(async () => {
-    await testRequest(app, 'groups/delete');
+    // Remove the user or group of the examples if a test added it
+    await request(app).delete('/@groups/nicks').set('Authorization', auth);
   });
 
   it('should get a list of groups', () => testRequest(app, 'groups/list'));
@@ -92,4 +93,14 @@ describe('Groups', () => {
     await testRequest(app, 'groups/post');
     return testRequest(app, 'groups/delete');
   });
+
+  it('should not delete a group which does not exist', () =>
+    testRequest(app, 'groups/delete_notfound'));
+
+  it('should not update a group which does not exist', () =>
+    request(app)
+      .patch('/@groups/doesnotexist')
+      .set('Authorization', auth)
+      .send({ title: 'Does not exist' })
+      .expect(404));
 });

@@ -136,3 +136,5 @@ A successful response will be indicated by a `204 No Content` response:
 ```http
 {% include_relative examples/groups/delete.res %}
 ```
+
+If the group doesn't exist, the server responds with a `404 Not Found`.
