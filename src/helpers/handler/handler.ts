@@ -108,10 +108,11 @@ export async function callHandler(
   req.navroot = result.navroot;
   req.type = type;
   req.roles = mergedRoles;
-  req.permissions = type._workflow.applyPermissions(
-    document.workflow_state,
+  document._type = type;
+  req.permissions = await document.applyWorkflowPermissions(
     mergedRoles,
     permissions,
+    trx,
   );
 
   // Check permission, like plone.restapi a missing permission is

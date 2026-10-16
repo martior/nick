@@ -73,6 +73,25 @@ The workflow json can also set `manager_bypass: true`: users with the `Administr
 
 If a workflow with the same `id` already exists, it is updated (merged) with the new definition.
 
+## Workflow chains
+
+A type can have more than one workflow, like a chain of the Plone workflow tool. Set `workflows` in the type profile (or bind several workflows in a `workflows.xml`):
+
+```json
+{
+  "id": "Page",
+  "workflows": ["simple_publication_workflow", "flag_workflow"]
+}
+```
+
+- The first workflow is the type's `workflow`. Its state is the review state of the content (`review_state`, `document.workflow_state`).
+- Every further workflow has its own state, stored in the workflow status of the document (`document_workflow_status`); new content starts in the initial state of each workflow.
+- `GET @workflow` offers the available transitions of all workflows, `state` is the review state and `history` the history of the first workflow which defines `review_history` (or the first workflow without variables).
+- `POST @workflow/<transition>` takes the transition in the first workflow where it is available, like `doActionFor`. History entries of further workflows have a `workflow` key.
+- Permissions: every workflow applies the permissions of its state in turn, so the last workflow of the chain that manages a permission decides, like the role mappings DCWorkflow sets per workflow. This holds for requests and for the permissions in the catalog.
+
+The chains are in the `type_workflow` table (position 0 is the type's workflow).
+
 ## Guards
 
 A guard decides if a user may take a transition, like a DCWorkflow guard. Every part that is set must pass; an empty or missing part is not checked:

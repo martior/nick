@@ -50,9 +50,14 @@ export const seedType = async (
     // Import types
     await mapAsync(types, async (type: string) => {
       let typeModel: any;
-      const data = stripI18n(
+      // The workflow chain (`workflows`) is stored separately, its first
+      // workflow is the type's workflow
+      const { workflows, ...data } = stripI18n(
         (await import(`${profilePath}/types/${type}`)).default,
       );
+      if (Array.isArray(workflows) && workflows.length > 0) {
+        data.workflow = workflows[0];
+      }
 
       // Check if type exists
       const current: any = await Type.fetchById(data.id, {}, trx);
@@ -77,6 +82,11 @@ export const seedType = async (
       }
 
       await typeModel.cacheSchema(trx);
+
+      // Set the workflow chain
+      if (Array.isArray(workflows) && workflows.length > 0) {
+        await typeModel.setChain(workflows, trx);
+      }
     });
     console.log('Types imported');
   }

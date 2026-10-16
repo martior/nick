@@ -367,6 +367,10 @@ const convertTypes = async (
             }),
           },
           workflow: getTypeWorkflow(id),
+          // The whole chain when a type has more than one workflow
+          ...((workflowInfo.types[id] || []).length > 1
+            ? { workflows: workflowInfo.types[id] }
+            : {}),
         },
         null,
         2,
