@@ -318,6 +318,7 @@
 - Support `subset_ids` and `sort` when ordering content, ignore an unknown `obj_id` instead of moving another item, keep a negative delta in range, and apply other fields sent with the ordering in the same PATCH @martior
 - Name copies and moved items whose id is taken `copy_of_<id>` like Plone instead of `<id>-1` @martior
 - Set the `effective` and `expires` dates sent with a workflow transition (also on children with `include_children`), refuse invalid dates with a 400, set the effective date when content is published the first time, and answer a POST to `@workflow` without a transition with a 400 instead of a 404 @martior
+- Store the comment of a workflow transition and return the workflow history in `@workflow` (it was always empty) @martior
 
 ### Internal
 

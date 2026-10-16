@@ -161,14 +161,28 @@ describe('Workflow', () => {
     expect((await fetch('/news/dated')).json.effective).toBeUndefined();
 
     // Dates are applied to the children too
-    await transition('/news/dated', 'publish', {
+    const res = await transition('/news/dated', 'publish', {
       include_children: true,
       effective: '2030-06-01T12:00:00',
       expires: '2031-05-06T07:08:00',
+      comment: 'Published with dates',
     }).expect(200);
+    expect(res.body.comments).toBe('Published with dates');
     const child = await fetch('/news/dated/child');
     expect(child.json.effective).toBe('2030-06-01T12:00:00');
     expect(child.json.expires).toBe('2031-05-06T07:08:00');
+    expect(child.workflow_history.at(-1).comments).toBe('Published with dates');
+    const workflow = await request(app)
+      .get('/news/dated/child/@workflow')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(
+      workflow.body.history.map((item: any) => [item.action, item.comments]),
+    ).toStrictEqual([
+      [null, ''],
+      ['publish', 'Published with dates'],
+    ]);
 
     // Republishing keeps the effective date
     await transition('/news/dated', 'retract').expect(200);
