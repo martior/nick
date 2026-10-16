@@ -289,6 +289,7 @@
 - Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
 - Return the existing lock when locking content locked by another user @martior
 - Return the existing lock when unlocking content locked by another user without force @martior
+- Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
 
 ### Internal
 
