@@ -1,0 +1,23 @@
+{
+  "id": "example_rating",
+  "title:i18n": "Rating",
+  "description:i18n": "Adds a rating from 0 to 5 stars.",
+  "schema": {
+    "fieldsets": [
+      {
+        "fields": ["rating"],
+        "id": "default",
+        "title:i18n": "Default"
+      }
+    ],
+    "properties": {
+      "rating": {
+        "title:i18n": "Rating",
+        "description:i18n": "Number of stars, from 0 to 5.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 5
+      }
+    }
+  }
+}

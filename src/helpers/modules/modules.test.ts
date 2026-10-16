@@ -9,7 +9,8 @@ import { describe, expect, it, vi } from 'vitest';
 // Internal imports
 import { knex } from '../knex/knex';
 import * as migrate from '../migrate/migrate';
-import { allModules, parseModules, run } from './modules';
+import * as drift from '../drift/drift';
+import { allModules, parseModules, parseOptions, run } from './modules';
 
 describe('parseModules', () => {
   it('should default to all modules', () => {
@@ -61,5 +62,33 @@ describe('run', () => {
     expect(await run(['migrate'])).toBe(0);
     migrating.mockRestore();
     destroy.mockRestore();
+  });
+
+  it('should exit non-zero when the schema differs from the snapshot', async () => {
+    const migrating = vi.spyOn(migrate, 'migrate').mockResolvedValue();
+    const destroy = vi.spyOn(knex, 'destroy').mockResolvedValue(undefined);
+    vi.spyOn(drift, 'readSnapshot').mockReturnValue(['table public.job']);
+    const describe = vi
+      .spyOn(drift, 'describeSchema')
+      .mockResolvedValue(['table public.job']);
+
+    expect(await run(['migrate'], { checkSchema: 'snapshot.txt' })).toBe(0);
+    describe.mockResolvedValue(['table public.job', 'table public.extra']);
+    expect(await run(['migrate'], { checkSchema: 'snapshot.txt' })).toBe(1);
+    migrating.mockRestore();
+    destroy.mockRestore();
+    vi.restoreAllMocks();
+  });
+});
+
+describe('parseOptions', () => {
+  it('should read the schema check option', () => {
+    expect(parseOptions(['--modules=migrate'])).toEqual({});
+    expect(parseOptions(['--check-schema'])).toEqual({
+      checkSchema: 'src/migrations/schema.snapshot.txt',
+    });
+    expect(parseOptions(['--check-schema=schema.txt'])).toEqual({
+      checkSchema: 'schema.txt',
+    });
   });
 });

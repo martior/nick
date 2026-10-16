@@ -296,6 +296,52 @@ export interface QueryParam {
   [key: string]: string;
 }
 
+/**
+ * Contents of a profile's metadata.json.
+ */
+export interface ProfileMetadata {
+  /** Profile id, `<package>:<profile>`. */
+  id: string;
+  title?: string;
+  description?: string;
+  /** Version of the profile; upgrade steps live in `upgrades/<version>`. */
+  version: number;
+  /** Profiles which have to be installed first, like `@plone/nick:core`. */
+  dependencies?: string[];
+  /** Description of an upgrade step (in `upgrades/<version>/metadata.json`). */
+  upgrade?: string;
+}
+
+/**
+ * The `nick` field in the package.json of Nick, an add-on or a project.
+ */
+export interface NickPackageConfig {
+  /** Directory of the profiles (default: `profiles` next to the entry point). */
+  profiles?: string;
+  /** Directory of the knex migrations of the package. */
+  migrations?: string;
+  /** Postgres schema of the tables of the package, created before migrating. */
+  schema?: string;
+  /** Name of the migration ledger (default: `knex_migrations_<package>`). */
+  migrationsTable?: string;
+}
+
+/**
+ * A periodic task declared in code: a scheduled job which is not stored in
+ * the database. A scheduled job with the same id overrides it.
+ */
+export interface PeriodicTask {
+  id: string;
+  title: string;
+  description?: string;
+  /** Cron expression, like `0 * * * *`. */
+  schedule: string;
+  /** Name of a registered scheduled job action. */
+  action: string;
+  params?: Params;
+  enabled?: boolean;
+}
+
 export type Task = {
   name: string;
   schedule: string;

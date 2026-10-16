@@ -15,5 +15,5 @@
     "noImplicitAny": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "packages"]
+  "exclude": ["node_modules", "packages/generator-nick", "packages/*/node_modules"]
 }

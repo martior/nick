@@ -1,0 +1,7 @@
+{
+  "id": "@plone/nick:core",
+  "title": "Nick Core",
+  "description": "Core functionality of Nick",
+  "version": 1016,
+  "upgrade": "Add the self-registration settings to the security control panel."
+}

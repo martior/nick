@@ -18,6 +18,7 @@
 - A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
 - @contextnavigation has the shape and the tree of plone.restapi's: an envelope with `available`, `has_custom_name`, `title` and `url`, items with `href`, `type`, `normalized_id`, `is_current`, `is_in_path` and `is_folderish` instead of catalog metadata, and the `topLevel`, `currentFolderOnly` and `name` parameters @martior
 - Importing `src/app.ts` no longer schedules or runs jobs, and jobs no longer run in a child process per job by default. Run a worker with `nick --modules=worker` (`src/server.ts` and `pnpm start` run the API and a worker); set `jobs.isolation` to `process` to keep the child processes. Run `pnpm migrate` for the job queue and rate limit tables @martior
+- Projects created with the generator depend on the `@plone/nick` npm package instead of a source checkout of Nick in `src/develop/nick` (mrs-developer), and keep their migrations in their own chain (`nick.migrations` in package.json) instead of in knexfile.ts. Existing projects keep working unchanged. To move one: remove `src/develop`, `mrs.developer.json`, the `workspaces` entry and the `develop`/`preinstall` scripts, add `@plone/nick` as a dependency, import from `@plone/nick` instead of `@plone/nick/src/...`, set `localesDir` to `node_modules/@plone/nick/locales`, and either keep knexfile.ts (its directories stay in the core ledger `knex_migrations`) or add `"nick": { "migrations": "src/migrations" }` to package.json, move the project's rows from `knex_migrations` to `knex_migrations_<project>` (as named by `migrationTable()`, created with the columns of `knex_migrations`) and remove knexfile.ts @martior
 
 ### Feature
 
@@ -180,6 +181,14 @@
 - Add a production Dockerfile: multi-stage, production dependencies only, non-root, `nick` as entrypoint and a health check on @health @martior
 - Support S3-compatible blob storage (MinIO, R2, Ceph) with the `s3.endpoint` and `s3.forcePathStyle` settings, read the blob and S3 settings from `BLOBS` and `S3_*` environment variables, use the default AWS credential chain without static keys and reuse one S3 client @martior
 - Add a Postgres rate limit store (`rateLimit.store: postgres` or `RATE_LIMIT_STORE=postgres`), so rate limits count across API processes; the default stays in memory per process @martior
+- Profiles can declare `dependencies` in their metadata.json. Nick loads, installs and upgrades the profiles in dependency order, adds dependencies that are not listed and refuses dependency cycles. The `PROFILES` environment variable (comma separated) replaces `profiles` of `config.ts` @martior
+- Every package (core, add-on or project) has its own migration chain: the knex migrations in `nick.migrations` of its package.json, its own ledger `knex_migrations_<package>` and optionally its own Postgres schema (`nick.schema`). `nick --modules=migrate` runs core's chain and then the chains of the packages of the profiles in dependency order, every migration in its own transaction, so a failed migration exits non-zero and the next run resumes with it @martior
+- Add batched, resumable data migrations: `migrateInBatches` commits every batch with its cursor in the new `migration_progress` table, so an interrupted data migration resumes after its last batch; registered data migrations can also run on the job queue (`registerDataMigration`, `queueDataMigration`). Run `pnpm migrate` @martior
+- Add periodic tasks declared in code (`scheduledJobs.registerTask`): the workers schedule them like scheduled jobs, once per time slot, and a scheduled job with the same id overrides them @martior
+- `@plone/nick` exports a typed public API for add-ons and projects: the registries (behaviors, blocks, blobs, content rules, events, middleware, models, routes, scheduled jobs and periodic tasks, seeds, vocabularies), `Model`, configuration, request, job, profile and migration helpers and their types, with an `exports` map. Deep imports like `@plone/nick/src/routes` still work but are deprecated @martior
+- Add `enable_self_reg` and `enable_user_pwd_choice` to the security control panel: anonymous users can register themselves when self-registration is enabled, cannot set roles or groups, and their password is kept when they may choose it, like in Plone. Run `pnpm seed:upgrade` (upgrade 1016) @martior
+- Add `pnpm migrate:check`: it migrates a scratch database from scratch, installs the profiles and fails when migrate fails, when a second run changes the schema, when a model has no table or when the schema differs from the committed snapshot `src/migrations/schema.snapshot.txt` (which includes the catalog columns profiles create). `nick --modules=migrate --check-schema` compares a live database with the snapshot. CI runs the check @martior
+- The Docker image installs the profiles listed in the `PROFILES` environment variable, so it runs without a mounted config.ts, and can include add-ons of the repository with `--build-arg ADDONS="packages/nick-example-addon"` @martior
 
 ### Bugfix
 
@@ -343,6 +352,8 @@
 - Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
 - Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
 - Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
+- The default profiles are `@plone/nick:core` only; the default `@plone/nick:default` profile never existed @martior
+- Find the core migrations when there is no knexfile.ts in the working directory @martior
 
 ### Internal
 
@@ -402,6 +413,7 @@
 - Check in CI that the previous version migrates and upgrades to the pushed version @martior
 - Move nodemon to the development dependencies @martior
 - Run the development docker-compose service from the node image @martior
+- Add the example add-on `packages/nick-example-addon`: a content type, a behavior, REST services, a periodic task, a table in its own schema and two migrations in its own chain, with tests that install it and use every extension point, and a test that a broken data migration fails migrate and resumes after the fix @martior
 
 ### Documentation
 
@@ -425,6 +437,7 @@
 - Add the jobs admin guide @martior
 - Add the deployment admin guide @martior
 - Document which state is per process when Nick runs several API processes @martior
+- Add the add-ons developer guide (package layout, profile dependencies, public API, per-package migrations and schemas, batched data migrations, periodic tasks, drift check, testing) and mark deep imports as deprecated @martior
 
 ## 2.8.0 (2022-07-17)
 
