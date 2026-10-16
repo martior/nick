@@ -387,6 +387,7 @@
 ### Internal
 
 - Add a workflow conformance test: every state, transition and role of the standard Plone 6.2 workflows, loaded from their definition.xml, against a matrix captured from Plone 6.2 over HTTP. The GPL-licensed definitions are not included, the test reads them from the checkouts in `PLONE_WORKFLOWS_DIR` and is skipped without it @martior
+- Test the DCWorkflow loader, the workflow seed and `@worklists` with workflow definitions written for Nick instead of copies of Plone's (GPL-2.0) @martior
 - Upgraded dependencies @robgietema
 - Update node dependency requirement @robgietema
 - Split profiles in core and default @robgietema
