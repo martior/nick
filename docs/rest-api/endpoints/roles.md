@@ -5,7 +5,7 @@ parent: Endpoints
 
 # Roles
 
-Available roles in a Plone site can be queried by interacting with the `/@roles` endpoint on portal root (requires an authenticated user):
+Available roles in a Plone site can be queried by interacting with the `/@roles` endpoint on portal root (requires the `Manage Users` permission):
 
 ## List Roles
 
@@ -28,3 +28,9 @@ The server will respond with a list of all roles in the site:
 ```
 
 The role `title` is the translated role title.
+
+Users without the `Manage Users` permission get a `401 Unauthorized` (anonymous) or `403 Forbidden`:
+
+```http
+{% include_relative examples/roles/get_anonymous.res %}
+```

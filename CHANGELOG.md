@@ -8,6 +8,7 @@
 - Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 - Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
+- Require the Manage Users permission for @roles, like Plone @martior
 
 ### Feature
 
