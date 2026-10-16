@@ -450,6 +450,7 @@
 
 ### Documentation
 
+- Use a worklist of Nick's own in the workflow and `@worklists` examples @martior
 - Document that `checkPermission` in workflow expressions is a Nick extension, Plone's DCWorkflow guards don't have it @martior
 - Added documentation for AI support @robgietema
 - Rearranged documention into sections @robgietema
