@@ -81,14 +81,19 @@ import { captchaProviders } from '../../vocabularies/captcha-providers/captcha-p
 import { fields } from '../../vocabularies/fields/fields';
 import { groups } from '../../vocabularies/groups/groups';
 import { imageScales } from '../../vocabularies/image-scales/image-scales';
+import { metadataFields } from '../../vocabularies/metadata-fields/metadata-fields';
+import { months, monthsAbbr } from '../../vocabularies/months/months';
 import { permissions } from '../../vocabularies/permissions/permissions';
+import { principals } from '../../vocabularies/principals/principals';
 import { roles } from '../../vocabularies/roles/roles';
 import { subjects } from '../../vocabularies/subjects/subjects';
 import { supportedLanguages } from '../../vocabularies/supported-languages/supported-languages';
 import { systemGroups } from '../../vocabularies/system-groups/system-groups';
 import { systemUsers } from '../../vocabularies/system-users/system-users';
+import { timezones } from '../../vocabularies/timezones/timezones';
 import { types } from '../../vocabularies/types/types';
 import { users } from '../../vocabularies/users/users';
+import { weekdays, weekdaysAbbr } from '../../vocabularies/weekdays/weekdays';
 import { workflows } from '../../vocabularies/workflows/workflows';
 import { workflowStates } from '../../vocabularies/workflow-states/workflow-states';
 import { workflowTransitions } from '../../vocabularies/workflow-transitions/workflow-transitions';
@@ -228,6 +233,40 @@ export function init(): void {
   vocabularies.register('workflows', workflows);
   vocabularies.register('workflowStates', workflowStates);
   vocabularies.register('workflowTransitions', workflowTransitions);
+  vocabularies.register('metadataFields', metadataFields);
+  vocabularies.register('months', months);
+  vocabularies.register('monthsAbbr', monthsAbbr);
+  vocabularies.register('principals', principals);
+  vocabularies.register('timezones', timezones);
+  vocabularies.register('weekdays', weekdays);
+  vocabularies.register('weekdaysAbbr', weekdaysAbbr);
+
+  // Names of plone.app.vocabularies used by Volto
+  const ploneVocabularies = {
+    AvailableContentLanguages: supportedLanguages,
+    Groups: groups,
+    ImagesScales: imageScales,
+    Keywords: subjects,
+    MetadataFields: metadataFields,
+    Month: months,
+    MonthAbbr: monthsAbbr,
+    PortalTypes: types,
+    Principals: principals,
+    ReallyUserFriendlyTypes: types,
+    Roles: roles,
+    SupportedContentLanguages: availableLanguages,
+    Timezones: timezones,
+    UserFriendlyTypes: types,
+    Users: users,
+    Weekdays: weekdays,
+    WeekdaysAbbr: weekdaysAbbr,
+    Workflows: workflows,
+    WorkflowStates: workflowStates,
+    WorkflowTransitions: workflowTransitions,
+  };
+  Object.entries(ploneVocabularies).map(([name, vocabulary]) =>
+    vocabularies.register(`plone.app.vocabularies.${name}`, vocabulary),
+  );
 
   // Register middleware
   middleware.register(accessLogger);

@@ -158,6 +158,7 @@
 - Export site title, robots.txt and language settings @martior
 - Convert querystring operations of collections and listing blocks in export @martior
 - Support the title and token filters and batching in the vocabularies endpoint @martior
+- Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
 
 ### Bugfix
 
