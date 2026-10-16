@@ -240,7 +240,7 @@ msgid "An error occurred while creating the user."
 msgstr ""
 
 #. Default: "An item can’t be moved into itself."
-#: src/routes/content/content.ts:150
+#: src/routes/content/content.ts:161
 msgctxt "Routes|Content"
 msgid "An item can’t be moved into itself."
 msgstr ""
@@ -477,6 +477,12 @@ msgctxt "Profiles|Core|Behaviors|Versioning"
 msgid "Change Note"
 msgstr "Σημείωση αλλαγής"
 
+#. Default: "Client/server ordering mismatch."
+#: src/routes/content/content.ts:1021
+msgctxt "Routes|Content"
+msgid "Client/server ordering mismatch."
+msgstr ""
+
 #. Default: "Comment"
 #: src/content_rules/actions/version_item.ts:33
 msgctxt "Content rules|Actions|Version item"
@@ -494,6 +500,12 @@ msgstr ""
 #: src/routes/userschema/userschema.ts:115
 msgctxt "Routes|Userschema"
 msgid "Confirm password"
+msgstr ""
+
+#. Default: "Constraint not satisfied"
+#: src/helpers/schema/schema.ts:205
+msgctxt "Helpers|Schema"
+msgid "Constraint not satisfied"
 msgstr ""
 
 #. Default: "Contact"
@@ -798,8 +810,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:898
-#: src/routes/content/content.ts:1035
+#: src/routes/content/content.ts:1063
+#: src/routes/content/content.ts:1239
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Το έγγραφο κλειδώθηκε"
@@ -1028,6 +1040,18 @@ msgctxt "Profiles|Core|Types|Feed"
 msgid "Feed"
 msgstr ""
 
+#. Default: "Field {id} already exists."
+#: src/routes/types/types.ts:226
+msgctxt "Routes|Types"
+msgid "Field {id} already exists."
+msgstr ""
+
+#. Default: "Fieldset {id} already exists."
+#: src/routes/types/types.ts:201
+msgctxt "Routes|Types"
+msgid "Fieldset {id} already exists."
+msgstr ""
+
 #. Default: "File"
 #: src/profiles/core/types/file.json:3
 #: src/profiles/core/types/file.json:19
@@ -1204,11 +1228,17 @@ msgid "Information about rights held in and over this item."
 msgstr "Πληροφορίες σχετικά με τα δικαιώματα που κατέχονται σε και πάνω σε αυτό το αντικείμενο."
 
 #. Default: "Internal server error"
-#: src/app.ts:254
-#: src/app.ts:265
+#: src/app.ts:264
+#: src/app.ts:276
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Εσωτερικό σφάλμα διακομιστή"
+
+#. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
+#: src/routes/content/content.ts:757
+msgctxt "Routes|Content"
+msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
+msgstr ""
 
 #. Default: "Invalid credentials"
 #: src/routes/authentication/authentication.ts:88
@@ -1216,6 +1246,12 @@ msgstr "Εσωτερικό σφάλμα διακομιστή"
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Μη έγκυρα διαπιστευτήρια"
+
+#. Default: "Invalid date for {field}."
+#: src/routes/workflow/workflow.ts:79
+msgctxt "Routes|Workflow"
+msgid "Invalid date for {field}."
+msgstr ""
 
 #. Default: "Invalid depth."
 #: src/routes/navigation/navigation.ts:79
@@ -1230,9 +1266,15 @@ msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
 msgstr ""
 
+#. Default: "Invalid parameter factory."
+#: src/routes/types/types.ts:221
+msgctxt "Routes|Types"
+msgid "Invalid parameter factory."
+msgstr ""
+
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:160
-#: src/routes/search/search.ts:307
+#: src/routes/search/search.ts:150
+#: src/routes/search/search.ts:297
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1392,6 +1434,12 @@ msgctxt "Profiles|Core|Actions"
 msgid "Log out"
 msgstr "Αποσύνδεση"
 
+#. Default: "Logged-in users"
+#: src/routes/sharing/sharing.ts:181
+msgctxt "Routes|Sharing"
+msgid "Logged-in users"
+msgstr ""
+
 #. Default: "Logger"
 #: src/content_rules/actions/logger.ts:13
 msgctxt "Content rules|Actions|Logger"
@@ -1516,6 +1564,12 @@ msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Λείπουν διαπιστευτήρια"
 
+#. Default: "Missing parameter title."
+#: src/routes/types/types.ts:188
+msgctxt "Routes|Types"
+msgid "Missing parameter title."
+msgstr ""
+
 #. Default: "Modification date"
 #: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
@@ -1585,8 +1639,9 @@ msgid "Name of a person to contact about this event."
 msgstr ""
 
 #. Default: "Navigation"
+#: src/routes/contextnavigation/contextnavigation.ts:216
 #: src/profiles/core/controlpanels/navigation.json:3
-msgctxt "Profiles|Core|Controlpanels|Navigation"
+msgctxt "Routes|Contextnavigation"
 msgid "Navigation"
 msgstr "Πλοήγηση"
 
@@ -1630,9 +1685,15 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:155
+#: src/routes/search/search.ts:145
 msgctxt "Routes|Search"
 msgid "No query supplied."
+msgstr ""
+
+#. Default: "No transition specified."
+#: src/routes/workflow/workflow.ts:177
+msgctxt "Routes|Workflow"
+msgid "No transition specified."
 msgstr ""
 
 #. Default: "None"
@@ -1681,7 +1742,10 @@ msgstr ""
 #: src/routes/users/users.ts:168
 #: src/routes/users/users.ts:417
 #: src/routes/users/users.ts:484
-#: src/routes/types/types.ts:45
+#: src/routes/types/types.ts:59
+#: src/routes/types/types.ts:166
+#: src/routes/types/types.ts:324
+#: src/routes/types/types.ts:371
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:43
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:63
 #: src/routes/recyclebin/recyclebin.ts:35
@@ -1728,8 +1792,14 @@ msgctxt "Vocabularies|Months"
 msgid "November"
 msgstr ""
 
+#. Default: "Object is of wrong type."
+#: src/helpers/schema/schema.ts:198
+msgctxt "Helpers|Schema"
+msgid "Object is of wrong type."
+msgstr ""
+
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1032
+#: src/routes/content/content.ts:1236
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1834,7 +1904,7 @@ msgid "Pattern must be at least 1 character long."
 msgstr ""
 
 #. Default: "Pending review"
-#: src/profiles/core/workflows.json:23
+#: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Εκκρεμεί έλεγχος"
@@ -1947,6 +2017,12 @@ msgctxt "Profiles|Ai|Controlpanels"
 msgid "Prompts"
 msgstr "Προτροπές"
 
+#. Default: "Property '@type' is required."
+#: src/routes/content/content.ts:741
+msgctxt "Routes|Content"
+msgid "Property '@type' is required."
+msgstr ""
+
 #. Default: "Property “groupname” is required."
 #: src/routes/groups/groups.ts:100
 msgctxt "Routes|Groups"
@@ -1961,13 +2037,13 @@ msgid "Provided block id is not valid."
 msgstr ""
 
 #. Default: "Publish"
-#: src/profiles/core/workflows.json:49
+#: src/profiles/core/workflows.json:52
 msgctxt "Profiles|Core|Workflows"
 msgid "Publish"
 msgstr "Δημοσίευση"
 
 #. Default: "Published"
-#: src/profiles/core/workflows.json:35
+#: src/profiles/core/workflows.json:37
 msgctxt "Profiles|Core|Workflows"
 msgid "Published"
 msgstr "Δημοσιευμένο"
@@ -2043,14 +2119,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:289
+#: src/routes/sharing/sharing.ts:313
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:290
+#: src/routes/sharing/sharing.ts:314
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -2109,20 +2185,21 @@ msgctxt "Routes|Replace"
 msgid "Replacement must be provided."
 msgstr ""
 
-#. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:700
+#. Default: "Required input is missing."
+#: src/routes/content/content.ts:771
+#: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
-msgid "Required field(s) missing."
-msgstr "Λείπουν υποχρεωτικά πεδία."
+msgid "Required input is missing."
+msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:897
+#: src/routes/content/content.ts:1062
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
 
 #. Default: "Retract"
-#: src/profiles/core/workflows.json:59
+#: src/profiles/core/workflows.json:62
 msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Ανάκληση"
@@ -2259,7 +2336,7 @@ msgid "Send an email on the triggering object"
 msgstr ""
 
 #. Default: "Send back"
-#: src/profiles/core/workflows.json:54
+#: src/profiles/core/workflows.json:57
 msgctxt "Profiles|Core|Workflows"
 msgid "Send back"
 msgstr "Επιστροφή"
@@ -2296,7 +2373,7 @@ msgid "Sharing"
 msgstr "Κοινή χρήση"
 
 #. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
-#: src/routes/sharing/sharing.ts:220
+#: src/routes/sharing/sharing.ts:235
 msgctxt "Routes|Sharing"
 msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
 msgstr ""
@@ -2411,7 +2488,7 @@ msgid "Submit"
 msgstr "Υποβολή"
 
 #. Default: "Submit for publication"
-#: src/profiles/core/workflows.json:64
+#: src/profiles/core/workflows.json:67
 msgctxt "Profiles|Core|Workflows"
 msgid "Submit for publication"
 msgstr "Υποβολή για δημοσίευση"
@@ -2628,6 +2705,19 @@ msgctxt "Routes|Groups"
 msgid "The group name you entered already exists."
 msgstr ""
 
+#. Default: "The id “{id}” is invalid - it is already in use."
+#: src/routes/content/content.ts:799
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid - it is already in use."
+msgstr ""
+
+#. Default: "The id “{id}” is invalid."
+#: src/routes/content/content.ts:788
+#: src/routes/content/content.ts:1081
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid."
+msgstr ""
+
 #. Default: "The item’s title, transformed for sorting"
 #: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
@@ -2694,6 +2784,12 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "Η θύρα του τοπικού διακομιστή SMTP (εξερχόμενα email). Συνήθως '25'."
 
+#. Default: "The request body is not valid JSON."
+#: src/app.ts:294
+msgctxt "App"
+msgid "The request body is not valid JSON."
+msgstr ""
+
 #. Default: "The roles to check for."
 #: src/content_rules/conditions/user_role.ts:34
 msgctxt "Content rules|Conditions|User role"
@@ -2747,6 +2843,18 @@ msgstr "Το θέμα αυτού του αντικειμένου."
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr "Ο χρήστης που προβάλλει τα αποτελέσματα της συμβολοσειράς ερωτήματος"
+
+#. Default: "The uuid is already in use."
+#: src/routes/content/content.ts:834
+msgctxt "Routes|Content"
+msgid "The uuid is already in use."
+msgstr ""
+
+#. Default: "The uuid is invalid."
+#: src/routes/content/content.ts:829
+msgctxt "Routes|Content"
+msgid "The uuid is invalid."
+msgstr ""
 
 #. Default: "The workflow states to check for."
 #: src/content_rules/conditions/workflow_state.ts:31
@@ -2827,7 +2935,7 @@ msgstr "Συμβουλή: μπορείτε να χρησιμοποιήσετε *
 
 #. Default: "Title"
 #: src/profiles/core/catalog.json:271
-#: src/profiles/core/behaviors/basic.json:22
+#: src/profiles/core/behaviors/basic.json:24
 #: src/profiles/ai/controlpanels/ai.json:29
 msgctxt "Profiles|Core|Catalog"
 msgid "Title"
@@ -2852,8 +2960,8 @@ msgstr "Σήμερα"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:180
+#: src/app.ts:168
+#: src/app.ts:185
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Σφάλμα συναλλαγής."
@@ -2871,13 +2979,13 @@ msgid "Transition workflow state"
 msgstr ""
 
 #. Default: "Transition {transition} is not available for {path}."
-#: src/routes/workflow/workflow.ts:43
+#: src/routes/workflow/workflow.ts:44
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:87
+#: src/routes/workflow/workflow.ts:101
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -2911,12 +3019,6 @@ msgstr "Όνομα τύπου"
 msgctxt "Helpers|Handler"
 msgid "Type of the current document is not found."
 msgstr "Ο τύπος του τρέχοντος εγγράφου δεν βρέθηκε."
-
-#. Default: "Type {type} not found."
-#: src/routes/content/content.ts:689
-msgctxt "Routes|Content"
-msgid "Type {type} not found."
-msgstr ""
 
 #. Default: "Unknown roles: {roles}"
 #: src/routes/groups/groups.ts:134
@@ -3010,6 +3112,12 @@ msgctxt "Content rules|Conditions|User role"
 msgid "User’s role"
 msgstr ""
 
+#. Default: "Value is too long"
+#: src/helpers/schema/schema.ts:210
+msgctxt "Helpers|Schema"
+msgid "Value is too long"
+msgstr ""
+
 #. Default: "Version item"
 #: src/content_rules/actions/version_item.ts:14
 msgctxt "Content rules|Actions|Version item"
@@ -3024,6 +3132,7 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:91
+#: src/routes/content/content.ts:334
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3075,13 +3184,13 @@ msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
-#: src/profiles/core/workflows.json:36
+#: src/profiles/core/workflows.json:38
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Ορατό σε όλους, επεξεργάσιμο από τον κάτοχο."
 
 #. Default: "Waiting to be reviewed, not editable by the owner."
-#: src/profiles/core/workflows.json:24
+#: src/profiles/core/workflows.json:25
 msgctxt "Profiles|Core|Workflows"
 msgid "Waiting to be reviewed, not editable by the owner."
 msgstr "Αναμονή για έλεγχο, μη επεξεργάσιμο από τον κάτοχο."
@@ -3185,7 +3294,7 @@ msgid "Yes"
 msgstr "Ναι"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:96
+#: src/routes/workflow/workflow.ts:110
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Δεν έχετε δικαίωμα πρόσβασης σε αυτόν τον πόρο."
@@ -3198,6 +3307,7 @@ msgstr ""
 
 #. Default: "You are not authorized to access this resource."
 #: src/routes/users/users.ts:400
+#: src/routes/types/types.ts:43
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -3206,14 +3316,14 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:131
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
-#: src/routes/content/content.ts:137
-#: src/helpers/handler/handler.ts:121
+#: src/routes/content/content.ts:148
+#: src/helpers/handler/handler.ts:122
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr "Δεν έχετε εξουσιοδότηση για πρόσβαση σε αυτόν τον πόρο."
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:716
+#: src/routes/content/content.ts:820
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
