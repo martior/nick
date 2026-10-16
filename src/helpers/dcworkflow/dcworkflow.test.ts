@@ -165,8 +165,13 @@ describe('DCWorkflow', () => {
       expect(convertWorkflow(xml, 'custom').id).toBe('custom');
     });
 
-    it('converts the standard Plone workflows without unsupported parts', () => {
+    it('converts the fixture workflows without unsupported parts', () => {
       const path = `${import.meta.dirname}/fixtures/workflows`;
+      expect(readdirSync(path).sort()).toEqual([
+        'editorial_workflow',
+        'single_stage_workflow',
+        'team_space_workflow',
+      ]);
       readdirSync(path).map((id) => {
         const { workflow, warnings } = convertDefinition(
           readFileSync(`${path}/${id}/definition.xml`, 'utf8'),
@@ -178,6 +183,123 @@ describe('DCWorkflow', () => {
             (warning) => !warning.includes('Access contents information'),
           ),
         ).toEqual([]);
+      });
+    });
+
+    it('converts typed state values, triggers and acquired maps', () => {
+      const { workflow } = convertDefinition(
+        readFileSync(
+          `${import.meta.dirname}/fixtures/workflows/editorial_workflow/definition.xml`,
+          'utf8',
+        ),
+      );
+      expect(workflow.title).toBe('Editorial Desk');
+      expect(workflow.description).toBe(
+        'Newsroom flow & archive. Authors write drafts, editors approve them for the live site. Old stories go to the archive.',
+      );
+      expect(workflow.json.managed_permissions).toEqual([
+        'View',
+        'Modify',
+        'Delete',
+      ]);
+
+      // Typed assignments of the states
+      expect(workflow.json.states.draft.variables).toEqual({
+        stage: 'writing',
+        priority: 3,
+      });
+      expect(workflow.json.states.in_review.variables).toEqual({
+        stage: 'checking',
+        flagged: true,
+      });
+      expect(workflow.json.states.live.variables).toEqual({
+        weight: 0.5,
+        embargo: null,
+      });
+
+      // An acquired map adds its roles, a managed permission without a
+      // map is acquired, an empty map grants nothing
+      expect(workflow.json.states.archived).toMatchObject({
+        title: 'Archive',
+        permissions: { Authenticated: ['View'] },
+        acquire: ['View', 'Delete'],
+      });
+      expect(workflow.json.states.draft.acquire).toEqual(['Delete']);
+      expect(workflow.json.states.live.permissions).toMatchObject({
+        Anonymous: ['View'],
+        Authenticated: ['View'],
+        Administrator: ['Modify', 'Delete'],
+      });
+
+      // Guards: any of the permissions, roles, groups and expressions
+      expect(workflow.json.transitions.approve.guard).toEqual({
+        permissions: ['Review', 'Modify'],
+      });
+      expect(workflow.json.transitions.archive.guard).toEqual({
+        roles: ['Administrator'],
+        groups: ['archivists'],
+      });
+      expect(workflow.json.transitions.restore.guard.unsupported).toBe(
+        undefined,
+      );
+      expect(workflow.json.transitions.propose.variables).toEqual({
+        handed_in_by: 'python:user.getId()',
+      });
+
+      // Automatic transitions are kept, WORKFLOW triggers and actions
+      // outside the workflow category are hidden, an empty guard is none
+      expect(workflow.json.transitions.expire.trigger).toBe('automatic');
+      expect(workflow.json.transitions.refresh_index).toEqual({
+        title: 'Refresh',
+        description: '',
+        new_state: '',
+        hidden: true,
+      });
+      expect(workflow.json.transitions.print_preview).toEqual({
+        title: 'Print preview',
+        description: '',
+        new_state: '',
+        hidden: true,
+      });
+
+      // Variables: defaults by value or expression, an empty value is none
+      expect(workflow.json.variables.review_history.info_guard).toEqual({
+        permissions: ['Review'],
+        roles: ['Owner'],
+      });
+      expect(workflow.json.variables.priority.default_value).toBe(5);
+      expect(workflow.json.variables.handed_in_by).toEqual({
+        description: '',
+        for_catalog: false,
+        for_status: true,
+        update_always: false,
+      });
+    });
+
+    it('converts a single state workflow with an acquired view', () => {
+      const { workflow } = convertDefinition(
+        readFileSync(
+          `${import.meta.dirname}/fixtures/workflows/single_stage_workflow/definition.xml`,
+          'utf8',
+        ),
+      );
+      expect(workflow.json).toEqual({
+        initial_state: 'visible',
+        managed_permissions: ['View', 'Modify', 'Add Comment'],
+        states: {
+          visible: {
+            title: 'visible',
+            description: '',
+            transitions: [],
+            permissions: {
+              Owner: ['Modify'],
+              Administrator: ['Modify'],
+              Authenticated: ['Add Comment'],
+            },
+            acquire: ['View'],
+          },
+        },
+        transitions: {},
       });
     });
 
@@ -237,21 +359,26 @@ describe('DCWorkflow', () => {
     it('converts worklists', () => {
       const { workflow } = convertDefinition(
         readFileSync(
-          `${import.meta.dirname}/fixtures/workflows/simple_publication_workflow/definition.xml`,
+          `${import.meta.dirname}/fixtures/workflows/editorial_workflow/definition.xml`,
           'utf8',
         ),
       );
       expect(workflow.json.worklists).toEqual({
-        reviewer_queue: {
+        desk_inbox: {
           title: '',
-          description: 'Reviewer tasks',
-          match: { review_state: ['pending'] },
+          description: 'Stories for the desk',
+          match: { review_state: ['in_review'] },
           guard: { permissions: ['Review'] },
           action: {
-            name: 'Pending (%(count)d)',
-            url: '%(portal_url)s/search?review_state=pending',
+            name: 'Desk (%(count)d)',
+            url: '%(portal_url)s/search?review_state=in_review',
             category: 'global',
           },
+        },
+        urgent_drafts: {
+          title: 'Urgent drafts',
+          description: '',
+          match: { review_state: ['draft'], stage: ['writing', 'checking'] },
         },
       });
     });
