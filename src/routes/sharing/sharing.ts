@@ -8,6 +8,7 @@ import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
 // External imports
+import { uniq } from 'es-toolkit/array';
 import { isObject } from 'es-toolkit/compat';
 
 // Internal imports
@@ -41,23 +42,42 @@ async function fetchPrincipals(
 ) {
   const Document = models.get('Document');
 
-  // Get principals
+  // Get the principals with local roles on the document or its parents and,
+  // with a search query, the principals matching it by id or title
+  const prefix = `${type}:`;
+  const ids = uniq(
+    (await document.fetchLocalRoles(trx))
+      .filter((localRole: any) => localRole.principal.startsWith(prefix))
+      .map((localRole: any) => localRole.principal.slice(prefix.length)),
+  );
+  const search =
+    query && query.length >= 2 ? `%${query.toLowerCase()}%` : undefined;
   const principals =
-    query && query.length >= 2
-      ? await Model.fetchAll(
-          {
-            [`LOWER(${title})`]: ['like', `%${query.toLowerCase()}%`],
-          },
-          { related: '_roles' },
-          trx,
-        )
+    ids.length > 0 || search
+      ? await Model.query(trx)
+          .withGraphFetched('_roles')
+          .where((builder: any) => {
+            if (ids.length > 0) {
+              builder.whereIn('id', ids);
+            }
+            if (search) {
+              builder.orWhereRaw(`LOWER(id) LIKE ? OR LOWER(${title}) LIKE ?`, [
+                search,
+                search,
+              ]);
+            }
+          })
+          .orderBy('id')
       : [];
 
   // Return principal data
   return await Promise.all(
     principals.map(async (principal: any) => {
       // Get local roles
-      const localRoles = await principal.fetchRolesByDocument(document.uuid);
+      const localRoles = await principal.fetchRolesByDocument(
+        document.uuid,
+        trx,
+      );
 
       // Get acquired roles
       let acquiredRoles = [] as string[];
@@ -66,7 +86,7 @@ async function fetchPrincipals(
         traverse = await Document.fetchById(traverse.parent, {}, trx);
         acquiredRoles = [
           ...acquiredRoles,
-          ...(await principal.fetchRolesByDocument(traverse.uuid)),
+          ...(await principal.fetchRolesByDocument(traverse.uuid, trx)),
         ];
       }
 
