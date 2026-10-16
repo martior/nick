@@ -103,6 +103,42 @@ export class Catalog extends Model {
   }
 
   /**
+   * Fetch a sorted batch of items, taking permissions into account, for a
+   * query which matches only a few items: the items are filtered first and
+   * sorted afterwards. Otherwise Postgres may walk an index in sort order
+   * through most of the catalog to find the few items, because it can't
+   * estimate how many items pass the permission filter.
+   * @method fetchFewRestricted
+   * @static
+   * @param {Object} where Where clause.
+   * @param {Object} options Options for the query.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {Request} req Request object.
+   * @returns {Promise<any>} Collection of items.
+   */
+  static async fetchFewRestricted(
+    where: any = {},
+    options: any = {},
+    trx?: Knex.Transaction,
+    req?: Request,
+  ): Promise<any> {
+    const { order, limit, offset, ...rest } = options;
+    const matches = this.buildQuery(
+      req ? this.restrictWhere(where, req) : where,
+      rest,
+      trx,
+    ).toKnexQuery();
+    // The materialized CTE is named like the table, so the outer query
+    // reads the matches; inside the CTE catalog is still the table
+    const items = await this.buildQuery(
+      {},
+      { order, limit, offset },
+      trx,
+    ).withMaterialized('catalog', matches);
+    return new this.collection(items);
+  }
+
+  /**
    * Count all items but take permissions into account.
    * @method countRestricted
    * @static

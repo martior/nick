@@ -58,6 +58,24 @@ const batching = (
 };
 
 /**
+ * Up to this number of matches the matches are filtered before sorting.
+ * @constant FEW_MATCHES
+ */
+const FEW_MATCHES = 5000;
+
+/**
+ * Get the catalog method to fetch a batch of results, by the number of
+ * matches, see Catalog.fetchFewRestricted.
+ * @method fetchMethod
+ * @param {number} count Number of matches.
+ * @returns {string} Method name.
+ */
+const fetchMethod = (
+  count: number,
+): 'fetchFewRestricted' | 'fetchAllRestricted' =>
+  count <= FEW_MATCHES ? 'fetchFewRestricted' : 'fetchAllRestricted';
+
+/**
  * Serialize the search results.
  *
  * With `fullobjects` the full content objects are returned. Otherwise a
@@ -164,7 +182,7 @@ const querystringSearch = async (
   const total = isNaN(limit) || limit < 0 ? count : Math.min(count, limit);
   const items =
     size > 0 && start < total
-      ? await Catalog.fetchAllRestricted(
+      ? await Catalog[fetchMethod(count)](
           query[0],
           {
             ...query[1],
@@ -224,7 +242,7 @@ export default [
       const total = await Catalog.countRestricted(query[0], trx, req);
       const items =
         size > 0 && start < total
-          ? await Catalog.fetchAllRestricted(
+          ? await Catalog[fetchMethod(total)](
               query[0],
               { ...query[1], offset: start, limit: size },
               trx,
