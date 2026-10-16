@@ -711,7 +711,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:799
+#: src/routes/content/content.ts:797
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokument lukus"
@@ -1796,6 +1796,12 @@ msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Kohustuslikud väljad on puudu."
 
+#. Default: "Resource is locked."
+#: src/routes/content/content.ts:796
+msgctxt "Routes|Content"
+msgid "Resource is locked."
+msgstr ""
+
 #. Default: "Retract"
 #: src/profiles/core/workflows.json:57
 msgctxt "Profiles|Core|Workflows"
@@ -2760,7 +2766,6 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:796
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Teil pole luba seda dokumenti salvestada, kuna see on teise kasutaja poolt lukustatud."
