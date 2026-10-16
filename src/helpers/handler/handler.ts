@@ -47,7 +47,11 @@ export async function callHandler(
   );
 
   // If user not found (e.g. deleted) or token not in user model
-  if (!req.user || !req.token || !(req.user.tokens || []).includes(req.token)) {
+  if (
+    !req.user ||
+    (req.user.id !== 'anonymous' &&
+      (!req.token || !(req.user.tokens || []).includes(req.token)))
+  ) {
     // Set anonymous user
     req.user = await User.fetchById(
       'anonymous',
@@ -58,13 +62,11 @@ export async function callHandler(
     );
   }
 
-  // Traverse to document
-  const root = await Document.fetchOne({ parent: null }, {}, trx);
-  const result = await root.traverse(
+  // Traverse to document, the root and the documents along the path are
+  // fetched with one query
+  const result = await Document.traverseFromRoot(
     compact(getPath(req).split('/')), // Slugs
     req.user,
-    await req.user.fetchUserGroupRolesByDocument(root.uuid, trx), // Root roles
-    root,
     trx,
   );
 
@@ -89,8 +91,8 @@ export async function callHandler(
   const mergedRoles = uniq([...localRoles, ...req.user.getRoles()]);
   const permissions = await Role.fetchPermissions(mergedRoles, trx);
 
-  // Find type
-  const type = await Type.fetchById(document.type, {}, trx);
+  // Find type, traverse already fetched it for documents below the root
+  const type = document._type || (await Type.fetchById(document.type, {}, trx));
 
   // Check if type found
   if (!type) {

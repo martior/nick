@@ -196,6 +196,44 @@ export class User extends Model {
   }
 
   /**
+   * Fetch user and group roles of several documents at once.
+   * @method fetchUserGroupRolesByDocuments
+   * @param {string[]} documents Uuids of the documents
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<Object>} Arrays of roles by document uuid.
+   */
+  async fetchUserGroupRolesByDocuments(
+    documents: string[],
+    trx?: Knex.Transaction,
+  ): Promise<Record<string, string[]>> {
+    const self: InstanceType<typeof User> = this;
+    const knex = trx || User.knex();
+    const roles: Record<string, string[]> = Object.fromEntries(
+      documents.map((document) => [document, []]),
+    );
+    if (documents.length === 0) {
+      return roles;
+    }
+    const rows: any[] = await knex('user_role_document')
+      .select('document', 'role')
+      .where('user', self.id)
+      .whereIn('document', documents);
+    const groups = self.getGroups();
+    if (groups.length > 0) {
+      rows.push(
+        ...(await knex('group_role_document')
+          .select('document', 'role')
+          .whereIn('group', groups)
+          .whereIn('document', documents)),
+      );
+    }
+    rows.forEach((row: any) => {
+      roles[row.document] = uniq([...roles[row.document], row.role]);
+    });
+    return roles;
+  }
+
+  /**
    * Delete files and images associated with the user
    * @method deleteFilesAndImages
    * @param {Request} req Request object.

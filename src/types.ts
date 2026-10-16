@@ -70,6 +70,10 @@ export interface User extends Model {
     uuid: string,
     trx?: Knex.Transaction,
   ) => Promise<string[]>;
+  fetchUserGroupRolesByDocuments: (
+    uuids: string[],
+    trx?: Knex.Transaction,
+  ) => Promise<Record<string, string[]>>;
 }
 
 export interface Request extends express.Request {
