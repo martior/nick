@@ -4,6 +4,10 @@
 
 ### Breaking
 
+- Ids starting with `@` are refused with 400 on create and rename, so content can't hide services like `@search` below a folder @martior
+- Reverting with `@history` also requires the Modify permission in the current state, so a revert can't change content the workflow doesn't let the user edit (for example an Editor on a pending item); `may_revert` follows @martior
+- A workflow transition of content locked by another user is refused with `403 Resource is locked.`, like edits and deletes @martior
+- A lock token only lets the creator of the lock edit, revert or delete the locked content; another user who learned the token is refused. The token is no longer shown in `@lock` and in the `lock` of the content to users without the Modify permission @martior
 - @sharing only lists and changes the roles the user may delegate, with the new Delegate Reader, Delegate Contributor, Delegate Editor and Delegate Reviewer permissions, so a local Editor can no longer grant Reviewer or Administrator. Roles without a Delegate permission (Anonymous, Authenticated, Owner, Administrator) are no longer offered. Run `pnpm seed:upgrade` @martior
 - Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
 - Workflows use the `acquire` permission model by default: for the permissions a workflow manages (default: those used in its states), the roles a state lists replace the global role permissions instead of being added to them, like in Plone. Run `pnpm permissions:dry-run` before upgrading to list the content whose permissions change, then `pnpm seed:upgrade`; set `"permission_model": "additive"` on a workflow to keep the old behaviour. The core workflow now lists Reader in the private and pending states @martior
@@ -22,6 +26,8 @@
 
 ### Feature
 
+- Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1018 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
+- Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1017) @martior
 - Add an `acquire` permission model to workflows (`permission_model`, `managed_permissions` and per state `acquire`), where the roles of a state replace the global role permissions like in Plone @martior
 - Add support for multiple profiles @robgietema
 - Add yeoman generator to create a Nick project @robgietema
@@ -192,6 +198,13 @@
 
 ### Bugfix
 
+- Make the ids of the documents in a folder unique in the database (documents in the recycle bin excepted), so imports and bulk loads can't create documents that can't be reached; a duplicate id gives 400. Run `pnpm migrate`; the migration lists the duplicate ids and stops if there are any, rename or remove those documents first @martior
+- Leave out the ancestors the user may not view from @breadcrumbs, so the titles of private folders don't leak @martior
+- Check the email address on PATCH @users like on create, an invalid one gives 400 @martior
+- Answer @sharing entries for users or groups that don't exist with 400 instead of ignoring them @martior
+- Answer @search with an invalid `b_start`, `b_size`, `path.depth` or date with 400 instead of ignoring the value; a negative `b_start` is still the start, like in Plone @martior
+- Answer reordering with an unknown `obj_id` or an invalid `delta` with 400 instead of ignoring it @martior
+- Answer `@history` requests with a version that is not a number with 404 and a revert without a valid version with 400 instead of 500 @martior
 - Change behavior to snake case @robgietema
 - Remove authentication header from breadcrumbs call in docs @robgietema
 - Read config file from working directory @robgietema

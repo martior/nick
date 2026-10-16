@@ -102,6 +102,33 @@ describe('History', () => {
       .expect(401);
   });
 
+  it('should require the modify permission in the current state', async () => {
+    const editor = await createUser('editor', ['Editor']);
+    await global.txn!('document')
+      .where({ path: '/news' })
+      .update({ workflow_state: 'pending' });
+
+    // The workflow takes modify away from editors in the pending state
+    const history = await request(app)
+      .get('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .expect(200);
+    expect(
+      history.body
+        .filter((item: any) => item.type === 'versioning')
+        .map((item: any) => item.may_revert),
+    ).toEqual([false, false]);
+    await request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .send({ version: 0 })
+      .expect(401);
+    const document = await global.txn!('document').where({ path: '/news' });
+    expect(document[0].version).toBe(1);
+  });
+
   it('should reindex after a revert', async () => {
     await request(app)
       .patch('/news/@history')
@@ -113,6 +140,26 @@ describe('History', () => {
     expect(catalog[0].Title).toBe('Old News');
     const document = await global.txn!('document').where({ id: 'news' });
     expect(document[0].path).toBe('/news');
+  });
+
+  it('should return 404 for a version which is not a number', () =>
+    request(app)
+      .get('/news/@history/abc')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(404));
+
+  it('should refuse a revert without a valid version', async () => {
+    for (const body of [{}, { version: 'abc' }, { version: -1 }]) {
+      await request(app)
+        .patch('/news/@history')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body)
+        .expect(400);
+    }
+    const document = await global.txn!('document').where({ path: '/news' });
+    expect(document[0].version).toBe(1);
   });
 
   it('should return 404 for an unknown version', () =>

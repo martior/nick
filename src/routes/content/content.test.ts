@@ -222,9 +222,23 @@ describe('Content', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ '@type': 'Page', id, title: 'x' });
 
-    for (const id of ['slash/inside', '_underscore', '..', 'aq_parent']) {
+    for (const id of [
+      'slash/inside',
+      '_underscore',
+      '..',
+      'aq_parent',
+      '@search',
+    ]) {
       await post(id).expect(400);
     }
+
+    // The service is not hidden by a child
+    const search = await request(app)
+      .get('/news/@search')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(search.body.items).toBeDefined();
     await post('has space').expect(201);
     expect((await post('has space').expect(400)).body.message).toBe(
       'The id “has space” is invalid - it is already in use.',
@@ -395,7 +409,10 @@ describe('Content', () => {
     await patch({
       ordering: { obj_id: 'a', delta: 1, subset_ids: ['c', 'a'] },
     }).expect(400);
-    await patch({ ordering: { obj_id: 'unknown', delta: 1 } }).expect(204);
+    await patch({ ordering: { obj_id: 'unknown', delta: 1 } }).expect(400);
+    await patch({ ordering: { obj_id: 'a', delta: 'sideways' } }).expect(400);
+    await patch({ ordering: { obj_id: 'a', delta: 1.5 } }).expect(400);
+    expect(await ids()).toStrictEqual(['a', 'b', 'd', 'c']);
     await patch({ ordering: { obj_id: 'b', delta: -10 } }).expect(204);
     expect(await ids()).toStrictEqual(['b', 'a', 'd', 'c']);
 

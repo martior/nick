@@ -4,11 +4,13 @@
  */
 
 // External imports
-import { describe, it } from 'vitest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import { createDocument, testRequest } from '../../helpers/tests/tests';
+import models from '../../models';
 
 describe('Search', () => {
   it('should return all items', () => testRequest(app, 'search/get'));
@@ -71,4 +73,67 @@ describe('Search', () => {
 
   it('should return a bad request on an invalid querystring operation', () =>
     testRequest(app, 'search/post_invalid'));
+
+  it('should sort titles with numbers in natural order', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    for (const [index, title] of ['Item 10', 'item 2', 'Item 1'].entries()) {
+      await createDocument(
+        `0123abcd-0000-4000-8000-00000000040${index}`,
+        news,
+        `item-${index}`,
+        'Page',
+        { workflow_state: 'published', json: { title } },
+      );
+    }
+    const res = await request(app)
+      .get('/news/@search?portal_type=Page&sort_on=sortable_title')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(res.body.items.map((item: any) => item.title)).toEqual([
+      'Item 1',
+      'item 2',
+      'Item 10',
+    ]);
+  });
+
+  it('should filter on isFolderish like Plone', async () => {
+    const folderish = await request(app)
+      .get('/@search?isFolderish=true')
+      .set('Accept', 'application/json')
+      .expect(200);
+    const legacy = await request(app)
+      .get('/@search?is_folderish=true')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(folderish.body.items_total).toBeGreaterThan(0);
+    expect(folderish.body.items_total).toBe(legacy.body.items_total);
+    const indexes = await request(app)
+      .get('/@querystring')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(indexes.body.indexes.isFolderish.operations).toContain(
+      'plone.app.querystring.operation.boolean.isTrue',
+    );
+  });
+
+  it('should return a bad request on invalid parameters', async () => {
+    for (const query of [
+      'b_size=abc',
+      'b_start=x',
+      'b_size=-1',
+      'path.depth=x',
+      'created.query=not-a-date&created.range=min',
+    ]) {
+      const res = await request(app)
+        .get(`/@search?${query}`)
+        .set('Accept', 'application/json')
+        .expect(400);
+      expect(res.body.type).toBe('BadRequest');
+    }
+    await request(app)
+      .get('/@search?b_size=2&b_start=-1&path.depth=-1')
+      .set('Accept', 'application/json')
+      .expect(200);
+  });
 });

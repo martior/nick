@@ -6,14 +6,14 @@
 // External imports
 import { createHmac } from 'crypto';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
 import { addToken } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import * as lock from '../../helpers/lock/lock';
-import { testRequest } from '../../helpers/tests/tests';
+import { createUser, testRequest } from '../../helpers/tests/tests';
 import { User } from '../../models/user/user';
 
 // Mock lockExpired
@@ -71,13 +71,8 @@ describe('Locking', () => {
   beforeEach(async () => {
     await testRequest(app, 'content/post');
   });
-  afterEach(async () => {
-    await request(app)
-      .delete(path)
-      .set('Authorization', `Bearer ${adminToken}`)
-      .set('Lock-Token', 'a95388f2-e4b3-4292-98aa-62656cbd5b9c')
-      .expect(204);
-  });
+  // The test transaction is rolled back after each test, which removes the
+  // document and its lock
 
   it('should lock an item', () => testRequest(app, 'locking/post'));
 
@@ -179,5 +174,54 @@ describe('Locking', () => {
     await testRequest(app, 'locking/post');
     await testRequest(app, 'locking/update');
     expect((await getLock()).locked).toBe(true);
+  });
+
+  it('should not update a document locked by another user with the token', async () => {
+    const token = await editorToken();
+    await request(app)
+      .post(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    const lockToken = (await getLock()).token;
+    expect(lockToken).toBe('a95388f2-e4b3-4292-98aa-62656cbd5b9c');
+    await request(app)
+      .patch(path)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Lock-Token', lockToken)
+      .send({ title: 'Changed' })
+      .expect(403);
+    await request(app)
+      .patch(`${path}/@history`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Lock-Token', lockToken)
+      .send({ version: 0 })
+      .expect(401);
+    await request(app)
+      .patch(path)
+      .set('Authorization', `Bearer ${token}`)
+      .set('Lock-Token', lockToken)
+      .send({ title: 'Changed' })
+      .expect(204);
+  });
+
+  it('should not show the lock token to users who may only view', async () => {
+    await testRequest(app, 'locking/post');
+    const token = await createUser('viewer', ['Reader']);
+    const lock = await request(app)
+      .get(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(lock.body.locked).toBe(true);
+    expect(lock.body.creator).toBe('admin');
+    expect(lock.body.token).toBeUndefined();
+    const content = await request(app)
+      .get(path)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(content.body.lock.locked).toBe(true);
+    expect(content.body.lock.token).toBeUndefined();
+    expect((await getLock()).token).toBe(
+      'a95388f2-e4b3-4292-98aa-62656cbd5b9c',
+    );
   });
 });

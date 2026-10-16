@@ -32,7 +32,6 @@ import {
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
-import { lockExpired } from '../../helpers/lock/lock';
 import { getBatching, getBatchParams } from '../../helpers/query/query';
 import { getRootUrl, getUrl } from '../../helpers/url/url';
 import { normalizeFields, validateFields } from '../../helpers/schema/schema';
@@ -327,6 +326,12 @@ export default [
     client: 'getHistoryVersion',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // A version is a non-negative integer, there is no other version
+      if (!/^[0-9]+$/.test(req.params.version)) {
+        throw new RequestException(404, {
+          message: req.i18n('Version not found.'),
+        });
+      }
       await req.document.fetchChildren({}, trx);
       const version = parseInt(req.params.version, 10);
       await req.document.fetchVersion(version, trx);
@@ -1023,6 +1028,35 @@ export default [
               });
             }
           }
+
+          // The item has to be one of the (subset of the) children and the
+          // delta `top`, `bottom` or an integer
+          const ids = (
+            Array.isArray(subset_ids)
+              ? subset_ids
+              : req.document._children.map(
+                  (child: InstanceType<typeof Document>) => child.id,
+                )
+          ) as string[];
+          if (typeof obj_id !== 'string' || !ids.includes(obj_id)) {
+            throw new RequestException(400, {
+              message: req.i18n('The item “{id}” is not found.', {
+                id: `${obj_id}`,
+              }),
+            });
+          }
+          if (!(
+            delta === 'top' ||
+            delta === 'bottom' ||
+            Number.isInteger(delta) ||
+            (typeof delta === 'string' && /^[-+]?[0-9]+$/.test(delta))
+          )) {
+            throw new RequestException(400, {
+              message: req.i18n(
+                'The delta has to be top, bottom or an integer.',
+              ),
+            });
+          }
           await req.document.reorder(
             obj_id,
             delta,
@@ -1052,12 +1086,7 @@ export default [
       }
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(403, {
           error: {
             message: req.i18n('Resource is locked.'),
@@ -1226,12 +1255,7 @@ export default [
       await req.document.lockForUpdate(trx);
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(423, {
           error: {
             message: req.i18n('Object “{id}” is locked.', {

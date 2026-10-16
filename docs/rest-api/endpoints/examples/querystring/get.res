@@ -466,6 +466,33 @@ Content-Type: application/json
         }
       }
     },
+    "isFolderish": {
+      "title": "Folder-like",
+      "description": "Find items that can contain other objects",
+      "group": "Metadata",
+      "enabled": true,
+      "sortable": false,
+      "values": {},
+      "vocabulary": null,
+      "operations": [
+        "plone.app.querystring.operation.boolean.isTrue",
+        "plone.app.querystring.operation.boolean.isFalse"
+      ],
+      "operators": {
+        "plone.app.querystring.operation.boolean.isTrue": {
+          "title": "Yes",
+          "widget": null,
+          "operation": "isTrue",
+          "description": ""
+        },
+        "plone.app.querystring.operation.boolean.isFalse": {
+          "title": "No",
+          "widget": null,
+          "operation": "isFalse",
+          "description": ""
+        }
+      }
+    },
     "path": {
       "title": "Location",
       "description": "The location of an item",

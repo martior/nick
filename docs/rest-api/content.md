@@ -57,7 +57,7 @@ The response body can contain information about why the request failed. As in pl
 
 A missing `@type` gives `400 Bad Request`, an unknown `@type` gives `403 Forbidden`.
 
-An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()# @`, not `.` or `..`, not starting with `_` or `aq_` and not ending with `__`. An id which is already used in the folder gives `400 Bad Request`; only ids generated from the title are made unique.
+An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()# @`, not `.` or `..`, not starting with `_`, `@` or `aq_` and not ending with `__`. Path segments starting with `@` address services, so a child called `@search` would hide the search service of its folder. An id which is already used in the folder gives `400 Bad Request`; only ids generated from the title are made unique.
 
 ### Server managed fields
 
@@ -181,7 +181,7 @@ Or use the client directly:
 {% include_relative endpoints/examples/content/patch_reorder.ts %}
 ```
 
-Like in plone.restapi, the optional `subset_ids` subkey lists the ids of the resources the client shows, in the order it knows them. The resource is then moved within this subset; if the order of the subset doesn't match the order on the server, the response is `400 Bad Request`. An unknown `obj_id` is ignored.
+Like in plone.restapi, the optional `subset_ids` subkey lists the ids of the resources the client shows, in the order it knows them. The resource is then moved within this subset; if the order of the subset doesn't match the order on the server, the response is `400 Bad Request`. An `obj_id` that is not one of the resources (or of the subset), or a `delta` that is not 'top', 'bottom' or an integer, gives `400 Bad Request` and nothing is moved.
 
 All resources can be sorted with the `sort` key, with `on` (`id`, `sortable_title`, `created`, `modified` or a field) and `order` (`ascending` or `descending`):
 

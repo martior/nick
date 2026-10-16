@@ -52,6 +52,8 @@ Like in plone.restapi, the body can contain the publication dates `effective` an
 
 A `POST` to `@workflow` without a transition returns `400 Bad Request`.
 
+An object locked by another user (see [Locking](locking.md)) can't be transitioned: the server responds with `403 Forbidden` and the message `Resource is locked.`, and the state is unchanged. The creator of the lock can transition it.
+
 A `comment` in the body is stored with the transition and returned in the response, in the `history` of `@workflow` and in `@history`. The `history` of `@workflow` lists the workflow history like in plone.restapi; for content created through the API it starts with the creation in the initial state (`"action": null`).
 
 A transition to the state the object is already in is accepted and does nothing: the response is `200 OK` with the last transition and no new history entry is recorded.

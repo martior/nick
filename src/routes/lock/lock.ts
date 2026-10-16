@@ -26,22 +26,10 @@ export default [
     permission: 'View',
     client: 'getLock',
     cache: 'manage',
-    handler: async (req: Request, _trx: Knex.Transaction) => {
-      if (req.document.lock.locked && lockExpired(req.document)) {
-        return {
-          json: {
-            locked: false,
-            stealable: true,
-          },
-          xkeys: [req.document.uuid],
-        };
-      } else {
-        return {
-          json: req.document.lock,
-          xkeys: [req.document.uuid],
-        };
-      }
-    },
+    handler: async (req: Request, _trx: Knex.Transaction) => ({
+      json: req.document.lockInfo(req.permissions),
+      xkeys: [req.document.uuid],
+    }),
   },
   {
     op: 'post',

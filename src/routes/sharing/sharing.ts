@@ -238,6 +238,25 @@ export default [
         });
       }
 
+      // Check that the users and groups exist, nothing is changed otherwise.
+      // A role of an unknown principal would be a latent grant to whoever
+      // later gets that id. The group of all authenticated users is created
+      // when needed.
+      for (const entry of entries) {
+        const Model = entry.type === 'user' ? User : Group;
+        if (
+          !(entry.type === 'group' && entry.id === authenticatedUsers) &&
+          !(await Model.fetchById(entry.id, {}, trx))
+        ) {
+          throw new RequestException(400, {
+            message: req.i18n('The {type} “{id}” is not found.', {
+              type: entry.type,
+              id: entry.id,
+            }),
+          });
+        }
+      }
+
       // Update inherit
       if (
         typeof body.inherit === 'boolean' &&

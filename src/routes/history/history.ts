@@ -15,7 +15,6 @@ import { omit } from 'es-toolkit/object';
 // Internal imports
 import { Collection } from '../../collections/_collection/_collection';
 import { RequestException } from '../../helpers/error/error';
-import { lockExpired } from '../../helpers/lock/lock';
 import { uniqueId } from '../../helpers/utils/utils';
 import models from '../../models';
 
@@ -53,16 +52,30 @@ export default [
     client: 'revertHistory',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // A revert is an edit, so it also needs the right to edit the content
+      // in its current state
+      if (!req.permissions.includes('Modify')) {
+        throw new RequestException(401, {
+          message: req.i18n('You are not authorized to access this resource.'),
+        });
+      }
+
+      // Check the version, a non-negative integer (or a string of one)
+      const versionNumber = req.body?.version;
+      if (!(
+        (Number.isInteger(versionNumber) && versionNumber >= 0) ||
+        (typeof versionNumber === 'string' && /^[0-9]+$/.test(versionNumber))
+      )) {
+        throw new RequestException(400, {
+          message: req.i18n('The version is missing or invalid.'),
+        });
+      }
+
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(401, {
           error: {
             message: req.i18n(
@@ -78,7 +91,7 @@ export default [
       const version = await Version.fetchOne(
         {
           document: req.document.uuid,
-          version: req.body.version,
+          version: parseInt(versionNumber, 10),
         },
         {},
         trx,
@@ -118,7 +131,7 @@ export default [
       // Create new version
       const json = omit(version.json, ['changeNote']);
       const modified = dayjs.utc().format();
-      const versionNumber = req.document.version + 1;
+      const newVersion = req.document.version + 1;
       await req.document.createRelated(
         '_versions',
         {
@@ -126,7 +139,7 @@ export default [
           id: newId,
           created: modified,
           actor: req.user.id,
-          version: versionNumber,
+          version: newVersion,
           json: {
             ...json,
             changeNote: `Reverted to revision ${version.version}`,
@@ -146,7 +159,7 @@ export default [
         {
           id: newId,
           path: newPath,
-          version: versionNumber,
+          version: newVersion,
           modified,
           json,
           lock: {

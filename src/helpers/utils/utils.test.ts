@@ -12,6 +12,7 @@ import {
   mapSync,
   uniqueId,
   isValidId,
+  sortableTitle,
   pasteId,
   removeUndefined,
   arrayToVocabulary,
@@ -145,17 +146,40 @@ describe('utils', () => {
     });
   });
 
+  describe('sortableTitle', () => {
+    it('makes titles sortable like Plone', () => {
+      expect(sortableTitle(' Item 2 ')).toBe('item 0002');
+      expect(sortableTitle('Item 10')).toBe('item 0010');
+      expect(sortableTitle('Item 12345')).toBe('item 12345');
+      expect(sortableTitle('Ångström Éclair')).toBe('angstrom eclair');
+      expect(sortableTitle(undefined)).toBe('');
+      expect(
+        [sortableTitle('Item 10'), sortableTitle('item 2')].sort(),
+      ).toEqual(['item 0002', 'item 0010']);
+    });
+  });
+
   describe('isValidId', () => {
     it('accepts ids Zope accepts', () => {
-      ['news', 'has space', 'UPPER.case~ok', 'index_html', '@search'].forEach(
+      ['news', 'has space', 'UPPER.case~ok', 'index_html', 'a@b'].forEach(
         (id) => expect(isValidId(id)).toBe(true),
       );
     });
 
     it('refuses ids Zope refuses', () => {
-      ['', 'a/b', '_a', '.', '..', 'aq_parent', 'a__', 'ü', 12].forEach((id) =>
-        expect(isValidId(id)).toBe(false),
-      );
+      [
+        '',
+        'a/b',
+        '_a',
+        '.',
+        '..',
+        'aq_parent',
+        'a__',
+        'ü',
+        12,
+        '@search',
+        '@@view',
+      ].forEach((id) => expect(isValidId(id)).toBe(false));
     });
   });
 
