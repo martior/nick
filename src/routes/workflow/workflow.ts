@@ -113,6 +113,16 @@ export default [
         });
       }
 
+      // A lock of another user blocks state changes, like edits and deletes
+      if (req.document.isLockedByOther(req.user.id)) {
+        throw new RequestException(403, {
+          error: {
+            message: req.i18n('Resource is locked.'),
+            type: req.i18n('Document locked'),
+          },
+        });
+      }
+
       // Check the transition on all children, it is applied to all or none
       if (recursive) {
         await checkChildren(req, req.document, transition, trx);
