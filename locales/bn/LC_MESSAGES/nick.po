@@ -1127,8 +1127,8 @@ msgid "Information about rights held in and over this item."
 msgstr "এই আইটেমের উপর অধিকার সম্পর্কিত তথ্য।"
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:268
+#: src/app.ts:280
 msgctxt "App"
 msgid "Internal server error"
 msgstr "অভ্যন্তরীণ সার্ভার ত্রুটি"
@@ -2435,6 +2435,12 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "আপনার স্থানীয় SMTP (বহির্গামী ইমেইল) সার্ভারের পোর্ট। সাধারণত '25'।"
 
+#. Default: "The request body is not valid JSON."
+#: src/app.ts:298
+msgctxt "App"
+msgid "The request body is not valid JSON."
+msgstr ""
+
 #. Default: "The roles to check for."
 #: src/content_rules/conditions/user_role.ts:34
 msgctxt "Content rules|Conditions|User role"
@@ -2581,8 +2587,8 @@ msgstr "আজ"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/app.ts:172
+#: src/app.ts:189
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "লেনদেন ত্রুটি।"

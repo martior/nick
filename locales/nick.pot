@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T01:21:52.915Z\n"
+"POT-Creation-Date: 2026-10-16T01:46:20.544Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1124,8 +1124,8 @@ msgid "Information about rights held in and over this item."
 msgstr ""
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:268
+#: src/app.ts:280
 msgctxt "App"
 msgid "Internal server error"
 msgstr ""
@@ -2432,6 +2432,12 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr ""
 
+#. Default: "The request body is not valid JSON."
+#: src/app.ts:298
+msgctxt "App"
+msgid "The request body is not valid JSON."
+msgstr ""
+
 #. Default: "The roles to check for."
 #: src/content_rules/conditions/user_role.ts:34
 msgctxt "Content rules|Conditions|User role"
@@ -2578,8 +2584,8 @@ msgstr ""
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/app.ts:172
+#: src/app.ts:189
 msgctxt "Client"
 msgid "Transaction error."
 msgstr ""

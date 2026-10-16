@@ -1127,8 +1127,8 @@ msgid "Information about rights held in and over this item."
 msgstr "ಈ ಐಟಂನಲ್ಲಿ ಮತ್ತು ಅದರ ಮೇಲೆ ಇರುವ ಹಕ್ಕುಗಳ ಬಗ್ಗೆ ಮಾಹಿತಿ."
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:268
+#: src/app.ts:280
 msgctxt "App"
 msgid "Internal server error"
 msgstr "ಆಂತರಿಕ ಸರ್ವರ್ ದೋಷ"
@@ -2435,6 +2435,12 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "ನಿಮ್ಮ ಸ್ಥಳೀಯ SMTP (ಹೊರಹೋಗುವ ಇಮೇಲ್) ಸರ್ವರ್‌ನ ಪೋರ್ಟ್. ಸಾಮಾನ್ಯವಾಗಿ '25'."
 
+#. Default: "The request body is not valid JSON."
+#: src/app.ts:298
+msgctxt "App"
+msgid "The request body is not valid JSON."
+msgstr ""
+
 #. Default: "The roles to check for."
 #: src/content_rules/conditions/user_role.ts:34
 msgctxt "Content rules|Conditions|User role"
@@ -2581,8 +2587,8 @@ msgstr "ಇಂದು"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/app.ts:172
+#: src/app.ts:189
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "ವಹಿವಾಟು ದೋಷ."
