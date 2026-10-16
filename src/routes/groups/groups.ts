@@ -12,6 +12,7 @@ import config from '../../helpers/config/config';
 import events from '../../events';
 import { RequestException } from '../../helpers/error/error';
 import { apiLimiter } from '../../helpers/limiter/limiter';
+import { getRootUrl } from '../../helpers/url/url';
 import models from '../../models';
 
 const defaultLimit = 25;
@@ -172,6 +173,9 @@ export default [
       // Send created
       return {
         status: 201,
+        headers: {
+          Location: `${getRootUrl(req)}/@groups/${group.id}`,
+        },
         json: await group.toJson(req),
       };
     },

@@ -88,7 +88,11 @@ describe('User', () => {
   it('should not get a user when not found', () =>
     testRequest(app, 'users/get_notfound'));
 
-  it('should add a new user', () => testRequest(app, 'users/post'));
+  it('should add a new user', () =>
+    testRequest(app, 'users/post').expect(
+      'Location',
+      'http://localhost:8080/@users/headlessnick',
+    ));
 
   it('should not add a user with a short password', () =>
     testRequest(app, 'users/post_short_password'));
