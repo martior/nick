@@ -92,7 +92,7 @@ export async function importWorkflows(
 }
 
 /**
- * Bind workflows to types with the GenericSetup `workflows.xml` of a
+ * Bind workflow chains to types with the GenericSetup `workflows.xml` of a
  * profile (`<bindings><type type_id="..."><bound-workflow .../>`). Types
  * which don't exist and empty chains (Nick types always have a workflow)
  * are skipped.
@@ -118,7 +118,7 @@ export async function seedWorkflowBindings(
     } else if (chain.length === 0) {
       console.warn(`Workflow bindings: type ${id} keeps its workflow`);
     } else {
-      await Type.update(id, { workflow: chain[0] }, trx);
+      await type.setChain(chain, trx);
     }
   });
   console.log('Workflow bindings imported');

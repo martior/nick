@@ -41,7 +41,6 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
   const Catalog = models.get('Catalog');
   const Document = models.get('Document');
   const Index = models.get('Index');
-  const Type = models.get('Type');
   const Workflow = models.get('Workflow');
   const { start, size } = getBatchParams(req.query.b_start, req.query.b_size);
 
@@ -60,11 +59,16 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
       : {}),
   };
 
-  // Types by workflow
-  const types: Record<string, string[]> = {};
-  (await Type.fetchAll({}, {}, trx)).map((type: any) => {
-    types[type.workflow] = [...(types[type.workflow] || []), type.id];
-  });
+  // Types by workflow: where it is the first workflow of the chain (its
+  // state is the review state) and where it is a further one
+  const types: Record<string, { primary: string[]; other: string[] }> = {};
+  const chains = await Document.fetchChains(trx);
+  Object.keys(chains).map((type: string) =>
+    chains[type].map((workflow: any, index: number) => {
+      types[workflow.id] = types[workflow.id] || { primary: [], other: [] };
+      types[workflow.id][index === 0 ? 'primary' : 'other'].push(type);
+    }),
+  );
 
   if (!req.indexes) {
     req.indexes = await Index.fetchAll({}, {}, trx);
@@ -83,10 +87,11 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
         continue;
       }
 
-      // Match the state in the catalog and other variables in the
-      // workflow status of the documents
+      // Match the state in the catalog (in the workflow status for further
+      // workflows of a chain) and other variables in the workflow status
+      const { primary, other } = types[workflow.id];
       const where: Record<string, any> = {
-        _portal_type: ['=', types[workflow.id]],
+        _portal_type: ['=', [...primary, ...other]],
       };
       for (const [variable, values] of Object.entries(worklist.match || {}) as [
         string,
@@ -94,7 +99,17 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
       ][]) {
         const matched = await matchValues(values, { ...context, workflow });
         if (variable === 'review_state') {
-          where._review_state = ['=', matched.map(String)];
+          where['_review_state:match'] = [
+            'raw',
+            `(("_portal_type" = ANY(?) AND "_review_state" = ANY(?)) OR ("_portal_type" = ANY(?) AND "document" IN (SELECT document FROM document_workflow_status WHERE workflow = ? AND state = ANY(?))))`,
+            [
+              primary,
+              matched.map(String),
+              other,
+              workflow.id,
+              matched.map(String),
+            ],
+          ];
         } else {
           where[`_variable:${variable}`] = [
             'raw',

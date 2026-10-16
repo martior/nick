@@ -35,6 +35,7 @@
 
 ### Feature
 
+- Support several workflows per type (workflow chains, `workflows` in a type profile and `workflows.xml`, the new `type_workflow` table). Further workflows keep their state in the workflow status of the document, `@workflow` offers the transitions of all workflows like plone.restapi and takes a transition in the first workflow providing it, and the permissions of all states apply in turn. The export keeps the chains. Run `pnpm migrate` @martior
 - Add DCWorkflow worklists to workflows and the `@worklists` endpoint: the worklists the user passes the guard of, with the matching content they can view (by state and workflow variables, batched). The loader converts worklists @martior
 - Add DCWorkflow variables to workflows: `for_status` variables with default values and expressions, values set by states and expressions of transitions, stored with the history and in the new `document_workflow_status` table, `info_guard` (`review_history` hides the `@workflow` history like Plone) and `getInfoFor` in expressions. The loader converts variables and the export keeps them in the history. Run `pnpm migrate` @martior
 - Load Plone DCWorkflow definitions: `workflows/<id>/definition.xml` and `workflows.xml` bindings in a profile and `pnpm workflows:import`. The export from Plone uses the same loader, so migrated sites keep their guards (permissions, roles, groups, expressions), acquired permissions, hidden and automatic transitions. Adds the `Review Comments` permission for Reviewer and Administrator; run `pnpm seed:upgrade` (upgrade 1019) @martior
