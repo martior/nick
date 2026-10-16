@@ -1437,7 +1437,7 @@ export class Document extends Model {
       await knex
         .raw(
           `UPDATE catalog SET "_allowedUsersGroupsRoles" = item.allowed
-            FROM jsonb_to_recordset(?::jsonb) AS item(document uuid, allowed varchar(255)[])
+            FROM jsonb_to_recordset(?::jsonb) AS item(document uuid, allowed text[])
             WHERE catalog.document = item.document`,
           [JSON.stringify(allowed.slice(i, i + 500))],
         )
