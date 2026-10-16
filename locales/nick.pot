@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-15T23:31:09.594Z\n"
+"POT-Creation-Date: 2026-10-16T01:18:01.967Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -13,6 +13,19 @@ msgstr ""
 "Preferred-Encodings: utf-8\n"
 "Domain: nick\n"
  
+#. Default: ""
+#: src/profiles/migrated/types/plone site.json:4
+#: src/profiles/migrated/types/news item.json:4
+#: src/profiles/migrated/types/lrf.json:4
+#: src/profiles/migrated/types/link.json:4
+#: src/profiles/migrated/types/lif.json:4
+#: src/profiles/migrated/types/folder.json:4
+#: src/profiles/migrated/types/document.json:4
+#: src/profiles/migrated/types/collection.json:4
+msgctxt "Profiles|Migrated|Types|Plone site"
+msgid ""
+msgstr ""
+
 #. Default: "&e = the triggering event, &c = the context, &u = the user"
 #: src/content_rules/actions/logger.ts:30
 msgctxt "Content rules|Actions|Logger"
@@ -77,7 +90,7 @@ msgid "Add"
 msgstr ""
 
 #. Default: "Add Comment"
-#: src/profiles/core/permissions.json:54
+#: src/profiles/core/permissions.json:66
 #: src/profiles/core/upgrades/1002/permissions.json:10
 msgctxt "Profiles|Core|Permissions"
 msgid "Add Comment"
@@ -132,7 +145,11 @@ msgid "Adds title and description fields."
 msgstr ""
 
 #. Default: "Administrator"
-#: src/profiles/core/roles.json:47
+#: src/profiles/core/roles.json:64
+#: src/profiles/core/upgrades/1013/roles.json:20
+#: src/profiles/core/upgrades/1012/roles.json:26
+#: src/profiles/core/upgrades/1010/roles.json:16
+#: src/profiles/core/upgrades/1009/roles.json:21
 #: src/profiles/core/upgrades/1002/roles.json:26
 msgctxt "Profiles|Core|Roles"
 msgid "Administrator"
@@ -140,6 +157,7 @@ msgstr ""
 
 #. Default: "Administrators"
 #: src/profiles/multilingualcontent/groups.json:6
+#: src/profiles/migrated/groups.json:6
 #: src/profiles/examplecontent/groups.json:6
 msgctxt "Profiles|Multilingualcontent|Groups"
 msgid "Administrators"
@@ -148,10 +166,10 @@ msgstr ""
 #. Default: "After N days in the future"
 #: src/profiles/core/catalog.json:95
 #: src/profiles/core/catalog.json:168
-#: src/profiles/core/catalog.json:510
-#: src/profiles/core/catalog.json:589
-#: src/profiles/core/catalog.json:662
-#: src/profiles/core/catalog.json:735
+#: src/profiles/core/catalog.json:528
+#: src/profiles/core/catalog.json:607
+#: src/profiles/core/catalog.json:680
+#: src/profiles/core/catalog.json:753
 msgctxt "Profiles|Core|Catalog"
 msgid "After N days in the future"
 msgstr ""
@@ -159,10 +177,10 @@ msgstr ""
 #. Default: "After date"
 #: src/profiles/core/catalog.json:124
 #: src/profiles/core/catalog.json:197
-#: src/profiles/core/catalog.json:539
-#: src/profiles/core/catalog.json:618
-#: src/profiles/core/catalog.json:691
-#: src/profiles/core/catalog.json:764
+#: src/profiles/core/catalog.json:557
+#: src/profiles/core/catalog.json:636
+#: src/profiles/core/catalog.json:709
+#: src/profiles/core/catalog.json:782
 msgctxt "Profiles|Core|Catalog"
 msgid "After date"
 msgstr ""
@@ -170,10 +188,10 @@ msgstr ""
 #. Default: "After relative date"
 #: src/profiles/core/catalog.json:94
 #: src/profiles/core/catalog.json:167
-#: src/profiles/core/catalog.json:509
-#: src/profiles/core/catalog.json:588
-#: src/profiles/core/catalog.json:661
-#: src/profiles/core/catalog.json:734
+#: src/profiles/core/catalog.json:527
+#: src/profiles/core/catalog.json:606
+#: src/profiles/core/catalog.json:679
+#: src/profiles/core/catalog.json:752
 msgctxt "Profiles|Core|Catalog"
 msgid "After relative date"
 msgstr ""
@@ -181,10 +199,10 @@ msgstr ""
 #. Default: "After the current day"
 #: src/profiles/core/catalog.json:101
 #: src/profiles/core/catalog.json:174
-#: src/profiles/core/catalog.json:516
-#: src/profiles/core/catalog.json:595
-#: src/profiles/core/catalog.json:668
-#: src/profiles/core/catalog.json:741
+#: src/profiles/core/catalog.json:534
+#: src/profiles/core/catalog.json:613
+#: src/profiles/core/catalog.json:686
+#: src/profiles/core/catalog.json:759
 msgctxt "Profiles|Core|Catalog"
 msgid "After the current day"
 msgstr ""
@@ -192,10 +210,10 @@ msgstr ""
 #. Default: "After today"
 #: src/profiles/core/catalog.json:100
 #: src/profiles/core/catalog.json:173
-#: src/profiles/core/catalog.json:515
-#: src/profiles/core/catalog.json:594
-#: src/profiles/core/catalog.json:667
-#: src/profiles/core/catalog.json:740
+#: src/profiles/core/catalog.json:533
+#: src/profiles/core/catalog.json:612
+#: src/profiles/core/catalog.json:685
+#: src/profiles/core/catalog.json:758
 msgctxt "Profiles|Core|Catalog"
 msgid "After today"
 msgstr ""
@@ -232,6 +250,12 @@ msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
 
+#. Default: "An item can’t be moved into itself."
+#: src/routes/content/content.ts:150
+msgctxt "Routes|Content"
+msgid "An item can’t be moved into itself."
+msgstr ""
+
 #. Default: "An item’s description"
 #: src/profiles/core/catalog.json:234
 msgctxt "Profiles|Core|Catalog"
@@ -239,13 +263,13 @@ msgid "An item’s description"
 msgstr ""
 
 #. Default: "An item’s type (e.g. Event)"
-#: src/profiles/core/catalog.json:440
+#: src/profiles/core/catalog.json:446
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s type (e.g. Event)"
 msgstr ""
 
 #. Default: "An item’s workflow state (e.g.published)"
-#: src/profiles/core/catalog.json:459
+#: src/profiles/core/catalog.json:471
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s workflow state (e.g.published)"
 msgstr ""
@@ -323,10 +347,10 @@ msgstr ""
 #. Default: "Before N days in the past"
 #: src/profiles/core/catalog.json:107
 #: src/profiles/core/catalog.json:180
-#: src/profiles/core/catalog.json:522
-#: src/profiles/core/catalog.json:601
-#: src/profiles/core/catalog.json:674
-#: src/profiles/core/catalog.json:747
+#: src/profiles/core/catalog.json:540
+#: src/profiles/core/catalog.json:619
+#: src/profiles/core/catalog.json:692
+#: src/profiles/core/catalog.json:765
 msgctxt "Profiles|Core|Catalog"
 msgid "Before N days in the past"
 msgstr ""
@@ -334,10 +358,10 @@ msgstr ""
 #. Default: "Before date"
 #: src/profiles/core/catalog.json:136
 #: src/profiles/core/catalog.json:209
-#: src/profiles/core/catalog.json:551
-#: src/profiles/core/catalog.json:630
-#: src/profiles/core/catalog.json:703
-#: src/profiles/core/catalog.json:776
+#: src/profiles/core/catalog.json:569
+#: src/profiles/core/catalog.json:648
+#: src/profiles/core/catalog.json:721
+#: src/profiles/core/catalog.json:794
 msgctxt "Profiles|Core|Catalog"
 msgid "Before date"
 msgstr ""
@@ -345,10 +369,10 @@ msgstr ""
 #. Default: "Before relative date"
 #: src/profiles/core/catalog.json:106
 #: src/profiles/core/catalog.json:179
-#: src/profiles/core/catalog.json:521
-#: src/profiles/core/catalog.json:600
-#: src/profiles/core/catalog.json:673
-#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:539
+#: src/profiles/core/catalog.json:618
+#: src/profiles/core/catalog.json:691
+#: src/profiles/core/catalog.json:764
 msgctxt "Profiles|Core|Catalog"
 msgid "Before relative date"
 msgstr ""
@@ -356,10 +380,10 @@ msgstr ""
 #. Default: "Before the current day"
 #: src/profiles/core/catalog.json:113
 #: src/profiles/core/catalog.json:186
-#: src/profiles/core/catalog.json:528
-#: src/profiles/core/catalog.json:607
-#: src/profiles/core/catalog.json:680
-#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:546
+#: src/profiles/core/catalog.json:625
+#: src/profiles/core/catalog.json:698
+#: src/profiles/core/catalog.json:771
 msgctxt "Profiles|Core|Catalog"
 msgid "Before the current day"
 msgstr ""
@@ -367,10 +391,10 @@ msgstr ""
 #. Default: "Before today"
 #: src/profiles/core/catalog.json:112
 #: src/profiles/core/catalog.json:185
-#: src/profiles/core/catalog.json:527
-#: src/profiles/core/catalog.json:606
-#: src/profiles/core/catalog.json:679
-#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:545
+#: src/profiles/core/catalog.json:624
+#: src/profiles/core/catalog.json:697
+#: src/profiles/core/catalog.json:770
 msgctxt "Profiles|Core|Catalog"
 msgid "Before today"
 msgstr ""
@@ -384,10 +408,10 @@ msgstr ""
 #. Default: "Between dates"
 #: src/profiles/core/catalog.json:118
 #: src/profiles/core/catalog.json:191
-#: src/profiles/core/catalog.json:533
-#: src/profiles/core/catalog.json:612
-#: src/profiles/core/catalog.json:685
-#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:551
+#: src/profiles/core/catalog.json:630
+#: src/profiles/core/catalog.json:703
+#: src/profiles/core/catalog.json:776
 msgctxt "Profiles|Core|Catalog"
 msgid "Between dates"
 msgstr ""
@@ -428,6 +452,12 @@ msgstr ""
 #: src/profiles/core/behaviors/versioning.json:16
 msgctxt "Profiles|Core|Behaviors|Versioning"
 msgid "Change Note"
+msgstr ""
+
+#. Default: "Collection"
+#: src/profiles/migrated/types/collection.json:3
+msgctxt "Profiles|Migrated|Types|Collection"
+msgid "Collection"
 msgstr ""
 
 #. Default: "Comment"
@@ -477,7 +507,7 @@ msgstr ""
 #: src/profiles/core/catalog.json:240
 #: src/profiles/core/catalog.json:259
 #: src/profiles/core/catalog.json:278
-#: src/profiles/core/catalog.json:484
+#: src/profiles/core/catalog.json:502
 msgctxt "Profiles|Core|Catalog"
 msgid "Contains"
 msgstr ""
@@ -516,7 +546,8 @@ msgid "Contents"
 msgstr ""
 
 #. Default: "Contributor"
-#: src/profiles/core/roles.json:32
+#: src/profiles/core/roles.json:42
+#: src/profiles/core/upgrades/1012/roles.json:11
 msgctxt "Profiles|Core|Roles"
 msgid "Contributor"
 msgstr ""
@@ -552,19 +583,19 @@ msgid "Coverage"
 msgstr ""
 
 #. Default: "Creation date"
-#: src/profiles/core/catalog.json:654
+#: src/profiles/core/catalog.json:672
 msgctxt "Profiles|Core|Catalog"
 msgid "Creation date"
 msgstr ""
 
 #. Default: "Creator"
-#: src/profiles/core/catalog.json:408
+#: src/profiles/core/catalog.json:414
 msgctxt "Profiles|Core|Catalog"
 msgid "Creator"
 msgstr ""
 
 #. Default: "Current logged in user"
-#: src/profiles/core/catalog.json:421
+#: src/profiles/core/catalog.json:427
 msgctxt "Profiles|Core|Catalog"
 msgid "Current logged in user"
 msgstr ""
@@ -640,9 +671,39 @@ msgctxt "Profiles|Core|Types|Event"
 msgid "Define the event recurrence rule."
 msgstr ""
 
+#. Default: "Delegate Contributor"
+#: src/profiles/core/permissions.json:78
+#: src/profiles/core/upgrades/1013/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Contributor"
+msgstr ""
+
+#. Default: "Delegate Editor"
+#: src/profiles/core/permissions.json:82
+#: src/profiles/core/upgrades/1013/permissions.json:10
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Editor"
+msgstr ""
+
+#. Default: "Delegate Reader"
+#: src/profiles/core/permissions.json:86
+#: src/profiles/core/upgrades/1013/permissions.json:14
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reader"
+msgstr ""
+
+#. Default: "Delegate Reviewer"
+#: src/profiles/core/permissions.json:90
+#: src/profiles/core/upgrades/1013/permissions.json:18
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reviewer"
+msgstr ""
+
 #. Default: "Delete"
+#: src/profiles/core/permissions.json:38
 #: src/profiles/core/actions.json:54
-msgctxt "Profiles|Core|Actions"
+#: src/profiles/core/upgrades/1010/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
 msgid "Delete"
 msgstr ""
 
@@ -707,8 +768,8 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:799
+#: src/routes/history/history.ts:71
+#: src/routes/content/content.ts:900
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr ""
@@ -756,13 +817,17 @@ msgid "Edit"
 msgstr ""
 
 #. Default: "Editor"
-#: src/profiles/core/roles.json:37
+#: src/profiles/core/roles.json:47
+#: src/profiles/core/upgrades/1013/roles.json:15
+#: src/profiles/core/upgrades/1012/roles.json:16
+#: src/profiles/core/upgrades/1010/roles.json:11
+#: src/profiles/core/upgrades/1009/roles.json:11
 msgctxt "Profiles|Core|Roles"
 msgid "Editor"
 msgstr ""
 
 #. Default: "Effective date"
-#: src/profiles/core/catalog.json:727
+#: src/profiles/core/catalog.json:745
 msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
 msgstr ""
@@ -831,14 +896,15 @@ msgstr ""
 
 #. Default: "Equals"
 #: src/profiles/core/catalog.json:63
-#: src/profiles/core/catalog.json:340
+#: src/profiles/core/catalog.json:346
 msgctxt "Profiles|Core|Catalog"
 msgid "Equals"
 msgstr ""
 
 #. Default: "Event"
+#: src/profiles/migrated/types/event.json:3
 #: src/profiles/core/types/event.json:3
-msgctxt "Profiles|Core|Types|Event"
+msgctxt "Profiles|Migrated|Types|Event"
 msgid "Event"
 msgstr ""
 
@@ -878,6 +944,12 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Event start date"
 msgstr ""
 
+#. Default: "Events can be shown in calendars."
+#: src/profiles/migrated/types/event.json:4
+msgctxt "Profiles|Migrated|Types|Event"
+msgid "Events can be shown in calendars."
+msgstr ""
+
 #. Default: "Exclude actor from recipients"
 #: src/content_rules/actions/send_email.ts:38
 msgctxt "Content rules|Actions|Send email"
@@ -904,7 +976,7 @@ msgid "Expiration Date"
 msgstr ""
 
 #. Default: "Expiration date"
-#: src/profiles/core/catalog.json:581
+#: src/profiles/core/catalog.json:599
 msgctxt "Profiles|Core|Catalog"
 msgid "Expiration date"
 msgstr ""
@@ -916,9 +988,10 @@ msgid "Feed"
 msgstr ""
 
 #. Default: "File"
+#: src/profiles/migrated/types/file.json:3
 #: src/profiles/core/types/file.json:3
 #: src/profiles/core/types/file.json:19
-msgctxt "Profiles|Core|Types|File"
+msgctxt "Profiles|Migrated|Types|File"
 msgid "File"
 msgstr ""
 
@@ -947,25 +1020,26 @@ msgid "Filter Contained Types"
 msgstr ""
 
 #. Default: "Find items related to the selected items"
-#: src/profiles/core/catalog.json:334
+#: src/profiles/core/catalog.json:340
 msgctxt "Profiles|Core|Catalog"
 msgid "Find items related to the selected items"
 msgstr ""
 
 #. Default: "Find items that can contain other objects"
-#: src/profiles/core/catalog.json:353
+#: src/profiles/core/catalog.json:359
 msgctxt "Profiles|Core|Catalog"
 msgid "Find items that can contain other objects"
 msgstr ""
 
 #. Default: "Folder"
+#: src/profiles/migrated/types/folder.json:3
 #: src/profiles/core/types/folder.json:3
-msgctxt "Profiles|Core|Types|Folder"
+msgctxt "Profiles|Migrated|Types|Folder"
 msgid "Folder"
 msgstr ""
 
 #. Default: "Folder-like"
-#: src/profiles/core/catalog.json:352
+#: src/profiles/core/catalog.json:358
 msgctxt "Profiles|Core|Catalog"
 msgid "Folder-like"
 msgstr ""
@@ -1060,15 +1134,17 @@ msgid "If this date is in the future, the content will not show up in listings a
 msgstr ""
 
 #. Default: "Image"
+#: src/profiles/migrated/types/image.json:3
 #: src/profiles/core/types/image.json:3
 #: src/profiles/core/types/image.json:19
-msgctxt "Profiles|Core|Types|Image"
+msgctxt "Profiles|Migrated|Types|Image"
 msgid "Image"
 msgstr ""
 
 #. Default: "Images can be referenced in pages or displayed in an album."
+#: src/profiles/migrated/types/image.json:4
 #: src/profiles/core/types/image.json:4
-msgctxt "Profiles|Core|Types|Image"
+msgctxt "Profiles|Migrated|Types|Image"
 msgid "Images can be referenced in pages or displayed in an album."
 msgstr ""
 
@@ -1079,17 +1155,23 @@ msgid "Information about rights held in and over this item."
 msgstr ""
 
 #. Default: "Internal server error"
-#: src/app.ts:231
-#: src/app.ts:242
+#: src/app.ts:258
+#: src/app.ts:269
 msgctxt "App"
 msgid "Internal server error"
 msgstr ""
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:86
+#: src/routes/authentication/authentication.ts:100
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
+msgstr ""
+
+#. Default: "Invalid depth."
+#: src/routes/navigation/navigation.ts:79
+msgctxt "Routes|Navigation"
+msgid "Invalid depth."
 msgstr ""
 
 #. Default: "Invalid move."
@@ -1099,15 +1181,22 @@ msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
 msgstr ""
 
+#. Default: "Invalid query."
+#: src/routes/search/search.ts:160
+#: src/routes/search/search.ts:307
+msgctxt "Routes|Search"
+msgid "Invalid query."
+msgstr ""
+
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:135
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr ""
 
 #. Default: "Is"
-#: src/profiles/core/catalog.json:396
-#: src/profiles/core/catalog.json:490
+#: src/profiles/core/catalog.json:402
+#: src/profiles/core/catalog.json:508
 msgctxt "Profiles|Core|Catalog"
 msgid "Is"
 msgstr ""
@@ -1123,6 +1212,18 @@ msgstr ""
 #: src/profiles/core/behaviors/categorization.json:22
 msgctxt "Profiles|Core|Controlpanels|Language"
 msgid "Language"
+msgstr ""
+
+#. Default: "Language Independent Folder"
+#: src/profiles/migrated/types/lif.json:3
+msgctxt "Profiles|Migrated|Types|Lif"
+msgid "Language Independent Folder"
+msgstr ""
+
+#. Default: "Language Root Folder"
+#: src/profiles/migrated/types/lrf.json:3
+msgctxt "Profiles|Migrated|Types|Lrf"
+msgid "Language Root Folder"
 msgstr ""
 
 #. Default: "Language root"
@@ -1150,9 +1251,16 @@ msgid "Less than"
 msgstr ""
 
 #. Default: "Lets you upload a file to the site."
+#: src/profiles/migrated/types/file.json:4
 #: src/profiles/core/types/file.json:4
-msgctxt "Profiles|Core|Types|File"
+msgctxt "Profiles|Migrated|Types|File"
 msgid "Lets you upload a file to the site."
+msgstr ""
+
+#. Default: "Link"
+#: src/profiles/migrated/types/link.json:3
+msgctxt "Profiles|Migrated|Types|Link"
+msgid "Link"
 msgstr ""
 
 #. Default: "List of attendees."
@@ -1224,7 +1332,7 @@ msgid "Login"
 msgstr ""
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr ""
@@ -1288,11 +1396,19 @@ msgstr ""
 
 #. Default: "Matches any condition"
 #: src/profiles/core/catalog.json:305
-#: src/profiles/core/catalog.json:415
-#: src/profiles/core/catalog.json:446
-#: src/profiles/core/catalog.json:465
+#: src/profiles/core/catalog.json:421
+#: src/profiles/core/catalog.json:452
+#: src/profiles/core/catalog.json:477
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches any condition"
+msgstr ""
+
+#. Default: "Matches none of"
+#: src/profiles/core/catalog.json:309
+#: src/profiles/core/catalog.json:458
+#: src/profiles/core/catalog.json:483
+msgctxt "Profiles|Core|Catalog"
+msgid "Matches none of"
 msgstr ""
 
 #. Default: "Message"
@@ -1303,13 +1419,13 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:64
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr ""
 
 #. Default: "Modification date"
-#: src/profiles/core/catalog.json:502
+#: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
 msgid "Modification date"
 msgstr ""
@@ -1321,14 +1437,14 @@ msgid "Modify"
 msgstr ""
 
 #. Default: "Modify Comments"
-#: src/profiles/core/permissions.json:58
+#: src/profiles/core/permissions.json:70
 #: src/profiles/core/upgrades/1002/permissions.json:14
 msgctxt "Profiles|Core|Permissions"
 msgid "Modify Comments"
 msgstr ""
 
 #. Default: "Modify Own Comments"
-#: src/profiles/core/permissions.json:62
+#: src/profiles/core/permissions.json:74
 #: src/profiles/core/upgrades/1002/permissions.json:18
 msgctxt "Profiles|Core|Permissions"
 msgid "Modify Own Comments"
@@ -1384,6 +1500,12 @@ msgctxt "Helpers|I18n|I18n.test"
 msgid "News"
 msgstr ""
 
+#. Default: "News Item"
+#: src/profiles/migrated/types/news item.json:3
+msgctxt "Profiles|Migrated|Types|News item"
+msgid "News Item"
+msgstr ""
+
 #. Default: "Nick generates email using this address as the email return address. It is also used as the destination address for the site-wide contact form and the “Send test email” feature."
 #: src/profiles/core/controlpanels/mail.json:25
 msgctxt "Profiles|Core|Controlpanels|Mail"
@@ -1397,7 +1519,7 @@ msgid "Nick generates email using this name as the email sender."
 msgstr ""
 
 #. Default: "No"
-#: src/profiles/core/catalog.json:359
+#: src/profiles/core/catalog.json:365
 #: src/profiles/core/vocabularies/boolean.json:6
 msgctxt "Profiles|Core|Catalog"
 msgid "No"
@@ -1407,6 +1529,12 @@ msgstr ""
 #: src/routes/form/form.ts:106
 msgctxt "Routes|Form"
 msgid "No data is submitted."
+msgstr ""
+
+#. Default: "No query supplied."
+#: src/routes/search/search.ts:155
+msgctxt "Routes|Search"
+msgid "No query supplied."
 msgstr ""
 
 #. Default: "None"
@@ -1430,6 +1558,12 @@ msgstr ""
 #: src/routes/lock/lock.ts:174
 msgctxt "Routes|Lock"
 msgid "Not allowed"
+msgstr ""
+
+#. Default: "Not found"
+#: src/routes/history/history.ts:92
+msgctxt "Routes|History"
+msgid "Not found"
 msgstr ""
 
 #. Default: "Not found."
@@ -1481,6 +1615,10 @@ msgstr ""
 
 #. Default: "Owner"
 #: src/profiles/core/roles.json:22
+#: src/profiles/core/upgrades/1013/roles.json:6
+#: src/profiles/core/upgrades/1012/roles.json:6
+#: src/profiles/core/upgrades/1010/roles.json:6
+#: src/profiles/core/upgrades/1009/roles.json:6
 #: src/profiles/core/upgrades/1002/roles.json:16
 msgctxt "Profiles|Core|Roles"
 msgid "Owner"
@@ -1494,8 +1632,9 @@ msgid "Ownership"
 msgstr ""
 
 #. Default: "Page"
+#: src/profiles/migrated/types/document.json:3
 #: src/profiles/core/types/page.json:3
-msgctxt "Profiles|Core|Types|Page"
+msgctxt "Profiles|Migrated|Types|Document"
 msgid "Page"
 msgstr ""
 
@@ -1531,6 +1670,18 @@ msgctxt "Profiles|Core|Actions"
 msgid "Paste"
 msgstr ""
 
+#. Default: "Path"
+#: src/scheduled_jobs/actions/reindex_security.ts:35
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Path"
+msgstr ""
+
+#. Default: "Path of the item, for example /news."
+#: src/scheduled_jobs/actions/reindex_security.ts:33
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Path of the item, for example /news."
+msgstr ""
+
 #. Default: "Pattern must be at least 1 character long."
 #: src/routes/replace/replace.ts:36
 msgctxt "Routes|Replace"
@@ -1538,7 +1689,7 @@ msgid "Pattern must be at least 1 character long."
 msgstr ""
 
 #. Default: "Pending review"
-#: src/profiles/core/workflows.json:22
+#: src/profiles/core/workflows.json:23
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr ""
@@ -1560,14 +1711,14 @@ msgstr ""
 #: src/profiles/core/catalog.json:143
 #: src/profiles/core/catalog.json:204
 #: src/profiles/core/catalog.json:216
-#: src/profiles/core/catalog.json:546
-#: src/profiles/core/catalog.json:558
-#: src/profiles/core/catalog.json:625
-#: src/profiles/core/catalog.json:637
-#: src/profiles/core/catalog.json:698
-#: src/profiles/core/catalog.json:710
-#: src/profiles/core/catalog.json:771
-#: src/profiles/core/catalog.json:783
+#: src/profiles/core/catalog.json:564
+#: src/profiles/core/catalog.json:576
+#: src/profiles/core/catalog.json:643
+#: src/profiles/core/catalog.json:655
+#: src/profiles/core/catalog.json:716
+#: src/profiles/core/catalog.json:728
+#: src/profiles/core/catalog.json:789
+#: src/profiles/core/catalog.json:801
 msgctxt "Profiles|Core|Catalog"
 msgid "Please enter the number in days."
 msgstr ""
@@ -1579,20 +1730,26 @@ msgstr ""
 #: src/profiles/core/catalog.json:192
 #: src/profiles/core/catalog.json:198
 #: src/profiles/core/catalog.json:210
-#: src/profiles/core/catalog.json:534
-#: src/profiles/core/catalog.json:540
 #: src/profiles/core/catalog.json:552
-#: src/profiles/core/catalog.json:613
-#: src/profiles/core/catalog.json:619
+#: src/profiles/core/catalog.json:558
+#: src/profiles/core/catalog.json:570
 #: src/profiles/core/catalog.json:631
-#: src/profiles/core/catalog.json:686
-#: src/profiles/core/catalog.json:692
+#: src/profiles/core/catalog.json:637
+#: src/profiles/core/catalog.json:649
 #: src/profiles/core/catalog.json:704
-#: src/profiles/core/catalog.json:759
-#: src/profiles/core/catalog.json:765
+#: src/profiles/core/catalog.json:710
+#: src/profiles/core/catalog.json:722
 #: src/profiles/core/catalog.json:777
+#: src/profiles/core/catalog.json:783
+#: src/profiles/core/catalog.json:795
 msgctxt "Profiles|Core|Catalog"
 msgid "Please use YYYY/MM/DD."
+msgstr ""
+
+#. Default: "Plone Site"
+#: src/profiles/migrated/types/plone site.json:3
+msgctxt "Profiles|Migrated|Types|Plone site"
+msgid "Plone Site"
 msgstr ""
 
 #. Default: "Portrait"
@@ -1659,13 +1816,13 @@ msgid "Provided block id is not valid."
 msgstr ""
 
 #. Default: "Publish"
-#: src/profiles/core/workflows.json:47
+#: src/profiles/core/workflows.json:49
 msgctxt "Profiles|Core|Workflows"
 msgid "Publish"
 msgstr ""
 
 #. Default: "Published"
-#: src/profiles/core/workflows.json:33
+#: src/profiles/core/workflows.json:35
 msgctxt "Profiles|Core|Workflows"
 msgid "Published"
 msgstr ""
@@ -1703,7 +1860,7 @@ msgid "Re-enter the password. Make sure the passwords are identical."
 msgstr ""
 
 #. Default: "Reader"
-#: src/profiles/core/roles.json:27
+#: src/profiles/core/roles.json:37
 msgctxt "Profiles|Core|Roles"
 msgid "Reader"
 msgstr ""
@@ -1715,7 +1872,7 @@ msgid "Recurrence"
 msgstr ""
 
 #. Default: "Register"
-#: src/profiles/core/permissions.json:38
+#: src/profiles/core/permissions.json:50
 #: src/profiles/core/actions.json:103
 msgctxt "Profiles|Core|Permissions"
 msgid "Register"
@@ -1739,6 +1896,26 @@ msgctxt "Scheduled jobs|Actions|Reindex"
 msgid "Reindex items of type {type}"
 msgstr ""
 
+#. Default: "Reindex security"
+#: src/scheduled_jobs/actions/reindex_security.ts:16
+#: src/routes/sharing/sharing.ts:289
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex security"
+msgstr ""
+
+#. Default: "Reindex security of {path}"
+#: src/scheduled_jobs/actions/reindex_security.ts:20
+#: src/routes/sharing/sharing.ts:290
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex security of {path}"
+msgstr ""
+
+#. Default: "Reindex the permissions of an item and the items below it"
+#: src/scheduled_jobs/actions/reindex_security.ts:18
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex the permissions of an item and the items below it"
+msgstr ""
+
 #. Default: "Related"
 #: src/profiles/core/behaviors/categorization.json:34
 msgctxt "Profiles|Core|Behaviors|Categorization"
@@ -1752,7 +1929,7 @@ msgid "Related Items"
 msgstr ""
 
 #. Default: "Related To"
-#: src/profiles/core/catalog.json:333
+#: src/profiles/core/catalog.json:339
 msgctxt "Profiles|Core|Catalog"
 msgid "Related To"
 msgstr ""
@@ -1788,34 +1965,55 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:609
+#: src/routes/content/content.ts:700
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr ""
 
 #. Default: "Retract"
-#: src/profiles/core/workflows.json:57
+#: src/profiles/core/workflows.json:59
 msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr ""
 
+#. Default: "Revert"
+#: src/profiles/core/permissions.json:46
+#: src/profiles/core/upgrades/1009/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Revert"
+msgstr ""
+
 #. Default: "Review"
-#: src/profiles/core/permissions.json:42
+#: src/profiles/core/permissions.json:54
 msgctxt "Profiles|Core|Permissions"
 msgid "Review"
 msgstr ""
 
 #. Default: "Review state"
-#: src/profiles/core/catalog.json:458
+#: src/profiles/core/catalog.json:470
 msgctxt "Profiles|Core|Catalog"
 msgid "Review state"
 msgstr ""
 
 #. Default: "Reviewer"
-#: src/profiles/core/roles.json:42
+#: src/profiles/core/roles.json:59
+#: src/profiles/core/upgrades/1012/roles.json:21
+#: src/profiles/core/upgrades/1009/roles.json:16
 #: src/profiles/core/upgrades/1002/roles.json:21
 msgctxt "Profiles|Core|Roles"
 msgid "Reviewer"
+msgstr ""
+
+#. Default: "Reviewers"
+#: src/profiles/migrated/groups.json:14
+msgctxt "Profiles|Migrated|Groups"
+msgid "Reviewers"
+msgstr ""
+
+#. Default: "Reviewers team"
+#: src/profiles/migrated/groups.json:30
+msgctxt "Profiles|Migrated|Groups"
+msgid "Reviewers team"
 msgstr ""
 
 #. Default: "Rights"
@@ -1904,7 +2102,7 @@ msgid "Send an email on the triggering object"
 msgstr ""
 
 #. Default: "Send back"
-#: src/profiles/core/workflows.json:52
+#: src/profiles/core/workflows.json:54
 msgctxt "Profiles|Core|Workflows"
 msgid "Send back"
 msgstr ""
@@ -1928,6 +2126,12 @@ msgctxt "Profiles|Core|Actions"
 msgid "Sharing"
 msgstr ""
 
+#. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
+#: src/routes/sharing/sharing.ts:220
+msgctxt "Routes|Sharing"
+msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
+msgstr ""
+
 #. Default: "Short name"
 #: src/profiles/core/behaviors/short_name.json:3
 msgctxt "Profiles|Core|Behaviors|Short name"
@@ -1935,7 +2139,7 @@ msgid "Short name"
 msgstr ""
 
 #. Default: "Short name (id)"
-#: src/profiles/core/catalog.json:389
+#: src/profiles/core/catalog.json:395
 msgctxt "Profiles|Core|Catalog"
 msgid "Short name (id)"
 msgstr ""
@@ -1971,6 +2175,12 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "Site 'From' name"
 msgstr ""
 
+#. Default: "Site Administrators"
+#: src/profiles/migrated/groups.json:22
+msgctxt "Profiles|Migrated|Groups"
+msgid "Site Administrators"
+msgstr ""
+
 #. Default: "Site Logo"
 #: src/profiles/core/controlpanels/site.json:22
 msgctxt "Profiles|Core|Controlpanels|Site"
@@ -2002,7 +2212,7 @@ msgid "Sitemap"
 msgstr ""
 
 #. Default: "Sortable Title"
-#: src/profiles/core/catalog.json:477
+#: src/profiles/core/catalog.json:495
 msgctxt "Profiles|Core|Catalog"
 msgid "Sortable Title"
 msgstr ""
@@ -2011,6 +2221,12 @@ msgstr ""
 #: src/profiles/core/behaviors/ownership.json:26
 msgctxt "Profiles|Core|Behaviors|Ownership"
 msgid "Source"
+msgstr ""
+
+#. Default: "Staff"
+#: src/profiles/migrated/groups.json:39
+msgctxt "Profiles|Migrated|Groups"
+msgid "Staff"
 msgstr ""
 
 #. Default: "Store a new version of the item"
@@ -2032,13 +2248,13 @@ msgid "Subject of the message"
 msgstr ""
 
 #. Default: "Submit"
-#: src/profiles/core/permissions.json:46
+#: src/profiles/core/permissions.json:58
 msgctxt "Profiles|Core|Permissions"
 msgid "Submit"
 msgstr ""
 
 #. Default: "Submit for publication"
-#: src/profiles/core/workflows.json:62
+#: src/profiles/core/workflows.json:64
 msgctxt "Profiles|Core|Workflows"
 msgid "Submit for publication"
 msgstr ""
@@ -2192,16 +2408,16 @@ msgstr ""
 #. Default: "The current day"
 #: src/profiles/core/catalog.json:149
 #: src/profiles/core/catalog.json:222
-#: src/profiles/core/catalog.json:564
-#: src/profiles/core/catalog.json:643
-#: src/profiles/core/catalog.json:716
-#: src/profiles/core/catalog.json:789
+#: src/profiles/core/catalog.json:582
+#: src/profiles/core/catalog.json:661
+#: src/profiles/core/catalog.json:734
+#: src/profiles/core/catalog.json:807
 msgctxt "Profiles|Core|Catalog"
 msgid "The current day"
 msgstr ""
 
 #. Default: "The date an item was created"
-#: src/profiles/core/catalog.json:655
+#: src/profiles/core/catalog.json:673
 msgctxt "Profiles|Core|Catalog"
 msgid "The date an item was created"
 msgstr ""
@@ -2238,7 +2454,7 @@ msgid "The following link takes you to a page where you can reset your password:
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"
-#: src/profiles/core/catalog.json:478
+#: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
 msgid "The item’s title, transformed for sorting"
 msgstr ""
@@ -2292,7 +2508,7 @@ msgid "The password for the ESMTP user account."
 msgstr ""
 
 #. Default: "The person that created an item"
-#: src/profiles/core/catalog.json:409
+#: src/profiles/core/catalog.json:415
 msgctxt "Profiles|Core|Catalog"
 msgid "The person that created an item"
 msgstr ""
@@ -2310,7 +2526,7 @@ msgid "The roles to check for."
 msgstr ""
 
 #. Default: "The short name of an item (used in the url)"
-#: src/profiles/core/catalog.json:390
+#: src/profiles/core/catalog.json:396
 msgctxt "Profiles|Core|Catalog"
 msgid "The short name of an item (used in the url)"
 msgstr ""
@@ -2328,19 +2544,19 @@ msgid "The start date and time of an event"
 msgstr ""
 
 #. Default: "The time and date an item was expired"
-#: src/profiles/core/catalog.json:582
+#: src/profiles/core/catalog.json:600
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was expired"
 msgstr ""
 
 #. Default: "The time and date an item was first published"
-#: src/profiles/core/catalog.json:728
+#: src/profiles/core/catalog.json:746
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was first published"
 msgstr ""
 
 #. Default: "The time and date an item was last modified"
-#: src/profiles/core/catalog.json:503
+#: src/profiles/core/catalog.json:521
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was last modified"
 msgstr ""
@@ -2352,7 +2568,7 @@ msgid "The topic of this item."
 msgstr ""
 
 #. Default: "The user viewing the querystring results"
-#: src/profiles/core/catalog.json:422
+#: src/profiles/core/catalog.json:428
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr ""
@@ -2410,11 +2626,14 @@ msgstr ""
 #. Default: "Tip: you can use * to autocomplete."
 #: src/profiles/core/catalog.json:297
 #: src/profiles/core/catalog.json:303
-#: src/profiles/core/catalog.json:397
-#: src/profiles/core/catalog.json:416
-#: src/profiles/core/catalog.json:447
-#: src/profiles/core/catalog.json:466
-#: src/profiles/core/catalog.json:491
+#: src/profiles/core/catalog.json:310
+#: src/profiles/core/catalog.json:403
+#: src/profiles/core/catalog.json:422
+#: src/profiles/core/catalog.json:453
+#: src/profiles/core/catalog.json:459
+#: src/profiles/core/catalog.json:478
+#: src/profiles/core/catalog.json:484
+#: src/profiles/core/catalog.json:509
 msgctxt "Profiles|Core|Catalog"
 msgid "Tip: you can use * to autocomplete."
 msgstr ""
@@ -2436,18 +2655,18 @@ msgstr ""
 #. Default: "Today"
 #: src/profiles/core/catalog.json:148
 #: src/profiles/core/catalog.json:221
-#: src/profiles/core/catalog.json:563
-#: src/profiles/core/catalog.json:642
-#: src/profiles/core/catalog.json:715
-#: src/profiles/core/catalog.json:788
+#: src/profiles/core/catalog.json:581
+#: src/profiles/core/catalog.json:660
+#: src/profiles/core/catalog.json:733
+#: src/profiles/core/catalog.json:806
 msgctxt "Profiles|Core|Catalog"
 msgid "Today"
 msgstr ""
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:161
-#: src/app.ts:175
+#: src/app.ts:167
+#: src/app.ts:184
 msgctxt "Client"
 msgid "Transaction error."
 msgstr ""
@@ -2464,8 +2683,20 @@ msgctxt "Content rules|Actions|Transition workflow"
 msgid "Transition workflow state"
 msgstr ""
 
+#. Default: "Transition {transition} is not available for {path}."
+#: src/routes/workflow/workflow.ts:43
+msgctxt "Routes|Workflow"
+msgid "Transition {transition} is not available for {path}."
+msgstr ""
+
+#. Default: "Transition {transition} is not available in the current state."
+#: src/routes/workflow/workflow.ts:87
+msgctxt "Routes|Workflow"
+msgid "Transition {transition} is not available in the current state."
+msgstr ""
+
 #. Default: "Type"
-#: src/profiles/core/catalog.json:439
+#: src/profiles/core/catalog.json:445
 msgctxt "Profiles|Core|Catalog"
 msgid "Type"
 msgstr ""
@@ -2483,7 +2714,7 @@ msgid "Type of the current document is not found."
 msgstr ""
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:598
+#: src/routes/content/content.ts:689
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2521,7 +2752,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr ""
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr ""
@@ -2580,6 +2811,12 @@ msgctxt "Content rules|Actions|Version item"
 msgid "Version item with comment {comment}"
 msgstr ""
 
+#. Default: "Version not found."
+#: src/routes/history/history.ts:91
+msgctxt "Routes|History"
+msgid "Version not found."
+msgstr ""
+
 #. Default: "Versioning"
 #: src/profiles/core/behaviors/versioning.json:3
 msgctxt "Profiles|Core|Behaviors|Versioning"
@@ -2613,20 +2850,27 @@ msgid "View"
 msgstr ""
 
 #. Default: "View Comments"
-#: src/profiles/core/permissions.json:50
+#: src/profiles/core/permissions.json:62
 #: src/profiles/core/upgrades/1002/permissions.json:6
 msgctxt "Profiles|Core|Permissions"
 msgid "View Comments"
 msgstr ""
 
+#. Default: "View History"
+#: src/profiles/core/permissions.json:42
+#: src/profiles/core/upgrades/1012/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "View History"
+msgstr ""
+
 #. Default: "Visible to everyone, editable by the owner."
-#: src/profiles/core/workflows.json:34
+#: src/profiles/core/workflows.json:36
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr ""
 
 #. Default: "Waiting to be reviewed, not editable by the owner."
-#: src/profiles/core/workflows.json:23
+#: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
 msgid "Waiting to be reviewed, not editable by the owner."
 msgstr ""
@@ -2659,10 +2903,10 @@ msgstr ""
 #. Default: "Within last"
 #: src/profiles/core/catalog.json:130
 #: src/profiles/core/catalog.json:203
-#: src/profiles/core/catalog.json:545
-#: src/profiles/core/catalog.json:624
-#: src/profiles/core/catalog.json:697
-#: src/profiles/core/catalog.json:770
+#: src/profiles/core/catalog.json:563
+#: src/profiles/core/catalog.json:642
+#: src/profiles/core/catalog.json:715
+#: src/profiles/core/catalog.json:788
 msgctxt "Profiles|Core|Catalog"
 msgid "Within last"
 msgstr ""
@@ -2670,10 +2914,10 @@ msgstr ""
 #. Default: "Within next"
 #: src/profiles/core/catalog.json:142
 #: src/profiles/core/catalog.json:215
-#: src/profiles/core/catalog.json:557
-#: src/profiles/core/catalog.json:636
-#: src/profiles/core/catalog.json:709
-#: src/profiles/core/catalog.json:782
+#: src/profiles/core/catalog.json:575
+#: src/profiles/core/catalog.json:654
+#: src/profiles/core/catalog.json:727
+#: src/profiles/core/catalog.json:800
 msgctxt "Profiles|Core|Catalog"
 msgid "Within next"
 msgstr ""
@@ -2698,21 +2942,21 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr ""
 
 #. Default: "Yes"
-#: src/profiles/core/catalog.json:365
+#: src/profiles/core/catalog.json:371
 #: src/profiles/core/vocabularies/boolean.json:5
 msgctxt "Profiles|Core|Catalog"
 msgid "Yes"
 msgstr ""
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:45
+#: src/routes/workflow/workflow.ts:96
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr ""
@@ -2726,9 +2970,16 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/helpers/handler/handler.ts:120
+#: src/routes/content/content.ts:137
+#: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Recyclebin"
 msgid "You are not authorized to access this resource."
+msgstr ""
+
+#. Default: "You are not authorized to set the uuid."
+#: src/routes/content/content.ts:716
+msgctxt "Routes|Content"
+msgid "You are not authorized to set the uuid."
 msgstr ""
 
 #. Default: "You can’t delete system groups."
@@ -2756,8 +3007,8 @@ msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:796
+#: src/routes/history/history.ts:68
+#: src/routes/content/content.ts:897
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr ""
