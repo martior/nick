@@ -242,7 +242,7 @@ msgid "An entity responsible for making this item available."
 msgstr "الجهة المسؤولة عن إتاحة هذا العنصر."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:360
+#: src/routes/users/users.ts:366
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -885,7 +885,7 @@ msgid "Effective date"
 msgstr "تاريخ السريان"
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:297
+#: src/routes/users/users.ts:303
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -1409,7 +1409,7 @@ msgid "Lets you upload a file to the site."
 msgstr "يتيح لك رفع ملف إلى الموقع."
 
 #. Default: "Limit must be a positive number."
-#: src/routes/users/users.ts:210
+#: src/routes/users/users.ts:220
 #: src/routes/groups/groups.ts:69
 msgctxt "Routes|Users"
 msgid "Limit must be a positive number."
@@ -1776,9 +1776,9 @@ msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:170
-#: src/routes/users/users.ts:438
-#: src/routes/users/users.ts:505
+#: src/routes/users/users.ts:180
+#: src/routes/users/users.ts:444
+#: src/routes/users/users.ts:518
 #: src/routes/types/types.ts:59
 #: src/routes/types/types.ts:166
 #: src/routes/types/types.ts:324
@@ -1902,16 +1902,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:130
-#: src/routes/users/users.ts:386
+#: src/routes/users/users.ts:140
+#: src/routes/users/users.ts:392
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "طلب إعادة تعيين كلمة المرور"
 
 #. Default: "Password should be at least 8 characters long."
-#: src/routes/users/users.ts:54
-#: src/routes/users/users.ts:307
-#: src/routes/users/users.ts:448
+#: src/routes/users/users.ts:64
+#: src/routes/users/users.ts:313
+#: src/routes/users/users.ts:454
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -2104,7 +2104,7 @@ msgid "Query"
 msgstr ""
 
 #. Default: "Query must be at least 2 characters long."
-#: src/routes/users/users.ts:200
+#: src/routes/users/users.ts:210
 #: src/routes/principals/principals.ts:30
 #: src/routes/groups/groups.ts:58
 msgctxt "Routes|Users"
@@ -2581,7 +2581,7 @@ msgid "System group"
 msgstr "مجموعة نظام"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:497
+#: src/routes/users/users.ts:510
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "مستخدمو النظام"
@@ -2738,8 +2738,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:131
-#: src/routes/users/users.ts:387
+#: src/routes/users/users.ts:141
+#: src/routes/users/users.ts:393
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -3123,7 +3123,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:79
+#: src/routes/users/users.ts:89
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "المستخدم غير موجود أو بيانات الاعتماد غير صالحة."
@@ -3346,7 +3346,7 @@ msgid "Wrong login and/or password."
 msgstr "اسم المستخدم و/أو كلمة المرور خاطئة."
 
 #. Default: "Wrong password."
-#: src/routes/users/users.ts:97
+#: src/routes/users/users.ts:107
 msgctxt "Routes|Users"
 msgid "Wrong password."
 msgstr ""
@@ -3359,7 +3359,7 @@ msgid "Yes"
 msgstr "نعم"
 
 #. Default: "You are not allowed to set roles or groups."
-#: src/routes/users/users.ts:278
+#: src/routes/users/users.ts:288
 msgctxt "Routes|Users"
 msgid "You are not allowed to set roles or groups."
 msgstr ""
@@ -3377,7 +3377,7 @@ msgid "You are not authorized to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
-#: src/routes/users/users.ts:421
+#: src/routes/users/users.ts:427
 #: src/routes/types/types.ts:43
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
@@ -3407,7 +3407,7 @@ msgid "You can not filter by title and token at the same time."
 msgstr ""
 
 #. Default: "You can only change your own password."
-#: src/routes/users/users.ts:86
+#: src/routes/users/users.ts:96
 msgctxt "Routes|Users"
 msgid "You can only change your own password."
 msgstr ""
@@ -3419,7 +3419,7 @@ msgid "You can’t delete system groups."
 msgstr "لا يمكنك حذف مجموعات النظام."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:496
+#: src/routes/users/users.ts:509
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "لا يمكنك حذف مستخدمي النظام."
@@ -3449,19 +3449,20 @@ msgid "You don’t have permission to unlock this document."
 msgstr "ليس لديك صلاحية لإلغاء قفل هذا المستند."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:267
+#: src/routes/users/users.ts:277
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "ليس لديك صلاحيات لإضافة مستخدم."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:158
+#: src/routes/users/users.ts:168
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""
 
 #. Default: "You must enter a valid email address."
-#: src/routes/users/users.ts:289
+#: src/routes/users/users.ts:295
+#: src/routes/users/users.ts:461
 msgctxt "Routes|Users"
 msgid "You must enter a valid email address."
 msgstr ""
