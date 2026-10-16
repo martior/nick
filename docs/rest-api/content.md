@@ -57,7 +57,7 @@ The response body can contain information about why the request failed. As in pl
 
 A missing `@type` gives `400 Bad Request`, an unknown `@type` gives `403 Forbidden`.
 
-An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()# @`, not `.` or `..`, not starting with `_` or `aq_` and not ending with `__`. An id which is already used in the folder gives `400 Bad Request`; only ids generated from the title are made unique.
+An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()# @`, not `.` or `..`, not starting with `_`, `@` or `aq_` and not ending with `__`. Path segments starting with `@` address services, so a child called `@search` would hide the search service of its folder. An id which is already used in the folder gives `400 Bad Request`; only ids generated from the title are made unique.
 
 ### Server managed fields
 
