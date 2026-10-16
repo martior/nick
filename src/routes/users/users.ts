@@ -10,6 +10,7 @@ import type { Request } from '../../types';
 // External imports
 // @ts-expect-error bcrypt-promise does not have types
 import bcrypt from 'bcrypt-promise';
+import { isEmpty } from 'es-toolkit/compat';
 import { omit } from 'es-toolkit/object';
 import jwt from 'jsonwebtoken';
 
@@ -267,6 +268,16 @@ export default [
         });
       }
       const choosePassword = manageUsers || !!security.enable_user_pwd_choice;
+
+      // Users who register themselves can't choose roles or groups
+      if (
+        !manageUsers &&
+        (!isEmpty(req.body?.roles) || !isEmpty(req.body?.groups))
+      ) {
+        throw new RequestException(401, {
+          message: req.i18n('You are not allowed to set roles or groups.'),
+        });
+      }
 
       // Check email
       if (

@@ -43,7 +43,7 @@ describe('User', () => {
   });
 
   it('should only let users register themselves when enabled', async () => {
-    const register = (username: string) =>
+    const register = (username: string, extra: any = {}) =>
       request(app)
         .post('/@users')
         .set('Accept', 'application/json')
@@ -51,7 +51,7 @@ describe('User', () => {
           username,
           email: `${username}@example.com`,
           password: 'Pw-selfreg-12345',
-          roles: ['Manager'],
+          ...extra,
         });
     const security = async (data: any) => {
       const row = await global.txn!('controlpanel')
@@ -71,7 +71,15 @@ describe('User', () => {
     let user = await User.fetchById('selfreg2', {}, global.txn as any);
     expect(user.password).toBe('');
 
-    // With choosing a password, the user can log in; roles are ignored
+    // Roles and groups can't be chosen
+    expect((await register('selfreg4', { roles: ['Manager'] })).status).toBe(
+      401,
+    );
+    expect(
+      await User.fetchById('selfreg4', {}, global.txn as any),
+    ).toBeUndefined();
+
+    // With choosing a password, the user can log in
     await security({ enable_user_pwd_choice: true });
     const created = await register('selfreg3');
     expect(created.status).toBe(201);
