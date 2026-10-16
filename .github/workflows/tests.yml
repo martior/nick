@@ -148,3 +148,7 @@ jobs:
       - name: Check core migrations for drift
         run: pnpm migrate:check
 
+      - name: Check the example add-on migrations for drift
+        env:
+          PROFILES: '@plone/nick:core,@plone/nick-example-addon:default'
+        run: pnpm migrate:check --schema example --snapshot packages/nick-example-addon/src/migrations/schema.snapshot.txt

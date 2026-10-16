@@ -11,6 +11,7 @@ import type { ProfileInfo } from './profiles';
 import {
   configuredProfiles,
   resolvePackage,
+  resolveProfile,
   resolveProfiles,
   splitProfileId,
 } from './profiles';
@@ -54,10 +55,17 @@ describe('Profiles', () => {
     expect(() => splitProfileId('@plone/nick')).toThrow('Invalid profile');
   });
 
-  it('should resolve packages', async () => {
+  it('should resolve core and add-on packages', async () => {
     const core = resolvePackage('@plone/nick');
     expect(core.config.migrations).toBe('src/migrations');
     expect(core.profilesDir.endsWith('/src/profiles')).toBe(true);
+
+    const addon = await resolveProfile('@plone/nick-example-addon:default');
+    expect(addon.packageConfig).toMatchObject({ schema: 'example' });
+    expect(addon.path.endsWith('nick-example-addon/src/profiles/default')).toBe(
+      true,
+    );
+    expect(addon.metadata?.dependencies).toEqual(['@plone/nick:core']);
 
     expect(() => resolvePackage('@plone/does-not-exist')).toThrow(
       "Cannot resolve package '@plone/does-not-exist'",
@@ -111,10 +119,11 @@ describe('Profiles', () => {
   });
 
   it('should read the profiles from the PROFILES variable', () => {
-    process.env.PROFILES = '@plone/nick:core, @acme/nick-addon:default,';
+    process.env.PROFILES =
+      '@plone/nick:core, @plone/nick-example-addon:default,';
     expect(configuredProfiles()).toEqual([
       '@plone/nick:core',
-      '@acme/nick-addon:default',
+      '@plone/nick-example-addon:default',
     ]);
     delete process.env.PROFILES;
     expect(configuredProfiles()[0]).toBe('@plone/nick:core');

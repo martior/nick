@@ -409,6 +409,7 @@
 - Check in CI that the previous version migrates and upgrades to the pushed version @martior
 - Move nodemon to the development dependencies @martior
 - Run the development docker-compose service from the node image @martior
+- Add the example add-on `packages/nick-example-addon`: a content type, a behavior, REST services, a periodic task, a table in its own schema and two migrations in its own chain, with tests that install it and use every extension point, and a test that a broken data migration fails migrate and resumes after the fix @martior
 
 ### Documentation
 
