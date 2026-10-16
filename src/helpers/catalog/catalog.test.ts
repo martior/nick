@@ -47,7 +47,7 @@ describe('Catalog', () => {
         JSON.stringify(
           (
             await global.txn!.raw(
-              `EXPLAIN SELECT count(*) FROM catalog WHERE ${where} AND "_allowedUsersGroupsRoles" && ?::varchar[] AND "_deleted" = false`,
+              `EXPLAIN SELECT count(*) FROM catalog WHERE ${where} AND "_allowedUsersGroupsRoles" && ?::text[] AND "_deleted" = false`,
               [['Anonymous']],
             )
           ).rows,
