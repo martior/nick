@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T08:17:28.084Z\n"
+"POT-Creation-Date: 2026-10-16T08:19:14.816Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -817,8 +817,8 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/workflow/workflow.ts:121
 #: src/routes/history/history.ts:84
-#: src/routes/content/content.ts:1064
-#: src/routes/content/content.ts:1235
+#: src/routes/content/content.ts:1093
+#: src/routes/content/content.ts:1264
 msgctxt "Routes|Workflow"
 msgid "Document locked"
 msgstr ""
@@ -1827,7 +1827,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1232
+#: src/routes/content/content.ts:1261
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2222,7 +2222,7 @@ msgstr ""
 
 #. Default: "Resource is locked."
 #: src/routes/workflow/workflow.ts:120
-#: src/routes/content/content.ts:1063
+#: src/routes/content/content.ts:1092
 msgctxt "Routes|Workflow"
 msgid "Resource is locked."
 msgstr ""
@@ -2698,6 +2698,12 @@ msgctxt "Profiles|Core|Catalog"
 msgid "The date an item was created"
 msgstr ""
 
+#. Default: "The delta has to be top, bottom or an integer."
+#: src/routes/content/content.ts:1055
+msgctxt "Routes|Content"
+msgid "The delta has to be top, bottom or an integer."
+msgstr ""
+
 #. Default: "The email address that sends the email. If no email is provided here, it will use the portal from address."
 #: src/content_rules/actions/send_email.ts:56
 msgctxt "Content rules|Actions|Send email"
@@ -2743,9 +2749,15 @@ msgstr ""
 
 #. Default: "The id “{id}” is invalid."
 #: src/routes/content/content.ts:794
-#: src/routes/content/content.ts:1082
+#: src/routes/content/content.ts:1111
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
+msgstr ""
+
+#. Default: "The item “{id}” is not found."
+#: src/routes/content/content.ts:1043
+msgctxt "Routes|Content"
+msgid "The item “{id}” is not found."
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"

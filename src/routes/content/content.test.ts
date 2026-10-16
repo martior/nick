@@ -409,7 +409,10 @@ describe('Content', () => {
     await patch({
       ordering: { obj_id: 'a', delta: 1, subset_ids: ['c', 'a'] },
     }).expect(400);
-    await patch({ ordering: { obj_id: 'unknown', delta: 1 } }).expect(204);
+    await patch({ ordering: { obj_id: 'unknown', delta: 1 } }).expect(400);
+    await patch({ ordering: { obj_id: 'a', delta: 'sideways' } }).expect(400);
+    await patch({ ordering: { obj_id: 'a', delta: 1.5 } }).expect(400);
+    expect(await ids()).toStrictEqual(['a', 'b', 'd', 'c']);
     await patch({ ordering: { obj_id: 'b', delta: -10 } }).expect(204);
     expect(await ids()).toStrictEqual(['b', 'a', 'd', 'c']);
 

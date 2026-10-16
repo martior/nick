@@ -196,6 +196,7 @@
 
 ### Bugfix
 
+- Answer reordering with an unknown `obj_id` or an invalid `delta` with 400 instead of ignoring it @martior
 - Answer `@history` requests with a version that is not a number with 404 and a revert without a valid version with 400 instead of 500 @martior
 - Change behavior to snake case @robgietema
 - Remove authentication header from breadcrumbs call in docs @robgietema
