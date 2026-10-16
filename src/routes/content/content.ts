@@ -946,6 +946,35 @@ export default [
               });
             }
           }
+
+          // The item has to be one of the (subset of the) children and the
+          // delta `top`, `bottom` or an integer
+          const ids = (
+            Array.isArray(subset_ids)
+              ? subset_ids
+              : req.document._children.map(
+                  (child: InstanceType<typeof Document>) => child.id,
+                )
+          ) as string[];
+          if (typeof obj_id !== 'string' || !ids.includes(obj_id)) {
+            throw new RequestException(400, {
+              message: req.i18n('The item “{id}” is not found.', {
+                id: `${obj_id}`,
+              }),
+            });
+          }
+          if (!(
+            delta === 'top' ||
+            delta === 'bottom' ||
+            Number.isInteger(delta) ||
+            (typeof delta === 'string' && /^[-+]?[0-9]+$/.test(delta))
+          )) {
+            throw new RequestException(400, {
+              message: req.i18n(
+                'The delta has to be top, bottom or an integer.',
+              ),
+            });
+          }
           await req.document.reorder(
             obj_id,
             delta,
