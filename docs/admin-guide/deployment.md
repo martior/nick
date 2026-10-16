@@ -39,3 +39,11 @@ Run `nick` (all modules) as the only process. It migrates on start, serves the A
 - Run one or more `nick --modules=worker` replicas. Workers share the queue safely; a periodic job runs once per time slot however many workers run.
 
 The processes stop gracefully on `SIGTERM`: the API stops accepting connections and the worker finishes the job it is running.
+
+## Upgrades
+
+`migrate` upgrades installed profiles step by step (`upgrades/<version>/` of each profile). Every step runs in its own transaction, which also stores the step's number as the profile version. When a step fails, its changes are rolled back, the profile stays at the previous step, `migrate` exits with code 1, and the next run starts again at the step that failed. Upgrade steps must therefore finish within one transaction; split large data changes into several steps or into [jobs](/admin-guide/jobs).
+
+`pnpm seed:upgrade` runs the same upgrade steps without the knex migrations.
+
+CI bootstraps the version before each push and then migrates it to the pushed version twice, so a broken or non-repeatable migration or upgrade step fails the build.
