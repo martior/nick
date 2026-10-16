@@ -2156,14 +2156,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:313
+#: src/routes/sharing/sharing.ts:332
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:314
+#: src/routes/sharing/sharing.ts:333
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -2917,6 +2917,12 @@ msgstr ""
 #: src/content_rules/conditions/workflow_state.ts:31
 msgctxt "Content rules|Conditions|Workflow state"
 msgid "The workflow states to check for."
+msgstr ""
+
+#. Default: "The {type} “{id}” is not found."
+#: src/routes/sharing/sharing.ts:252
+msgctxt "Routes|Sharing"
+msgid "The {type} “{id}” is not found."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
