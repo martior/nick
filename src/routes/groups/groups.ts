@@ -184,6 +184,12 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Group = models.get('Group');
+
+      // Check if group exists
+      if (!(await Group.fetchById(req.params.id, {}, trx))) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
+
       const group = await Group.update(
         req.params.id,
         {
@@ -221,6 +227,11 @@ export default [
             type: req.i18n('System group'),
           },
         });
+      }
+
+      // Check if group exists
+      if (!(await Group.fetchById(req.params.id, {}, trx))) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
       }
 
       // Trigger on before delete group

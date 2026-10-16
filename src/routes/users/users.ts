@@ -392,6 +392,9 @@ export default [
       ]);
 
       const curUser = await User.fetchById(req.params.id, {}, trx);
+      if (!curUser) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
 
       // Check min password length
       if (
@@ -454,6 +457,9 @@ export default [
 
       // Fetch user
       const user = await User.fetchById(req.params.id, {}, trx);
+      if (!user) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
 
       // Check if user exists
       if (user) {

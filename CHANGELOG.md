@@ -242,6 +242,7 @@
 - Answer 400 instead of 500 when a group is created without a name, with an existing name or with unknown roles or users @martior
 - List the members of a group in GET @groups/<id> @martior
 - Search groups case insensitive and support the limit parameter on @groups @martior
+- Answer 404 when deleting or updating a user or group that doesn't exist @martior
 
 ### Internal
 

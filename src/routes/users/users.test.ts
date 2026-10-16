@@ -32,7 +32,10 @@ async function addHeadlessNick(): Promise<void> {
 
 describe('User', () => {
   afterEach(async () => {
-    await testRequest(app, 'users/delete');
+    // Remove the user or group of the examples if a test added it
+    await request(app)
+      .delete('/@users/headlessnick')
+      .set('Authorization', `Bearer ${adminToken}`);
   });
 
   it('should get a list of users', () => testRequest(app, 'users/list'));
@@ -121,6 +124,9 @@ describe('User', () => {
     await testRequest(app, 'users/post');
     return testRequest(app, 'users/delete');
   });
+
+  it('should not delete a user which does not exist', () =>
+    testRequest(app, 'users/delete_notfound'));
 
   it('should send a reset password mail', async () => {
     await testRequest(app, 'users/post');
