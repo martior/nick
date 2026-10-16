@@ -414,6 +414,18 @@ describe('Content', () => {
     expect(res.body.title).toBe('Sorted news');
   });
 
+  it('should prefix the id of a copy in the same folder', async () => {
+    const res = await request(app)
+      .post('/events/@copy')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ source: 'http://localhost:8080/events/event-1' })
+      .expect(200);
+    expect(res.body[0].target).toBe(
+      'http://localhost:8080/events/copy_of_event-1',
+    );
+  });
+
   it('should require the delete permission', async () => {
     const Document = models.get('Document');
     const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);

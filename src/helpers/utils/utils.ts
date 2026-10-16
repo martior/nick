@@ -178,3 +178,23 @@ export function isValidId(id: any): boolean {
     !id.endsWith('__')
   );
 }
+
+/**
+ * Get the id of a pasted item, like Zope: `copy_of_<id>`, `copy2_of_<id>`
+ * and so on when the id is already used.
+ * @method pasteId
+ * @param {string} id Id of the item.
+ * @param {Array<string>} ids Ids of the items in the target folder.
+ * @returns {string} Unique id.
+ */
+export function pasteId(id: string, ids: string[]): string {
+  const match = id.match(/^copy([0-9]*)_of_(.*)$/);
+  let n = match ? parseInt(match[1] || '1', 10) : 0;
+  const original = match ? match[2] : id;
+  let newId = id;
+  while (ids.includes(newId)) {
+    newId = `copy${n ? n + 1 : ''}_of_${original}`;
+    n = n + 1;
+  }
+  return newId;
+}
