@@ -140,6 +140,31 @@ describe('Sharing', () => {
     expect(roles.map((role: any) => role.role)).toEqual(['Reader']);
   });
 
+  it('should replace the roles of a principal with an entry', async () => {
+    const Document = models.get('Document');
+    await createUser('jane');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const roles = async () =>
+      (
+        await global.txn!('user_role_document').where({
+          document: news.uuid,
+          user: 'jane',
+        })
+      )
+        .map((role: any) => role.role)
+        .sort();
+    const entry = (roles: any) => ({
+      entries: [{ id: 'jane', type: 'user', roles }],
+    });
+
+    await share('/news', entry({ Reader: true, Contributor: true }));
+    expect(await roles()).toStrictEqual(['Contributor', 'Reader']);
+    await share('/news', entry({ Editor: true }));
+    expect(await roles()).toStrictEqual(['Editor']);
+    await share('/news', entry({ Editor: false }));
+    expect(await roles()).toStrictEqual([]);
+  });
+
   it('should refuse invalid sharing data', async () => {
     const post = (body: any) =>
       request(app)
