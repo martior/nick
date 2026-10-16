@@ -223,12 +223,12 @@ export function init(): void {
   vocabularies.register('imageScales', imageScales);
   vocabularies.register('permissions', permissions);
   vocabularies.register('roles', roles);
-  vocabularies.register('subjects', subjects);
+  vocabularies.register('subjects', subjects, 'Modify');
   vocabularies.register('supportedLanguages', supportedLanguages);
   vocabularies.register('systemGroups', systemGroups);
   vocabularies.register('systemUsers', systemUsers);
   vocabularies.register('types', types);
-  vocabularies.register('users', users);
+  vocabularies.register('users', users, 'Modify');
   vocabularies.register('workflows', workflows);
   vocabularies.register('workflowStates', workflowStates);
   vocabularies.register('workflowTransitions', workflowTransitions);
@@ -264,7 +264,12 @@ export function init(): void {
     WorkflowTransitions: workflowTransitions,
   };
   Object.entries(ploneVocabularies).map(([name, vocabulary]) =>
-    vocabularies.register(`plone.app.vocabularies.${name}`, vocabulary),
+    vocabularies.register(
+      `plone.app.vocabularies.${name}`,
+      vocabulary,
+      // Protected like in plone.app.content
+      ['Keywords', 'Users'].includes(name) ? 'Modify' : undefined,
+    ),
   );
 
   // Register middleware

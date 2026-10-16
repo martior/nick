@@ -66,6 +66,27 @@ export default [
         }
         items = vocabulary.items;
       } else {
+        // Check the permission of protected vocabularies
+        const permission = vocabularies.permission(id);
+        if (permission && !req.permissions.includes(permission)) {
+          const anonymous = req.user.id === 'anonymous';
+          throw new RequestException(anonymous ? 401 : 403, {
+            error: {
+              type: anonymous
+                ? req.i18n('Not authenticated')
+                : req.i18n('Not authorized'),
+              message: anonymous
+                ? req.i18n(
+                    'You need to be authenticated to access the vocabulary “{id}”.',
+                    { id },
+                  )
+                : req.i18n(
+                    'You are not authorized to access the vocabulary “{id}”.',
+                    { id },
+                  ),
+            },
+          });
+        }
         items = await vocabularies.get(id)(req, trx);
       }
 

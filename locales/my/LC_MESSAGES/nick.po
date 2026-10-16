@@ -1586,6 +1586,18 @@ msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "ခွင့်မပြုပါ"
 
+#. Default: "Not authenticated"
+#: src/routes/vocabularies/vocabularies.ts:76
+msgctxt "Routes|Vocabularies"
+msgid "Not authenticated"
+msgstr ""
+
+#. Default: "Not authorized"
+#: src/routes/vocabularies/vocabularies.ts:77
+msgctxt "Routes|Vocabularies"
+msgid "Not authorized"
+msgstr ""
+
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:168
@@ -3020,6 +3032,12 @@ msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "ဤအရင်းအမြစ်ကို ဝင်ရောက်ရန် ခွင့်ပြုချက် မရှိပါ။"
 
+#. Default: "You are not authorized to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:83
+msgctxt "Routes|Vocabularies"
+msgid "You are not authorized to access the vocabulary “{id}”."
+msgstr ""
+
 #. Default: "You are not authorized to access this resource."
 #: src/routes/users/users.ts:400
 #: src/routes/recyclebin/recyclebin.ts:45
@@ -3036,7 +3054,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You can not filter by title and token at the same time."
-#: src/routes/vocabularies/vocabularies.ts:77
+#: src/routes/vocabularies/vocabularies.ts:98
 msgctxt "Routes|Vocabularies"
 msgid "You can not filter by title and token at the same time."
 msgstr ""
@@ -3099,6 +3117,12 @@ msgstr ""
 #: src/routes/users/users.ts:268
 msgctxt "Routes|Users"
 msgid "You must enter a valid email address."
+msgstr ""
+
+#. Default: "You need to be authenticated to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:79
+msgctxt "Routes|Vocabularies"
+msgid "You need to be authenticated to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "Your location - either city and country - or in a company setting, where your office is located."

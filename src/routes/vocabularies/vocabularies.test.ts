@@ -121,6 +121,15 @@ describe('Vocabularies', () => {
     }
   });
 
+  it('should not return the users vocabulary to anonymous', () =>
+    testRequest(app, 'vocabularies/get_users_anonymous'));
+
+  it('should not return the subjects vocabulary to anonymous', () =>
+    request(app)
+      .get('/@vocabularies/subjects')
+      .set('Accept', 'application/json')
+      .expect(401));
+
   it('should return a 404 if the vocabulary does not exist', () =>
     testRequest(app, 'vocabularies/get_notfound'));
 });
