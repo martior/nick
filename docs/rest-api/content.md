@@ -179,6 +179,18 @@ Or use the client directly:
 {% include_relative endpoints/examples/content/patch_reorder.ts %}
 ```
 
+Like in plone.restapi, the optional `subset_ids` subkey lists the ids of the resources the client shows, in the order it knows them. The resource is then moved within this subset; if the order of the subset doesn't match the order on the server, the response is `400 Bad Request`. An unknown `obj_id` is ignored.
+
+All resources can be sorted with the `sort` key, with `on` (`id`, `sortable_title`, `created`, `modified` or a field) and `order` (`ascending` or `descending`):
+
+```json
+{
+  "sort": { "on": "sortable_title", "order": "descending" }
+}
+```
+
+Ordering and sorting can be combined with changes of other fields in the same PATCH request.
+
 ## Exporting a Resource with GET
 
 We can use the `@export` endpoint to export the content to a `json`-file to be used for migrations or external services. We can export the resource by sending a GET request to the resource URL:
