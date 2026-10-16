@@ -68,6 +68,9 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const recursive = req.body?.include_children === true ? true : false;
       await req.type.fetchRelated('_workflow', trx);
+
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
       const transition = req.params.transition;
 
       // Check the transition against the current state and the permissions
