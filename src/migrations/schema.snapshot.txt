@@ -110,6 +110,10 @@ column public.document.uuid uuid not null
 column public.document.version integer
 column public.document.workflow_history jsonb not null
 column public.document.workflow_state character varying(255) not null
+column public.document_workflow_status.document uuid not null
+column public.document_workflow_status.state character varying(255) not null
+column public.document_workflow_status.variables jsonb not null default '{}'::jsonb
+column public.document_workflow_status.workflow character varying(255) not null
 column public.file.data bytea
 column public.file.uuid uuid not null
 column public.form.block uuid
@@ -240,6 +244,9 @@ constraint public.document.document_owner_foreign FOREIGN KEY (owner) REFERENCES
 constraint public.document.document_parent_foreign FOREIGN KEY (parent) REFERENCES document(uuid) ON UPDATE CASCADE ON DELETE CASCADE
 constraint public.document.document_pkey PRIMARY KEY (uuid)
 constraint public.document.document_type_foreign FOREIGN KEY (type) REFERENCES type(id) ON UPDATE CASCADE ON DELETE CASCADE
+constraint public.document_workflow_status.document_workflow_status_document_foreign FOREIGN KEY (document) REFERENCES document(uuid) ON UPDATE CASCADE ON DELETE CASCADE
+constraint public.document_workflow_status.document_workflow_status_pkey PRIMARY KEY (document, workflow)
+constraint public.document_workflow_status.document_workflow_status_workflow_foreign FOREIGN KEY (workflow) REFERENCES workflow(id) ON UPDATE CASCADE ON DELETE CASCADE
 constraint public.file.file_pkey PRIMARY KEY (uuid)
 constraint public.form.form_document_foreign FOREIGN KEY (document) REFERENCES document(uuid) ON UPDATE CASCADE ON DELETE CASCADE
 constraint public.form.form_pkey PRIMARY KEY (uuid)
@@ -337,6 +344,7 @@ index public.document.document_path_index CREATE INDEX document_path_index ON pu
 index public.document.document_path_pattern_index CREATE INDEX document_path_pattern_index ON public.document USING btree (path varchar_pattern_ops)
 index public.document.document_pkey CREATE UNIQUE INDEX document_pkey ON public.document USING btree (uuid)
 index public.document.document_translation_group_index CREATE INDEX document_translation_group_index ON public.document USING btree (translation_group)
+index public.document_workflow_status.document_workflow_status_pkey CREATE UNIQUE INDEX document_workflow_status_pkey ON public.document_workflow_status USING btree (document, workflow)
 index public.file.file_pkey CREATE UNIQUE INDEX file_pkey ON public.file USING btree (uuid)
 index public.form.form_pkey CREATE UNIQUE INDEX form_pkey ON public.form USING btree (uuid)
 index public.group.group_email_unique CREATE UNIQUE INDEX group_email_unique ON public."group" USING btree (email)
@@ -377,6 +385,7 @@ table public.content_rule
 table public.content_rule_document
 table public.controlpanel
 table public.document
+table public.document_workflow_status
 table public.file
 table public.form
 table public.group
