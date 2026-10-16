@@ -181,6 +181,59 @@ describe('DCWorkflow', () => {
       });
     });
 
+    it('converts variables and their assignments', () => {
+      const { workflow, warnings } = convertDefinition(
+        `<dc-workflow workflow_id="w" initial_state="a">
+ <state state_id="a">
+  <exit-transition transition_id="go"/>
+  <assignment name="stage" type="string">draft</assignment>
+  <assignment name="level" type="int">2</assignment>
+ </state>
+ <transition transition_id="go" new_state="a" trigger="USER">
+  <action category="workflow">Go</action>
+  <assignment name="by">user/getId</assignment>
+  <assignment name="bad">python:here.custom()</assignment>
+ </transition>
+ <variable variable_id="review_history" for_catalog="False" for_status="False" update_always="False">
+  <description>History</description>
+  <default><expression>state_change/getHistory</expression></default>
+  <guard><guard-permission>Request review</guard-permission><guard-permission>Review portal content</guard-permission></guard>
+ </variable>
+ <variable variable_id="stage" for_catalog="True" for_status="True" update_always="False">
+  <default><value type="string">new</value></default>
+  <guard></guard>
+ </variable>
+</dc-workflow>`,
+      );
+      expect(workflow.json.variables).toEqual({
+        review_history: {
+          description: 'History',
+          default_expr: 'state_change/getHistory',
+          for_catalog: false,
+          for_status: false,
+          update_always: false,
+          info_guard: { permissions: ['Submit', 'Review'] },
+        },
+        stage: {
+          description: '',
+          default_value: 'new',
+          for_catalog: true,
+          for_status: true,
+          update_always: false,
+        },
+      });
+      expect(workflow.json.states.a.variables).toEqual({
+        stage: 'draft',
+        level: 2,
+      });
+      expect(workflow.json.transitions.go.variables).toEqual({
+        by: 'user/getId',
+      });
+      expect(warnings).toEqual([
+        'w, transition go: unsupported expression "python:here.custom()" for bad (Method "custom" of the content object is not registered.), not converted',
+      ]);
+    });
+
     it('refuses other xml', () => {
       expect(() => convertDefinition('<object name="x"/>')).toThrow(
         /Not a DCWorkflow definition/,

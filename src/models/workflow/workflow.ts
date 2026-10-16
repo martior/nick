@@ -15,6 +15,7 @@ import type {
 // External imports
 import { flatten, uniq } from 'es-toolkit/array';
 import { isObject } from 'es-toolkit/compat';
+import { pick, pickBy } from 'es-toolkit/object';
 
 // Internal imports
 import { Model } from '../_model/_model';
@@ -23,7 +24,10 @@ import { checkExpression } from '../../helpers/expression/expression';
 import {
   type WorkflowContext,
   checkGuard,
+  evaluateWorkflowExpression,
+  toStatusValue,
 } from '../../helpers/workflow/workflow';
+import { log } from '../../helpers/log/log';
 
 /**
  * A model for Workflow.
@@ -44,9 +48,15 @@ export class Workflow extends Model {
    * @method toJson
    * @param {Request} req Request object
    * @param {string[]} transitions Ids of the available transitions.
+   * @param {boolean} showHistory False when the user may not see the
+   * history (the info guard of `review_history`).
    * @returns {Json} JSON object.
    */
-  toJson(req: Request, transitions: string[] = []): Json {
+  toJson(
+    req: Request,
+    transitions: string[] = [],
+    showHistory: boolean = true,
+  ): Json {
     const self: InstanceType<typeof Workflow> = this;
     const current_state_id = req.document.workflow_state;
     const current_state = (self.json.states || {})[current_state_id] || {};
@@ -54,9 +64,13 @@ export class Workflow extends Model {
     // Workflow history, the creation is the first entry (without action)
     const stateTitle = (state?: string) =>
       req.i18n(self.json.states?.[state || '']?.title || state || '');
-    const history = (req.document.workflow_history || [])
+    const variables = Object.keys(
+      pickBy(self.json.variables || {}, (variable: any) => variable.for_status),
+    );
+    const history = (showHistory ? req.document.workflow_history || [] : [])
       .filter((item: any) => !item.type || item.type === 'workflow')
       .map((item: any) => ({
+        ...pick(item, variables),
         action: item.action || null,
         actor: item.actor,
         comments: item.comments || '',
@@ -115,10 +129,92 @@ export class Workflow extends Model {
         }
       }
     };
-    Object.entries(json?.transitions || {}).map(([id, transition]) =>
-      checkGuardExpression(`transition ${id}`, transition.guard),
-    );
+    const checkValueExpression = (
+      where: string,
+      expr: string | undefined,
+      acknowledged: boolean,
+    ) => {
+      const reason = expr ? checkExpression(expr) : undefined;
+      if (expr && reason) {
+        problems.push({ where, expr, reason, acknowledged });
+      }
+    };
+    Object.entries(json?.transitions || {}).map(([id, transition]) => {
+      checkGuardExpression(`transition ${id}`, transition.guard);
+      Object.entries(transition.variables || {}).map(([variable, expr]) =>
+        checkValueExpression(
+          `transition ${id}, variable ${variable}`,
+          expr,
+          !!json.variables?.[variable]?.unsupported,
+        ),
+      );
+    });
+    Object.entries(json?.variables || {}).map(([id, variable]) => {
+      checkValueExpression(
+        `variable ${id}`,
+        variable.default_expr,
+        !!variable.unsupported,
+      );
+      checkGuardExpression(`variable ${id}`, variable.info_guard);
+    });
     return problems;
+  }
+
+  /**
+   * Compute the status of a document after a transition (or the creation,
+   * without transition), like DCWorkflow: for every variable `for_status`
+   * the value of the new state, else the expression of the transition, else
+   * the former value (unless `update_always`), else the default
+   * expression or value. An expression that fails gives `null`, it is
+   * logged.
+   * @method computeStatus
+   * @param {WorkflowContext} context Document, user, transition, new state
+   * and the former status.
+   * @returns {Promise<Object>} Status, the variables by id.
+   */
+  async computeStatus(context: WorkflowContext): Promise<Record<string, any>> {
+    const self: InstanceType<typeof Workflow> = this;
+    const former = context.status || {};
+    const stateValues =
+      self.json.states?.[context.newState || '']?.variables || {};
+    const expressions = context.transition
+      ? self.json.transitions?.[context.transition]?.variables || {}
+      : {};
+    const status: Record<string, any> = {};
+    for (const [id, variable] of Object.entries(self.json.variables || {})) {
+      if (!variable.for_status) {
+        continue;
+      }
+      let expression: string | undefined;
+      let value: any = null;
+      if (Object.hasOwn(stateValues, id)) {
+        value = stateValues[id];
+      } else if (Object.hasOwn(expressions, id)) {
+        expression = expressions[id];
+      } else if (!variable.update_always && Object.hasOwn(former, id)) {
+        value = former[id];
+      } else if (variable.default_expr) {
+        expression = variable.default_expr;
+      } else {
+        value = variable.default_value ?? null;
+      }
+      if (expression) {
+        try {
+          value = await evaluateWorkflowExpression(expression, {
+            ...context,
+            workflow: self,
+            status: former,
+          });
+        } catch (err: any) {
+          log.warn(
+            `Variable ${id} of workflow ${self.id} ("${expression}") failed: ${err.message}`,
+          );
+          value = null;
+        }
+      }
+      status[id] = toStatusValue(value);
+    }
+    return status;
   }
 
   /**

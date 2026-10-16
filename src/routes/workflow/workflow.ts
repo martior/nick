@@ -16,6 +16,7 @@ import { pick } from 'es-toolkit/object';
 import { hasPermission } from '../../helpers/auth/auth';
 import { RequestException } from '../../helpers/error/error';
 import { mapAsync } from '../../helpers/utils/utils';
+import { checkGuard } from '../../helpers/workflow/workflow';
 
 dayjs.extend(utc);
 
@@ -71,8 +72,23 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
       permissions: req.permissions,
     },
   );
+  // The history is hidden from users who don't pass the info guard of the
+  // review_history variable, like in Plone
+  const historyGuard =
+    req.type._workflow.json.variables?.review_history?.info_guard;
+  const showHistory =
+    !historyGuard ||
+    (await checkGuard(historyGuard, {
+      document: req.document,
+      user: req.user,
+      trx,
+      req,
+      roles: req.roles,
+      permissions: req.permissions,
+      workflow: req.type._workflow,
+    }));
   return {
-    json: req.type._workflow.toJson(req, transitions),
+    json: req.type._workflow.toJson(req, transitions, showHistory),
   };
 };
 

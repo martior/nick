@@ -43,6 +43,11 @@ import { lockExpired } from '../../helpers/lock/lock';
 import { getFactoryFields } from '../../helpers/schema/schema';
 import { getRootUrl } from '../../helpers/url/url';
 import {
+  checkGuard,
+  evaluateWorkflowExpression,
+  toStatusValue,
+} from '../../helpers/workflow/workflow';
+import {
   isPromise,
   likePrefix,
   mapAsync,
@@ -53,6 +58,17 @@ import {
 import { Model } from '../_model/_model';
 
 dayjs.extend(utc);
+
+/**
+ * Workflow variables which every history entry has (as Nick fields).
+ */
+const builtinVariables = [
+  'action',
+  'actor',
+  'comments',
+  'time',
+  'review_state',
+];
 
 /**
  * A model for Document.
@@ -1002,26 +1018,212 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the workflow status of this document for a workflow: the state
+   * and the variables.
+   * @method fetchWorkflowStatus
+   * @param {string} workflow Id of the workflow.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<Object | undefined>} Status, undefined if not stored.
+   */
+  async fetchWorkflowStatus(
+    workflow: string,
+    trx?: Knex.Transaction,
+  ): Promise<{ state: string; variables: Record<string, any> } | undefined> {
+    const self: InstanceType<typeof Document> = this;
+    return await (trx || Document.knex())('document_workflow_status')
+      .select('state', 'variables')
+      .where({ document: self.uuid, workflow })
+      .first();
+  }
+
+  /**
+   * Store the workflow status of this document for a workflow.
+   * @method saveWorkflowStatus
+   * @param {string} workflow Id of the workflow.
+   * @param {string} state State.
+   * @param {Object} variables Variables.
+   * @param {Knex.Transaction} trx Transaction object.
+   */
+  async saveWorkflowStatus(
+    workflow: string,
+    state: string,
+    variables: Record<string, any>,
+    trx?: Knex.Transaction,
+  ): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    await (trx || Document.knex())('document_workflow_status')
+      .insert({
+        document: self.uuid,
+        workflow,
+        state,
+        variables: JSON.stringify(variables),
+      })
+      .onConflict(['document', 'workflow'])
+      .merge();
+  }
+
+  /**
+   * Set the initial workflow status of a new document when its workflow
+   * has variables: compute them and store them with the creation entry of
+   * the history.
+   * @method initWorkflowStatus
+   * @param {Object} actor Actor object.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {Request} req Request object.
+   */
+  async initWorkflowStatus(
+    actor: any,
+    trx: Knex.Transaction,
+    req?: Request,
+  ): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+    const workflow = self._type._workflow;
+    if (!workflow.json.variables) {
+      return;
+    }
+    const status = await workflow.computeStatus({
+      document: self,
+      user: actor,
+      trx,
+      req,
+      newState: self.workflow_state,
+      kwargs: {},
+      date: self.created,
+    });
+    const history = self.workflow_history.map((item: any, index: number) =>
+      index === 0 ? { ...item, ...omit(status, builtinVariables) } : item,
+    );
+    await self.updateAndFetch(
+      { workflow_history: JSON.stringify(history) },
+      trx,
+    );
+    await self.saveWorkflowStatus(
+      workflow.id,
+      self.workflow_state,
+      status,
+      trx,
+    );
+  }
+
+  /**
+   * Restore the workflow status of an imported document: the given status
+   * by workflow, else, when the workflow has variables, the variables of
+   * the last entry of the history.
+   * @method restoreWorkflowStatus
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {Object} status Status by workflow id (state and variables).
+   */
+  async restoreWorkflowStatus(
+    trx: Knex.Transaction,
+    status?: Record<string, { state: string; variables?: any }>,
+  ): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    if (status) {
+      await mapAsync(Object.keys(status), (workflow: string) =>
+        self.saveWorkflowStatus(
+          workflow,
+          status[workflow].state,
+          status[workflow].variables || {},
+          trx,
+        ),
+      );
+      return;
+    }
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type?._workflow) {
+      await self._type?.fetchRelated('_workflow', trx);
+    }
+    const workflow = self._type?._workflow;
+    if (!workflow?.json.variables) {
+      return;
+    }
+    const last: Record<string, any> =
+      (self.workflow_history || [])
+        .filter((item: any) => !item.type || item.type === 'workflow')
+        .at(-1) || {};
+    const ids = Object.keys(workflow.json.variables).filter(
+      (id) => workflow.json.variables[id].for_status,
+    );
+    await self.saveWorkflowStatus(
+      workflow.id,
+      self.workflow_state,
+      pick(last, ids),
+      trx,
+    );
+  }
+
+  /**
    * Get a workflow variable of this document, like `getInfoFor` of the
-   * Plone workflow tool: the state (`review_state`) and the history
-   * (`review_history`) of the workflow.
+   * Plone workflow tool: the state (`review_state`), the history
+   * (`review_history`) and the variables of the workflow. A variable with
+   * an `info_guard` the user doesn't pass is not available.
    * @method getWorkflowInfo
    * @param {string} name Name of the variable.
    * @param {Knex.Transaction} trx Transaction object.
-   * @returns {Promise<any>} Value, undefined if no workflow provides it.
+   * @param {Object} user User object, for the info guard.
+   * @returns {Promise<any>} Value, undefined if not available.
    */
-  async getWorkflowInfo(name: string, trx?: Knex.Transaction): Promise<any> {
+  async getWorkflowInfo(
+    name: string,
+    trx: Knex.Transaction,
+    user?: any,
+  ): Promise<any> {
     const self: InstanceType<typeof Document> = this;
-    void trx;
-    switch (name) {
-      case 'review_state':
-        return self.workflow_state;
-      case 'review_history':
-        return (self.workflow_history || []).filter(
-          (item: any) => !item.type || item.type === 'workflow',
-        );
+    if (name === 'review_state') {
+      return self.workflow_state;
     }
-    return undefined;
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+    const workflow = self._type._workflow;
+    const variable = workflow.json.variables?.[name];
+    if (
+      variable?.info_guard &&
+      user &&
+      !(await checkGuard(variable.info_guard, {
+        document: self,
+        user,
+        trx,
+        workflow,
+      }))
+    ) {
+      return undefined;
+    }
+    if (name === 'review_history') {
+      return (self.workflow_history || []).filter(
+        (item: any) => !item.type || item.type === 'workflow',
+      );
+    }
+    if (!variable) {
+      return undefined;
+    }
+    const status = await self.fetchWorkflowStatus(workflow.id, trx);
+    if (status && Object.hasOwn(status.variables, name)) {
+      return status.variables[name];
+    }
+    if (variable.default_expr) {
+      return toStatusValue(
+        await evaluateWorkflowExpression(variable.default_expr, {
+          document: self,
+          user: user || { id: 'anonymous', getRoles: () => ['Anonymous'] },
+          trx,
+          workflow,
+          status: status?.variables || {},
+        }),
+      );
+    }
+    return variable.default_value ?? null;
   }
 
   /**
@@ -1148,6 +1350,24 @@ export class Document extends Model {
 
     // Check if state is available and not the current state
     if (new_state && (new_state !== old_state || stay)) {
+      // Compute the variables of the workflow
+      const workflow = self._type._workflow;
+      const status = workflow.json.variables
+        ? await workflow.computeStatus({
+            document: self,
+            user: actor,
+            trx,
+            req,
+            transition,
+            oldState: old_state,
+            newState: new_state,
+            status: (await self.fetchWorkflowStatus(workflow.id, trx))
+              ?.variables,
+            kwargs: { comment: options.comment || '', ...dates },
+            date: modified,
+          })
+        : undefined;
+
       // Add to workflow history
       const workflow_history = self.workflow_history;
       workflow_history.push({
@@ -1159,7 +1379,11 @@ export class Document extends Model {
         transition_title:
           self._type._workflow.json.transitions[transition].title,
         ...(options.comment ? { comments: options.comment } : {}),
+        ...(status ? omit(status, builtinVariables) : {}),
       });
+      if (status) {
+        await self.saveWorkflowStatus(workflow.id, new_state, status, trx);
+      }
 
       // Trigger on before change workflow
       await events.trigger(

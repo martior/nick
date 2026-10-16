@@ -103,6 +103,33 @@ export interface WorkflowContext {
   newState?: string;
   status?: Record<string, any>;
   kwargs?: Record<string, any>;
+  // Time of the transition (getDateTime)
+  date?: string;
+}
+
+/**
+ * Convert the value of a workflow variable to json: dates become ISO
+ * strings, objects of expressions their id.
+ * @method toStatusValue
+ * @param {any} value Value.
+ * @returns {any} Json value.
+ */
+export function toStatusValue(value: any): any {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+  if (Array.isArray(value)) {
+    return value.map(toStatusValue);
+  }
+  if (value && typeof value === 'object' && 'expressionKind' in value) {
+    return value.document?.uuid ?? value.attributes?.id ?? null;
+  }
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, toStatusValue(item)]),
+    );
+  }
+  return value === undefined ? null : value;
 }
 
 /**
@@ -451,6 +478,7 @@ export class WorkflowToolObject implements ExpressionObject {
     const value = await content.document.getWorkflowInfo(
       variable,
       this.security.context.trx,
+      this.security.context.user,
     );
     if (value === undefined) {
       if (rest.length > 0) {
@@ -497,11 +525,12 @@ export class StateChangeObject implements ExpressionObject {
   readonly expressionKind = 'statechange';
   scope: ExpressionScope;
   context: WorkflowContext;
-  date: Date = new Date();
+  date: Date;
 
   constructor(scope: ExpressionScope, context: WorkflowContext) {
     this.scope = scope;
     this.context = context;
+    this.date = context.date ? new Date(context.date) : new Date();
   }
 
   getAttribute(name: string): any {
