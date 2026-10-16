@@ -284,3 +284,9 @@ The server will respond with a 200 OK response without sending an email.
 ```http
 {% include_relative examples/users/reset_password_own.res %}
 ```
+
+If the old password is wrong, or the logged in user is not the user whose password is changed, the server responds with a `403 Forbidden` and the password stays the same:
+
+```http
+{% include_relative examples/users/reset_password_own_wrong.res %}
+```

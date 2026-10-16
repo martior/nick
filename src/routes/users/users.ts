@@ -76,20 +76,32 @@ export default [
           });
         }
       } else if (req.body?.old_password && req.body?.new_password && user) {
+        // Only the user itself can set a password with the old password
+        if (req.user.id !== user.id) {
+          throw new RequestException(403, {
+            message: req.i18n('You can only change your own password.'),
+          });
+        }
+
+        // Check old password
         const same = await bcrypt.compare(
           req.body?.old_password,
           user.password,
         );
-        if (req.user.id === user.id && same) {
-          const password = await bcrypt.hash(req.body?.new_password, 10);
-          await User.update(
-            user.id,
-            {
-              password,
-            },
-            trx,
-          );
+        if (!same) {
+          throw new RequestException(403, {
+            message: req.i18n('Wrong password.'),
+          });
         }
+
+        const password = await bcrypt.hash(req.body?.new_password, 10);
+        await User.update(
+          user.id,
+          {
+            password,
+          },
+          trx,
+        );
       } else if (user) {
         // Create token
         const token = jwt.sign(

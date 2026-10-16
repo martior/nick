@@ -9,15 +9,31 @@ import { describe, expect, it, afterEach } from 'vitest';
 
 // Internal imports
 import app from '../../app';
+import { addToken } from '../../helpers/auth/auth';
 import {
   createDocument,
   createUser,
   testRequest,
 } from '../../helpers/tests/tests';
 import models from '../../models';
+import { User } from '../../models/user/user';
 
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
+
+/**
+ * Add the user of the examples and log it in with the token of the examples
+ * @method addHeadlessNick
+ */
+async function addHeadlessNick(): Promise<void> {
+  await testRequest(app, 'users/post');
+  const user = await User.fetchById('headlessnick', {}, global.txn as any);
+  await addToken(
+    user,
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJoZWFkbGVzc25pY2siLCJmdWxsbmFtZSI6Ik5lYXJseSBIZWFkbGVzcyBOaWNrIiwiaWF0IjoxNjQ5Njk4MTUxfQ.K-NLonuCLqcv_hzq4d_vqEVGPLClwpry_HVYRSkJIf4',
+    global.txn as any,
+  );
+}
 
 describe('User', () => {
   afterEach(async () => {
@@ -92,8 +108,22 @@ describe('User', () => {
   });
 
   it('should set own password', async () => {
+    await addHeadlessNick();
+    await testRequest(app, 'users/reset_password_own');
+    return request(app)
+      .post('/@login')
+      .send({ login: 'headlessnick', password: 'headless' })
+      .expect(200);
+  });
+
+  it('should not set own password with a wrong old password', async () => {
+    await addHeadlessNick();
+    return testRequest(app, 'users/reset_password_own_wrong');
+  });
+
+  it('should not set the password of another user', async () => {
     await testRequest(app, 'users/post');
-    return testRequest(app, 'users/reset_password_own');
+    return testRequest(app, 'users/reset_password_other');
   });
 
   it('should keep the content and versions of a deleted user', async () => {
