@@ -46,7 +46,7 @@ export default [
 
       // Check min password length
       if (req.body?.new_password && req.body.new_password.length < 8) {
-        throw new RequestException(401, {
+        throw new RequestException(400, {
           message: req.i18n('Password should be at least 8 characters long.'),
         });
       }
@@ -202,9 +202,20 @@ export default [
         });
       }
 
-      // Check min password length
-      if (req.body?.password.length < 8) {
-        throw new RequestException(401, {
+      // Check password
+      if (typeof req.body?.password === 'undefined') {
+        if (manageUsers && !req.body?.sendPasswordReset) {
+          throw new RequestException(400, {
+            message: req.i18n(
+              'Either a password or sendPasswordReset must be provided.',
+            ),
+          });
+        }
+      } else if (
+        typeof req.body.password !== 'string' ||
+        req.body.password.length < 8
+      ) {
+        throw new RequestException(400, {
           message: req.i18n('Password should be at least 8 characters long.'),
         });
       }

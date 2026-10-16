@@ -34,6 +34,12 @@ describe('User', () => {
 
   it('should add a new user', () => testRequest(app, 'users/post'));
 
+  it('should not add a user with a short password', () =>
+    testRequest(app, 'users/post_short_password'));
+
+  it('should not add a user without a password', () =>
+    testRequest(app, 'users/post_without_password'));
+
   it('should update a user', async () => {
     await testRequest(app, 'users/post');
     return testRequest(app, 'users/patch');
@@ -70,6 +76,11 @@ describe('User', () => {
   it('should reset a password', async () => {
     await testRequest(app, 'users/post');
     return testRequest(app, 'users/reset_password_set');
+  });
+
+  it('should not set a password which is too short on reset', async () => {
+    await testRequest(app, 'users/post');
+    return testRequest(app, 'users/reset_password_short');
   });
 
   it('should set own password', async () => {

@@ -230,7 +230,7 @@ msgid "An entity responsible for making this item available."
 msgstr ""
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:261
+#: src/routes/users/users.ts:272
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -769,6 +769,12 @@ msgstr ""
 #: src/profiles/core/catalog.json:727
 msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
+msgstr ""
+
+#. Default: "Either a password or sendPasswordReset must be provided."
+#: src/routes/users/users.ts:209
+msgctxt "Routes|Users"
+msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
 
 #. Default: "Email"
@@ -1523,15 +1529,15 @@ msgstr ""
 
 #. Default: "Password reset request"
 #: src/routes/users/users.ts:114
-#: src/routes/users/users.ts:287
+#: src/routes/users/users.ts:298
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr ""
 
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:50
-#: src/routes/users/users.ts:208
-#: src/routes/users/users.ts:335
+#: src/routes/users/users.ts:219
+#: src/routes/users/users.ts:346
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -2097,7 +2103,7 @@ msgid "System group"
 msgstr ""
 
 #. Default: "System users"
-#: src/routes/users/users.ts:383
+#: src/routes/users/users.ts:394
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr ""
@@ -2249,7 +2255,7 @@ msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 #: src/routes/users/users.ts:115
-#: src/routes/users/users.ts:288
+#: src/routes/users/users.ts:299
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2755,7 +2761,7 @@ msgid "You can’t delete system groups."
 msgstr ""
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:382
+#: src/routes/users/users.ts:393
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr ""
