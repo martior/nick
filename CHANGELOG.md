@@ -437,6 +437,7 @@
 - Add the jobs admin guide @martior
 - Add the deployment admin guide @martior
 - Document which state is per process when Nick runs several API processes @martior
+- Add the add-ons developer guide (package layout, profile dependencies, public API, per-package migrations and schemas, batched data migrations, periodic tasks, drift check, testing) and mark deep imports as deprecated @martior
 
 ## 2.8.0 (2022-07-17)
 
