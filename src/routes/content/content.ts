@@ -311,7 +311,7 @@ export default [
   {
     op: 'get',
     view: '/@history/:version',
-    permission: 'View',
+    permission: 'View History',
     client: 'getHistoryVersion',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {

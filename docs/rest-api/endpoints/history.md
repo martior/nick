@@ -7,6 +7,8 @@ parent: Endpoints
 
 The `@history` endpoint exposes history and versioning information on previous versions of the content. Each change or workflow change on a content object or file is listed. It also allows to revert to a previous version of the file.
 
+Listing the history and getting a previous version require the `View History` permission, which the core profile gives to the `Owner`, `Contributor`, `Editor`, `Reviewer` and `Administrator` roles (like `CMFEditions: Access previous versions` in Plone). Users who can only view the content, such as anonymous users on published content, get `401 Unauthorized` or `403 Forbidden`.
+
 ## Listing the History of a Content Object
 
 Listing versions and history of a resource:

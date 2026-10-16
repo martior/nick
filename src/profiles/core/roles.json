@@ -20,7 +20,14 @@
     {
       "id": "Owner",
       "title:i18n": "Owner",
-      "permissions": ["Add", "Submit", "Modify Comments", "Revert", "Delete"]
+      "permissions": [
+        "Add",
+        "Submit",
+        "Modify Comments",
+        "Revert",
+        "Delete",
+        "View History"
+      ]
     },
     {
       "id": "Reader",
@@ -30,17 +37,17 @@
     {
       "id": "Contributor",
       "title:i18n": "Contributor",
-      "permissions": ["Add"]
+      "permissions": ["Add", "View History"]
     },
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Submit", "Revert", "Delete"]
+      "permissions": ["Submit", "Revert", "Delete", "View History"]
     },
     {
       "id": "Reviewer",
       "title:i18n": "Reviewer",
-      "permissions": ["Review", "Modify Comments", "Revert"]
+      "permissions": ["Review", "Modify Comments", "Revert", "View History"]
     },
     {
       "id": "Administrator",
@@ -53,7 +60,8 @@
         "Manage Site",
         "Modify Comments",
         "Revert",
-        "Delete"
+        "Delete",
+        "View History"
       ]
     }
   ]

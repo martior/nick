@@ -25,7 +25,7 @@ export default [
   {
     op: 'get',
     view: '/@history',
-    permission: 'View',
+    permission: 'View History',
     client: 'getHistory',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {

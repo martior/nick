@@ -71,7 +71,11 @@ Content-Type: application/json
     {
       "title": "View Comments",
       "token": "View Comments"
+    },
+    {
+      "title": "View History",
+      "token": "View History"
     }
   ],
-  "items_total": 17
+  "items_total": 18
 }
