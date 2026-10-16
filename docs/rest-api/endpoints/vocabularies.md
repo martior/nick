@@ -54,3 +54,39 @@ The server will respond with a list of terms. The title is purely for display pu
 ```http
 {% include_relative examples/vocabularies/get.res %}
 ```
+
+### Filter terms
+
+The terms can be filtered by `title`, which returns the terms whose title contains the value (ignoring case), or by `token`, which returns the term with that token (ignoring case). Both can't be used at the same time.
+
+```http
+{% include_relative examples/vocabularies/get_title.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/vocabularies/get_title.ts %}
+```
+
+```http
+{% include_relative examples/vocabularies/get_title.res %}
+```
+
+### Batching
+
+Pass `b_size` (and optionally `b_start`) to get a batch of the terms. `items_total` is the number of all (filtered) terms and `batching` contains the links to the other batches.
+
+```http
+{% include_relative examples/vocabularies/get_batched.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/vocabularies/get_batched.ts %}
+```
+
+```http
+{% include_relative examples/vocabularies/get_batched.res %}
+```
