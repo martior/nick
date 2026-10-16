@@ -52,6 +52,14 @@ export default [
     client: 'revertHistory',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // A revert is an edit, so it also needs the right to edit the content
+      // in its current state
+      if (!req.permissions.includes('Modify')) {
+        throw new RequestException(401, {
+          message: req.i18n('You are not authorized to access this resource.'),
+        });
+      }
+
       // Check the version, a non-negative integer (or a string of one)
       const versionNumber = req.body?.version;
       if (!(
