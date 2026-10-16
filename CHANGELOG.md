@@ -354,6 +354,7 @@
 - Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
 - The default profiles are `@plone/nick:core` only; the default `@plone/nick:default` profile never existed @martior
 - Find the core migrations when there is no knexfile.ts in the working directory @martior
+- Index the keyword catalog columns (Subject, isReferencing, block_types, ...) with GIN instead of btree, so keyword queries such as a listing by Subject can use their index on large sites; the permission tokens keep their btree index. Run `pnpm migrate` @martior
 
 ### Internal
 
