@@ -8,7 +8,13 @@
 #   docker run nick --modules=worker        # job worker and scheduler
 #
 # Configuration comes from environment variables (DB_HOST, DB_PASSWORD,
-# SECRET, ...) or from a config.ts mounted at /app/config.ts.
+# SECRET, PROFILES, ...) or from a config.ts mounted at /app/config.ts.
+# PROFILES lists the profiles to install, comma separated, for example
+# PROFILES=@plone/nick:core,@plone/nick:examplecontent.
+#
+# Add-ons of this repository can be built in with
+# --build-arg ADDONS="packages/nick-example-addon"; projects with add-ons
+# from npm build their own image with @plone/nick as a dependency.
 
 ARG NODE_VERSION=26.2.0
 
@@ -17,6 +23,7 @@ FROM node:${NODE_VERSION}-bookworm-slim AS deps
 WORKDIR /app
 RUN npm install -g corepack@latest && corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/nick-example-addon/package.json ./packages/nick-example-addon/
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install --prod --frozen-lockfile
 
@@ -31,7 +38,17 @@ COPY --chown=node:node package.json pnpm-workspace.yaml knexfile.ts tsconfig.jso
 COPY --chown=node:node locales ./locales
 COPY --chown=node:node scripts ./scripts
 COPY --chown=node:node src ./src
-RUN mkdir -p /app/var/blobstorage && chown -R node:node /app/var
+
+# Add-ons from this repository; they import @plone/nick, which is this app
+ARG ADDONS=""
+COPY --chown=node:node packages ./packages
+RUN mkdir -p node_modules/@plone && ln -sfn ../.. node_modules/@plone/nick && \
+    for addon in $ADDONS; do \
+      name=$(node -p "require('./$addon/package.json').name") && \
+      mkdir -p "node_modules/$(dirname "$name")" && \
+      ln -sfn "/app/$addon" "node_modules/$name" || exit 1; \
+    done && \
+    mkdir -p /app/var/blobstorage && chown -R node:node /app/var
 
 USER node
 
