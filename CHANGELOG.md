@@ -308,6 +308,7 @@
 - Return the Location header when creating a user or group @martior
 - Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
 - Support the categories:list parameter of @actions @martior
+- Refuse aliases which are relative or the path of existing content or of another alias @martior
 
 ### Internal
 
