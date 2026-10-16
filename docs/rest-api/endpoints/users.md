@@ -195,6 +195,20 @@ A successful response to a `PATCH` request will be indicated by a `204 No Conten
 {% include_relative examples/users/patch.res %}
 ```
 
+Users without the `Manage Users` permission can update their own properties, like their full name and email address:
+
+```http
+{% include_relative examples/users/patch_own.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/users/patch_own.ts %}
+```
+
+Their roles, groups, username and password can't be changed this way and are ignored. Updating another user answers `403 Forbidden`.
+
 A user with the `Manage Users` permission can also set the password of a user:
 
 ```http
