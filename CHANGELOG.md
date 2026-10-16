@@ -234,6 +234,7 @@
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
+- Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
 
 ### Internal
 
