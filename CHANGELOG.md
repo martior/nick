@@ -363,6 +363,7 @@
 - Move the dependabot configuration out of the workflows folder, where it failed as a workflow on every push @martior
 - Fix TypeScript type errors @martior
 - Remove the unused `Document.fetchLocalUsersGroups` @martior
+- Add a `typecheck` script and run it in CI @martior
 
 ### Documentation
 
