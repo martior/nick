@@ -16,6 +16,9 @@ import { User } from '../../models/user/user';
 const adminToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
 
+const nickToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJoZWFkbGVzc25pY2siLCJmdWxsbmFtZSI6Ik5lYXJseSBIZWFkbGVzcyBOaWNrIiwiaWF0IjoxNjQ5Njk4MTUxfQ.K-NLonuCLqcv_hzq4d_vqEVGPLClwpry_HVYRSkJIf4';
+
 /**
  * Add the user of the examples and log it in with the token of the examples
  * @method addHeadlessNick
@@ -23,11 +26,7 @@ const adminToken =
 async function addHeadlessNick(): Promise<void> {
   await testRequest(app, 'users/post');
   const user = await User.fetchById('headlessnick', {}, global.txn as any);
-  await addToken(
-    user,
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJoZWFkbGVzc25pY2siLCJmdWxsbmFtZSI6Ik5lYXJseSBIZWFkbGVzcyBOaWNrIiwiaWF0IjoxNjQ5Njk4MTUxfQ.K-NLonuCLqcv_hzq4d_vqEVGPLClwpry_HVYRSkJIf4',
-    global.txn as any,
-  );
+  await addToken(user, nickToken, global.txn as any);
 }
 
 describe('User', () => {
@@ -100,6 +99,31 @@ describe('User', () => {
   it('should update a user', async () => {
     await testRequest(app, 'users/post');
     return testRequest(app, 'users/patch');
+  });
+
+  it('should update own properties but not own roles', async () => {
+    await addHeadlessNick();
+    await testRequest(app, 'users/patch_own');
+    await request(app)
+      .patch('/@users/headlessnick')
+      .set('Authorization', `Bearer ${nickToken}`)
+      .send({ roles: ['Administrator'] })
+      .expect(204);
+    const res = await request(app)
+      .get('/@users/headlessnick')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    expect(res.body.fullname).toBe('Headless Nick');
+    expect(res.body.roles).toEqual(['Contributor']);
+  });
+
+  it('should not update another user', async () => {
+    await addHeadlessNick();
+    return request(app)
+      .patch('/@users/admin')
+      .set('Authorization', `Bearer ${nickToken}`)
+      .send({ fullname: 'Hijacked' })
+      .expect(403);
   });
 
   it('should set the password of a user', async () => {
