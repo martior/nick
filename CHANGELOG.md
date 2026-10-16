@@ -4,6 +4,7 @@
 
 ### Breaking
 
+- Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
 ### Feature
 
 - Add support for multiple profiles @robgietema
