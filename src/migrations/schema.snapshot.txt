@@ -331,6 +331,7 @@ index public.controlpanel.controlpanel_pkey CREATE UNIQUE INDEX controlpanel_pke
 index public.document.document_deleted_index CREATE INDEX document_deleted_index ON public.document USING btree (deleted)
 index public.document.document_language_index CREATE INDEX document_language_index ON public.document USING btree (language)
 index public.document.document_parent_id_index CREATE INDEX document_parent_id_index ON public.document USING btree (parent, id)
+index public.document.document_parent_id_unique CREATE UNIQUE INDEX document_parent_id_unique ON public.document USING btree (parent, id) WHERE (deleted IS NOT TRUE)
 index public.document.document_parent_index CREATE INDEX document_parent_index ON public.document USING btree (parent)
 index public.document.document_path_index CREATE INDEX document_path_index ON public.document USING btree (path)
 index public.document.document_path_pattern_index CREATE INDEX document_path_pattern_index ON public.document USING btree (path varchar_pattern_ops)
