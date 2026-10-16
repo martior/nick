@@ -320,6 +320,22 @@ export interface NickPackageConfig {
   migrationsTable?: string;
 }
 
+/**
+ * A periodic task declared in code: a scheduled job which is not stored in
+ * the database. A scheduled job with the same id overrides it.
+ */
+export interface PeriodicTask {
+  id: string;
+  title: string;
+  description?: string;
+  /** Cron expression, like `0 * * * *`. */
+  schedule: string;
+  /** Name of a registered scheduled job action. */
+  action: string;
+  params?: Params;
+  enabled?: boolean;
+}
+
 export type Task = {
   name: string;
   schedule: string;
