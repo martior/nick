@@ -11,6 +11,7 @@
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 - Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
 - Require the Manage Users permission for @roles, like Plone @martior
+- Importing `src/app.ts` no longer schedules or runs jobs, and jobs no longer run in a child process per job by default. Run a worker with `nick --modules=worker` (`src/server.ts` and `pnpm start` run the API and a worker); set `jobs.isolation` to `process` to keep the child processes. Run `pnpm migrate` for the job queue and rate limit tables @martior
 
 ### Feature
 
