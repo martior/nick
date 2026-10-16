@@ -415,26 +415,86 @@ export class Document extends Model {
    * @param {string} id Id of item to order.
    * @param {number|string} delta 'top', 'bottom' or numerical offset.
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} subsetIds Ids of the (visible) subset of the children
+   * the delta applies to, in their current order.
    * @returns {Promise} A Promise that resolves when the ordering has been done.
    */
-  async reorder(id: string, delta: any, trx?: Knex.Transaction): Promise<void> {
+  async reorder(
+    id: string,
+    delta: any,
+    trx?: Knex.Transaction,
+    subsetIds?: string[],
+  ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
-    let to: number;
-    const from = (self._children || []).findIndex(
-      (child: any) => child.id === id,
-    );
+    const children = self._children || [];
+
+    // The items which are ordered and their positions
+    const subset = subsetIds
+      ? children.filter((child: any) => subsetIds.includes(child.id))
+      : [...children];
+    const positions = subset.map((child: any) => children.indexOf(child));
+
+    // Ignore unknown items and invalid deltas
+    const from = subset.findIndex((child: any) => child.id === id);
+    const offset = parseInt(delta, 10);
+    if (
+      from === -1 ||
+      (delta !== 'top' && delta !== 'bottom' && isNaN(offset))
+    ) {
+      return;
+    }
 
     // Set to based on delta
+    let to: number;
     if (delta === 'top') {
       to = 0;
     } else if (delta === 'bottom') {
-      to = self._children.length - 1;
+      to = subset.length - 1;
     } else {
-      to = from + delta;
+      to = Math.min(Math.max(from + offset, 0), subset.length - 1);
     }
 
-    // Reorder and save to db
-    self._children.splice(to, 0, self._children.splice(from, 1)[0]);
+    // Reorder the subset and put it back at the positions of the subset
+    subset.splice(to, 0, subset.splice(from, 1)[0]);
+    positions.forEach((position: number, index: number) => {
+      children[position] = subset[index];
+    });
+    self._children = children;
+    await this.fixOrder(trx);
+  }
+
+  /**
+   * Sort the children
+   * @method sortChildren
+   * @param {string} on Field to sort on, like `id`, `sortable_title` or a
+   * field of the children.
+   * @param {string} order Sort order, `ascending` or `descending`.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise} A Promise that resolves when the sorting has been done.
+   */
+  async sortChildren(
+    on: string,
+    order: string,
+    trx?: Knex.Transaction,
+  ): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const value = (child: any): any => {
+      if (on === 'id' || on === 'getId') {
+        return child.id;
+      }
+      if (on === 'sortable_title' || on === 'title') {
+        return (child.json.title || '').toLowerCase();
+      }
+      if (['created', 'modified'].includes(on)) {
+        return `${child[on]}`;
+      }
+      return child.json[on] ?? '';
+    };
+    self._children = [...(self._children || [])].sort((a: any, b: any) => {
+      const [x, y] = [value(a), value(b)];
+      const result = x < y ? -1 : x > y ? 1 : 0;
+      return order === 'descending' || order === 'reverse' ? -result : result;
+    });
     await this.fixOrder(trx);
   }
 

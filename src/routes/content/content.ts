@@ -12,6 +12,7 @@ import express from 'express';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { difference, drop } from 'es-toolkit/array';
+import { isEqual, isObject } from 'es-toolkit/compat';
 import { omit, pick } from 'es-toolkit/object';
 import { v4 as uuid } from 'uuid';
 
@@ -895,23 +896,50 @@ export default [
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
 
-      // Check if ordering request
-      if (typeof req.body?.ordering !== 'undefined') {
-        // Get children and reorder
+      // Check if ordering or sorting request
+      const { ordering, sort } = req.body || {};
+      if (typeof ordering !== 'undefined' || typeof sort !== 'undefined') {
         await req.document.fetchChildren({}, trx);
-        await req.document.reorder(
-          req.body.ordering.obj_id,
-          req.body.ordering.delta,
-          trx,
-        );
+
+        // Reorder an item, within the subset if specified
+        if (isObject(ordering)) {
+          const { obj_id, delta, subset_ids } = ordering as any;
+          if (Array.isArray(subset_ids)) {
+            const ids = req.document._children
+              .map((child: InstanceType<typeof Document>) => child.id)
+              .filter((childId: string) => subset_ids.includes(childId));
+            if (!isEqual(ids, subset_ids)) {
+              throw new RequestException(400, {
+                message: req.i18n('Client/server ordering mismatch.'),
+              });
+            }
+          }
+          await req.document.reorder(
+            obj_id,
+            delta,
+            trx,
+            Array.isArray(subset_ids) ? subset_ids : undefined,
+          );
+        }
+
+        // Sort all items
+        if (isObject(sort) && typeof (sort as any).on === 'string') {
+          await req.document.sortChildren(
+            (sort as any).on,
+            (sort as any).order,
+            trx,
+          );
+        }
 
         // Reindex children
         await req.document.reindexChildren(trx);
 
-        // Send ok
-        return {
-          status: 204,
-        };
+        // Send ok if nothing else to update
+        if (Object.keys(omit(req.body, ['ordering', 'sort'])).length === 0) {
+          return {
+            status: 204,
+          };
+        }
       }
 
       // Check if locked

@@ -350,6 +350,70 @@ describe('Content', () => {
     expect(res.headers.location).toBe('http://localhost:8080/news/located');
   });
 
+  it('should order items within a subset and sort them', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const titles: Record<string, string> = {
+      a: 'Beta',
+      b: 'Alpha',
+      c: 'Gamma',
+      d: 'Delta',
+    };
+    for (const [index, id] of ['a', 'b', 'c', 'd'].entries()) {
+      await createDocument(
+        `0123abcd-0000-4000-8000-00000000020${index}`,
+        news,
+        id,
+        'Page',
+        {
+          position_in_parent: index,
+          json: { title: titles[id] },
+        },
+      );
+    }
+    const patch = (body: any) =>
+      request(app)
+        .patch('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    const ids = async () =>
+      (
+        await request(app)
+          .get('/news')
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+      ).body.items.map((item: any) => item.id);
+
+    await patch({
+      ordering: { obj_id: 'd', delta: 'top', subset_ids: ['c', 'd'] },
+    }).expect(204);
+    expect(await ids()).toStrictEqual(['a', 'b', 'd', 'c']);
+
+    await patch({
+      ordering: { obj_id: 'a', delta: 1, subset_ids: ['c', 'a'] },
+    }).expect(400);
+    await patch({ ordering: { obj_id: 'unknown', delta: 1 } }).expect(204);
+    await patch({ ordering: { obj_id: 'b', delta: -10 } }).expect(204);
+    expect(await ids()).toStrictEqual(['b', 'a', 'd', 'c']);
+
+    await patch({
+      sort: { on: 'sortable_title', order: 'descending' },
+    }).expect(204);
+    expect(await ids()).toStrictEqual(['c', 'd', 'a', 'b']);
+
+    await patch({
+      ordering: { obj_id: 'b', delta: 'top' },
+      title: 'Sorted news',
+    }).expect(204);
+    expect(await ids()).toStrictEqual(['b', 'c', 'd', 'a']);
+    const res = await request(app)
+      .get('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.body.title).toBe('Sorted news');
+  });
+
   it('should require the delete permission', async () => {
     const Document = models.get('Document');
     const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
