@@ -95,6 +95,8 @@ The server will respond with a `200 OK` status code and the JSON representation 
 {% include_relative examples/groups/get.res %}
 ```
 
+The ids of the users in the group are listed in `members`.
+
 ## Update Group
 
 To update the settings of a group, send a `PATCH` request with the group details you want to amend to the URL of that particular group:
