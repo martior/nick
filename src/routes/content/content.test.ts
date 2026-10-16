@@ -286,6 +286,70 @@ describe('Content', () => {
     await post('not-a-uuid').expect(400);
   });
 
+  it('should batch the items of a folder', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    for (const id of ['c0', 'c1', 'c2', 'c3', 'c4']) {
+      await createDocument(
+        `0123abcd-0000-4000-8000-00000000010${id[1]}`,
+        news,
+        id,
+        'Page',
+        {
+          position_in_parent: parseInt(id[1], 10),
+        },
+      );
+    }
+    const get = (query: string) =>
+      request(app)
+        .get(`/news?${query}`)
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+    let res = await get('b_size=2');
+    expect(res.body.items_total).toBe(5);
+    expect(res.body.items.map((item: any) => item.id)).toStrictEqual([
+      'c0',
+      'c1',
+    ]);
+    expect(res.body.batching.next).toBe(
+      'http://localhost:8080/news?b_size=2&b_start=2',
+    );
+    expect(res.body.items[0].description).toBe('');
+    expect(res.body.items[0].parent).toBeUndefined();
+
+    res = await get('b_size=2&b_start=4&fullobjects=1');
+    expect(res.body.items.map((item: any) => item.id)).toStrictEqual(['c4']);
+    expect(res.body.items[0].parent['@id']).toBe('http://localhost:8080/news');
+
+    res = await get('');
+    expect(res.body.items_total).toBe(5);
+    expect(res.body.batching).toBeUndefined();
+  });
+
+  it('should return the content on update if preferred', async () => {
+    const res = await request(app)
+      .patch('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .set('Prefer', 'return=representation')
+      .send({ title: 'Updated news' })
+      .expect(200);
+    expect(res.body.title).toBe('Updated news');
+    expect(res.body.parent['@id']).toBe('http://localhost:8080');
+  });
+
+  it('should return the location of new content', async () => {
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'located', title: 'Located' })
+      .expect(201);
+    expect(res.headers.location).toBe('http://localhost:8080/news/located');
+  });
+
   it('should require the delete permission', async () => {
     const Document = models.get('Document');
     const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);

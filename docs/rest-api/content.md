@@ -85,7 +85,9 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 {% include_relative endpoints/examples/content/get.res %}
 ```
 
-For folderish types, their childrens are automatically included in the response as items.
+For folderish types, their childrens are automatically included in the response as items, with `items_total`, the number of children the user may view. Like in plone.restapi, the items are batched with `b_start` and `b_size` (default 25), and a `batching` object with the `@id`, `first`, `last`, `next` and `prev` links is added when there is more than one batch. With `fullobjects=1` the items also contain their `parent`.
+
+The response contains a summary of the `parent` (`@id`, `@type`, `title`, `description` and `review_state`), except for the root.
 
 ### Unsuccessful response (404 Not Found)
 
@@ -128,6 +130,8 @@ A successful response to a PATCH request will be indicated by a `204 No Content`
 ```http
 {% include_relative endpoints/examples/content/patch.res %}
 ```
+
+With the header `Prefer: return=representation` the response is a `200 OK` with the updated resource, like a GET.
 
 ## Removing a Resource with DELETE
 
