@@ -244,6 +244,7 @@
 - Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
 - Check View on the sources of @copy and @move and Delete on the sources of @move, accept urls and uuids as sources and reindex the permissions of moved content @martior
 - Keep the content, children, versions and jobs of a deleted user instead of deleting them, the owner and actor are set to null @martior
+- Lock the user while storing or removing a token, so concurrent logins of one user no longer invalidate each other's tokens @martior
 
 ### Internal
 
