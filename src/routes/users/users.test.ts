@@ -193,6 +193,22 @@ describe('User', () => {
     expect(res.body.roles).toEqual(['Contributor']);
   });
 
+  it('should refuse an invalid email on update', async () => {
+    await addHeadlessNick();
+    for (const email of ['not-an-email', 42, null]) {
+      await request(app)
+        .patch('/@users/headlessnick')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ email })
+        .expect(400);
+    }
+    const res = await request(app)
+      .get('/@users/headlessnick')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    expect(res.body.email).not.toBe('not-an-email');
+  });
+
   it('should not update another user', async () => {
     await addHeadlessNick();
     return request(app)

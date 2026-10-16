@@ -31,6 +31,16 @@ import { getRootUrl } from '../../helpers/url/url';
 import models from '../../models';
 
 const userFields = ['id', 'fullname', 'email'];
+
+/**
+ * Check an email address of a user, undefined means not changed.
+ * @method isValidEmail
+ * @param {any} email Email address.
+ * @returns {boolean} True if undefined or a valid email address.
+ */
+const isValidEmail = (email: any): boolean =>
+  typeof email === 'undefined' ||
+  (typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
 const defaultLimit = 25;
 
 export default [
@@ -273,11 +283,7 @@ export default [
       }
 
       // Check email
-      if (
-        typeof req.body?.email !== 'undefined' &&
-        (typeof req.body.email !== 'string' ||
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.body.email))
-      ) {
+      if (!isValidEmail(req.body?.email)) {
         throw new RequestException(400, {
           message: req.i18n('You must enter a valid email address.'),
         });
@@ -439,6 +445,13 @@ export default [
       ) {
         throw new RequestException(400, {
           message: req.i18n('Password should be at least 8 characters long.'),
+        });
+      }
+
+      // Check email, like on create
+      if (!isValidEmail(req.body?.email)) {
+        throw new RequestException(400, {
+          message: req.i18n('You must enter a valid email address.'),
         });
       }
 
