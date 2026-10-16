@@ -1702,7 +1702,7 @@ export class Document extends Model {
     ).rows.forEach((row: any) => {
       const entry = local.get(row.path) || {
         inherit: row.inherit_roles,
-        roles: [],
+        roles: [] as { principal: string; role: string }[],
       };
       if (row.role) {
         entry.roles.push({
