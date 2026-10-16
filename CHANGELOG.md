@@ -145,6 +145,7 @@
 - Make the search batch size limit configurable via requestLimit.batch @robgietema
 - Add custom upgrade code support via index.ts in upgrade steps @robgietema
 - Support the title and token filters and batching in the vocabularies endpoint @martior
+- Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
 
 ### Bugfix
 
