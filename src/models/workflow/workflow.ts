@@ -40,9 +40,23 @@ export class Workflow extends Model {
     const current_state_id = req.document.workflow_state;
     const current_state = (self.json.states || {})[current_state_id] || {};
 
+    // Workflow history, the creation is the first entry (without action)
+    const stateTitle = (state?: string) =>
+      req.i18n(self.json.states?.[state || '']?.title || state || '');
+    const history = (req.document.workflow_history || [])
+      .filter((item: any) => !item.type || item.type === 'workflow')
+      .map((item: any) => ({
+        action: item.action || null,
+        actor: item.actor,
+        comments: item.comments || '',
+        review_state: item.review_state,
+        time: item.time,
+        title: stateTitle(item.review_state),
+      }));
+
     return {
       '@id': `${getUrl(req)}/@workflow`,
-      history: [],
+      history,
       state: {
         id: current_state_id,
         title: req.i18n(current_state.title),

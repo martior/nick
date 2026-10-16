@@ -11,7 +11,8 @@ import type { Knex } from 'knex';
 import express from 'express';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { drop, intersection } from 'es-toolkit/array';
+import { difference, drop } from 'es-toolkit/array';
+import { isEqual, isObject } from 'es-toolkit/compat';
 import { omit, pick } from 'es-toolkit/object';
 import { v4 as uuid } from 'uuid';
 
@@ -20,18 +21,28 @@ import events from '../../events';
 import { checkETag } from '../../helpers/cache/cache';
 import config from '../../helpers/config/config';
 import {
+  fetchParentSummary,
   getComponents,
   handleBlockReferences,
   handleBlocks,
   handleFiles,
   handleImages,
   handleRelationLists,
+  parentSummary,
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
-import { getRootUrl } from '../../helpers/url/url';
-import { mapAsync, uniqueId, bytesToNumber } from '../../helpers/utils/utils';
+import { getBatching, getBatchParams } from '../../helpers/query/query';
+import { getRootUrl, getUrl } from '../../helpers/url/url';
+import { normalizeFields, validateFields } from '../../helpers/schema/schema';
+import {
+  bytesToNumber,
+  isValidId,
+  mapAsync,
+  pasteId,
+  uniqueId,
+} from '../../helpers/utils/utils';
 import models from '../../models';
 
 dayjs.extend(utc);
@@ -168,7 +179,7 @@ export default [
 
           // Calculate new id and path
           const path = req.document.path;
-          const newId = uniqueId(document.id, childIds);
+          const newId = pasteId(document.id, childIds);
           const newPath = `${path}${path === '/' ? '' : '/'}${newId}`;
 
           // Add new id to list of taken ids
@@ -259,7 +270,7 @@ export default [
 
         // Calculate new id and path
         const path = req.document.path;
-        const newId = uniqueId(document.id, childIds);
+        const newId = pasteId(document.id, childIds);
         const newPath = `${path}${path === '/' ? '' : '/'}${newId}`;
 
         // Add new id to list of taken ids
@@ -316,14 +327,27 @@ export default [
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
       await req.document.fetchChildren({}, trx);
-      await req.document.fetchVersion(parseInt(req.params.version, 10), trx);
+      const version = parseInt(req.params.version, 10);
+      await req.document.fetchVersion(version, trx);
+      if (!req.document._version) {
+        throw new RequestException(404, {
+          message: req.i18n('Version not found.'),
+        });
+      }
       await req.document.fetchRelationLists(trx);
       return {
         json: await handleBlockReferences(
-          await req.document.toJson(
-            req,
-            await getComponents(req, trx, req.query?.expand?.split(',') || []),
-          ),
+          {
+            ...(await req.document.toJson(
+              req,
+              await getComponents(
+                req,
+                trx,
+                req.query?.expand?.split(',') || [],
+              ),
+            )),
+            version,
+          },
           trx,
         ),
         xkeys: [req.document.uuid],
@@ -648,13 +672,50 @@ export default [
         };
       }
 
-      const json = await req.document.toJson(
+      // Batch the items
+      const { start, size } = getBatchParams(
+        req.query?.b_start,
+        req.query?.b_size,
+      );
+      const total = req.document._restrictedChildren.length;
+      req.document._restrictedChildren = req.document._restrictedChildren.slice(
+        start,
+        start + size,
+      );
+      const fullobjects = ['1', 'true', 'True'].includes(
+        req.query?.fullobjects,
+      );
+
+      const json: any = await req.document.toJson(
         req,
         await getComponents(req, trx, req.query?.expand?.split(',') || []),
       );
+      const links = getBatching(
+        getUrl(req),
+        req.query || {},
+        total,
+        start,
+        size,
+      );
       return {
         xkeys: [req.document.uuid],
-        json: await handleBlockReferences(json, trx),
+        json: await handleBlockReferences(
+          {
+            ...json,
+            ...(await fetchParentSummary(req, req.document, trx)),
+            items: json.items.map((item: any) => ({
+              ...item,
+              description: item.description || '',
+              ...(fullobjects
+                ? { parent: parentSummary(req, req.document) }
+                : {}),
+            })),
+            items_total: total,
+            ...(links ? { batching: links } : {}),
+            version: 'current',
+          },
+          trx,
+        ),
       };
     },
   },
@@ -674,6 +735,13 @@ export default [
       // Lock the parent to serialize the creation of its children
       await req.document.lockForUpdate(trx);
 
+      // Check if a type is specified
+      if (typeof req.body?.['@type'] !== 'string') {
+        throw new RequestException(400, {
+          message: req.i18n("Property '@type' is required."),
+        });
+      }
+
       // Get content type date
       const type = await Type.fetchById(
         req.body['@type'],
@@ -685,40 +753,91 @@ export default [
 
       // Check if valid type
       if (!type) {
-        throw new RequestException(400, {
-          message: req.i18n('Type {type} not found.', {
-            type: req.body['@type'],
-          }),
+        throw new RequestException(403, {
+          message: req.i18n(
+            "Invalid '@type' parameter. No content type with the name “{type}” found.",
+            {
+              type: req.body['@type'],
+            },
+          ),
         });
       }
 
-      // Check required fields
-      const required = type._schema.required;
-      const requiredPosted = intersection(required, Object.keys(req.body));
-      if (required.length !== requiredPosted.length) {
+      // Check required fields and the values of the fields
+      const errors = [
+        ...difference(type._schema.required || [], Object.keys(req.body)).map(
+          (field: string) => ({
+            field,
+            message: req.i18n('Required input is missing.'),
+            error: 'ValidationError',
+          }),
+        ),
+        ...validateFields(req.body, type._schema, req.i18n),
+      ];
+      if (errors.length > 0) {
         throw new RequestException(400, {
-          message: req.i18n('Required field(s) missing.'),
+          message: JSON.stringify(errors),
         });
+      }
+
+      // Check the id if specified
+      await req.document.fetchChildren({}, trx);
+      if (typeof req.body.id !== 'undefined') {
+        if (!isValidId(req.body.id)) {
+          throw new RequestException(400, {
+            message: req.i18n('The id “{id}” is invalid.', {
+              id: `${req.body.id}`,
+            }),
+          });
+        }
+        if (
+          req.document._children.some(
+            (child: InstanceType<typeof Document>) => child.id === req.body.id,
+          )
+        ) {
+          throw new RequestException(400, {
+            message: req.i18n(
+              'The id “{id}” is invalid - it is already in use.',
+              {
+                id: req.body.id,
+              },
+            ),
+          });
+        }
       }
 
       // Set creation time
       const created = dayjs.utc().format();
 
-      // Get child nodes
-      await req.document.fetchChildren({}, trx);
-
       // Get json data
       const properties = type._schema.properties;
 
-      // Only site managers may choose the uuid
-      if (req.body.uuid && !req.permissions.includes('Manage Site')) {
+      // Only site managers may choose the uuid, as `UID` (like
+      // plone.restapi) or `uuid`
+      const requestedUuid = req.body.UID ?? req.body.uuid;
+      if (requestedUuid && !req.permissions.includes('Manage Site')) {
         throw new RequestException(403, {
           message: req.i18n('You are not authorized to set the uuid.'),
         });
       }
+      if (requestedUuid) {
+        if (
+          typeof requestedUuid !== 'string' ||
+          !/^[0-9a-f]{8}-?([0-9a-f]{4}-?){3}[0-9a-f]{12}$/i.test(requestedUuid)
+        ) {
+          throw new RequestException(400, {
+            message: req.i18n('The uuid is invalid.'),
+          });
+        }
+        if (await Document.fetchById(requestedUuid, {}, trx)) {
+          throw new RequestException(400, {
+            message: req.i18n('The uuid is already in use.'),
+          });
+        }
+      }
 
       // Set uuid
-      const newUuid = req.body.uuid || uuid();
+      const newUuid = requestedUuid || uuid();
 
       // Set translation
       let translation_group = newUuid;
@@ -738,9 +857,10 @@ export default [
       }
 
       // Remove fields which are not in the schema
-      let json = {
-        ...omit(pick(req.body, Object.keys(properties)), omitProperties),
-      };
+      let json = normalizeFields(
+        omit(pick(req.body, Object.keys(properties)), omitProperties),
+        type._schema,
+      );
 
       // Handle files, images and relation lists
       const schema = type._schema;
@@ -764,7 +884,18 @@ export default [
             : req.document._children.length,
         lock: { locked: false, stealable: true },
         workflow_state: type._workflow.json.initial_state,
-        workflow_history: JSON.stringify([]),
+        // The creation is the first entry of the history, like in Plone
+        workflow_history: JSON.stringify([
+          {
+            time: created,
+            actor: req.user.id,
+            action: null,
+            review_state: type._workflow.json.initial_state,
+            state_title:
+              type._workflow.json.states?.[type._workflow.json.initial_state]
+                ?.title,
+          },
+        ]),
         owner: req.user.id,
         json,
       }) as any;
@@ -842,12 +973,19 @@ export default [
       );
 
       // Send data back to client
+      const result: any = await document.toJson(
+        req,
+        await getComponents(req, trx, req.query?.expand?.split(',') || []),
+      );
       return {
         status: 201,
-        json: await document.toJson(
-          req,
-          await getComponents(req, trx, req.query?.expand?.split(',') || []),
-        ),
+        headers: {
+          Location: result['@id'],
+        },
+        json: {
+          ...result,
+          parent: parentSummary(req, req.document),
+        },
       };
     },
   },
@@ -866,23 +1004,50 @@ export default [
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
 
-      // Check if ordering request
-      if (typeof req.body?.ordering !== 'undefined') {
-        // Get children and reorder
+      // Check if ordering or sorting request
+      const { ordering, sort } = req.body || {};
+      if (typeof ordering !== 'undefined' || typeof sort !== 'undefined') {
         await req.document.fetchChildren({}, trx);
-        await req.document.reorder(
-          req.body.ordering.obj_id,
-          req.body.ordering.delta,
-          trx,
-        );
+
+        // Reorder an item, within the subset if specified
+        if (isObject(ordering)) {
+          const { obj_id, delta, subset_ids } = ordering as any;
+          if (Array.isArray(subset_ids)) {
+            const ids = req.document._children
+              .map((child: InstanceType<typeof Document>) => child.id)
+              .filter((childId: string) => subset_ids.includes(childId));
+            if (!isEqual(ids, subset_ids)) {
+              throw new RequestException(400, {
+                message: req.i18n('Client/server ordering mismatch.'),
+              });
+            }
+          }
+          await req.document.reorder(
+            obj_id,
+            delta,
+            trx,
+            Array.isArray(subset_ids) ? subset_ids : undefined,
+          );
+        }
+
+        // Sort all items
+        if (isObject(sort) && typeof (sort as any).on === 'string') {
+          await req.document.sortChildren(
+            (sort as any).on,
+            (sort as any).order,
+            trx,
+          );
+        }
 
         // Reindex children
         await req.document.reindexChildren(trx);
 
-        // Send ok
-        return {
-          status: 204,
-        };
+        // Send ok if nothing else to update
+        if (Object.keys(omit(req.body, ['ordering', 'sort'])).length === 0) {
+          return {
+            status: 204,
+          };
+        }
       }
 
       // Check if locked
@@ -897,6 +1062,25 @@ export default [
             message: req.i18n('Resource is locked.'),
             type: req.i18n('Document locked'),
           },
+        });
+      }
+
+      // Check the values of the fields and the id
+      const errors = validateFields(req.body || {}, req.type._schema, req.i18n);
+      if (errors.length > 0) {
+        throw new RequestException(400, {
+          message: JSON.stringify(errors),
+        });
+      }
+      if (
+        typeof req.body.id !== 'undefined' &&
+        req.body.id !== req.document.id &&
+        !isValidId(req.body.id)
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n('The id “{id}” is invalid.', {
+            id: `${req.body.id}`,
+          }),
         });
       }
 
@@ -929,9 +1113,12 @@ export default [
       // Handle file uploads
       let json = {
         ...req.document.json,
-        ...omit(
-          pick(req.body, Object.keys(req.type._schema.properties)),
-          omitProperties,
+        ...normalizeFields(
+          omit(
+            pick(req.body, Object.keys(req.type._schema.properties)),
+            omitProperties,
+          ),
+          req.type._schema,
         ),
       };
       const schema = req.type._schema;
@@ -997,6 +1184,23 @@ export default [
 
       // Trigger onAfterModified
       await events.trigger('onAfterModified', req.document, req.user, trx, req);
+
+      // Return the content if asked for
+      if (req.headers.prefer === 'return=representation') {
+        await req.document.fetchRelationLists(trx);
+        await req.document.fetchChildren(req, trx);
+        await req.document.restrictChildren(req, trx);
+        return {
+          status: 200,
+          json: {
+            ...(await req.document.toJson(
+              req,
+              await getComponents(req, trx, []),
+            )),
+            ...(await fetchParentSummary(req, req.document, trx)),
+          },
+        };
+      }
 
       // Send ok
       return {

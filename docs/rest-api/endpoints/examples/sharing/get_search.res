@@ -30,7 +30,8 @@ Content-Type: application/json
         "Reader": false,
         "Reviewer": false
       },
-      "type": "user"
+      "type": "user",
+      "disabled": true
     },
     {
       "id": "Administrators",
@@ -41,7 +42,20 @@ Content-Type: application/json
         "Reader": false,
         "Reviewer": false
       },
-      "type": "group"
+      "type": "group",
+      "disabled": false
+    },
+    {
+      "id": "AuthenticatedUsers",
+      "title": "Logged-in users",
+      "roles": {
+        "Contributor": false,
+        "Editor": false,
+        "Reader": false,
+        "Reviewer": false
+      },
+      "type": "group",
+      "disabled": false
     }
   ],
   "inherit": true

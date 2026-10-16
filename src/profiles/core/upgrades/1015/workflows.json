@@ -1,0 +1,27 @@
+{
+  "purge": false,
+  "workflows": [
+    {
+      "id": "simple_publication_workflow",
+      "json": {
+        "states": {
+          "private": {
+            "permissions": {
+              "Owner": ["View", "Modify"]
+            }
+          },
+          "pending": {
+            "permissions": {
+              "Owner": ["View"]
+            }
+          },
+          "published": {
+            "permissions": {
+              "Owner": ["Modify"]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

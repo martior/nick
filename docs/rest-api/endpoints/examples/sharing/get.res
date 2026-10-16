@@ -20,6 +20,19 @@ Content-Type: application/json
       "title": "Reviewer"
     }
   ],
-  "entries": [],
+  "entries": [
+    {
+      "id": "AuthenticatedUsers",
+      "title": "Logged-in users",
+      "roles": {
+        "Contributor": false,
+        "Editor": false,
+        "Reader": false,
+        "Reviewer": false
+      },
+      "type": "group",
+      "disabled": false
+    }
+  ],
   "inherit": true
 }

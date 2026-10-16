@@ -48,6 +48,12 @@ A transition requires the `View` permission on the object and the permission of 
 }
 ```
 
+Like in plone.restapi, the body can contain the publication dates `effective` and `expires`; they are set on the object (and with `include_children` on its children). An invalid date returns `400 Bad Request` and nothing is changed. When an object is published for the first time (it enters a state where `Anonymous` has `View`) and has no effective date, the effective date is set to the time of the transition; publishing it again keeps the first effective date.
+
+A `POST` to `@workflow` without a transition returns `400 Bad Request`.
+
+A `comment` in the body is stored with the transition and returned in the response, in the `history` of `@workflow` and in `@history`. The `history` of `@workflow` lists the workflow history like in plone.restapi; for content created through the API it starts with the creation in the initial state (`"action": null`).
+
 A transition to the state the object is already in is accepted and does nothing: the response is `200 OK` with the last transition and no new history entry is recorded.
 
 With `include_children: true`, the transition is checked for every object below the object first, with the permissions the user has on that object. If it can't be applied to one of them, nothing is changed and `400 Bad Request` is returned. Children that already are in the new state are skipped.

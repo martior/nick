@@ -7,7 +7,7 @@ parent: Endpoints
 
 ## Copying an object
 
-To copy a content object send a `POST` request to the `/@copy` endpoint at the destinations url with the source object specified in the request body. The source object can be specified by url, path or uuid.
+To copy a content object send a `POST` request to the `/@copy` endpoint at the destinations url with the source object specified in the request body. The source object can be specified by url, path or uuid. If the id is already used in the destination, the copy gets the id `copy_of_<id>`, then `copy2_of_<id>` and so on, like in Plone.
 
 ```http
 {% include_relative examples/copymove/copy.req %}

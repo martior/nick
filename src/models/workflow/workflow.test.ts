@@ -112,7 +112,7 @@ describe('Workflow', () => {
         },
       };
       await workflow.update({ json }, global.txn!);
-      await get().expect(403);
+      await get().expect(401);
       expect(await allowed()).not.toContain('Reader');
 
       // Unless the workflow keeps the additive model

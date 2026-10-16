@@ -129,7 +129,7 @@ export default [
           version: versionNumber,
           json: {
             ...json,
-            changeNote: `Reverted to version ${version.version}`,
+            changeNote: `Reverted to revision ${version.version}`,
           },
         },
         trx,

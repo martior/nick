@@ -156,3 +156,45 @@ export function bytesToNumber(bytes: string): number {
 
   return units[unit] ? value * units[unit] : value;
 }
+
+/**
+ * Check if an id is valid, like Zope's checkValidId: only characters which
+ * are allowed in urls, traversable, and not starting with an underscore or
+ * `aq_` or ending with two underscores.
+ * @method isValidId
+ * @param {any} id Id to check.
+ * @returns {boolean} True if the id is valid.
+ */
+export function isValidId(id: any): boolean {
+  return (
+    typeof id === 'string' &&
+    id !== '' &&
+    !/[^a-zA-Z0-9\-_~,.$()# @]/.test(id) &&
+    id !== '.' &&
+    id !== '..' &&
+    !id.startsWith('_') &&
+    !id.startsWith('aq_') &&
+    id !== 'REQUEST' &&
+    !id.endsWith('__')
+  );
+}
+
+/**
+ * Get the id of a pasted item, like Zope: `copy_of_<id>`, `copy2_of_<id>`
+ * and so on when the id is already used.
+ * @method pasteId
+ * @param {string} id Id of the item.
+ * @param {Array<string>} ids Ids of the items in the target folder.
+ * @returns {string} Unique id.
+ */
+export function pasteId(id: string, ids: string[]): string {
+  const match = id.match(/^copy([0-9]*)_of_(.*)$/);
+  let n = match ? parseInt(match[1] || '1', 10) : 0;
+  const original = match ? match[2] : id;
+  let newId = id;
+  while (ids.includes(newId)) {
+    newId = `copy${n ? n + 1 : ''}_of_${original}`;
+    n = n + 1;
+  }
+  return newId;
+}

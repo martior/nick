@@ -93,6 +93,7 @@ export class Document extends Model {
     state_title?: string;
     review_state?: string;
     transition_title?: string;
+    comments?: string;
   }[];
   declare translation_group: string;
   declare language: string;
@@ -415,26 +416,86 @@ export class Document extends Model {
    * @param {string} id Id of item to order.
    * @param {number|string} delta 'top', 'bottom' or numerical offset.
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} subsetIds Ids of the (visible) subset of the children
+   * the delta applies to, in their current order.
    * @returns {Promise} A Promise that resolves when the ordering has been done.
    */
-  async reorder(id: string, delta: any, trx?: Knex.Transaction): Promise<void> {
+  async reorder(
+    id: string,
+    delta: any,
+    trx?: Knex.Transaction,
+    subsetIds?: string[],
+  ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
-    let to: number;
-    const from = (self._children || []).findIndex(
-      (child: any) => child.id === id,
-    );
+    const children = self._children || [];
+
+    // The items which are ordered and their positions
+    const subset = subsetIds
+      ? children.filter((child: any) => subsetIds.includes(child.id))
+      : [...children];
+    const positions = subset.map((child: any) => children.indexOf(child));
+
+    // Ignore unknown items and invalid deltas
+    const from = subset.findIndex((child: any) => child.id === id);
+    const offset = parseInt(delta, 10);
+    if (
+      from === -1 ||
+      (delta !== 'top' && delta !== 'bottom' && isNaN(offset))
+    ) {
+      return;
+    }
 
     // Set to based on delta
+    let to: number;
     if (delta === 'top') {
       to = 0;
     } else if (delta === 'bottom') {
-      to = self._children.length - 1;
+      to = subset.length - 1;
     } else {
-      to = from + delta;
+      to = Math.min(Math.max(from + offset, 0), subset.length - 1);
     }
 
-    // Reorder and save to db
-    self._children.splice(to, 0, self._children.splice(from, 1)[0]);
+    // Reorder the subset and put it back at the positions of the subset
+    subset.splice(to, 0, subset.splice(from, 1)[0]);
+    positions.forEach((position: number, index: number) => {
+      children[position] = subset[index];
+    });
+    self._children = children;
+    await this.fixOrder(trx);
+  }
+
+  /**
+   * Sort the children
+   * @method sortChildren
+   * @param {string} on Field to sort on, like `id`, `sortable_title` or a
+   * field of the children.
+   * @param {string} order Sort order, `ascending` or `descending`.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise} A Promise that resolves when the sorting has been done.
+   */
+  async sortChildren(
+    on: string,
+    order: string,
+    trx?: Knex.Transaction,
+  ): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const value = (child: any): any => {
+      if (on === 'id' || on === 'getId') {
+        return child.id;
+      }
+      if (on === 'sortable_title' || on === 'title') {
+        return (child.json.title || '').toLowerCase();
+      }
+      if (['created', 'modified'].includes(on)) {
+        return `${child[on]}`;
+      }
+      return child.json[on] ?? '';
+    };
+    self._children = [...(self._children || [])].sort((a: any, b: any) => {
+      const [x, y] = [value(a), value(b)];
+      const result = x < y ? -1 : x > y ? 1 : 0;
+      return order === 'descending' || order === 'reverse' ? -result : result;
+    });
     await this.fixOrder(trx);
   }
 
@@ -705,12 +766,29 @@ export class Document extends Model {
     req: Request,
     trx?: Knex.Transaction,
   ): Promise<any[]> {
+    const self: InstanceType<typeof Document> = this;
     const User = models.get('User');
+
+    // The entry of the creation has no action, it is shown as "Create"
+    // like in plone.restapi
+    const history: any[] = self.workflow_history;
+
     return await Promise.all(
-      this.workflow_history.map(async (item: any) => {
-        const user = await User.fetchById(item.actor, {}, trx);
+      history.map(async (item: any) => {
+        const user = item.actor
+          ? await User.fetchById(item.actor, {}, trx)
+          : undefined;
         return {
           ...item,
+          ...(!item.action && (!item.type || item.type === 'workflow')
+            ? {
+                action: 'Create',
+                transition_title: 'Create',
+              }
+            : {}),
+          ...(item.state_title
+            ? { state_title: req.i18n(item.state_title) }
+            : {}),
           actor: {
             '@id': `${getRootUrl(req)}/@users/${item.actor}`,
             fullname: user ? user.fullname : item.actor,
@@ -827,6 +905,8 @@ export class Document extends Model {
    * @param {boolean} recursive
    * @param {Knex.Transaction} trx Transaction object.
    * @param {Request} req Request object.
+   * @param {Object} options Comment and publication dates (`effective` and
+   * `expires`) of the transition.
    */
   async changeWorkflow(
     transition: string,
@@ -835,6 +915,7 @@ export class Document extends Model {
     recursive: boolean,
     trx: Knex.Transaction,
     req: Request,
+    options: { comment?: string; effective?: string; expires?: string } = {},
   ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
 
@@ -851,6 +932,27 @@ export class Document extends Model {
     const new_state =
       self._type._workflow.json.transitions[transition]?.new_state;
 
+    // Set the publication dates; the effective date is set when the item
+    // is published (viewable by anonymous) the first time
+    const dates = pick(options, ['effective', 'expires']);
+    if (
+      new_state &&
+      new_state !== old_state &&
+      !self.json.effective &&
+      !dates.effective &&
+      self._type._workflow
+        .getPermissions(new_state, ['Anonymous'])
+        .includes('View')
+    ) {
+      dates.effective = modified;
+    }
+    if (Object.keys(dates).length > 0) {
+      await self.updateAndFetch({ json: { ...self.json, ...dates } }, trx);
+      if (!new_state || new_state === old_state) {
+        await self.reindex(trx);
+      }
+    }
+
     // Check if state is available and not the current state
     if (new_state && new_state !== old_state) {
       // Add to workflow history
@@ -863,6 +965,7 @@ export class Document extends Model {
         review_state: new_state,
         transition_title:
           self._type._workflow.json.transitions[transition].title,
+        ...(options.comment ? { comments: options.comment } : {}),
       });
 
       // Trigger on before change workflow
@@ -921,6 +1024,7 @@ export class Document extends Model {
           recursive,
           trx,
           req,
+          options,
         ),
     );
   }
@@ -1439,7 +1543,7 @@ export class Document extends Model {
       await knex
         .raw(
           `UPDATE catalog SET "_allowedUsersGroupsRoles" = item.allowed
-            FROM jsonb_to_recordset(?::jsonb) AS item(document uuid, allowed varchar(255)[])
+            FROM jsonb_to_recordset(?::jsonb) AS item(document uuid, allowed text[])
             WHERE catalog.document = item.document`,
           [JSON.stringify(allowed.slice(i, i + 500))],
         )
@@ -1577,24 +1681,6 @@ export class Document extends Model {
     );
 
     return image_scales;
-  }
-
-  /**
-   * Fetch local users and groups.
-   * @method fetchLocalUsersGroups
-   * @param {Array} viewRoles List of roles with the view permission.
-   * @param {Knex.Transaction} trx Transaction object.
-   * @return {Promise<string[]>} List of allowed users and groups.
-   */
-  async fetchLocalUsersGroups(
-    viewRoles: string[],
-    trx?: Knex.Transaction,
-  ): Promise<string[]> {
-    return uniq(
-      (await this.fetchLocalRoles(trx))
-        .filter((localRole) => viewRoles.includes(localRole.role))
-        .map((localRole) => localRole.principal),
-    );
   }
 
   /**

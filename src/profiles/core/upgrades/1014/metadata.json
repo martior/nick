@@ -1,0 +1,7 @@
+{
+  "id": "@plone/nick:core",
+  "title": "Nick Core",
+  "description": "Core functionality of Nick",
+  "version": 1014,
+  "upgrade": "Make the title a text line of at most 1024 characters."
+}

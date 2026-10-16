@@ -53,7 +53,8 @@
     "start": "pnpm migrate:list && pnpm seed:status && nodemon --exec 'tsx src/server.ts'",
     "rollback": "pnpm knex migrate:rollback --all",
     "reset": "pnpm rollback && pnpm migrate && pnpm seed",
-    "test": "AUTH_RATE_LIMIT=1000 vitest"
+    "test": "AUTH_RATE_LIMIT=1000 vitest",
+    "typecheck": "tsc --noEmit"
   },
   "engines": {
     "node": "^22 || ^24 || ^25 || ^26"

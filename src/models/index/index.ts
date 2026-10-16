@@ -43,7 +43,7 @@ export class Index extends Model {
   declare enabled: boolean;
   declare sortable: boolean;
   declare vocabulary: string;
-  declare operators: IndexOperator[];
+  declare operators: Record<string, IndexOperator>;
   declare type:
     | 'string'
     | 'integer'

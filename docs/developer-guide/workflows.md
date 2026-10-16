@@ -151,3 +151,5 @@ role Reader loses View on 12 items (simple_publication_workflow/private: 9, simp
 ```
 
 `--json` prints the same as JSON. For every line, either add the role to the state's `permissions` (or the permission to the state's `acquire`), or set `"permission_model": "additive"` on the workflow to keep the old behaviour. Then run `pnpm seed:upgrade`: upgrade `1011` of the core profile gives `Reader` `View` in the `private` and `pending` states of `simple_publication_workflow`, as in Plone, so the core workflow keeps its permissions, and rebuilds the permissions in the catalog.
+
+Upgrade `1015` gives `Owner` `View` and `Modify` in the `private` state, `View` in the `pending` state and `Modify` in the `published` state of `simple_publication_workflow`, like Plone's: the creator of an item can view and edit it while it is private, also without another local role.

@@ -11,6 +11,12 @@
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 - Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
 - Require the Manage Users permission for @roles, like Plone @martior
+- Error responses have the plone.restapi shape `{ "type": ..., "message": ... }`: 404 responses no longer use `{ "error": ... }`, and an invalid JSON body gives a JSON 400 instead of an HTML page. Redirects have an absolute `Location` header @martior
+- The items of a folder are batched like in plone.restapi (`b_start`, `b_size`, default 25 items) with `items_total` and `batching`; clients that expect all children in `items` have to page or pass a larger `b_size` @martior
+- A @sharing entry is the complete set of the principal's delegatable local roles, like in Plone: roles not named in the entry are revoked. Clients that sent only the changed roles must send all roles @martior
+- The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1015) @martior
+- A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
+- @contextnavigation has the shape and the tree of plone.restapi's: an envelope with `available`, `has_custom_name`, `title` and `url`, items with `href`, `type`, `normalized_id`, `is_current`, `is_in_path` and `is_folderish` instead of catalog metadata, and the `topLevel`, `currentFolderOnly` and `name` parameters @martior
 
 ### Feature
 
@@ -164,6 +170,8 @@
 - Convert querystring operations of collections and listing blocks in export @martior
 - Support the title and token filters and batching in the vocabularies endpoint @martior
 - Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
+- Add the `AuthenticatedUsers` group of all authenticated users, like Plone's: it is always listed in @sharing, and local roles given to it apply to every logged-in user, also in search @martior
+- Add field and fieldset lookup (`@types/<type>/<name>`) and through-the-web schema changes to @types: POST adds a field or a fieldset, PATCH changes it and DELETE removes it, like plone.restapi @martior
 
 ### Bugfix
 
@@ -310,6 +318,18 @@
 - Return the Location header when creating a user or group @martior
 - Support the categories:list parameter of @actions @martior
 - Refuse aliases which are relative or the path of existing content or of another alias @martior
+- Validate content on create and update like plone.restapi: field types, required fields, text lines and maximum lengths (the title is a text line of at most 1024 characters, upgrade 1014), and explicit ids; a missing `@type` is a 400 and an unknown `@type` a 403. Text is normalized to NFC. Run `pnpm seed:upgrade` @martior
+- Allow ids, paths and titles longer than 255 characters instead of failing with a 500 (new migration, run `pnpm migrate`); ids generated from a title are at most 255 characters @martior
+- Accept the uuid of new content as `UID` like plone.restapi, and answer an invalid or used uuid with a 400 instead of a 500 @martior
+- Add the `parent` summary to content (also to `fullobjects` items), the `Location` header on create and `Prefer: return=representation` on update, like plone.restapi; folder items always have a `description` @martior
+- Support `subset_ids` and `sort` when ordering content, ignore an unknown `obj_id` instead of moving another item, keep a negative delta in range, and apply other fields sent with the ordering in the same PATCH @martior
+- Name copies and moved items whose id is taken `copy_of_<id>` like Plone instead of `<id>-1` @martior
+- Set the `effective` and `expires` dates sent with a workflow transition (also on children with `include_children`), refuse invalid dates with a 400, set the effective date when content is published the first time, and answer a POST to `@workflow` without a transition with a 400 instead of a 404 @martior
+- Store the comment of a workflow transition and return the workflow history in `@workflow` (it was always empty) @martior
+- Shape `@history` like plone.restapi: list the creation as a `Create` entry, give versions without a change note `null` comments, say 'revision' in the revert comment, add `version` to content (`current`) and to old versions, and answer an unknown version with a 404 @martior
+- Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
+- @types is only available to authenticated users, list items have `id` and `immediately_addable`, and the schema has `type: object` and the content type `application/json+schema`, like plone.restapi @martior
+- Record the creation of content as the first workflow history entry (without action) like Plone, instead of deriving a `Create` entry, so migrated histories are shown unchanged @martior
 
 ### Internal
 
@@ -363,6 +383,9 @@
 - Save controlpanel and userschema files as blobs @robgietema
 - Update locale source references @martior
 - Move the dependabot configuration out of the workflows folder, where it failed as a workflow on every push @martior
+- Fix TypeScript type errors @martior
+- Remove the unused `Document.fetchLocalUsersGroups` @martior
+- Add a `typecheck` script and run it in CI @martior
 
 ### Documentation
 

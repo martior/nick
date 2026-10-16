@@ -30,14 +30,19 @@ export class TypeCollection extends Collection<TypeModel> {
    * @returns {Promise<Json>} JSON object.
    */
   async toJson(req: Request): Promise<Json> {
-    return ((await super.toJson(req)) as any).map((model: TypeModel) => ({
-      '@id': `${getRootUrl(req)}/@types/${model.id}`,
-      addable:
+    return ((await super.toJson(req)) as any).map((model: TypeModel) => {
+      const addable =
         hasPermission(req.permissions, 'Add') &&
         (req.type.filter_content_types
           ? req.type.allowed_content_types.includes(model.id)
-          : model.global_allow),
-      title: req.i18n(model.title),
-    }));
+          : model.global_allow);
+      return {
+        '@id': `${getRootUrl(req)}/@types/${model.id}`,
+        addable,
+        id: model.id,
+        immediately_addable: addable,
+        title: req.i18n(model.title),
+      };
+    });
   }
 }

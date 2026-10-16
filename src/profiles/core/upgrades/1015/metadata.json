@@ -1,0 +1,7 @@
+{
+  "id": "@plone/nick:core",
+  "title": "Nick Core",
+  "description": "Core functionality of Nick",
+  "version": 1015,
+  "upgrade": "Give Owner View and Modify in the private state, View in the pending state and Modify in the published state."
+}

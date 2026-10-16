@@ -1,5 +1,5 @@
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/json+schema
 
 {
   "required": ["title"],
@@ -53,7 +53,9 @@ Content-Type: application/json
       "behavior": "basic",
       "type": "string",
       "title": "Title",
-      "description": "A name given to this item."
+      "description": "A name given to this item.",
+      "factory": "Text line (String)",
+      "maxLength": 1024
     },
     "blocks": {
       "behavior": "blocks",
@@ -171,5 +173,6 @@ Content-Type: application/json
       "description": "The JSON representation of the object blocks layout. Must be a JSON array."
     }
   },
-  "title": "Page"
+  "title": "Page",
+  "type": "object"
 }

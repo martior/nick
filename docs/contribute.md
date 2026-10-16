@@ -45,6 +45,7 @@ readability:
 
 - We indent using two spaces (soft tabs)
 - We use prettier to format our Javascript and JSON files
+- The code must type check: run `pnpm typecheck` (`tsc --noEmit`)
 - All public facing text should be translatable, see our code for example on
   how to make text translatable in both Javascript and JSON
 - This is open source software. Consider the people who will read your code, and
