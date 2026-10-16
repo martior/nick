@@ -236,6 +236,7 @@
 - Fix mail debug print link issue @robgietema
 - Unlock content on DELETE @lock and let a forced unlock steal a stealable lock of another user @martior
 - Keep the token, timeout and stealable setting when refreshing a lock and don't lock unlocked content on refresh @martior
+- Keep the lock when locked content is saved with the lock token @martior
 
 ### Internal
 
