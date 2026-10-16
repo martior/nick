@@ -55,6 +55,10 @@ If the resource could not be created, for instance because the title was missing
 
 The response body can contain information about why the request failed.
 
+### Server managed fields
+
+The server sets the owner, the creation and modification dates, the workflow state and the workflow history of a new resource; values sent for them are ignored. A `uuid` can only be chosen by users with the `Manage Site` permission, other users get `403 Forbidden`.
+
 ## Reading a Resource with GET
 
 After a successful POST, we can access the resource by sending a GET request to the resource URL:

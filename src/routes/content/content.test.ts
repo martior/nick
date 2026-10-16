@@ -4,12 +4,17 @@
  */
 
 // External imports
+import request from 'supertest';
 import { v4 as uuid } from 'uuid';
-import { afterEach, beforeEach, describe, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import { createUser, testRequest } from '../../helpers/tests/tests';
+import models from '../../models';
+
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
 
 describe('Content', () => {
   beforeEach(() => {
@@ -81,4 +86,62 @@ describe('Content', () => {
 
   it('should export a markdown file for an object', () =>
     testRequest(app, 'content/markdown'));
+
+  it('should ignore a workflow history sent on create', async () => {
+    const Document = models.get('Document');
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        '@type': 'Page',
+        id: 'forged',
+        title: 'Forged',
+        workflow_history: [
+          {
+            action: 'publish',
+            actor: 'mallory',
+            review_state: 'published',
+            time: '2001-01-01T00:00:00Z',
+          },
+        ],
+      })
+      .expect(201);
+    const document = await Document.fetchOne(
+      { path: '/news/forged' },
+      {},
+      global.txn!,
+    );
+    expect(document.workflow_history).toEqual([]);
+  });
+
+  it('should only allow site managers to set the uuid', async () => {
+    const Document = models.get('Document');
+    const contributor = await createUser('contributor');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await news
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Contributor', user: 'contributor' });
+    const body = {
+      '@type': 'Page',
+      id: 'with-uuid',
+      title: 'With uuid',
+      uuid: '0123abcd-0000-4000-8000-000000000001',
+    };
+
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${contributor}`)
+      .send(body)
+      .expect(403);
+
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send(body)
+      .expect(201);
+    expect(res.body.UID).toBe(body.uuid);
+  });
 });
