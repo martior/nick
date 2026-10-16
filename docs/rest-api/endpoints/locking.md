@@ -114,7 +114,7 @@ Or use the client directly:
 {% include_relative examples/locking/patch.ts %}
 ```
 
-The server responds with status `200 OK` and returns the lock information containing the updated creation time.
+The server responds with status `200 OK` and returns the lock information containing the updated creation time. The token, timeout and stealable setting of the lock stay the same, so the client can keep using its token. Refreshing an object which is not locked does not lock it; the server responds with `"locked": false`. Only the creator of the lock can refresh it.
 
 ```http
 {% include_relative examples/locking/patch.res %}
