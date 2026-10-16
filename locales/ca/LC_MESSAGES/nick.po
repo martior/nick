@@ -155,10 +155,10 @@ msgstr "Administradors"
 #. Default: "After N days in the future"
 #: src/profiles/core/catalog.json:95
 #: src/profiles/core/catalog.json:168
-#: src/profiles/core/catalog.json:528
-#: src/profiles/core/catalog.json:607
-#: src/profiles/core/catalog.json:680
-#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:553
+#: src/profiles/core/catalog.json:632
+#: src/profiles/core/catalog.json:705
+#: src/profiles/core/catalog.json:778
 msgctxt "Profiles|Core|Catalog"
 msgid "After N days in the future"
 msgstr "D'aquí a N dies en el futur"
@@ -166,10 +166,10 @@ msgstr "D'aquí a N dies en el futur"
 #. Default: "After date"
 #: src/profiles/core/catalog.json:124
 #: src/profiles/core/catalog.json:197
-#: src/profiles/core/catalog.json:557
-#: src/profiles/core/catalog.json:636
-#: src/profiles/core/catalog.json:709
-#: src/profiles/core/catalog.json:782
+#: src/profiles/core/catalog.json:582
+#: src/profiles/core/catalog.json:661
+#: src/profiles/core/catalog.json:734
+#: src/profiles/core/catalog.json:807
 msgctxt "Profiles|Core|Catalog"
 msgid "After date"
 msgstr "Després de la data"
@@ -177,10 +177,10 @@ msgstr "Després de la data"
 #. Default: "After relative date"
 #: src/profiles/core/catalog.json:94
 #: src/profiles/core/catalog.json:167
-#: src/profiles/core/catalog.json:527
-#: src/profiles/core/catalog.json:606
-#: src/profiles/core/catalog.json:679
-#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:552
+#: src/profiles/core/catalog.json:631
+#: src/profiles/core/catalog.json:704
+#: src/profiles/core/catalog.json:777
 msgctxt "Profiles|Core|Catalog"
 msgid "After relative date"
 msgstr "D'aquí a"
@@ -188,10 +188,10 @@ msgstr "D'aquí a"
 #. Default: "After the current day"
 #: src/profiles/core/catalog.json:101
 #: src/profiles/core/catalog.json:174
-#: src/profiles/core/catalog.json:534
-#: src/profiles/core/catalog.json:613
-#: src/profiles/core/catalog.json:686
-#: src/profiles/core/catalog.json:759
+#: src/profiles/core/catalog.json:559
+#: src/profiles/core/catalog.json:638
+#: src/profiles/core/catalog.json:711
+#: src/profiles/core/catalog.json:784
 msgctxt "Profiles|Core|Catalog"
 msgid "After the current day"
 msgstr "Després del dia actual"
@@ -199,10 +199,10 @@ msgstr "Després del dia actual"
 #. Default: "After today"
 #: src/profiles/core/catalog.json:100
 #: src/profiles/core/catalog.json:173
-#: src/profiles/core/catalog.json:533
-#: src/profiles/core/catalog.json:612
-#: src/profiles/core/catalog.json:685
-#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:558
+#: src/profiles/core/catalog.json:637
+#: src/profiles/core/catalog.json:710
+#: src/profiles/core/catalog.json:783
 msgctxt "Profiles|Core|Catalog"
 msgid "After today"
 msgstr "A partir d'avui"
@@ -260,13 +260,13 @@ msgid "An item’s description"
 msgstr "La descripció d'un element"
 
 #. Default: "An item’s type (e.g. Event)"
-#: src/profiles/core/catalog.json:446
+#: src/profiles/core/catalog.json:471
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s type (e.g. Event)"
 msgstr "El tipus d'un element (ex: un event)"
 
 #. Default: "An item’s workflow state (e.g.published)"
-#: src/profiles/core/catalog.json:471
+#: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s workflow state (e.g.published)"
 msgstr "L'estat del circuit d'un element (ex: publicat)"
@@ -378,10 +378,10 @@ msgstr "Metadades bàsiques"
 #. Default: "Before N days in the past"
 #: src/profiles/core/catalog.json:107
 #: src/profiles/core/catalog.json:180
-#: src/profiles/core/catalog.json:540
-#: src/profiles/core/catalog.json:619
-#: src/profiles/core/catalog.json:692
-#: src/profiles/core/catalog.json:765
+#: src/profiles/core/catalog.json:565
+#: src/profiles/core/catalog.json:644
+#: src/profiles/core/catalog.json:717
+#: src/profiles/core/catalog.json:790
 msgctxt "Profiles|Core|Catalog"
 msgid "Before N days in the past"
 msgstr "Abans de N dies en el passat"
@@ -389,10 +389,10 @@ msgstr "Abans de N dies en el passat"
 #. Default: "Before date"
 #: src/profiles/core/catalog.json:136
 #: src/profiles/core/catalog.json:209
-#: src/profiles/core/catalog.json:569
-#: src/profiles/core/catalog.json:648
-#: src/profiles/core/catalog.json:721
-#: src/profiles/core/catalog.json:794
+#: src/profiles/core/catalog.json:594
+#: src/profiles/core/catalog.json:673
+#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:819
 msgctxt "Profiles|Core|Catalog"
 msgid "Before date"
 msgstr "Abans de la data"
@@ -400,10 +400,10 @@ msgstr "Abans de la data"
 #. Default: "Before relative date"
 #: src/profiles/core/catalog.json:106
 #: src/profiles/core/catalog.json:179
-#: src/profiles/core/catalog.json:539
-#: src/profiles/core/catalog.json:618
-#: src/profiles/core/catalog.json:691
-#: src/profiles/core/catalog.json:764
+#: src/profiles/core/catalog.json:564
+#: src/profiles/core/catalog.json:643
+#: src/profiles/core/catalog.json:716
+#: src/profiles/core/catalog.json:789
 msgctxt "Profiles|Core|Catalog"
 msgid "Before relative date"
 msgstr "Fa més de"
@@ -411,10 +411,10 @@ msgstr "Fa més de"
 #. Default: "Before the current day"
 #: src/profiles/core/catalog.json:113
 #: src/profiles/core/catalog.json:186
-#: src/profiles/core/catalog.json:546
-#: src/profiles/core/catalog.json:625
-#: src/profiles/core/catalog.json:698
-#: src/profiles/core/catalog.json:771
+#: src/profiles/core/catalog.json:571
+#: src/profiles/core/catalog.json:650
+#: src/profiles/core/catalog.json:723
+#: src/profiles/core/catalog.json:796
 msgctxt "Profiles|Core|Catalog"
 msgid "Before the current day"
 msgstr "Abans del dia actual"
@@ -422,10 +422,10 @@ msgstr "Abans del dia actual"
 #. Default: "Before today"
 #: src/profiles/core/catalog.json:112
 #: src/profiles/core/catalog.json:185
-#: src/profiles/core/catalog.json:545
-#: src/profiles/core/catalog.json:624
-#: src/profiles/core/catalog.json:697
-#: src/profiles/core/catalog.json:770
+#: src/profiles/core/catalog.json:570
+#: src/profiles/core/catalog.json:649
+#: src/profiles/core/catalog.json:722
+#: src/profiles/core/catalog.json:795
 msgctxt "Profiles|Core|Catalog"
 msgid "Before today"
 msgstr "Abans d'avui"
@@ -439,10 +439,10 @@ msgstr "Comportaments"
 #. Default: "Between dates"
 #: src/profiles/core/catalog.json:118
 #: src/profiles/core/catalog.json:191
-#: src/profiles/core/catalog.json:551
-#: src/profiles/core/catalog.json:630
-#: src/profiles/core/catalog.json:703
-#: src/profiles/core/catalog.json:776
+#: src/profiles/core/catalog.json:576
+#: src/profiles/core/catalog.json:655
+#: src/profiles/core/catalog.json:728
+#: src/profiles/core/catalog.json:801
 msgctxt "Profiles|Core|Catalog"
 msgid "Between dates"
 msgstr "Entre les dates"
@@ -544,7 +544,7 @@ msgstr ""
 #: src/profiles/core/catalog.json:240
 #: src/profiles/core/catalog.json:259
 #: src/profiles/core/catalog.json:278
-#: src/profiles/core/catalog.json:502
+#: src/profiles/core/catalog.json:527
 msgctxt "Profiles|Core|Catalog"
 msgid "Contains"
 msgstr "Conté"
@@ -620,19 +620,19 @@ msgid "Coverage"
 msgstr "Cobertura"
 
 #. Default: "Creation date"
-#: src/profiles/core/catalog.json:672
+#: src/profiles/core/catalog.json:697
 msgctxt "Profiles|Core|Catalog"
 msgid "Creation date"
 msgstr "Data de creació"
 
 #. Default: "Creator"
-#: src/profiles/core/catalog.json:414
+#: src/profiles/core/catalog.json:439
 msgctxt "Profiles|Core|Catalog"
 msgid "Creator"
 msgstr "Creador"
 
 #. Default: "Current logged in user"
-#: src/profiles/core/catalog.json:427
+#: src/profiles/core/catalog.json:452
 msgctxt "Profiles|Core|Catalog"
 msgid "Current logged in user"
 msgstr "Usuari actual connectat"
@@ -879,7 +879,7 @@ msgid "Editor"
 msgstr "Editor"
 
 #. Default: "Effective date"
-#: src/profiles/core/catalog.json:745
+#: src/profiles/core/catalog.json:770
 msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
 msgstr "Data efectiva"
@@ -1034,7 +1034,7 @@ msgid "Expiration Date"
 msgstr "Data de caducitat"
 
 #. Default: "Expiration date"
-#: src/profiles/core/catalog.json:599
+#: src/profiles/core/catalog.json:624
 msgctxt "Profiles|Core|Catalog"
 msgid "Expiration date"
 msgstr "Data de venciment"
@@ -1108,6 +1108,8 @@ msgstr "Troba elements relacionats amb els elements seleccionats"
 
 #. Default: "Find items that can contain other objects"
 #: src/profiles/core/catalog.json:359
+#: src/profiles/core/catalog.json:384
+#: src/profiles/core/upgrades/1017/catalog.json:8
 msgctxt "Profiles|Core|Catalog"
 msgid "Find items that can contain other objects"
 msgstr "Troba elements que contenen altres objectes"
@@ -1120,6 +1122,8 @@ msgstr "Carpeta"
 
 #. Default: "Folder-like"
 #: src/profiles/core/catalog.json:358
+#: src/profiles/core/catalog.json:383
+#: src/profiles/core/upgrades/1017/catalog.json:7
 msgctxt "Profiles|Core|Catalog"
 msgid "Folder-like"
 msgstr "Tipus carpeta"
@@ -1316,8 +1320,8 @@ msgid "Invalid value for {name}."
 msgstr ""
 
 #. Default: "Is"
-#: src/profiles/core/catalog.json:402
-#: src/profiles/core/catalog.json:508
+#: src/profiles/core/catalog.json:427
+#: src/profiles/core/catalog.json:533
 msgctxt "Profiles|Core|Catalog"
 msgid "Is"
 msgstr "És"
@@ -1566,17 +1570,17 @@ msgstr "Coincideix amb tots"
 
 #. Default: "Matches any condition"
 #: src/profiles/core/catalog.json:305
-#: src/profiles/core/catalog.json:421
-#: src/profiles/core/catalog.json:452
+#: src/profiles/core/catalog.json:446
 #: src/profiles/core/catalog.json:477
+#: src/profiles/core/catalog.json:502
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches any condition"
 msgstr "Coincideix amb algun"
 
 #. Default: "Matches none of"
 #: src/profiles/core/catalog.json:309
-#: src/profiles/core/catalog.json:458
 #: src/profiles/core/catalog.json:483
+#: src/profiles/core/catalog.json:508
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches none of"
 msgstr ""
@@ -1608,7 +1612,7 @@ msgid "Missing parameter title."
 msgstr ""
 
 #. Default: "Modification date"
-#: src/profiles/core/catalog.json:520
+#: src/profiles/core/catalog.json:545
 msgctxt "Profiles|Core|Catalog"
 msgid "Modification date"
 msgstr "Data de modificació"
@@ -1710,7 +1714,9 @@ msgstr ""
 
 #. Default: "No"
 #: src/profiles/core/catalog.json:365
+#: src/profiles/core/catalog.json:390
 #: src/profiles/core/vocabularies/boolean.json:6
+#: src/profiles/core/upgrades/1017/catalog.json:14
 msgctxt "Profiles|Core|Catalog"
 msgid "No"
 msgstr "No"
@@ -1963,14 +1969,14 @@ msgstr ""
 #: src/profiles/core/catalog.json:143
 #: src/profiles/core/catalog.json:204
 #: src/profiles/core/catalog.json:216
-#: src/profiles/core/catalog.json:564
-#: src/profiles/core/catalog.json:576
-#: src/profiles/core/catalog.json:643
-#: src/profiles/core/catalog.json:655
-#: src/profiles/core/catalog.json:716
-#: src/profiles/core/catalog.json:728
-#: src/profiles/core/catalog.json:789
-#: src/profiles/core/catalog.json:801
+#: src/profiles/core/catalog.json:589
+#: src/profiles/core/catalog.json:601
+#: src/profiles/core/catalog.json:668
+#: src/profiles/core/catalog.json:680
+#: src/profiles/core/catalog.json:741
+#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:814
+#: src/profiles/core/catalog.json:826
 msgctxt "Profiles|Core|Catalog"
 msgid "Please enter the number in days."
 msgstr "Si us plau, introduïu el número de dies."
@@ -1982,18 +1988,18 @@ msgstr "Si us plau, introduïu el número de dies."
 #: src/profiles/core/catalog.json:192
 #: src/profiles/core/catalog.json:198
 #: src/profiles/core/catalog.json:210
-#: src/profiles/core/catalog.json:552
-#: src/profiles/core/catalog.json:558
-#: src/profiles/core/catalog.json:570
-#: src/profiles/core/catalog.json:631
-#: src/profiles/core/catalog.json:637
-#: src/profiles/core/catalog.json:649
-#: src/profiles/core/catalog.json:704
-#: src/profiles/core/catalog.json:710
-#: src/profiles/core/catalog.json:722
-#: src/profiles/core/catalog.json:777
-#: src/profiles/core/catalog.json:783
-#: src/profiles/core/catalog.json:795
+#: src/profiles/core/catalog.json:577
+#: src/profiles/core/catalog.json:583
+#: src/profiles/core/catalog.json:595
+#: src/profiles/core/catalog.json:656
+#: src/profiles/core/catalog.json:662
+#: src/profiles/core/catalog.json:674
+#: src/profiles/core/catalog.json:729
+#: src/profiles/core/catalog.json:735
+#: src/profiles/core/catalog.json:747
+#: src/profiles/core/catalog.json:802
+#: src/profiles/core/catalog.json:808
+#: src/profiles/core/catalog.json:820
 msgctxt "Profiles|Core|Catalog"
 msgid "Please use YYYY/MM/DD."
 msgstr "Utilitzeu el format AAAA/MM/DD."
@@ -2256,7 +2262,7 @@ msgid "Review"
 msgstr "Revisa"
 
 #. Default: "Review state"
-#: src/profiles/core/catalog.json:470
+#: src/profiles/core/catalog.json:495
 msgctxt "Profiles|Core|Catalog"
 msgid "Review state"
 msgstr "Revisa l'estat"
@@ -2424,7 +2430,7 @@ msgid "Short name"
 msgstr "Nom curt"
 
 #. Default: "Short name (id)"
-#: src/profiles/core/catalog.json:395
+#: src/profiles/core/catalog.json:420
 msgctxt "Profiles|Core|Catalog"
 msgid "Short name (id)"
 msgstr "Nom curt (id)"
@@ -2491,7 +2497,7 @@ msgid "Sitemap"
 msgstr "Mapa del lloc"
 
 #. Default: "Sortable Title"
-#: src/profiles/core/catalog.json:495
+#: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
 msgid "Sortable Title"
 msgstr "Títol ordenable"
@@ -2693,16 +2699,16 @@ msgstr "Els tipus de contingut que s'han de mostrar en la navegació i el mapa d
 #. Default: "The current day"
 #: src/profiles/core/catalog.json:149
 #: src/profiles/core/catalog.json:222
-#: src/profiles/core/catalog.json:582
-#: src/profiles/core/catalog.json:661
-#: src/profiles/core/catalog.json:734
-#: src/profiles/core/catalog.json:807
+#: src/profiles/core/catalog.json:607
+#: src/profiles/core/catalog.json:686
+#: src/profiles/core/catalog.json:759
+#: src/profiles/core/catalog.json:832
 msgctxt "Profiles|Core|Catalog"
 msgid "The current day"
 msgstr "El dia actual"
 
 #. Default: "The date an item was created"
-#: src/profiles/core/catalog.json:673
+#: src/profiles/core/catalog.json:698
 msgctxt "Profiles|Core|Catalog"
 msgid "The date an item was created"
 msgstr "La data en què l'element s'ha creat"
@@ -2770,7 +2776,7 @@ msgid "The item “{id}” is not found."
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"
-#: src/profiles/core/catalog.json:496
+#: src/profiles/core/catalog.json:521
 msgctxt "Profiles|Core|Catalog"
 msgid "The item’s title, transformed for sorting"
 msgstr "El títol de l'element, transformat per a la classificació"
@@ -2824,7 +2830,7 @@ msgid "The password for the ESMTP user account."
 msgstr "La contrasenya del compte d'usuari ESMTP."
 
 #. Default: "The person that created an item"
-#: src/profiles/core/catalog.json:415
+#: src/profiles/core/catalog.json:440
 msgctxt "Profiles|Core|Catalog"
 msgid "The person that created an item"
 msgstr "La persona que va crear un element"
@@ -2848,7 +2854,7 @@ msgid "The roles to check for."
 msgstr ""
 
 #. Default: "The short name of an item (used in the url)"
-#: src/profiles/core/catalog.json:396
+#: src/profiles/core/catalog.json:421
 msgctxt "Profiles|Core|Catalog"
 msgid "The short name of an item (used in the url)"
 msgstr "El nom curt d'un element (utilitzat en l'URL)"
@@ -2866,19 +2872,19 @@ msgid "The start date and time of an event"
 msgstr "La data i hora d'inici d'un event"
 
 #. Default: "The time and date an item was expired"
-#: src/profiles/core/catalog.json:600
+#: src/profiles/core/catalog.json:625
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was expired"
 msgstr "La data i hora en que un element ha vençut"
 
 #. Default: "The time and date an item was first published"
-#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:771
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was first published"
 msgstr "La data i hora en que un element s'ha publicat per primer cop"
 
 #. Default: "The time and date an item was last modified"
-#: src/profiles/core/catalog.json:521
+#: src/profiles/core/catalog.json:546
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was last modified"
 msgstr "La data i hora en que un element va ésser modificat per darrer cop"
@@ -2890,7 +2896,7 @@ msgid "The topic of this item."
 msgstr "El tema d'aquest element."
 
 #. Default: "The user viewing the querystring results"
-#: src/profiles/core/catalog.json:428
+#: src/profiles/core/catalog.json:453
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr "L'usuari que està veient els resultats de la cadena de cerca"
@@ -2985,13 +2991,13 @@ msgstr ""
 #: src/profiles/core/catalog.json:297
 #: src/profiles/core/catalog.json:303
 #: src/profiles/core/catalog.json:310
-#: src/profiles/core/catalog.json:403
-#: src/profiles/core/catalog.json:422
-#: src/profiles/core/catalog.json:453
-#: src/profiles/core/catalog.json:459
+#: src/profiles/core/catalog.json:428
+#: src/profiles/core/catalog.json:447
 #: src/profiles/core/catalog.json:478
 #: src/profiles/core/catalog.json:484
+#: src/profiles/core/catalog.json:503
 #: src/profiles/core/catalog.json:509
+#: src/profiles/core/catalog.json:534
 msgctxt "Profiles|Core|Catalog"
 msgid "Tip: you can use * to autocomplete."
 msgstr "Consell: podeu utilitzar * per autocompletar."
@@ -3013,10 +3019,10 @@ msgstr "El destinatari, el remitent i el missatge són camps obligatoris."
 #. Default: "Today"
 #: src/profiles/core/catalog.json:148
 #: src/profiles/core/catalog.json:221
-#: src/profiles/core/catalog.json:581
-#: src/profiles/core/catalog.json:660
-#: src/profiles/core/catalog.json:733
-#: src/profiles/core/catalog.json:806
+#: src/profiles/core/catalog.json:606
+#: src/profiles/core/catalog.json:685
+#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:831
 msgctxt "Profiles|Core|Catalog"
 msgid "Today"
 msgstr "Avui"
@@ -3066,7 +3072,7 @@ msgid "Tuesday"
 msgstr ""
 
 #. Default: "Type"
-#: src/profiles/core/catalog.json:445
+#: src/profiles/core/catalog.json:470
 msgctxt "Profiles|Core|Catalog"
 msgid "Type"
 msgstr "Tipus"
@@ -3300,10 +3306,10 @@ msgstr ""
 #. Default: "Within last"
 #: src/profiles/core/catalog.json:130
 #: src/profiles/core/catalog.json:203
-#: src/profiles/core/catalog.json:563
-#: src/profiles/core/catalog.json:642
-#: src/profiles/core/catalog.json:715
-#: src/profiles/core/catalog.json:788
+#: src/profiles/core/catalog.json:588
+#: src/profiles/core/catalog.json:667
+#: src/profiles/core/catalog.json:740
+#: src/profiles/core/catalog.json:813
 msgctxt "Profiles|Core|Catalog"
 msgid "Within last"
 msgstr "Dins dels últims"
@@ -3311,10 +3317,10 @@ msgstr "Dins dels últims"
 #. Default: "Within next"
 #: src/profiles/core/catalog.json:142
 #: src/profiles/core/catalog.json:215
-#: src/profiles/core/catalog.json:575
-#: src/profiles/core/catalog.json:654
-#: src/profiles/core/catalog.json:727
-#: src/profiles/core/catalog.json:800
+#: src/profiles/core/catalog.json:600
+#: src/profiles/core/catalog.json:679
+#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:825
 msgctxt "Profiles|Core|Catalog"
 msgid "Within next"
 msgstr "Dins dels propers"
@@ -3353,7 +3359,9 @@ msgstr ""
 
 #. Default: "Yes"
 #: src/profiles/core/catalog.json:371
+#: src/profiles/core/catalog.json:396
 #: src/profiles/core/vocabularies/boolean.json:5
+#: src/profiles/core/upgrades/1017/catalog.json:20
 msgctxt "Profiles|Core|Catalog"
 msgid "Yes"
 msgstr "Sí"
