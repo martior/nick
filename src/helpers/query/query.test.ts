@@ -7,7 +7,7 @@
 import { describe, it, expect } from 'vitest';
 
 // Internal imports
-import { parseBoolean, textToTsquery } from './query';
+import { parseBoolean, pathCondition, textToTsquery } from './query';
 
 describe('Query', () => {
   describe('parseBoolean', () => {
@@ -113,6 +113,87 @@ describe('Query', () => {
           ).resolves.toBeDefined();
         }
       }
+    });
+  });
+
+  describe('pathCondition', () => {
+    const paths = [
+      '/',
+      '/a',
+      '/a/b',
+      '/a/b/c',
+      '/a/b/c/d',
+      '/ab',
+      '/a_c',
+      '/a%c/x',
+    ];
+
+    /**
+     * Match the test paths against path queries.
+     * @param {Array} queries Path queries.
+     * @returns {Promise<string[]>} Matching paths.
+     */
+    const match = async (queries: { path: string; depth?: number }[]) => {
+      const [, sql, bindings] = pathCondition(queries);
+      const result = await global.txn!.raw(
+        `SELECT "_path" FROM unnest(?::varchar[]) AS t("_path") WHERE ${sql}`,
+        [paths, ...bindings],
+      );
+      return result.rows.map((row: any) => row._path).sort();
+    };
+
+    it('should match the path and everything below it', async () => {
+      expect(await match([{ path: '/a' }])).toEqual([
+        '/a',
+        '/a/b',
+        '/a/b/c',
+        '/a/b/c/d',
+      ]);
+      expect(await match([{ path: '/a/', depth: -1 }])).toEqual([
+        '/a',
+        '/a/b',
+        '/a/b/c',
+        '/a/b/c/d',
+      ]);
+      expect(await match([{ path: '/' }])).toEqual(paths.slice().sort());
+    });
+
+    it('should support depth', async () => {
+      expect(await match([{ path: '/a', depth: 0 }])).toEqual(['/a']);
+      expect(await match([{ path: '/a', depth: 1 }])).toEqual(['/a/b']);
+      expect(await match([{ path: '/a', depth: 2 }])).toEqual([
+        '/a/b',
+        '/a/b/c',
+      ]);
+      expect(await match([{ path: '/', depth: 1 }])).toEqual(
+        ['/a', '/a_c', '/ab'].sort(),
+      );
+    });
+
+    it('should not treat like wildcards in paths as wildcards', async () => {
+      expect(await match([{ path: '/a_c' }])).toEqual(['/a_c']);
+      expect(await match([{ path: '/a%c' }])).toEqual(['/a%c/x']);
+    });
+
+    it('should combine paths with or', async () => {
+      expect(
+        await match([
+          { path: '/ab', depth: 0 },
+          { path: '/a/b/c', depth: 1 },
+        ]),
+      ).toEqual(['/a/b/c/d', '/ab'].sort());
+    });
+
+    it('should use the path index', async () => {
+      const [, sql, bindings] = pathCondition([{ path: '/a', depth: 2 }]);
+      await global.txn!.raw('SET LOCAL enable_seqscan = off');
+      const plan = await global.txn!.raw(
+        `EXPLAIN SELECT * FROM catalog WHERE ${sql}`,
+        bindings,
+      );
+      expect(JSON.stringify(plan.rows)).toContain(
+        'catalog__path_pattern_index',
+      );
     });
   });
 });

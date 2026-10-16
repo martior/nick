@@ -92,6 +92,13 @@ export const seedCatalog = async (
             break;
         }
       });
+      // Prefix queries on paths need the pattern operator class
+      if (index.type === 'path') {
+        await trx.raw('CREATE INDEX ?? ON catalog (?? varchar_pattern_ops)', [
+          `catalog__${index.name.toLowerCase()}_pattern_index`,
+          `_${index.name}`,
+        ]);
+      }
     });
     await mapAsync(profile.metadata, async (metadata: any) => {
       // Add index
