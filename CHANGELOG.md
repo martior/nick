@@ -15,6 +15,7 @@
 - The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1013) @martior
 - A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
 - @contextnavigation has the shape and the tree of plone.restapi's: an envelope with `available`, `has_custom_name`, `title` and `url`, items with `href`, `type`, `normalized_id`, `is_current`, `is_in_path` and `is_folderish` instead of catalog metadata, and the `topLevel`, `currentFolderOnly`, `root_path` and `name` parameters @martior
+- Importing `src/app.ts` no longer schedules or runs jobs, and jobs no longer run in a child process per job by default. Run a worker with `nick --modules=worker` (`src/server.ts` and `pnpm start` run the API and a worker); set `jobs.isolation` to `process` to keep the child processes. Run `pnpm migrate` for the job queue table @martior
 
 ### Feature
 
