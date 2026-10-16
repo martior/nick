@@ -230,7 +230,7 @@ msgid "An entity responsible for making this item available."
 msgstr "負責提供此項目的實體。"
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:328
+#: src/routes/users/users.ts:339
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -782,7 +782,7 @@ msgid "Effective date"
 msgstr "有效日期"
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:265
+#: src/routes/users/users.ts:276
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -1462,8 +1462,8 @@ msgstr "不允許"
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:168
-#: src/routes/users/users.ts:403
-#: src/routes/users/users.ts:470
+#: src/routes/users/users.ts:414
+#: src/routes/users/users.ts:481
 #: src/routes/types/types.ts:45
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
@@ -1550,15 +1550,15 @@ msgstr ""
 
 #. Default: "Password reset request"
 #: src/routes/users/users.ts:128
-#: src/routes/users/users.ts:354
+#: src/routes/users/users.ts:365
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "密碼重設請求"
 
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:52
-#: src/routes/users/users.ts:275
-#: src/routes/users/users.ts:413
+#: src/routes/users/users.ts:286
+#: src/routes/users/users.ts:424
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -2136,7 +2136,7 @@ msgid "System group"
 msgstr "系統群組"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:462
+#: src/routes/users/users.ts:473
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "系統使用者"
@@ -2288,7 +2288,7 @@ msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 #: src/routes/users/users.ts:129
-#: src/routes/users/users.ts:355
+#: src/routes/users/users.ts:366
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2798,7 +2798,7 @@ msgid "You are not authorization to access this resource."
 msgstr "您沒有存取此資源的權限。"
 
 #. Default: "You are not authorized to access this resource."
-#: src/routes/users/users.ts:386
+#: src/routes/users/users.ts:397
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -2825,7 +2825,7 @@ msgid "You can’t delete system groups."
 msgstr "您無法刪除系統群組。"
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:461
+#: src/routes/users/users.ts:472
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "您無法刪除系統使用者。"
@@ -2864,6 +2864,12 @@ msgstr "您沒有新增使用者的權限。"
 #: src/routes/users/users.ts:156
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
+msgstr ""
+
+#. Default: "You must enter a valid email address."
+#: src/routes/users/users.ts:268
+msgctxt "Routes|Users"
+msgid "You must enter a valid email address."
 msgstr ""
 
 #. Default: "Your location - either city and country - or in a company setting, where your office is located."

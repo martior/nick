@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T00:58:53.484Z\n"
+"POT-Creation-Date: 2026-10-16T00:59:28.513Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -227,7 +227,7 @@ msgid "An entity responsible for making this item available."
 msgstr ""
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:328
+#: src/routes/users/users.ts:339
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -779,7 +779,7 @@ msgid "Effective date"
 msgstr ""
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:265
+#: src/routes/users/users.ts:276
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -1459,8 +1459,8 @@ msgstr ""
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:168
-#: src/routes/users/users.ts:403
-#: src/routes/users/users.ts:470
+#: src/routes/users/users.ts:414
+#: src/routes/users/users.ts:481
 #: src/routes/types/types.ts:45
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
@@ -1547,15 +1547,15 @@ msgstr ""
 
 #. Default: "Password reset request"
 #: src/routes/users/users.ts:128
-#: src/routes/users/users.ts:354
+#: src/routes/users/users.ts:365
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr ""
 
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:52
-#: src/routes/users/users.ts:275
-#: src/routes/users/users.ts:413
+#: src/routes/users/users.ts:286
+#: src/routes/users/users.ts:424
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -2133,7 +2133,7 @@ msgid "System group"
 msgstr ""
 
 #. Default: "System users"
-#: src/routes/users/users.ts:462
+#: src/routes/users/users.ts:473
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr ""
@@ -2285,7 +2285,7 @@ msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 #: src/routes/users/users.ts:129
-#: src/routes/users/users.ts:355
+#: src/routes/users/users.ts:366
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2795,7 +2795,7 @@ msgid "You are not authorization to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
-#: src/routes/users/users.ts:386
+#: src/routes/users/users.ts:397
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -2822,7 +2822,7 @@ msgid "You can’t delete system groups."
 msgstr ""
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:461
+#: src/routes/users/users.ts:472
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr ""
@@ -2861,6 +2861,12 @@ msgstr ""
 #: src/routes/users/users.ts:156
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
+msgstr ""
+
+#. Default: "You must enter a valid email address."
+#: src/routes/users/users.ts:268
+msgctxt "Routes|Users"
+msgid "You must enter a valid email address."
 msgstr ""
 
 #. Default: "Your location - either city and country - or in a company setting, where your office is located."

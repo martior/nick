@@ -258,6 +258,17 @@ export default [
         });
       }
 
+      // Check email
+      if (
+        typeof req.body?.email !== 'undefined' &&
+        (typeof req.body.email !== 'string' ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.body.email))
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n('You must enter a valid email address.'),
+        });
+      }
+
       // Check password
       if (typeof req.body?.password === 'undefined') {
         if (manageUsers && !req.body?.sendPasswordReset) {
