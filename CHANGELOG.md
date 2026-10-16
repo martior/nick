@@ -425,6 +425,7 @@
 - Move nodemon to the development dependencies @martior
 - Run the development docker-compose service from the node image @martior
 - Add the example add-on `packages/nick-example-addon`: a content type, a behavior, REST services, a periodic task, a table in its own schema and two migrations in its own chain, with tests that install it and use every extension point, and a test that a broken data migration fails migrate and resumes after the fix @martior
+- Fetch the type and the children of a document one after the other instead of in parallel, so a request transaction no longer runs two queries at once on its connection (pg warns about this and pg 9 refuses it) @martior
 
 ### Documentation
 

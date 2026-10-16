@@ -2110,13 +2110,13 @@ export class Document extends Model {
   ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
     if (types) {
-      // Reuse the type of the document if it is already fetched
-      await self.fetchRelated(
-        self._type
-          ? '_children(order)._type'
-          : '[_children(order)._type, _type]',
-        trx,
-      );
+      // Reuse the type of the document if it is already fetched. One
+      // relation at a time: objection fetches sibling relations in
+      // parallel, and a transaction has only one connection.
+      if (!self._type) {
+        await self.fetchRelated('_type', trx);
+      }
+      await self.fetchRelated('_children(order)._type', trx);
     } else {
       await self.fetchRelated('_children(order)', trx);
     }

@@ -416,4 +416,35 @@ describe('Document', () => {
       ]);
     });
   });
+
+  describe('fetchChildren', () => {
+    it('should not run queries in parallel in a transaction', async () => {
+      const Document = models.get('Document');
+      const root = await Document.fetchOne({ path: '/' }, {}, global.txn!);
+      let running = 0;
+      let maximum = 0;
+      const start = () => {
+        running += 1;
+        maximum = Math.max(maximum, running);
+      };
+      const end = () => {
+        running -= 1;
+      };
+      const client = global.txn!.client;
+      client.on('query', start);
+      client.on('query-response', end);
+      client.on('query-error', end);
+      try {
+        await root.fetchChildren({}, global.txn!);
+      } finally {
+        client.removeListener('query', start);
+        client.removeListener('query-response', end);
+        client.removeListener('query-error', end);
+      }
+      expect(root._type.id).toBe('Site');
+      expect(root._children.length).toBeGreaterThan(0);
+      expect(root._children[0]._type).toBeDefined();
+      expect(maximum).toBe(1);
+    });
+  });
 });
