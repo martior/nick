@@ -13,6 +13,10 @@ Content-Type: application/json
       "token": "Add Comment"
     },
     {
+      "title": "Delete",
+      "token": "Delete"
+    },
+    {
       "title": "Login",
       "token": "Login"
     },
@@ -69,5 +73,5 @@ Content-Type: application/json
       "token": "View Comments"
     }
   ],
-  "items_total": 16
+  "items_total": 17
 }

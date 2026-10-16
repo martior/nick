@@ -10,7 +10,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { createUser, testRequest } from '../../helpers/tests/tests';
+import {
+  createDocument,
+  createUser,
+  testRequest,
+} from '../../helpers/tests/tests';
 import models from '../../models';
 
 const token =
@@ -164,5 +168,45 @@ describe('Content', () => {
       .send(body)
       .expect(201);
     expect(res.body.UID).toBe(body.uuid);
+  });
+
+  it('should require the delete permission', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const pending = await createDocument(
+      '0123abcd-0000-4000-8000-000000000002',
+      news,
+      'pending',
+      'Page',
+      { workflow_state: 'pending' },
+    );
+    const reviewer = await createUser('reviewer');
+    const editor = await createUser('editor');
+    await pending
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Reviewer', user: 'reviewer' });
+    await pending
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Editor', user: 'editor' });
+
+    // A reviewer may modify a pending item but not delete it
+    await request(app)
+      .patch('/news/pending')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${reviewer}`)
+      .send({ title: 'Reviewed' })
+      .expect(204);
+    await request(app)
+      .delete('/news/pending')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${reviewer}`)
+      .expect(403);
+
+    // An editor may delete it
+    await request(app)
+      .delete('/news/pending')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .expect(204);
   });
 });

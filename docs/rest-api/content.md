@@ -143,9 +143,12 @@ A successful response will be indicated by a `204 No Content` response:
 {% include_relative endpoints/examples/content/delete.res %}
 ```
 
+Deleting requires the `Delete` permission on the resource. The core profile gives it to the `Owner`, `Editor` and `Administrator` roles, like `Delete objects` in Plone, so for example a `Reviewer` who may edit a pending item can't delete it.
+
 ### DELETE Repsonses
 
 - 204 No Content
+- 401 Unauthorized or 403 Forbidden (without the `Delete` permission)
 - 404 Not Found (if the resource does not exist)
 - 405 Method Not Allowed (if deleting the resource is not allowed)
 - 500 Internal Server Error

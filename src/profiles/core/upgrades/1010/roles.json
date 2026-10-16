@@ -1,0 +1,20 @@
+{
+  "purge": false,
+  "roles": [
+    {
+      "id": "Owner",
+      "title:i18n": "Owner",
+      "permissions": ["Delete"]
+    },
+    {
+      "id": "Editor",
+      "title:i18n": "Editor",
+      "permissions": ["Delete"]
+    },
+    {
+      "id": "Administrator",
+      "title:i18n": "Administrator",
+      "permissions": ["Delete"]
+    }
+  ]
+}

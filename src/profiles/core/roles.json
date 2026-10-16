@@ -20,7 +20,7 @@
     {
       "id": "Owner",
       "title:i18n": "Owner",
-      "permissions": ["Add", "Submit", "Modify Comments", "Revert"]
+      "permissions": ["Add", "Submit", "Modify Comments", "Revert", "Delete"]
     },
     {
       "id": "Reader",
@@ -35,7 +35,7 @@
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Submit", "Revert"]
+      "permissions": ["Submit", "Revert", "Delete"]
     },
     {
       "id": "Reviewer",
@@ -52,7 +52,8 @@
         "Manage Users",
         "Manage Site",
         "Modify Comments",
-        "Revert"
+        "Revert",
+        "Delete"
       ]
     }
   ]
