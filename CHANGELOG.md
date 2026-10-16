@@ -8,6 +8,7 @@
 
 ### Feature
 
+- Add an `acquire` permission model to workflows (`permission_model`, `managed_permissions` and per state `acquire`), where the roles of a state replace the global role permissions like in Plone @martior
 - Add support for multiple profiles @robgietema
 - Add yeoman generator to create a Nick project @robgietema
 - Add vocabularies based on profiles @robgietema

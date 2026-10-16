@@ -1,0 +1,111 @@
+/**
+ * Workflow model tests.
+ * @module models/workflow/workflow.test
+ */
+
+// External imports
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
+
+// Internal imports
+import app from '../../app';
+import { createDocument, createUser } from '../../helpers/tests/tests';
+import models from '../../models';
+import { Workflow } from './workflow';
+
+const json: any = {
+  states: {
+    open: { permissions: { Editor: ['View'] } },
+    restricted: {
+      permissions: { Editor: ['View', 'Modify'] },
+      acquire: ['Modify'],
+    },
+  },
+};
+
+describe('Workflow', () => {
+  describe('getManagedPermissions', () => {
+    it('defaults to the permissions used in the states', () => {
+      expect(Workflow.getManagedPermissions(json)).toEqual(['View', 'Modify']);
+      expect(
+        Workflow.getManagedPermissions({
+          ...json,
+          managed_permissions: ['View'],
+        }),
+      ).toEqual(['View']);
+    });
+  });
+
+  describe('applyPermissions', () => {
+    it('adds the state permissions to the global ones by default', () => {
+      const workflow = Workflow.fromJson({ id: 'test', json });
+      expect(
+        workflow.applyPermissions('restricted', ['Reader'], ['View', 'Add']),
+      ).toEqual(['View', 'Add']);
+    });
+
+    it('replaces global permissions with the acquire model', () => {
+      const workflow = Workflow.fromJson({
+        id: 'test',
+        json: { ...json, permission_model: 'acquire' },
+      });
+
+      // View is managed and not acquired, Add is not managed
+      expect(
+        workflow.applyPermissions('restricted', ['Reader'], ['View', 'Add']),
+      ).toEqual(['Add']);
+
+      // Modify is acquired in the restricted state
+      expect(
+        workflow.applyPermissions('restricted', ['Reader'], ['Modify']),
+      ).toEqual(['Modify']);
+
+      // The roles of the state still get their permissions
+      expect(workflow.applyPermissions('open', ['Editor'], ['Add'])).toEqual([
+        'Add',
+        'View',
+      ]);
+    });
+  });
+
+  describe('acquire permission model', () => {
+    it('removes global View in a state without it', async () => {
+      const Document = models.get('Document');
+      const Workflow = models.get('Workflow');
+      const reader = await createUser('reader', ['Reader']);
+      const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+      const page = await createDocument(
+        '3c4d5e6f-0000-4000-8000-000000000001',
+        news,
+        'page',
+        'Page',
+      );
+      const get = () =>
+        request(app)
+          .get('/news/page')
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${reader}`);
+      const allowed = async () =>
+        (await global.txn!('catalog').where({ document: page.uuid }).first())
+          ._allowedUsersGroupsRoles;
+
+      // Additive: the global Reader role views the private page
+      await get().expect(200);
+      expect(await allowed()).toContain('Reader');
+
+      // Acquire: the private state doesn't give Reader View
+      const workflow = await Workflow.fetchById(
+        'simple_publication_workflow',
+        {},
+        global.txn!,
+      );
+      await workflow.update(
+        { json: { ...workflow.json, permission_model: 'acquire' } },
+        global.txn!,
+      );
+      await get().expect(403);
+      await page.reindexSecurity(global.txn!);
+      expect(await allowed()).not.toContain('Reader');
+    });
+  });
+});
