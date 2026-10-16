@@ -183,6 +183,7 @@
 - Profiles can declare `dependencies` in their metadata.json. Nick loads, installs and upgrades the profiles in dependency order, adds dependencies that are not listed and refuses dependency cycles. The `PROFILES` environment variable (comma separated) replaces `profiles` of `config.ts` @martior
 - Every package (core, add-on or project) has its own migration chain: the knex migrations in `nick.migrations` of its package.json, its own ledger `knex_migrations_<package>` and optionally its own Postgres schema (`nick.schema`). `nick --modules=migrate` runs core's chain and then the chains of the packages of the profiles in dependency order, every migration in its own transaction, so a failed migration exits non-zero and the next run resumes with it @martior
 - Add batched, resumable data migrations: `migrateInBatches` commits every batch with its cursor in the new `migration_progress` table, so an interrupted data migration resumes after its last batch; registered data migrations can also run on the job queue (`registerDataMigration`, `queueDataMigration`). Run `pnpm migrate` @martior
+- Add periodic tasks declared in code (`scheduledJobs.registerTask`): the workers schedule them like scheduled jobs, once per time slot, and a scheduled job with the same id overrides them @martior
 
 ### Bugfix
 
