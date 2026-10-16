@@ -55,6 +55,47 @@ The server will respond with a list of terms. The title is purely for display pu
 {% include_relative examples/vocabularies/get.res %}
 ```
 
+### plone.app.vocabularies names
+
+For compatibility with Volto and other plone.restapi clients the following `plone.app.vocabularies` names are available as well. They return the same terms as the Nick vocabulary they map to:
+
+| Name                                                  | Nick vocabulary       |
+| ----------------------------------------------------- | --------------------- |
+| `plone.app.vocabularies.AvailableContentLanguages`    | `supportedLanguages`  |
+| `plone.app.vocabularies.Groups`                       | `groups`              |
+| `plone.app.vocabularies.ImagesScales`                 | `imageScales`         |
+| `plone.app.vocabularies.Keywords`                     | `subjects`            |
+| `plone.app.vocabularies.MetadataFields`               | `metadataFields`      |
+| `plone.app.vocabularies.Month`                        | `months`              |
+| `plone.app.vocabularies.MonthAbbr`                    | `monthsAbbr`          |
+| `plone.app.vocabularies.PortalTypes`                  | `types`               |
+| `plone.app.vocabularies.Principals`                   | `principals`          |
+| `plone.app.vocabularies.ReallyUserFriendlyTypes`      | `types`               |
+| `plone.app.vocabularies.Roles`                        | `roles`               |
+| `plone.app.vocabularies.SupportedContentLanguages`    | `availableLanguages`  |
+| `plone.app.vocabularies.Timezones`                    | `timezones`           |
+| `plone.app.vocabularies.UserFriendlyTypes`            | `types`               |
+| `plone.app.vocabularies.Users`                        | `users`               |
+| `plone.app.vocabularies.Weekdays`                     | `weekdays`            |
+| `plone.app.vocabularies.WeekdaysAbbr`                 | `weekdaysAbbr`        |
+| `plone.app.vocabularies.Workflows`                    | `workflows`           |
+| `plone.app.vocabularies.WorkflowStates`               | `workflowStates`      |
+| `plone.app.vocabularies.WorkflowTransitions`          | `workflowTransitions` |
+
+```http
+{% include_relative examples/vocabularies/get_plone_weekdays.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/vocabularies/get_plone_weekdays.ts %}
+```
+
+```http
+{% include_relative examples/vocabularies/get_plone_weekdays.res %}
+```
+
 ### Filter terms
 
 The terms can be filtered by `title`, which returns the terms whose title contains the value (ignoring case), or by `token`, which returns the term with that token (ignoring case). Both can't be used at the same time.
