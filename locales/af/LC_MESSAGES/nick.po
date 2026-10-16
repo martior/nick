@@ -222,13 +222,6 @@ msgctxt "Profiles|Core|Upgrades|1016|Controlpanels|Security"
 msgid "Allows users to login with their email address instead of specifying a separate login name."
 msgstr ""
 
-#. Default: "Allows users to register themselves on the site. If not selected, only portal managers can add new users."
-#: src/profiles/core/upgrades/1016/controlpanels/security.json:20
-#: src/profiles/core/controlpanels/security.json:20
-msgctxt "Profiles|Core|Upgrades|1016|Controlpanels|Security"
-msgid "Allows users to register themselves on the site. If not selected, only portal managers can add new users."
-msgstr ""
-
 #. Default: "Already locked"
 #: src/routes/lock/lock.ts:58
 #: src/routes/lock/lock.ts:117
@@ -1217,13 +1210,6 @@ msgctxt "Profiles|Core|Controlpanels|Language"
 msgid "If enabled, the site is multilingual."
 msgstr "Indien geaktiveer, is die webwerf meertalig."
 
-#. Default: "If not selected, a password is not set when users register themselves; they have to reset it."
-#: src/profiles/core/upgrades/1016/controlpanels/security.json:25
-#: src/profiles/core/controlpanels/security.json:25
-msgctxt "Profiles|Core|Upgrades|1016|Controlpanels|Security"
-msgid "If not selected, a password is not set when users register themselves; they have to reset it."
-msgstr ""
-
 #. Default: "If selected, this item will not appear in the navigation tree."
 #: src/profiles/core/behaviors/exclude_from_nav.json:4
 #: src/profiles/core/behaviors/exclude_from_nav.json:16
@@ -1952,6 +1938,13 @@ msgstr ""
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Hangende hersiening"
+
+#. Default: "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
+#: src/profiles/core/upgrades/1016/controlpanels/security.json:25
+#: src/profiles/core/controlpanels/security.json:25
+msgctxt "Profiles|Core|Upgrades|1016|Controlpanels|Security"
+msgid "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
+msgstr ""
 
 #. Default: "Perform a workflow transition on the triggering object"
 #: src/content_rules/actions/transition_workflow.ts:16
@@ -3274,6 +3267,13 @@ msgstr ""
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Sigbaar vir almal, wysigbaar deur die eienaar."
+
+#. Default: "Visitors can create their own account. When this is off, only administrators can add users."
+#: src/profiles/core/upgrades/1016/controlpanels/security.json:20
+#: src/profiles/core/controlpanels/security.json:20
+msgctxt "Profiles|Core|Upgrades|1016|Controlpanels|Security"
+msgid "Visitors can create their own account. When this is off, only administrators can add users."
+msgstr ""
 
 #. Default: "Waiting to be reviewed, not editable by the owner."
 #: src/profiles/core/workflows.json:25
