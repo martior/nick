@@ -223,34 +223,28 @@ export default [
         (role: any) => role.id,
       );
 
-      // Update local roles
+      // Update local roles: an entry is the complete set of the local roles
+      // of the principal, roles not set to true are removed
       await mapAsync(entries, async (entry: any) => {
         const Model = entry.type === 'user' ? User : Group;
         const principal = await Model.fetchById(entry.id, {}, trx);
         if (principal) {
-          await mapAsync(
-            Object.keys(entry.roles).filter((role) => roles.includes(role)),
-            async (role: any) => {
-              // If should relate
-              if (entry.roles[role] === true) {
-                const existing = await principal
-                  .$relatedQuery('_documentRoles', trx)
-                  .where({ id: role, document: req.document.uuid })
-                  .first();
-                if (!existing) {
-                  await principal
-                    .$relatedQuery('_documentRoles', trx)
-                    .relate({ id: role, document: req.document.uuid });
-                }
-              } else if (entry.roles[role] === false) {
-                // Unrelate
-                await principal
-                  .$relatedQuery('_documentRoles', trx)
-                  .unrelate()
-                  .where({ role, document: req.document.uuid });
-              }
-            },
-          );
+          await mapAsync(roles, async (role: string) => {
+            const existing = await principal
+              .$relatedQuery('_documentRoles', trx)
+              .where({ id: role, document: req.document.uuid })
+              .first();
+            if (entry.roles[role] === true && !existing) {
+              await principal
+                .$relatedQuery('_documentRoles', trx)
+                .relate({ id: role, document: req.document.uuid });
+            } else if (entry.roles[role] !== true && existing) {
+              await principal
+                .$relatedQuery('_documentRoles', trx)
+                .unrelate()
+                .where({ role, document: req.document.uuid });
+            }
+          });
         }
       });
 

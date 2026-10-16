@@ -11,6 +11,7 @@
 - Require the Manage Users permission for @roles, like Plone @martior
 - Error responses have the plone.restapi shape `{ "type": ..., "message": ... }`: 404 responses no longer use `{ "error": ... }`, and an invalid JSON body gives a JSON 400 instead of an HTML page. Redirects have an absolute `Location` header @martior
 - The items of a folder are batched like in plone.restapi (`b_start`, `b_size`, default 25 items) with `items_total` and `batching`; clients that expect all children in `items` have to page or pass a larger `b_size` @martior
+- A @sharing entry is the complete set of the principal's local roles, like in Plone: roles not named in the entry are revoked. Clients that sent only the changed roles must send all roles @martior
 
 ### Feature
 
