@@ -196,7 +196,7 @@
 - Leave out the ancestors the user may not view from @breadcrumbs, so the titles of private folders don't leak @martior
 - Check the email address on PATCH @users like on create, an invalid one gives 400 @martior
 - Answer @sharing entries for users or groups that don't exist with 400 instead of ignoring them @martior
-- Answer @search with an invalid `b_start`, `b_size`, `path.depth` or date with 400 instead of ignoring the value @martior
+- Answer @search with an invalid `b_start`, `b_size`, `path.depth` or date with 400 instead of ignoring the value; a negative `b_start` is still the start, like in Plone @martior
 - Answer reordering with an unknown `obj_id` or an invalid `delta` with 400 instead of ignoring it @martior
 - Answer `@history` requests with a version that is not a number with 404 and a revert without a valid version with 400 instead of 500 @martior
 - Change behavior to snake case @robgietema
