@@ -323,6 +323,7 @@
 - Store the comment of a workflow transition and return the workflow history in `@workflow` (it was always empty) @martior
 - Shape `@history` like plone.restapi: list the creation as a `Create` entry, give versions without a change note `null` comments, say 'revision' in the revert comment, add `version` to content (`current`) and to old versions, and answer an unknown version with a 404 @martior
 - Record the creation of content as the first workflow history entry (without action) like Plone, instead of deriving a `Create` entry, so migrated histories are shown unchanged @martior
+- Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
 
 ### Internal
 

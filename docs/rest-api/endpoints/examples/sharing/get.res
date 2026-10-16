@@ -50,7 +50,8 @@ Content-Type: application/json
         "Reviewer": false,
         "Administrator": false
       },
-      "type": "group"
+      "type": "group",
+      "disabled": false
     }
   ],
   "inherit": true

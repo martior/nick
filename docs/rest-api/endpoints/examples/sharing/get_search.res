@@ -50,7 +50,8 @@ Content-Type: application/json
         "Reviewer": false,
         "Administrator": "global"
       },
-      "type": "user"
+      "type": "user",
+      "disabled": true
     },
     {
       "id": "Administrators",
@@ -65,7 +66,8 @@ Content-Type: application/json
         "Reviewer": false,
         "Administrator": "global"
       },
-      "type": "group"
+      "type": "group",
+      "disabled": false
     },
     {
       "id": "AuthenticatedUsers",
@@ -80,7 +82,8 @@ Content-Type: application/json
         "Reviewer": false,
         "Administrator": false
       },
-      "type": "group"
+      "type": "group",
+      "disabled": false
     }
   ],
   "inherit": true

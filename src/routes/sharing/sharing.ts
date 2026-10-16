@@ -172,9 +172,13 @@ export default [
             id: role.id,
             title: role.title,
           })),
-          entries: [...users, ...groups].sort((a, b) =>
-            a.title > b.title ? 1 : -1,
-          ),
+          entries: [...users, ...groups]
+            .sort((a, b) => (a.title > b.title ? 1 : -1))
+            .map((entry: any) => ({
+              ...entry,
+              // The entry of the current user is shown but not editable
+              disabled: entry.type === 'user' && entry.id === req.user.id,
+            })),
           inherit: req.document.inherit_roles,
         },
         xkeys: [req.document.uuid],
