@@ -4,6 +4,7 @@
  */
 
 // Type imports
+import type { S3ClientConfig } from '@aws-sdk/client-s3';
 import type { Knex } from 'knex';
 
 // External imports
@@ -20,18 +21,38 @@ import config from '../../helpers/config/config';
 import models from '../../models';
 
 /**
+ * Get the S3 client configuration. A custom endpoint and path-style
+ * addressing support S3-compatible services (MinIO, R2, Ceph). Without
+ * static keys the default AWS credential chain (environment, IAM role) is
+ * used.
+ * @method s3ClientConfig
+ * @returns {S3ClientConfig} S3 client configuration
+ */
+export function s3ClientConfig(): S3ClientConfig {
+  const { region, endpoint, forcePathStyle, accessKeyId, secretAccessKey } =
+    config.settings.s3;
+  return {
+    region,
+    ...(endpoint ? { endpoint } : {}),
+    forcePathStyle: forcePathStyle || false,
+    ...(accessKeyId && secretAccessKey
+      ? { credentials: { accessKeyId, secretAccessKey } }
+      : {}),
+  };
+}
+
+let client: S3Client | undefined;
+
+/**
  * Connect to S3
  * @method connectS3
  * @returns {S3Client} S3 client instance
  */
 function connectS3() {
-  return new S3Client({
-    region: config.settings.s3.region,
-    credentials: {
-      accessKeyId: config.settings.s3.accessKeyId,
-      secretAccessKey: config.settings.s3.secretAccessKey,
-    },
-  });
+  if (!client) {
+    client = new S3Client(s3ClientConfig());
+  }
+  return client;
 }
 
 export const s3 = {
