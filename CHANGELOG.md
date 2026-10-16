@@ -286,6 +286,7 @@
 - Keep the token, timeout and stealable setting when refreshing a lock and don't lock unlocked content on refresh @martior
 - Keep the lock when locked content is saved with the lock token @martior
 - Return 403 "Resource is locked." when locked content is saved without the lock token @martior
+- Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
 
 ### Internal
 

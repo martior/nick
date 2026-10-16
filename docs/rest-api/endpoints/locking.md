@@ -155,3 +155,15 @@ Or use the client directly:
 ```
 
 The object stays locked after the update, so the client can keep editing with the same token. Send a `DELETE` request to the `@lock` endpoint to unlock it when done.
+
+## Deleting a locked object
+
+A locked object can't be deleted. The server responds with `423 Locked` unless the request provides the lock token with the `Lock-Token` header.
+
+```http
+{% include_relative examples/locking/delete_content_locked.req %}
+```
+
+```http
+{% include_relative examples/locking/delete_content_locked.res %}
+```
