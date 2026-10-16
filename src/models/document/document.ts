@@ -275,6 +275,12 @@ export class Document extends Model {
     const self: InstanceType<typeof Document> = this;
     const Catalog = models.get('Catalog');
     const paths = (self._children || []).map((child: any) => child.path);
+
+    // Nothing to check without children
+    if (paths.length === 0) {
+      self._restrictedChildren = [];
+      return;
+    }
     const items = await Catalog.fetchAllRestricted(
       { _path: ['=', paths] },
       {},
@@ -2014,7 +2020,13 @@ export class Document extends Model {
   ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
     if (types) {
-      await self.fetchRelated('[_children(order)._type, _type]', trx);
+      // Reuse the type of the document if it is already fetched
+      await self.fetchRelated(
+        self._type
+          ? '_children(order)._type'
+          : '[_children(order)._type, _type]',
+        trx,
+      );
     } else {
       await self.fetchRelated('_children(order)', trx);
     }

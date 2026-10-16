@@ -364,6 +364,24 @@ describe('Document', () => {
   });
 
   describe('restrictChildren', () => {
+    it('does not query the catalog without children', async () => {
+      const Catalog = models.get('Catalog');
+      const Document = models.get('Document');
+      const root = await Document.fetchOne({ path: '/' }, {}, global.txn!);
+      const leaf = await createDocument(
+        'c2000000-0000-4000-8000-000000000311',
+        root,
+        'leaf',
+        'Page',
+      );
+      await leaf.fetchChildren({}, global.txn!);
+      const restricted = vi.spyOn(Catalog, 'fetchAllRestricted');
+      await leaf.restrictChildren({} as any, global.txn!);
+      expect(leaf._restrictedChildren).toEqual([]);
+      expect(restricted).not.toHaveBeenCalled();
+      restricted.mockRestore();
+    });
+
     it('keeps the viewable children in their order', async () => {
       const Document = models.get('Document');
       const root = await Document.fetchOne({ path: '/' }, {}, global.txn!);
