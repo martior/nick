@@ -10,7 +10,7 @@ import { describe, expect, it, vi } from 'vitest';
 // Internal imports
 import app from '../../app';
 import models from '../../models';
-import { errorBody, isRetryableError } from './error';
+import { errorBody, isDuplicateIdError, isRetryableError } from './error';
 
 describe('Error', () => {
   describe('errorBody', () => {
@@ -49,6 +49,36 @@ describe('Error', () => {
         type: 'BadRequest',
         message: 'The request body is not valid JSON.',
       });
+    });
+
+    it('answers a duplicate id in a folder with 400', async () => {
+      const Document = models.get('Document');
+      const duplicate = Object.assign(new Error('duplicate key'), {
+        code: '23505',
+        constraint: 'document_parent_id_unique',
+      });
+      expect(isDuplicateIdError(duplicate)).toBe(true);
+      expect(isDuplicateIdError({ nativeError: duplicate })).toBe(true);
+      expect(isDuplicateIdError({ code: '23505', constraint: 'other' })).toBe(
+        false,
+      );
+      const spy = vi
+        .spyOn(Document, 'replacePath')
+        .mockRejectedValue(duplicate);
+      try {
+        const res = await request(app)
+          .patch('/news')
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+          .send({ id: 'news-renamed' })
+          .expect(400);
+        expect(res.body).toStrictEqual({
+          type: 'BadRequest',
+          message: 'The id is already in use in this folder.',
+        });
+      } finally {
+        spy.mockRestore();
+      }
     });
 
     it('redirects to an absolute url', async () => {

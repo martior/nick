@@ -17,6 +17,7 @@ import { applyCache } from './helpers/cache/cache';
 import config from './helpers/config/config';
 import {
   errorBody,
+  isDuplicateIdError,
   isRetryableError,
   RequestException,
 } from './helpers/error/error';
@@ -264,6 +265,14 @@ routes.routes.map((route: Route) => {
                 ? { message: req.i18n('Internal server error') }
                 : err.message;
             return res.status(err.status).send(errorBody(err.status, message));
+          } else if (isDuplicateIdError(err)) {
+            // An id which is already used in the folder, the checks of the
+            // routes normally catch this before the database does
+            return res.status(400).send(
+              errorBody(400, {
+                message: req.i18n('The id is already in use in this folder.'),
+              }),
+            );
           } else {
             // Log error
             log.error(err);

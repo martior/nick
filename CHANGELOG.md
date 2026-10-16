@@ -195,6 +195,7 @@
 
 ### Bugfix
 
+- Make the ids of the documents in a folder unique in the database (documents in the recycle bin excepted), so imports and bulk loads can't create documents that can't be reached; a duplicate id gives 400. Run `pnpm migrate`; the migration lists the duplicate ids and stops if there are any, rename or remove those documents first @martior
 - Leave out the ancestors the user may not view from @breadcrumbs, so the titles of private folders don't leak @martior
 - Check the email address on PATCH @users like on create, an invalid one gives 400 @martior
 - Answer @sharing entries for users or groups that don't exist with 400 instead of ignoring them @martior

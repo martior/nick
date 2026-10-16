@@ -56,6 +56,20 @@ export function isRetryableError(err: any): boolean {
 }
 
 /**
+ * Check if an error is a violation of the unique ids of the documents in a
+ * folder, see the document_unique_id migration.
+ * @method isDuplicateIdError
+ * @param {any} err The error.
+ * @returns {boolean} True if an id is already used in the folder.
+ */
+export function isDuplicateIdError(err: any): boolean {
+  const error = err?.nativeError || err;
+  return (
+    error?.code === '23505' && error?.constraint === 'document_parent_id_unique'
+  );
+}
+
+/**
  * Error types of the plone.restapi error bodies by status code.
  * @constant errorTypes
  */
