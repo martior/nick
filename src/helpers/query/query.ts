@@ -657,7 +657,7 @@ export const querystringToQuery = async (
       {
         path: root,
         depth: Math.min(
-          Math.max(parseInt(querystring['path.depth'], 10) || 1, 1),
+          Math.max(parseInt(`${querystring['path.depth']}`, 10) || 1, 1),
           21,
         ),
       },
