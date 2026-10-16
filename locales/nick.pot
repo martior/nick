@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T08:19:14.816Z\n"
+"POT-Creation-Date: 2026-10-16T08:20:22.676Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1304,6 +1304,12 @@ msgstr ""
 #: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
+msgstr ""
+
+#. Default: "Invalid value for {name}."
+#: src/helpers/query/query.ts:770
+msgctxt "Helpers|Query"
+msgid "Invalid value for {name}."
 msgstr ""
 
 #. Default: "Is"

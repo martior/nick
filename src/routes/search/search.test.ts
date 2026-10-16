@@ -4,7 +4,8 @@
  */
 
 // External imports
-import { describe, it } from 'vitest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
@@ -71,4 +72,24 @@ describe('Search', () => {
 
   it('should return a bad request on an invalid querystring operation', () =>
     testRequest(app, 'search/post_invalid'));
+
+  it('should return a bad request on invalid parameters', async () => {
+    for (const query of [
+      'b_size=abc',
+      'b_start=x',
+      'b_size=-1',
+      'path.depth=x',
+      'created.query=not-a-date&created.range=min',
+    ]) {
+      const res = await request(app)
+        .get(`/@search?${query}`)
+        .set('Accept', 'application/json')
+        .expect(400);
+      expect(res.body.type).toBe('BadRequest');
+    }
+    await request(app)
+      .get('/@search?b_size=2&b_start=0&path.depth=-1')
+      .set('Accept', 'application/json')
+      .expect(200);
+  });
 });

@@ -1309,6 +1309,12 @@ msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Neveljavna seja"
 
+#. Default: "Invalid value for {name}."
+#: src/helpers/query/query.ts:770
+msgctxt "Helpers|Query"
+msgid "Invalid value for {name}."
+msgstr ""
+
 #. Default: "Is"
 #: src/profiles/core/catalog.json:402
 #: src/profiles/core/catalog.json:508

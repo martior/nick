@@ -21,6 +21,7 @@ import { normalize } from 'path';
 // Internal imports
 import { embed } from '../../helpers/ai/ai';
 import config from '../../helpers/config/config';
+import { RequestException } from '../../helpers/error/error';
 import { getUrlByPath } from '../../helpers/url/url';
 import { likePrefix } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -760,6 +761,38 @@ export const queryparamToQuery = async (
       ...params[index],
       [option]: queryparam[key],
     };
+  });
+
+  // Check the values which have to be integers and dates, an invalid value
+  // is a malformed request
+  const invalid = (name: string) =>
+    new RequestException(400, {
+      message: req.i18n('Invalid value for {name}.', { name }),
+    });
+  (['b_start', 'b_size'] as const).forEach((name) => {
+    if (
+      params[name] !== undefined &&
+      !/^[0-9]+$/.test(`${params[name].query}`)
+    ) {
+      throw invalid(name);
+    }
+  });
+  if (
+    params.path?.depth !== undefined &&
+    !/^-?[0-9]+$/.test(`${params.path.depth}`)
+  ) {
+    throw invalid('path.depth');
+  }
+  Object.keys(params).forEach((key: string) => {
+    if (
+      indexes[key]?.type === 'date' &&
+      params[key].query !== undefined &&
+      toArray(params[key].query).some(
+        (item: any) => item !== '' && parseDate(item) === undefined,
+      )
+    ) {
+      throw invalid(key);
+    }
   });
 
   const where: WhereClause = {};
