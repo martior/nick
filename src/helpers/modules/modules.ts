@@ -9,6 +9,7 @@ import type { Server } from 'node:http';
 
 // Internal imports
 import config from '../config/config';
+import { describeSchema, diffSchema, readSnapshot } from '../drift/drift';
 import { initI18n } from '../i18n/i18n';
 import jobs from '../jobs/jobs';
 import { knex } from '../knex/knex';
@@ -55,6 +56,55 @@ export function parseModules(
 }
 
 /**
+ * Options of the modules.
+ */
+export interface ModuleOptions {
+  /** Compare the schema with this snapshot after migrating. */
+  checkSchema?: string;
+}
+
+/**
+ * Parse the options from the command line arguments
+ * @method parseOptions
+ * @param {string[]} args Command line arguments.
+ * @returns {ModuleOptions} Options.
+ */
+export function parseOptions(args: string[]): ModuleOptions {
+  const options: ModuleOptions = {};
+  args.forEach((arg) => {
+    if (arg === '--check-schema') {
+      options.checkSchema = 'src/migrations/schema.snapshot.txt';
+    } else if (arg.startsWith('--check-schema=')) {
+      options.checkSchema = arg.substring('--check-schema='.length);
+    }
+  });
+  return options;
+}
+
+/**
+ * Compare the schema of the database with a snapshot
+ * @method checkSchema
+ * @param {string} snapshot Snapshot file.
+ * @returns {Promise<boolean>} True if the schema matches.
+ */
+export async function checkSchema(snapshot: string): Promise<boolean> {
+  const expected = readSnapshot(snapshot);
+  if (expected.length === 0) {
+    log.error(`Schema check: no snapshot at ${snapshot}`);
+    return false;
+  }
+  const diff = diffSchema(expected, await describeSchema(knex));
+  if (diff.length > 0) {
+    log.error(
+      `Schema check: the schema differs from ${snapshot} (- snapshot only, + database only):\n${diff.join('\n')}`,
+    );
+    return false;
+  }
+  log.info(`Schema check: the schema matches ${snapshot}`);
+  return true;
+}
+
+/**
  * Start the API
  * @method startApi
  * @returns {Promise<Server>} The HTTP server.
@@ -89,10 +139,14 @@ export async function startWorker(): Promise<void> {
  * modules start. With only migrate, the process ends when it is done.
  * @method run
  * @param {string[]} modules Modules to run.
+ * @param {ModuleOptions} options Options.
  * @returns {Promise<number | undefined>} Exit code, or undefined if the
  * process keeps running.
  */
-export async function run(modules: string[]): Promise<number | undefined> {
+export async function run(
+  modules: string[],
+  options: ModuleOptions = {},
+): Promise<number | undefined> {
   if (modules.includes('migrate')) {
     try {
       await migrate();
@@ -100,6 +154,10 @@ export async function run(modules: string[]): Promise<number | undefined> {
     } catch (err: any) {
       log.error(`Migrate failed: ${err?.stack || err}`);
       console.error(err);
+      await knex.destroy();
+      return 1;
+    }
+    if (options.checkSchema && !(await checkSchema(options.checkSchema))) {
       await knex.destroy();
       return 1;
     }

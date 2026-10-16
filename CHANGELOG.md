@@ -182,6 +182,7 @@
 - Add batched, resumable data migrations: `migrateInBatches` commits every batch with its cursor in the new `migration_progress` table, so an interrupted data migration resumes after its last batch; registered data migrations can also run on the job queue (`registerDataMigration`, `queueDataMigration`). Run `pnpm migrate` @martior
 - Add periodic tasks declared in code (`scheduledJobs.registerTask`): the workers schedule them like scheduled jobs, once per time slot, and a scheduled job with the same id overrides them @martior
 - `@plone/nick` exports a typed public API for add-ons and projects: the registries (behaviors, blocks, blobs, content rules, events, middleware, models, routes, scheduled jobs and periodic tasks, seeds, vocabularies), `Model`, configuration, request, job, profile and migration helpers and their types, with an `exports` map. Deep imports like `@plone/nick/src/routes` still work but are deprecated @martior
+- Add `pnpm migrate:check`: it migrates a scratch database from scratch, installs the profiles and fails when migrate fails, when a second run changes the schema, when a model has no table or when the schema differs from the committed snapshot `src/migrations/schema.snapshot.txt` (which includes the catalog columns profiles create). `nick --modules=migrate --check-schema` compares a live database with the snapshot. CI runs the check @martior
 
 ### Bugfix
 
