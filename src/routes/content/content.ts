@@ -791,11 +791,9 @@ export default [
         !lockExpired(req.document) &&
         req.headers['lock-token'] !== lock.token
       ) {
-        throw new RequestException(401, {
+        throw new RequestException(403, {
           error: {
-            message: req.i18n(
-              'You don’t have permission to save this document because it is locked by another user.',
-            ),
+            message: req.i18n('Resource is locked.'),
             type: req.i18n('Document locked'),
           },
         });

@@ -142,7 +142,7 @@ The server responds with status `200 OK` and returns the information about the l
 
 ## Updating a locked object
 
-To update a locked object with a PATCH request, you have to provide the lock token with the `Lock-Token` header.
+To update a locked object with a PATCH request, you have to provide the lock token with the `Lock-Token` header. Without the token, or with a wrong token, the server responds with `403 Forbidden` and the message `Resource is locked.`. This applies to the lock creator too.
 
 ```http
 {% include_relative examples/locking/update.req %}
