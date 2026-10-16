@@ -919,7 +919,7 @@ export default [
   {
     op: 'delete',
     view: '',
-    permission: 'Modify',
+    permission: 'Delete',
     client: 'deleteContent',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {

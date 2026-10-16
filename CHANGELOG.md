@@ -4,6 +4,8 @@
 
 ### Breaking
 
+- Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
+
 ### Feature
 
 - Add support for multiple profiles @robgietema
