@@ -115,6 +115,26 @@ describe('History', () => {
     expect(document[0].path).toBe('/news');
   });
 
+  it('should return 404 for a version which is not a number', () =>
+    request(app)
+      .get('/news/@history/abc')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(404));
+
+  it('should refuse a revert without a valid version', async () => {
+    for (const body of [{}, { version: 'abc' }, { version: -1 }]) {
+      await request(app)
+        .patch('/news/@history')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body)
+        .expect(400);
+    }
+    const document = await global.txn!('document').where({ path: '/news' });
+    expect(document[0].version).toBe(1);
+  });
+
   it('should return 404 for an unknown version', () =>
     request(app)
       .patch('/news/@history')

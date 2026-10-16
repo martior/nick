@@ -229,8 +229,8 @@ msgid "Allows users to register themselves on the site. If not selected, only po
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:129
+#: src/routes/lock/lock.ts:58
+#: src/routes/lock/lock.ts:117
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "Jau bloķēts"
@@ -248,7 +248,7 @@ msgid "An error occurred while creating the user."
 msgstr ""
 
 #. Default: "An item can’t be moved into itself."
-#: src/routes/content/content.ts:162
+#: src/routes/content/content.ts:161
 msgctxt "Routes|Content"
 msgid "An item can’t be moved into itself."
 msgstr ""
@@ -486,7 +486,7 @@ msgid "Change Note"
 msgstr "Izmaiņu piezīme"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:1022
+#: src/routes/content/content.ts:1027
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -818,12 +818,13 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/history/history.ts:71
+#: src/routes/workflow/workflow.ts:121
+#: src/routes/history/history.ts:76
 #: src/routes/content/content.ts:1064
-#: src/routes/content/content.ts:1240
-msgctxt "Routes|History"
+#: src/routes/content/content.ts:1235
+msgctxt "Routes|Workflow"
 msgid "Document locked"
-msgstr "Dokuments bloķēts"
+msgstr ""
 
 #. Default: "Document modified"
 #: src/profiles/core/vocabularies/events.json:10
@@ -1258,7 +1259,7 @@ msgid "Internal server error"
 msgstr "Iekšēja servera kļūda"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:758
+#: src/routes/content/content.ts:763
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1296,8 +1297,8 @@ msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:168
-#: src/routes/search/search.ts:315
+#: src/routes/search/search.ts:172
+#: src/routes/search/search.ts:319
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1715,13 +1716,13 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:163
+#: src/routes/search/search.ts:167
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
 
 #. Default: "No transition specified."
-#: src/routes/workflow/workflow.ts:177
+#: src/routes/workflow/workflow.ts:187
 msgctxt "Routes|Workflow"
 msgid "No transition specified."
 msgstr ""
@@ -1744,7 +1745,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:158
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Nav atļauts"
@@ -1762,7 +1763,7 @@ msgid "Not authorized"
 msgstr ""
 
 #. Default: "Not found"
-#: src/routes/history/history.ts:92
+#: src/routes/history/history.ts:97
 msgctxt "Routes|History"
 msgid "Not found"
 msgstr ""
@@ -1829,7 +1830,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1237
+#: src/routes/content/content.ts:1232
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2048,7 +2049,7 @@ msgid "Prompts"
 msgstr "Uzvednes"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:742
+#: src/routes/content/content.ts:747
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2216,15 +2217,16 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:772
+#: src/routes/content/content.ts:777
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
+#: src/routes/workflow/workflow.ts:120
 #: src/routes/content/content.ts:1063
-msgctxt "Routes|Content"
+msgctxt "Routes|Workflow"
 msgid "Resource is locked."
 msgstr ""
 
@@ -2737,13 +2739,13 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:800
+#: src/routes/content/content.ts:805
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:789
+#: src/routes/content/content.ts:794
 #: src/routes/content/content.ts:1082
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
@@ -2876,15 +2878,21 @@ msgid "The user viewing the querystring results"
 msgstr "Lietotājs, kurš skata vaicājuma virknes rezultātus"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:835
+#: src/routes/content/content.ts:840
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:830
+#: src/routes/content/content.ts:835
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
+msgstr ""
+
+#. Default: "The version is missing or invalid."
+#: src/routes/history/history.ts:62
+msgctxt "Routes|History"
+msgid "The version is missing or invalid."
 msgstr ""
 
 #. Default: "The workflow states to check for."
@@ -2894,8 +2902,8 @@ msgid "The workflow states to check for."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:126
+#: src/routes/lock/lock.ts:55
+#: src/routes/lock/lock.ts:114
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "Šo dokumentu jau ir bloķējis cits lietotājs."
@@ -3163,8 +3171,9 @@ msgid "Version item with comment {comment}"
 msgstr ""
 
 #. Default: "Version not found."
-#: src/routes/history/history.ts:91
-#: src/routes/content/content.ts:335
+#: src/routes/history/history.ts:96
+#: src/routes/content/content.ts:332
+#: src/routes/content/content.ts:340
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3354,14 +3363,14 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:131
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
-#: src/routes/content/content.ts:149
+#: src/routes/content/content.ts:148
 #: src/helpers/handler/handler.ts:120
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr "Jums nav atļaujas piekļūt šim resursam."
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:821
+#: src/routes/content/content.ts:826
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -3403,13 +3412,13 @@ msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:68
+#: src/routes/history/history.ts:73
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Jums nav atļaujas saglabāt šo dokumentu, jo to ir bloķējis cits lietotājs."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:167
+#: src/routes/lock/lock.ts:155
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Jums nav atļaujas atbloķēt šo dokumentu."
