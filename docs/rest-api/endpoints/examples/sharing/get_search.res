@@ -66,6 +66,21 @@ Content-Type: application/json
         "Administrator": "global"
       },
       "type": "group"
+    },
+    {
+      "id": "AuthenticatedUsers",
+      "title": "Logged-in users",
+      "roles": {
+        "Anonymous": false,
+        "Authenticated": false,
+        "Owner": false,
+        "Reader": false,
+        "Contributor": false,
+        "Editor": false,
+        "Reviewer": false,
+        "Administrator": false
+      },
+      "type": "group"
     }
   ],
   "inherit": true
