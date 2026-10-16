@@ -218,7 +218,7 @@ msgstr ""
 
 #. Default: "Already locked"
 #: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:129
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "已被鎖定"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:173
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "不允許"
@@ -2368,7 +2368,7 @@ msgstr ""
 
 #. Default: "This document is already locked by another user."
 #: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:126
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "此文件已被其他用戶鎖定。"
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "您無法儲存此文件，因為它已被其他用戶鎖定。"
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:167
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "您無權解鎖此文件。"

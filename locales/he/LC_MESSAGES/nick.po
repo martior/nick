@@ -218,7 +218,7 @@ msgstr ""
 
 #. Default: "Already locked"
 #: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:129
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "כבר נעול"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:173
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "לא מורשה"
@@ -2368,7 +2368,7 @@ msgstr ""
 
 #. Default: "This document is already locked by another user."
 #: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:126
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "מסמך זה כבר נעול על ידי משתמש אחר."
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "אין לכם הרשאה לשמור מסמך זה מכיוון שהוא נעול על ידי משתמש אחר."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:167
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "אין לכם הרשאה לבטל את נעילת מסמך זה."

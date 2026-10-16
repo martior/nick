@@ -134,6 +134,22 @@ describe('Locking', () => {
     return testRequest(app, 'locking/patch');
   });
 
+  it('should keep the token, timeout and stealable on refresh', async () => {
+    await testRequest(app, 'locking/post_options');
+    const res = await request(app)
+      .patch(`${path}/@lock`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    expect(res.body.token).toBe('a95388f2-e4b3-4292-98aa-62656cbd5b9c');
+    expect(res.body.timeout).toBe(3600);
+    expect(res.body.stealable).toBe(false);
+  });
+
+  it('should not lock an unlocked item on refresh', async () => {
+    await testRequest(app, 'locking/patch_unlocked');
+    expect((await getLock()).locked).toBe(false);
+  });
+
   it('should get lock information', async () => {
     await testRequest(app, 'locking/post');
     return testRequest(app, 'locking/get');

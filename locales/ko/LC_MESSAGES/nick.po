@@ -218,7 +218,7 @@ msgstr ""
 
 #. Default: "Already locked"
 #: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:129
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "이미 잠겨 있음"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:173
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "허용되지 않음"
@@ -2368,7 +2368,7 @@ msgstr ""
 
 #. Default: "This document is already locked by another user."
 #: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:126
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "이 문서는 이미 다른 사용자에 의해 잠겨 있습니다."
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "다른 사용자가 잠갔으므로 이 문서를 저장할 권한이 없습니다."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:167
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "이 문서의 잠금을 해제할 권한이 없습니다."

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T00:32:06.110Z\n"
+"POT-Creation-Date: 2026-10-16T00:33:06.958Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -215,7 +215,7 @@ msgstr ""
 
 #. Default: "Already locked"
 #: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:129
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr ""
@@ -1427,7 +1427,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:173
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr ""
@@ -2365,7 +2365,7 @@ msgstr ""
 
 #. Default: "This document is already locked by another user."
 #: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:126
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr ""
@@ -2763,7 +2763,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr ""
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:167
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr ""
