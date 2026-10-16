@@ -16,7 +16,7 @@ import config from '../../helpers/config/config';
 import { RequestException } from '../../helpers/error/error';
 import jobs from '../../helpers/jobs/jobs';
 import { apiLimiter } from '../../helpers/limiter/limiter';
-import { mapAsync } from '../../helpers/utils/utils';
+import { likePrefix, mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
 
 /**
@@ -278,8 +278,8 @@ export default [
       const limit = config.settings.reindexSecurityLimit ?? 1000;
       const [{ count }] = await Document.knex()('document')
         .count('uuid')
-        .whereRaw('starts_with(path, ?)', [
-          req.document.path === '/' ? '/' : `${req.document.path}/`,
+        .whereRaw('path LIKE ?', [
+          likePrefix(req.document.path === '/' ? '/' : `${req.document.path}/`),
         ])
         .transacting(trx);
       if (parseInt(count as string) < limit) {

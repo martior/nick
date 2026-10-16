@@ -31,7 +31,12 @@ import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
 import { getRootUrl } from '../../helpers/url/url';
-import { mapAsync, uniqueId, bytesToNumber } from '../../helpers/utils/utils';
+import {
+  bytesToNumber,
+  likePrefix,
+  mapAsync,
+  uniqueId,
+} from '../../helpers/utils/utils';
 import models from '../../models';
 
 dayjs.extend(utc);
@@ -1052,7 +1057,13 @@ export default [
       if (config.settings.recyclebin) {
         // Get document and children to be deleted
         const documents = await Document.fetchAll(
-          { path: ['~', `^${req.document.path}`] },
+          {
+            path: [
+              'raw',
+              '(path = ? OR path LIKE ?)',
+              [req.document.path, likePrefix(`${req.document.path}/`)],
+            ],
+          },
           {},
           trx,
         );

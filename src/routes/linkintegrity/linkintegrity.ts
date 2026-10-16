@@ -9,7 +9,7 @@ import type { Request } from '../../types';
 
 // Internal imports
 import { getUrlByPath } from '../../helpers/url/url';
-import { mapAsync } from '../../helpers/utils/utils';
+import { likePrefix, mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
 
 interface Breach {
@@ -48,7 +48,7 @@ export default [
         const subitems = (
           await Catalog.fetchAll(
             {
-              _path: ['~', `^${item._path}/`],
+              _path: ['raw', '"_path" LIKE ?', [likePrefix(`${item._path}/`)]],
             },
             {},
             trx,
