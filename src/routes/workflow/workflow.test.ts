@@ -5,10 +5,11 @@
 
 // External imports
 import request from 'supertest';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
+import * as lock from '../../helpers/lock/lock';
 import {
   createDocument,
   createUser,
@@ -58,6 +59,44 @@ describe('Workflow', () => {
   it('should change a workflow state', async () => {
     await testRequest(app, 'content/post');
     return testRequest(app, 'workflow/post');
+  });
+
+  it('should refuse a transition of an item locked by another user', async () => {
+    const spy = vi.spyOn(lock, 'lockExpired').mockReturnValue(false);
+    try {
+      await testRequest(app, 'content/post');
+      const document = await fetch('/news/my-news-item');
+      await document.update(
+        {
+          lock: {
+            locked: true,
+            stealable: true,
+            creator: 'editor',
+            token: 'other-token',
+            created: '2022-04-08T16:00:00.000Z',
+            timeout: 600,
+          },
+        },
+        global.txn!,
+      );
+      const res = await transition('/news/my-news-item', 'publish');
+      expect(res.status).toBe(403);
+      expect(res.body.error.message).toBe('Resource is locked.');
+      expect((await fetch('/news/my-news-item')).workflow_state).toBe(
+        'private',
+      );
+
+      // The creator of the lock may change the state
+      await document.update(
+        { lock: { ...document.lock, creator: 'admin' } },
+        global.txn!,
+      );
+      expect((await transition('/news/my-news-item', 'publish')).status).toBe(
+        200,
+      );
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('should refuse an unknown transition', async () => {
