@@ -131,3 +131,17 @@ Or use the client directly:
 ```http
 {% include_relative examples/vocabularies/get_batched.res %}
 ```
+
+### Protected vocabularies
+
+Like in Plone, some vocabularies need more than the `View` permission. `users`, `subjects`, `plone.app.vocabularies.Users` and `plone.app.vocabularies.Keywords` need the `Modify` permission on the context. Anonymous users get a `401 Unauthorized`, other users a `403 Forbidden`:
+
+```http
+{% include_relative examples/vocabularies/get_users_anonymous.req %}
+```
+
+```http
+{% include_relative examples/vocabularies/get_users_anonymous.res %}
+```
+
+Code based vocabularies can be protected by passing a permission when registering them: `vocabularies.register('myVocab', myVocab, 'Modify')`.
