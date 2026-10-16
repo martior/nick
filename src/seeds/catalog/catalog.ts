@@ -7,6 +7,7 @@
 import type { Knex } from 'knex';
 
 // Internal imports
+import { createCoveringIndexes } from '../../helpers/catalog/catalog';
 import config from '../../helpers/config/config';
 import { fileExists } from '../../helpers/fs/fs';
 import { stripI18n } from '../../helpers/i18n/i18n';
@@ -162,6 +163,8 @@ export const seedCatalog = async (
         }
       });
     });
+    // Indexes over several columns, once all columns exist
+    await createCoveringIndexes(trx);
     console.log('Catalog imported');
   }
 };
