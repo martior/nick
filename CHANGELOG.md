@@ -4,6 +4,7 @@
 
 ### Breaking
 
+- Workflows use the `acquire` permission model by default: for the permissions a workflow manages (default: those used in its states), the roles a state lists replace the global role permissions instead of being added to them, like in Plone. Run `pnpm permissions:dry-run` before upgrading to list the content whose permissions change, then `pnpm seed:upgrade`; set `"permission_model": "additive"` on a workflow to keep the old behaviour. The core workflow now lists Reader in the private and pending states @martior
 - Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
 
 ### Feature

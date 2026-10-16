@@ -45,6 +45,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}'",
     "migrate": "pnpm knex migrate:latest",
     "migrate:list": "pnpm knex migrate:list",
+    "permissions:dry-run": "tsx scripts/permissions.ts",
     "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}'",
     "seed": "tsx scripts/seed.ts run",
     "seed:status": "tsx scripts/seed.ts status",
