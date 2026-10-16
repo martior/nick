@@ -378,6 +378,9 @@ export default [
       // Send created
       return {
         status: 201,
+        headers: {
+          Location: `${getRootUrl(req)}/@users/${user.id}`,
+        },
         json: await user.toJson(req),
       };
     },

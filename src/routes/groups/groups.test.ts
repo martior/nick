@@ -73,7 +73,11 @@ describe('Groups', () => {
   it('should not get a group when not found', () =>
     testRequest(app, 'groups/get_notfound'));
 
-  it('should add a new group', () => testRequest(app, 'groups/post'));
+  it('should add a new group', () =>
+    testRequest(app, 'groups/post').expect(
+      'Location',
+      'http://localhost:8080/@groups/nicks',
+    ));
 
   it('should not add a group without a group name', () =>
     testRequest(app, 'groups/post_without_groupname'));
