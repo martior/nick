@@ -253,7 +253,7 @@ If the user doesn't exist, the server responds with a `404 Not Found`.
 
 ## User Registration
 
-If user registration it is enabled, then an anonymous user can register a new user using the user creation endpoint.
+If user registration is enabled, an anonymous user can register a new user using the user creation endpoint. Enable it with `enable_self_reg` in the `security` control panel (or `userRegistration` in `config.ts`). Self-registered users get no roles or groups, and their password is only stored when `enable_user_pwd_choice` is enabled in the `security` control panel; otherwise they set it with a password reset.
 
 To create a new user send a `POST` request to the `@users` endpoint:
 
