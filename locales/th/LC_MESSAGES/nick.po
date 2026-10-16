@@ -444,7 +444,7 @@ msgid "Change Note"
 msgstr "บันทึกการเปลี่ยนแปลง"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:1010
+#: src/routes/content/content.ts:1021
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -764,7 +764,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:1054
+#: src/routes/content/content.ts:1065
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "เอกสารถูกล็อก"
@@ -2454,7 +2454,7 @@ msgstr ""
 
 #. Default: "The id “{id}” is invalid."
 #: src/routes/content/content.ts:788
-#: src/routes/content/content.ts:1072
+#: src/routes/content/content.ts:1083
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -3034,7 +3034,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:1051
+#: src/routes/content/content.ts:1062
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "คุณไม่มีสิทธิ์บันทึกเอกสารนี้เนื่องจากถูกล็อกโดยผู้ใช้รายอื่น"
