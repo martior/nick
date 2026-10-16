@@ -1,5 +1,6 @@
 HTTP/1.1 201 Created
 Content-Type: application/json
+Location: http://localhost:8080/@users/headlessnick
 
 {
   "@id": "http://localhost:8080/@users/headlessnick",
