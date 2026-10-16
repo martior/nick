@@ -327,6 +327,7 @@
 - Index the paths of documents and the catalog with the pattern operator class and query subtrees with `LIKE` prefixes instead of `starts_with` and regular expressions, so path and `path.depth` queries use an index. Run `pnpm migrate` @martior
 - Moving, renaming or deleting (with the recycle bin) an item no longer touches siblings whose id starts with the same text (`/news` and `/newsletter`), paths with quotes no longer break the move, and subtree queries in moves, deletes, sharing and link integrity use the path index instead of regular expressions @martior
 - Resolve a path with a constant number of queries instead of four per level (one query for the documents along the path, one or two for the local roles and one for the types), and stop fetching the anonymous user twice per request @martior
+- Fix the reindex job action, which did nothing for a single type and failed for a list of types: it now reindexes the documents of the given types (all documents without types) in batches of 500, each written with one statement in its own transaction, with the types, indexes and local roles fetched once instead of per document, and stops when the job is aborted @martior
 
 ### Internal
 
