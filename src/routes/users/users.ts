@@ -374,11 +374,18 @@ export default [
   {
     op: 'patch',
     view: '/@users/:id',
-    permission: 'Manage Users',
     client: 'updateUser',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const User = models.get('User');
+
+      // Check permissions, users can update their own properties
+      const manageUsers = req.permissions.includes('Manage Users');
+      if (!manageUsers && req.user.id !== req.params.id) {
+        throw new RequestException(req.user.id === 'anonymous' ? 401 : 403, {
+          message: req.i18n('You are not authorized to access this resource.'),
+        });
+      }
 
       // Make a copy
       let json: any = omit(req.body, [
@@ -398,6 +405,7 @@ export default [
 
       // Check min password length
       if (
+        manageUsers &&
         typeof req.body.password !== 'undefined' &&
         (typeof req.body.password !== 'string' || req.body.password.length < 8)
       ) {
@@ -416,15 +424,16 @@ export default [
       const user = await User.update(
         req.params.id,
         {
-          id: req.body.username,
+          id: manageUsers ? req.body.username : undefined,
           fullname: req.body.fullname,
           email: req.body.email,
-          password: req.body.password
-            ? await bcrypt.hash(req.body.password, 10)
-            : undefined,
+          password:
+            manageUsers && req.body.password
+              ? await bcrypt.hash(req.body.password, 10)
+              : undefined,
           json: { ...curUser.json, ...json },
-          _roles: req.body.roles,
-          _groups: req.body.groups,
+          _roles: manageUsers ? req.body.roles : undefined,
+          _groups: manageUsers ? req.body.groups : undefined,
         },
         trx,
       );

@@ -1462,8 +1462,8 @@ msgstr "Betg lubì"
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:168
-#: src/routes/users/users.ts:396
-#: src/routes/users/users.ts:461
+#: src/routes/users/users.ts:403
+#: src/routes/users/users.ts:470
 #: src/routes/types/types.ts:45
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
@@ -1558,7 +1558,7 @@ msgstr "Dumonda per redefinir il pled-clav"
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:52
 #: src/routes/users/users.ts:275
-#: src/routes/users/users.ts:405
+#: src/routes/users/users.ts:413
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -2136,7 +2136,7 @@ msgid "System group"
 msgstr "Gruppa da sistem"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:453
+#: src/routes/users/users.ts:462
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Utilisaders da sistem"
@@ -2798,6 +2798,7 @@ msgid "You are not authorization to access this resource."
 msgstr "Vus n'avais betg l'autorisaziun per acceder a questa resursa."
 
 #. Default: "You are not authorized to access this resource."
+#: src/routes/users/users.ts:386
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -2807,7 +2808,7 @@ msgstr "Vus n'avais betg l'autorisaziun per acceder a questa resursa."
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
 #: src/helpers/handler/handler.ts:120
-msgctxt "Routes|Recyclebin"
+msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
@@ -2824,7 +2825,7 @@ msgid "You can’t delete system groups."
 msgstr "Vus na pudais betg stizzar gruppas da sistem."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:452
+#: src/routes/users/users.ts:461
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Vus na pudais betg stizzar utilisaders da sistem."

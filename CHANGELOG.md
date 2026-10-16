@@ -250,6 +250,7 @@
 - List the members of a group in GET @groups/<id> @martior
 - Search groups case insensitive and support the limit parameter on @groups @martior
 - Answer 404 when deleting or updating a user or group that doesn't exist @martior
+- Let users update their own properties with PATCH @users @martior
 
 ### Internal
 
