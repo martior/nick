@@ -516,7 +516,7 @@
     {
       "name": "sortable_title",
       "type": "string",
-      "attr": "getTitle",
+      "attr": "sortableTitle",
       "title:i18n": "Sortable Title",
       "description:i18n": "The item’s title, transformed for sorting",
       "group": "Text",

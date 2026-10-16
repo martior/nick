@@ -24,6 +24,7 @@
 
 ### Feature
 
+- Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1016 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
 - Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1015) @martior
 - Add support for multiple profiles @robgietema
 - Add yeoman generator to create a Nick project @robgietema

@@ -169,6 +169,26 @@ export function bytesToNumber(bytes: string): number {
 }
 
 /**
+ * Get the sortable title of a title, like Plone's sortable_title: accents
+ * removed, lower case, stripped and numbers zero filled to 4 digits, so
+ * `Item 2` sorts before `Item 10`.
+ * @method sortableTitle
+ * @param {any} title Title.
+ * @returns {string} Sortable title, empty if the title is not a string.
+ */
+export function sortableTitle(title: any): string {
+  if (typeof title !== 'string') {
+    return '';
+  }
+  return title
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[0-9]+/g, (number: string) => number.padStart(4, '0'));
+}
+
+/**
  * Check if an id is valid, like Zope's checkValidId: only characters which
  * are allowed in urls, traversable, and not starting with an underscore or
  * `aq_` or ending with two underscores. Ids starting with `@` are refused
