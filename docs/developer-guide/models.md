@@ -74,7 +74,7 @@ export class MyModel extends Model {
 
 ## Database migration
 
-Create a migration file in `src/migrations/` to create the table:
+Create a migration file in the migrations directory of your package (`nick.migrations` in its `package.json`, see [Add-ons](/developer-guide/addons)) to create the table. Every package has its own migration chain and ledger; put the tables of an add-on in its own Postgres schema with `nick.schema` and `withSchema()`:
 
 ```ts
 // src/migrations/202605270000_my_model.ts
@@ -93,7 +93,7 @@ export const down = async (knex: Knex): Promise<void> => {
 };
 ```
 
-Run the migration with `pnpm knex migrate:latest`.
+Run the migrations with `pnpm nick --modules=migrate`, which runs the chains of core and of all packages of the configured profiles in dependency order. Then update the schema snapshot with `pnpm migrate:check --update` (see [Add-ons](/developer-guide/addons#drift-check)).
 
 ## Registration
 

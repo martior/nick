@@ -124,3 +124,24 @@ Define pre-configured scheduled jobs in a `scheduled_jobs.json` file placed in y
 | `schedule`    | `string`  | A cron expression defining the run schedule. Defaults to `0 0 * * *`.     |
 
 Place the file at `src/profiles/{your-profile}/scheduled_jobs.json`. The schedule uses standard cron syntax — in the example above, `0 0 * * *` runs daily at midnight.
+
+## Periodic tasks in code
+
+Add-ons can declare a scheduled job in code instead of in `scheduled_jobs.json`, with `scheduledJobs.registerTask()` in a profile's `init()`:
+
+```ts
+import { scheduledJobs } from '@plone/nick';
+
+scheduledJobs.registerAction('purge_notes', purgeNotes);
+scheduledJobs.registerTask({
+  id: 'purge-notes',
+  title: 'Purge notes',
+  description: 'Remove the notes of deleted documents',
+  schedule: '0 3 * * *',
+  action: 'purge_notes',
+  params: {},
+});
+```
+
+The workers schedule it like the scheduled jobs in the database, once per time slot across all workers. It is not stored and not listed by `@scheduled-jobs`, but a scheduled job with the same id overrides it, for example to disable it or change its schedule. An invalid cron expression throws when the task is registered.
+
