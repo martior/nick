@@ -1,4 +1,49 @@
-FROM node:26.2.0
+# syntax=docker/dockerfile:1
+#
+# Production image of Nick: one image, one entrypoint.
+#
+#   docker run nick                         # migrate, then api + worker
+#   docker run nick --modules=migrate       # migrate and exit (non-zero on errors)
+#   docker run nick --modules=api           # API on $PORT (default 8080)
+#   docker run nick --modules=worker        # job worker and scheduler
+#
+# Configuration comes from environment variables (DB_HOST, DB_PASSWORD,
+# SECRET, ...) or from a config.ts mounted at /app/config.ts.
+
+ARG NODE_VERSION=26.2.0
+
+# Install the production dependencies
+FROM node:${NODE_VERSION}-bookworm-slim AS deps
 WORKDIR /app
-COPY . /app
+RUN npm install -g corepack@latest && corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+    pnpm install --prod --frozen-lockfile
+
+# Runtime image
+FROM node:${NODE_VERSION}-bookworm-slim
+ENV NODE_ENV=production \
+    PORT=8080
+WORKDIR /app
+
+COPY --from=deps --chown=node:node /app/node_modules ./node_modules
+COPY --chown=node:node package.json pnpm-workspace.yaml knexfile.ts tsconfig.json ./
+COPY --chown=node:node locales ./locales
+COPY --chown=node:node scripts ./scripts
+COPY --chown=node:node src ./src
+RUN mkdir -p /app/var/blobstorage && chown -R node:node /app/var
+
+USER node
+
+# Compile the sources once at build time, so the TypeScript loader (tsx)
+# starts from a warm cache
+RUN NODE_ENV=development node --import tsx -e "await import('/app/src/helpers/modules/modules.ts'); await import('/app/src/app.ts'); process.exit(0)"
+
 EXPOSE 8080
+
+# Healthy when @health passes; processes without the api module have no HTTP
+HEALTHCHECK --interval=15s --timeout=5s --start-period=60s --retries=3 \
+  CMD node -e "const m=process.env.NICK_MODULES||'all'; if(m!=='all'&&!m.split(',').includes('api'))process.exit(0); fetch('http://127.0.0.1:'+process.env.PORT+'/@health',{headers:{Accept:'application/json'}}).then(r=>r.json()).then(j=>process.exit(j.status==='fail'?1:0)).catch(()=>process.exit(1))"
+
+ENTRYPOINT ["node", "--import", "tsx", "scripts/nick.ts"]
+CMD []

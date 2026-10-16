@@ -28,6 +28,24 @@ In a checkout, run it with `pnpm nick --modules=...`. `pnpm start` runs the API 
 
 `migrate` always runs first. When it fails, the other modules do not start and the process exits with code 1. Only one process migrates at a time (a Postgres advisory lock), so several replicas started with `migrate` wait for each other instead of running the same migrations twice.
 
+## Docker image
+
+The `Dockerfile` builds a production image: production dependencies only (no nodemon), running as the unprivileged `node` user, with `nick` as its entrypoint and a health check on `@health`.
+
+```bash
+docker build -t nick .
+
+# Migrate (exits non-zero on errors), then start the API and a worker
+docker run --rm -e DB_HOST=db -e DB_PASSWORD=... -e SECRET=... nick --modules=migrate
+docker run -d -p 8080:8080 -e NICK_MODULES=api -e DB_HOST=db -e DB_PASSWORD=... -e SECRET=... nick
+docker run -d -e NICK_MODULES=worker -e DB_HOST=db -e DB_PASSWORD=... -e SECRET=... nick
+```
+
+- **Configuration:** environment variables (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `SECRET`, `PORT`, `ALLOWED_ORIGINS`, `API_RATE_LIMIT`, `JOBS_*`, `S3_*`, ...) or a `config.ts` mounted at `/app/config.ts`. The image runs with `NODE_ENV=production`, so `SECRET` and `DB_PASSWORD` are required. Profiles of your own can be mounted under `/app/src/profiles/<name>` and listed in `config.ts`, or added in an image built `FROM` this one.
+- **Modules:** pass `--modules=...` as the command, or set `NICK_MODULES`. Set `NICK_MODULES` when you split the modules: the health check passes without HTTP for processes that do not run the API.
+- **Blobs:** the default `file` storage writes to `/app/var/blobstorage` inside the container. Mount a volume there, or use `db` or [S3-compatible storage](/admin-guide/blobs) when you run more than one API replica.
+- **TypeScript:** Nick runs from its TypeScript sources with the `tsx` loader (`node --import tsx`). The image compiles the sources once while it is built, so processes start from a warm cache (about 2.5 s to a listening API).
+
 ## Small sites: one process
 
 Run `nick` (all modules) as the only process. It migrates on start, serves the API and runs the jobs.
