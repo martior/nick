@@ -235,6 +235,7 @@
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
 - Set the password of a user on PATCH @users and apply the password policy @martior
+- Answer 400 instead of 401 or 500 when a password is missing or too short on @users @martior
 
 ### Internal
 
