@@ -697,10 +697,10 @@ export class Document extends Model {
         return {
           ...item,
           actor: {
-            '@id': `${getRootUrl(req)}/@users/${user.id}`,
-            fullname: user.fullname,
-            id: user.id,
-            username: user.id,
+            '@id': `${getRootUrl(req)}/@users/${item.actor}`,
+            fullname: user ? user.fullname : item.actor,
+            id: item.actor,
+            username: item.actor,
           },
           comments: '',
           type: item.type || 'workflow',
@@ -1772,7 +1772,7 @@ export class Document extends Model {
     <language>${self.language || 'en'}</language>
     <link>${self.getUrl(req)}</link>
     <lastBuildDate>${dayjs().utc().format('ddd, DD MMM YYYY HH:mm:ss [GMT]')}</lastBuildDate>
-    <managingEditor>${self._owner.email} (${self._owner.fullname})</managingEditor>
+    ${self._owner ? `<managingEditor>${self._owner.email} (${self._owner.fullname})</managingEditor>` : ''}
 ${self._restrictedChildren
   .map(
     (child: any) => `      <item>

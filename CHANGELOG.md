@@ -243,6 +243,7 @@
 - Require the new Revert permission to revert to a previous version, report it in `may_revert`, reindex after a revert and keep the path of top level items; run `pnpm seed:upgrade` to add it @martior
 - Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
 - Check View on the sources of @copy and @move and Delete on the sources of @move, accept urls and uuids as sources and reindex the permissions of moved content @martior
+- Keep the content, children, versions and jobs of a deleted user instead of deleting them, the owner and actor are set to null @martior
 
 ### Internal
 
