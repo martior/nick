@@ -65,6 +65,16 @@ If the group has been created successfully, the server will respond with a statu
 {% include_relative examples/groups/post.res %}
 ```
 
+The `groupname` is required and must not be in use by another group, and all `roles` and `users` must exist. Otherwise the server responds with a `400 Bad Request`:
+
+```http
+{% include_relative examples/groups/post_duplicate.req %}
+```
+
+```http
+{% include_relative examples/groups/post_duplicate.res %}
+```
+
 ## Read Group
 
 To retrieve all details for a particular group, send a `GET` request to the `/@groups` endpoint and append the group id to the URL:
