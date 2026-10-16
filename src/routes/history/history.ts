@@ -15,7 +15,6 @@ import { omit } from 'es-toolkit/object';
 // Internal imports
 import { Collection } from '../../collections/_collection/_collection';
 import { RequestException } from '../../helpers/error/error';
-import { lockExpired } from '../../helpers/lock/lock';
 import { uniqueId } from '../../helpers/utils/utils';
 import models from '../../models';
 
@@ -57,12 +56,7 @@ export default [
       await req.document.lockForUpdate(trx);
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(401, {
           error: {
             message: req.i18n(
