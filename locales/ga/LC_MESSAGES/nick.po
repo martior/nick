@@ -147,7 +147,6 @@ msgstr "Riarthóir"
 
 #. Default: "Administrators"
 #: src/profiles/multilingualcontent/groups.json:6
-#: src/profiles/migrated/groups.json:6
 #: src/profiles/examplecontent/groups.json:6
 msgctxt "Profiles|Multilingualcontent|Groups"
 msgid "Administrators"
@@ -443,12 +442,6 @@ msgstr "Catagóiriú"
 msgctxt "Profiles|Core|Behaviors|Versioning"
 msgid "Change Note"
 msgstr "Nóta Athraithe"
-
-#. Default: "Collection"
-#: src/profiles/migrated/types/collection.json:3
-msgctxt "Profiles|Migrated|Types|Collection"
-msgid "Collection"
-msgstr ""
 
 #. Default: "Comment"
 #: src/content_rules/actions/version_item.ts:33
@@ -892,9 +885,8 @@ msgid "Equals"
 msgstr "Cothrom le"
 
 #. Default: "Event"
-#: src/profiles/migrated/types/event.json:3
 #: src/profiles/core/types/event.json:3
-msgctxt "Profiles|Migrated|Types|Event"
+msgctxt "Profiles|Core|Types|Event"
 msgid "Event"
 msgstr ""
 
@@ -934,12 +926,6 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Event start date"
 msgstr "Dáta tosaigh na himeachta"
 
-#. Default: "Events can be shown in calendars."
-#: src/profiles/migrated/types/event.json:4
-msgctxt "Profiles|Migrated|Types|Event"
-msgid "Events can be shown in calendars."
-msgstr ""
-
 #. Default: "Exclude actor from recipients"
 #: src/content_rules/actions/send_email.ts:38
 msgctxt "Content rules|Actions|Send email"
@@ -978,12 +964,11 @@ msgid "Feed"
 msgstr ""
 
 #. Default: "File"
-#: src/profiles/migrated/types/file.json:3
 #: src/profiles/core/types/file.json:3
 #: src/profiles/core/types/file.json:19
-msgctxt "Profiles|Migrated|Types|File"
+msgctxt "Profiles|Core|Types|File"
 msgid "File"
-msgstr ""
+msgstr "Comhad"
 
 #. Default: "File Extension"
 #: src/content_rules/conditions/file_extension.ts:11
@@ -1022,11 +1007,10 @@ msgid "Find items that can contain other objects"
 msgstr "Aimsigh míreanna inar féidir rudaí eile a bheith iontu"
 
 #. Default: "Folder"
-#: src/profiles/migrated/types/folder.json:3
 #: src/profiles/core/types/folder.json:3
-msgctxt "Profiles|Migrated|Types|Folder"
+msgctxt "Profiles|Core|Types|Folder"
 msgid "Folder"
-msgstr ""
+msgstr "Fillteán"
 
 #. Default: "Folder-like"
 #: src/profiles/core/catalog.json:358
@@ -1124,19 +1108,17 @@ msgid "If this date is in the future, the content will not show up in listings a
 msgstr "Má tá an dáta seo sa todhchaí, ní bheidh an t-ábhar le feiceáil i liostaí agus i gcuardaigh go dtí an dáta seo."
 
 #. Default: "Image"
-#: src/profiles/migrated/types/image.json:3
 #: src/profiles/core/types/image.json:3
 #: src/profiles/core/types/image.json:19
-msgctxt "Profiles|Migrated|Types|Image"
+msgctxt "Profiles|Core|Types|Image"
 msgid "Image"
-msgstr ""
+msgstr "Íomhá"
 
 #. Default: "Images can be referenced in pages or displayed in an album."
-#: src/profiles/migrated/types/image.json:4
 #: src/profiles/core/types/image.json:4
-msgctxt "Profiles|Migrated|Types|Image"
+msgctxt "Profiles|Core|Types|Image"
 msgid "Images can be referenced in pages or displayed in an album."
-msgstr ""
+msgstr "Is féidir tagairt a dhéanamh d'íomhánna i leathanaigh nó iad a thaispeáint in albam."
 
 #. Default: "Information about rights held in and over this item."
 #: src/profiles/core/behaviors/ownership.json:20
@@ -1204,18 +1186,6 @@ msgctxt "Profiles|Core|Controlpanels|Language"
 msgid "Language"
 msgstr "Teanga"
 
-#. Default: "Language Independent Folder"
-#: src/profiles/migrated/types/lif.json:3
-msgctxt "Profiles|Migrated|Types|Lif"
-msgid "Language Independent Folder"
-msgstr ""
-
-#. Default: "Language Root Folder"
-#: src/profiles/migrated/types/lrf.json:3
-msgctxt "Profiles|Migrated|Types|Lrf"
-msgid "Language Root Folder"
-msgstr ""
-
 #. Default: "Language root"
 #: src/profiles/multilingual/types/languageroot.json:3
 msgctxt "Profiles|Multilingual|Types|Languageroot"
@@ -1241,17 +1211,10 @@ msgid "Less than"
 msgstr "Níos lú ná"
 
 #. Default: "Lets you upload a file to the site."
-#: src/profiles/migrated/types/file.json:4
 #: src/profiles/core/types/file.json:4
-msgctxt "Profiles|Migrated|Types|File"
+msgctxt "Profiles|Core|Types|File"
 msgid "Lets you upload a file to the site."
-msgstr ""
-
-#. Default: "Link"
-#: src/profiles/migrated/types/link.json:3
-msgctxt "Profiles|Migrated|Types|Link"
-msgid "Link"
-msgstr ""
+msgstr "Ligeann sé duit comhad a uaslódáil chuig an suíomh."
 
 #. Default: "List of attendees."
 #: src/profiles/core/types/event.json:73
@@ -1490,12 +1453,6 @@ msgctxt "Helpers|I18n|I18n.test"
 msgid "News"
 msgstr ""
 
-#. Default: "News Item"
-#: src/profiles/migrated/types/news item.json:3
-msgctxt "Profiles|Migrated|Types|News item"
-msgid "News Item"
-msgstr ""
-
 #. Default: "Nick generates email using this address as the email return address. It is also used as the destination address for the site-wide contact form and the “Send test email” feature."
 #: src/profiles/core/controlpanels/mail.json:25
 msgctxt "Profiles|Core|Controlpanels|Mail"
@@ -1622,11 +1579,10 @@ msgid "Ownership"
 msgstr "Úinéireacht"
 
 #. Default: "Page"
-#: src/profiles/migrated/types/document.json:3
 #: src/profiles/core/types/page.json:3
-msgctxt "Profiles|Migrated|Types|Document"
+msgctxt "Profiles|Core|Types|Page"
 msgid "Page"
-msgstr ""
+msgstr "Leathanach"
 
 #. Default: "Parent comment does not exist."
 #: src/routes/comments/comments.ts:155
@@ -1735,12 +1691,6 @@ msgstr "Cuir isteach an uimhir i laethanta."
 msgctxt "Profiles|Core|Catalog"
 msgid "Please use YYYY/MM/DD."
 msgstr "Bain úsáid as YYYY/MM/DD, le do thoil."
-
-#. Default: "Plone Site"
-#: src/profiles/migrated/types/plone site.json:3
-msgctxt "Profiles|Migrated|Types|Plone site"
-msgid "Plone Site"
-msgstr ""
 
 #. Default: "Portrait"
 #: src/constants/userschema.ts:43
@@ -1994,18 +1944,6 @@ msgctxt "Profiles|Core|Roles"
 msgid "Reviewer"
 msgstr "Léirmheastóir"
 
-#. Default: "Reviewers"
-#: src/profiles/migrated/groups.json:14
-msgctxt "Profiles|Migrated|Groups"
-msgid "Reviewers"
-msgstr ""
-
-#. Default: "Reviewers team"
-#: src/profiles/migrated/groups.json:30
-msgctxt "Profiles|Migrated|Groups"
-msgid "Reviewers team"
-msgstr ""
-
 #. Default: "Rights"
 #: src/profiles/core/behaviors/ownership.json:21
 msgctxt "Profiles|Core|Behaviors|Ownership"
@@ -2165,12 +2103,6 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "Site 'From' name"
 msgstr "Ainm 'Ó' an tSuímh"
 
-#. Default: "Site Administrators"
-#: src/profiles/migrated/groups.json:22
-msgctxt "Profiles|Migrated|Groups"
-msgid "Site Administrators"
-msgstr ""
-
 #. Default: "Site Logo"
 #: src/profiles/core/controlpanels/site.json:22
 msgctxt "Profiles|Core|Controlpanels|Site"
@@ -2212,12 +2144,6 @@ msgstr "Teideal Sórtáilte"
 msgctxt "Profiles|Core|Behaviors|Ownership"
 msgid "Source"
 msgstr "Foinse"
-
-#. Default: "Staff"
-#: src/profiles/migrated/groups.json:39
-msgctxt "Profiles|Migrated|Groups"
-msgid "Staff"
-msgstr ""
 
 #. Default: "Store a new version of the item"
 #: src/content_rules/actions/version_item.ts:15

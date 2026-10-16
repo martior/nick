@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T01:18:01.967Z\n"
+"POT-Creation-Date: 2026-10-16T01:21:52.915Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -13,19 +13,6 @@ msgstr ""
 "Preferred-Encodings: utf-8\n"
 "Domain: nick\n"
  
-#. Default: ""
-#: src/profiles/migrated/types/plone site.json:4
-#: src/profiles/migrated/types/news item.json:4
-#: src/profiles/migrated/types/lrf.json:4
-#: src/profiles/migrated/types/link.json:4
-#: src/profiles/migrated/types/lif.json:4
-#: src/profiles/migrated/types/folder.json:4
-#: src/profiles/migrated/types/document.json:4
-#: src/profiles/migrated/types/collection.json:4
-msgctxt "Profiles|Migrated|Types|Plone site"
-msgid ""
-msgstr ""
-
 #. Default: "&e = the triggering event, &c = the context, &u = the user"
 #: src/content_rules/actions/logger.ts:30
 msgctxt "Content rules|Actions|Logger"
@@ -157,7 +144,6 @@ msgstr ""
 
 #. Default: "Administrators"
 #: src/profiles/multilingualcontent/groups.json:6
-#: src/profiles/migrated/groups.json:6
 #: src/profiles/examplecontent/groups.json:6
 msgctxt "Profiles|Multilingualcontent|Groups"
 msgid "Administrators"
@@ -452,12 +438,6 @@ msgstr ""
 #: src/profiles/core/behaviors/versioning.json:16
 msgctxt "Profiles|Core|Behaviors|Versioning"
 msgid "Change Note"
-msgstr ""
-
-#. Default: "Collection"
-#: src/profiles/migrated/types/collection.json:3
-msgctxt "Profiles|Migrated|Types|Collection"
-msgid "Collection"
 msgstr ""
 
 #. Default: "Comment"
@@ -902,9 +882,8 @@ msgid "Equals"
 msgstr ""
 
 #. Default: "Event"
-#: src/profiles/migrated/types/event.json:3
 #: src/profiles/core/types/event.json:3
-msgctxt "Profiles|Migrated|Types|Event"
+msgctxt "Profiles|Core|Types|Event"
 msgid "Event"
 msgstr ""
 
@@ -942,12 +921,6 @@ msgstr ""
 #: src/profiles/core/catalog.json:87
 msgctxt "Profiles|Core|Catalog"
 msgid "Event start date"
-msgstr ""
-
-#. Default: "Events can be shown in calendars."
-#: src/profiles/migrated/types/event.json:4
-msgctxt "Profiles|Migrated|Types|Event"
-msgid "Events can be shown in calendars."
 msgstr ""
 
 #. Default: "Exclude actor from recipients"
@@ -988,10 +961,9 @@ msgid "Feed"
 msgstr ""
 
 #. Default: "File"
-#: src/profiles/migrated/types/file.json:3
 #: src/profiles/core/types/file.json:3
 #: src/profiles/core/types/file.json:19
-msgctxt "Profiles|Migrated|Types|File"
+msgctxt "Profiles|Core|Types|File"
 msgid "File"
 msgstr ""
 
@@ -1032,9 +1004,8 @@ msgid "Find items that can contain other objects"
 msgstr ""
 
 #. Default: "Folder"
-#: src/profiles/migrated/types/folder.json:3
 #: src/profiles/core/types/folder.json:3
-msgctxt "Profiles|Migrated|Types|Folder"
+msgctxt "Profiles|Core|Types|Folder"
 msgid "Folder"
 msgstr ""
 
@@ -1134,17 +1105,15 @@ msgid "If this date is in the future, the content will not show up in listings a
 msgstr ""
 
 #. Default: "Image"
-#: src/profiles/migrated/types/image.json:3
 #: src/profiles/core/types/image.json:3
 #: src/profiles/core/types/image.json:19
-msgctxt "Profiles|Migrated|Types|Image"
+msgctxt "Profiles|Core|Types|Image"
 msgid "Image"
 msgstr ""
 
 #. Default: "Images can be referenced in pages or displayed in an album."
-#: src/profiles/migrated/types/image.json:4
 #: src/profiles/core/types/image.json:4
-msgctxt "Profiles|Migrated|Types|Image"
+msgctxt "Profiles|Core|Types|Image"
 msgid "Images can be referenced in pages or displayed in an album."
 msgstr ""
 
@@ -1214,18 +1183,6 @@ msgctxt "Profiles|Core|Controlpanels|Language"
 msgid "Language"
 msgstr ""
 
-#. Default: "Language Independent Folder"
-#: src/profiles/migrated/types/lif.json:3
-msgctxt "Profiles|Migrated|Types|Lif"
-msgid "Language Independent Folder"
-msgstr ""
-
-#. Default: "Language Root Folder"
-#: src/profiles/migrated/types/lrf.json:3
-msgctxt "Profiles|Migrated|Types|Lrf"
-msgid "Language Root Folder"
-msgstr ""
-
 #. Default: "Language root"
 #: src/profiles/multilingual/types/languageroot.json:3
 msgctxt "Profiles|Multilingual|Types|Languageroot"
@@ -1251,16 +1208,9 @@ msgid "Less than"
 msgstr ""
 
 #. Default: "Lets you upload a file to the site."
-#: src/profiles/migrated/types/file.json:4
 #: src/profiles/core/types/file.json:4
-msgctxt "Profiles|Migrated|Types|File"
+msgctxt "Profiles|Core|Types|File"
 msgid "Lets you upload a file to the site."
-msgstr ""
-
-#. Default: "Link"
-#: src/profiles/migrated/types/link.json:3
-msgctxt "Profiles|Migrated|Types|Link"
-msgid "Link"
 msgstr ""
 
 #. Default: "List of attendees."
@@ -1500,12 +1450,6 @@ msgctxt "Helpers|I18n|I18n.test"
 msgid "News"
 msgstr ""
 
-#. Default: "News Item"
-#: src/profiles/migrated/types/news item.json:3
-msgctxt "Profiles|Migrated|Types|News item"
-msgid "News Item"
-msgstr ""
-
 #. Default: "Nick generates email using this address as the email return address. It is also used as the destination address for the site-wide contact form and the “Send test email” feature."
 #: src/profiles/core/controlpanels/mail.json:25
 msgctxt "Profiles|Core|Controlpanels|Mail"
@@ -1632,9 +1576,8 @@ msgid "Ownership"
 msgstr ""
 
 #. Default: "Page"
-#: src/profiles/migrated/types/document.json:3
 #: src/profiles/core/types/page.json:3
-msgctxt "Profiles|Migrated|Types|Document"
+msgctxt "Profiles|Core|Types|Page"
 msgid "Page"
 msgstr ""
 
@@ -1744,12 +1687,6 @@ msgstr ""
 #: src/profiles/core/catalog.json:795
 msgctxt "Profiles|Core|Catalog"
 msgid "Please use YYYY/MM/DD."
-msgstr ""
-
-#. Default: "Plone Site"
-#: src/profiles/migrated/types/plone site.json:3
-msgctxt "Profiles|Migrated|Types|Plone site"
-msgid "Plone Site"
 msgstr ""
 
 #. Default: "Portrait"
@@ -2004,18 +1941,6 @@ msgctxt "Profiles|Core|Roles"
 msgid "Reviewer"
 msgstr ""
 
-#. Default: "Reviewers"
-#: src/profiles/migrated/groups.json:14
-msgctxt "Profiles|Migrated|Groups"
-msgid "Reviewers"
-msgstr ""
-
-#. Default: "Reviewers team"
-#: src/profiles/migrated/groups.json:30
-msgctxt "Profiles|Migrated|Groups"
-msgid "Reviewers team"
-msgstr ""
-
 #. Default: "Rights"
 #: src/profiles/core/behaviors/ownership.json:21
 msgctxt "Profiles|Core|Behaviors|Ownership"
@@ -2175,12 +2100,6 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "Site 'From' name"
 msgstr ""
 
-#. Default: "Site Administrators"
-#: src/profiles/migrated/groups.json:22
-msgctxt "Profiles|Migrated|Groups"
-msgid "Site Administrators"
-msgstr ""
-
 #. Default: "Site Logo"
 #: src/profiles/core/controlpanels/site.json:22
 msgctxt "Profiles|Core|Controlpanels|Site"
@@ -2221,12 +2140,6 @@ msgstr ""
 #: src/profiles/core/behaviors/ownership.json:26
 msgctxt "Profiles|Core|Behaviors|Ownership"
 msgid "Source"
-msgstr ""
-
-#. Default: "Staff"
-#: src/profiles/migrated/groups.json:39
-msgctxt "Profiles|Migrated|Groups"
-msgid "Staff"
 msgstr ""
 
 #. Default: "Store a new version of the item"
