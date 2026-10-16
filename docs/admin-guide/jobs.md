@@ -12,7 +12,7 @@ Background work (scheduled jobs, large security reindexes, jobs started through 
 ## How the queue works
 
 - **Claiming:** a worker takes the oldest queued job with `SELECT ... FOR UPDATE SKIP LOCKED`, so two workers never take the same job and neither waits for the other.
-- **Leases:** the worker that claimed a job holds a lease on it (`locked_by`, `locked_until`) and renews it every third of the lease while the job runs. If the worker crashes or is killed, the lease runs out and the next worker that looks at the queue queues the job again.
+- **Leases:** the worker that claimed a job holds a lease on it (`locked_by`, `locked_until`; `locked_by` keeps the last worker that ran the job) and renews it every third of the lease while the job runs. If the worker crashes or is killed, the lease runs out and the next worker that looks at the queue queues the job again.
 - **Retries:** a job that throws is retried with exponential backoff (`backoff`, `2 × backoff`, `4 × backoff`, ... up to `maxBackoff` seconds) until it has used `maxAttempts` attempts. Then its status is `failed` and its `result` holds the error. A job is only `completed` when it succeeded.
 - **One transaction:** a job runs in its own transaction, and it is marked `completed` in the same transaction. A worker that lost its lease (because it stalled for longer than the lease) rolls its work back instead of completing a job another worker now owns.
 - **Idempotency:** jobs can carry a unique key (`jobs.add(..., { key })`). A second job with the same key is not added. The scheduler uses this to start a periodic job once per time slot.

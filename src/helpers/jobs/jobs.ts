@@ -184,7 +184,6 @@ class Jobs {
       .update({
         status: 'failed',
         finished: db.fn.now(),
-        locked_by: null,
         locked_until: null,
         result: { error: 'The worker running the job stopped.' },
       });
@@ -194,7 +193,6 @@ class Jobs {
       .whereRaw('attempts < max_attempts')
       .update({
         status: 'created',
-        locked_by: null,
         locked_until: null,
         run_after: db.fn.now(),
         result: { error: 'The worker running the job stopped.' },
@@ -284,7 +282,6 @@ class Jobs {
       .update({
         status: 'completed',
         finished: db.fn.now(),
-        locked_by: null,
         locked_until: null,
         result: result ?? {},
       });
@@ -310,7 +307,6 @@ class Jobs {
       .update({
         status,
         finished: retry ? null : db.fn.now(),
-        locked_by: null,
         locked_until: null,
         run_after: retry
           ? db.raw(`now() + make_interval(secs => ?)`, [delay])
@@ -566,7 +562,6 @@ class Jobs {
       .update({
         status: 'aborted',
         finished: db.fn.now(),
-        locked_by: null,
         locked_until: null,
       });
   }
