@@ -7,10 +7,10 @@
 import type { Params, Request } from '../../types';
 
 // External imports
+import { compact } from 'es-toolkit/array';
 import { Knex } from 'knex';
 
 // Internal imports
-import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
 
 export const reindex = {
@@ -53,23 +53,23 @@ export const reindex = {
     required: ['type'],
     type: 'object',
   },
-  handler: async (params: Params, actor: string, trx: Knex.Transaction) => {
-    // Get all documents of the specified type
+  handler: async (
+    params: Params,
+    _actor: string,
+    _trx: Knex.Transaction,
+    context?: { signal?: AbortSignal },
+  ) => {
+    // Reindex the documents of the types, all documents without types
     const Document = models.get('Document');
-    const documents = await Document.fetchAll(
-      {
-        type: params.type,
-      },
-      {},
-      trx,
+    const types = compact(
+      Array.isArray(params.type) ? params.type : [params.type],
     );
-
-    // Reindex the documents
-    await mapAsync(documents, async (document: any) => {
-      await document.reindex(trx);
+    const count = await Document.reindexCatalog({
+      types: types.length > 0 ? types : undefined,
+      signal: context?.signal,
     });
 
     // Return success
-    return { status: 'success' };
+    return { status: 'success', count };
   },
 };

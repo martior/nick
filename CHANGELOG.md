@@ -354,6 +354,17 @@
 - Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
 - The default profiles are `@plone/nick:core` only; the default `@plone/nick:default` profile never existed @martior
 - Find the core migrations when there is no knexfile.ts in the working directory @martior
+- Index the keyword catalog columns (Subject, isReferencing, block_types, ...) with GIN instead of btree, so keyword queries such as a listing by Subject can use their index on large sites; the permission tokens keep their btree index. Run `pnpm migrate` @martior
+- Index the paths of documents and the catalog with the pattern operator class and query subtrees with `LIKE` prefixes instead of `starts_with` and regular expressions, so path and `path.depth` queries use an index. Run `pnpm migrate` @martior
+- Moving, renaming or deleting (with the recycle bin) an item no longer touches siblings whose id starts with the same text (`/news` and `/newsletter`), paths with quotes no longer break the move, and subtree queries in moves, deletes, sharing and link integrity use the path index instead of regular expressions @martior
+- Resolve a path with a constant number of queries instead of four per level (one query for the documents along the path, one or two for the local roles and one for the types), and stop fetching the anonymous user twice per request @martior
+- Fix the reindex job action, which did nothing for a single type and failed for a list of types: it now reindexes the documents of the given types (all documents without types) in batches of 500, each written with one statement in its own transaction, with the types, indexes and local roles fetched once instead of per document, and stops when the job is aborted @martior
+- Order search results without `sort_on` by the primary key instead of the unindexed UID metadata column (the same order), so a batch of results no longer sorts every match, and collect more statistics for the full text and keyword catalog columns, so Postgres still uses the full text index for rare words. Run `pnpm migrate` @martior
+- Filter the viewable children of a folder in linear time instead of comparing every child with every catalog entry, which took seconds for folders with thousands of items @martior
+- Skip the catalog query for the children of content without children and reuse the already fetched type when fetching children, two queries less per request for most pages @martior
+- Fetch the user of a request with its roles and groups, and the types along the path with their workflows, with one joined query each instead of one query per relation @martior
+- Count search results faster: a catalog index by type and state that includes the permission columns and Subject lets Postgres count listings by type, state and subject and searches of the whole site without reading the catalog rows, and a search of the whole site no longer adds a path condition. Run `pnpm migrate` @martior
+- Filter search results before sorting them when the search matches at most 5000 items, so a selective search no longer walks an index in sort order through most of the catalog @martior
 
 ### Internal
 

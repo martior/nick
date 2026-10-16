@@ -114,6 +114,17 @@ export function regExpEscape(string: string): string {
 }
 
 /**
+ * Escape a string and turn it into a LIKE pattern matching it as a prefix.
+ * Prefix patterns can use the path indexes, regular expressions can't.
+ * @method likePrefix
+ * @param {String} prefix Prefix
+ * @returns {String} LIKE pattern
+ */
+export function likePrefix(prefix: string): string {
+  return `${prefix.replace(/[\\%_]/g, '\\$&')}%`;
+}
+
+/**
  * Get the node version
  * @method getNodeVersion
  * @param {String} string Input string

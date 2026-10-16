@@ -37,34 +37,30 @@ export async function callHandler(
   const Role = models.get('Role');
   const Type = models.get('Type');
 
+  // Fetch a user with its roles and groups in one query
+  const fetchUser = async (id: string) =>
+    await User.query(trx)
+      .withGraphJoined('[_roles, _groups._roles]')
+      .findById(id);
+
   // Get user
-  req.user = await User.fetchById(
-    getUserId(req) || 'anonymous',
-    {
-      related: '[_roles, _groups._roles]',
-    },
-    trx,
-  );
+  req.user = await fetchUser(getUserId(req) || 'anonymous');
 
   // If user not found (e.g. deleted) or token not in user model
-  if (!req.user || !req.token || !(req.user.tokens || []).includes(req.token)) {
+  if (
+    !req.user ||
+    (req.user.id !== 'anonymous' &&
+      (!req.token || !(req.user.tokens || []).includes(req.token)))
+  ) {
     // Set anonymous user
-    req.user = await User.fetchById(
-      'anonymous',
-      {
-        related: '[_roles, _groups._roles]',
-      },
-      trx,
-    );
+    req.user = await fetchUser('anonymous');
   }
 
-  // Traverse to document
-  const root = await Document.fetchOne({ parent: null }, {}, trx);
-  const result = await root.traverse(
+  // Traverse to document, the root and the documents along the path are
+  // fetched with one query
+  const result = await Document.traverseFromRoot(
     compact(getPath(req).split('/')), // Slugs
     req.user,
-    await req.user.fetchUserGroupRolesByDocument(root.uuid, trx), // Root roles
-    root,
     trx,
   );
 
@@ -89,8 +85,8 @@ export async function callHandler(
   const mergedRoles = uniq([...localRoles, ...req.user.getRoles()]);
   const permissions = await Role.fetchPermissions(mergedRoles, trx);
 
-  // Find type
-  const type = await Type.fetchById(document.type, {}, trx);
+  // Find type, traverse already fetched it for documents below the root
+  const type = document._type || (await Type.fetchById(document.type, {}, trx));
 
   // Check if type found
   if (!type) {
@@ -100,7 +96,9 @@ export async function callHandler(
   }
 
   // Get workflow
-  await type.fetchRelated('_workflow', trx);
+  if (!type._workflow) {
+    await type.fetchRelated('_workflow', trx);
+  }
 
   // Apply behaviors
   await document.applyBehaviors(trx);
