@@ -235,6 +235,7 @@
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
+- Support the categories:list parameter of @actions @martior
 
 ### Internal
 
