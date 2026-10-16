@@ -80,6 +80,8 @@ export default [
           });
         }
       });
+      const comment =
+        typeof req.body?.comment === 'string' ? req.body.comment : '';
 
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
@@ -148,7 +150,7 @@ export default [
         recursive,
         trx,
         req,
-        dates,
+        { ...dates, comment },
       );
 
       // Return workflow state
@@ -156,7 +158,7 @@ export default [
         json: {
           action: req.params.transition,
           actor: req.user.id,
-          comments: '',
+          comments: comment,
           review_state: new_state,
           time: modified,
           title: req.type._workflow.json.states[new_state].title,

@@ -93,6 +93,7 @@ export class Document extends Model {
     state_title?: string;
     review_state?: string;
     transition_title?: string;
+    comments?: string;
   }[];
   declare translation_group: string;
   declare language: string;
@@ -887,8 +888,8 @@ export class Document extends Model {
    * @param {boolean} recursive
    * @param {Knex.Transaction} trx Transaction object.
    * @param {Request} req Request object.
-   * @param {Object} options Publication dates (`effective` and `expires`)
-   * of the transition.
+   * @param {Object} options Comment and publication dates (`effective` and
+   * `expires`) of the transition.
    */
   async changeWorkflow(
     transition: string,
@@ -897,7 +898,7 @@ export class Document extends Model {
     recursive: boolean,
     trx: Knex.Transaction,
     req: Request,
-    options: { effective?: string; expires?: string } = {},
+    options: { comment?: string; effective?: string; expires?: string } = {},
   ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
 
@@ -947,6 +948,7 @@ export class Document extends Model {
         review_state: new_state,
         transition_title:
           self._type._workflow.json.transitions[transition].title,
+        ...(options.comment ? { comments: options.comment } : {}),
       });
 
       // Trigger on before change workflow

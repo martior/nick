@@ -52,6 +52,8 @@ Like in plone.restapi, the body can contain the publication dates `effective` an
 
 A `POST` to `@workflow` without a transition returns `400 Bad Request`.
 
+A `comment` in the body is stored with the transition and returned in the response, in the `history` of `@workflow` and in `@history`. The `history` of `@workflow` lists the transitions like in plone.restapi, starting with the initial state.
+
 A transition to the state the object is already in is accepted and does nothing: the response is `200 OK` with the last transition and no new history entry is recorded.
 
 With `include_children: true`, the transition is checked for every object below the object first, with the permissions the user has on that object. If it can't be applied to one of them, nothing is changed and `400 Bad Request` is returned. Children that already are in the new state are skipped.
