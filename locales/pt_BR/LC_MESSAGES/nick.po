@@ -230,7 +230,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Uma entidade responsável por disponibilizar este item."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:272
+#: src/routes/users/users.ts:284
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -772,7 +772,7 @@ msgid "Effective date"
 msgstr "Data de efetivação"
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:209
+#: src/routes/users/users.ts:221
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -1444,7 +1444,7 @@ msgstr "Não permitido"
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:154
+#: src/routes/users/users.ts:166
 #: src/routes/types/types.ts:45
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
@@ -1528,16 +1528,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:114
-#: src/routes/users/users.ts:298
+#: src/routes/users/users.ts:126
+#: src/routes/users/users.ts:310
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Solicitação de redefinição de senha"
 
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:50
-#: src/routes/users/users.ts:219
-#: src/routes/users/users.ts:346
+#: src/routes/users/users.ts:231
+#: src/routes/users/users.ts:358
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1706,7 +1706,7 @@ msgid "Query"
 msgstr ""
 
 #. Default: "Query must be at least 2 characters long."
-#: src/routes/users/users.ts:175
+#: src/routes/users/users.ts:187
 #: src/routes/principals/principals.ts:30
 #: src/routes/groups/groups.ts:55
 msgctxt "Routes|Users"
@@ -2103,7 +2103,7 @@ msgid "System group"
 msgstr "Grupo de sistema"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:394
+#: src/routes/users/users.ts:406
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Usuários de sistema"
@@ -2254,8 +2254,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:115
-#: src/routes/users/users.ts:299
+#: src/routes/users/users.ts:127
+#: src/routes/users/users.ts:311
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2727,6 +2727,12 @@ msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Nome de usuário e/ou senha incorretos."
 
+#. Default: "Wrong password."
+#: src/routes/users/users.ts:93
+msgctxt "Routes|Users"
+msgid "Wrong password."
+msgstr ""
+
 #. Default: "Yes"
 #: src/profiles/core/catalog.json:365
 #: src/profiles/core/vocabularies/boolean.json:5
@@ -2754,6 +2760,12 @@ msgctxt "Routes|Recyclebin"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
+#. Default: "You can only change your own password."
+#: src/routes/users/users.ts:82
+msgctxt "Routes|Users"
+msgid "You can only change your own password."
+msgstr ""
+
 #. Default: "You can’t delete system groups."
 #: src/routes/groups/groups.ts:141
 msgctxt "Routes|Groups"
@@ -2761,7 +2773,7 @@ msgid "You can’t delete system groups."
 msgstr "Você não pode excluir grupos de sistema."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:393
+#: src/routes/users/users.ts:405
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Você não pode excluir usuários de sistema."
@@ -2791,13 +2803,13 @@ msgid "You don’t have permission to unlock this document."
 msgstr "Você não tem permissão para desbloquear este documento."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:201
+#: src/routes/users/users.ts:213
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Você não tem permissões para adicionar um usuário."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:142
+#: src/routes/users/users.ts:154
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""
