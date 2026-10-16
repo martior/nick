@@ -12,6 +12,7 @@ import {
   mapSync,
   uniqueId,
   isValidId,
+  sortableTitle,
   pasteId,
   removeUndefined,
   arrayToVocabulary,
@@ -142,6 +143,19 @@ describe('utils', () => {
 
     it('returns value for unknown unit', () => {
       expect(bytesToNumber('5 xb')).toBe(5);
+    });
+  });
+
+  describe('sortableTitle', () => {
+    it('makes titles sortable like Plone', () => {
+      expect(sortableTitle(' Item 2 ')).toBe('item 0002');
+      expect(sortableTitle('Item 10')).toBe('item 0010');
+      expect(sortableTitle('Item 12345')).toBe('item 12345');
+      expect(sortableTitle('Ångström Éclair')).toBe('angstrom eclair');
+      expect(sortableTitle(undefined)).toBe('');
+      expect(
+        [sortableTitle('Item 10'), sortableTitle('item 2')].sort(),
+      ).toEqual(['item 0002', 'item 0010']);
     });
   });
 
