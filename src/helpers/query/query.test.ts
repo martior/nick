@@ -165,6 +165,17 @@ describe('Query', () => {
       expect(await match([{ path: '/' }])).toEqual(paths.slice().sort());
     });
 
+    it('should leave out the condition for the whole site', () => {
+      expect(pathCondition([{ path: '/' }])).toEqual(['raw', 'true', []]);
+      expect(
+        pathCondition([
+          { path: '/a', depth: 0 },
+          { path: '/', depth: -1 },
+        ]),
+      ).toEqual(['raw', 'true', []]);
+      expect(pathCondition([{ path: '/', depth: 1 }])[1]).not.toBe('true');
+    });
+
     it('should support depth', async () => {
       expect(await match([{ path: '/a', depth: 0 }])).toEqual(['/a']);
       expect(await match([{ path: '/a', depth: 1 }])).toEqual(['/a/b']);

@@ -128,6 +128,16 @@ const slashes = (column: string): string =>
 export const pathCondition = (
   paths: { path: string; depth?: number }[],
 ): ['raw', string, any[]] => {
+  // Every path is below the root, no condition lets the planner use the
+  // covering indexes for counting
+  if (
+    paths.some(
+      ({ path, depth }) =>
+        stripTrailingSlash(path) === '/' && (depth === undefined || depth < 0),
+    )
+  ) {
+    return ['raw', 'true', []];
+  }
   const sql: string[] = [];
   const bindings: any[] = [];
   paths.forEach(({ path, depth }) => {

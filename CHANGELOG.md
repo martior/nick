@@ -363,6 +363,7 @@
 - Filter the viewable children of a folder in linear time instead of comparing every child with every catalog entry, which took seconds for folders with thousands of items @martior
 - Skip the catalog query for the children of content without children and reuse the already fetched type when fetching children, two queries less per request for most pages @martior
 - Fetch the user of a request with its roles and groups, and the types along the path with their workflows, with one joined query each instead of one query per relation @martior
+- Count search results faster: a catalog index by type and state that includes the permission columns and Subject lets Postgres count listings by type, state and subject and searches of the whole site without reading the catalog rows, and a search of the whole site no longer adds a path condition. Run `pnpm migrate` @martior
 
 ### Internal
 
