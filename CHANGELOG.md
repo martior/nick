@@ -272,6 +272,7 @@
 - Prefix users and groups in the catalog permissions as `user:` and `group:`, so a user or group named like a role no longer sees items that role may view; run `pnpm seed:upgrade` to rebuild them @martior
 - Check workflow transitions against the current state and the permissions on every child with `include_children`, return 400 for unknown or unavailable transitions and require View @martior
 - Require the new Revert permission to revert to a previous version, report it in `may_revert`, reindex after a revert and keep the path of top level items; run `pnpm seed:upgrade` to add it @martior
+- Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
 
 ### Internal
 
