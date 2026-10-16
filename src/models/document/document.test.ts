@@ -8,6 +8,7 @@ import { describe, it, expect } from 'vitest';
 
 // Internal imports
 import '../../app';
+import { createDocument } from '../../helpers/tests/tests';
 import models from '../../models';
 
 describe('Document', () => {
@@ -110,6 +111,109 @@ describe('Document', () => {
       expect(news.version).not.toBe(7);
       await news.lockForUpdate(global.txn!);
       expect(news.version).toBe(7);
+    });
+  });
+
+  describe('replacePath', () => {
+    it('only changes the document and the documents below it', async () => {
+      const Document = models.get('Document');
+      const root = await Document.fetchOne({ path: '/' }, {}, global.txn!);
+      const folder = await createDocument(
+        'c2000000-0000-4000-8000-000000000001',
+        root,
+        'scale',
+        'Folder',
+      );
+      await createDocument(
+        'c2000000-0000-4000-8000-000000000002',
+        folder,
+        'child',
+        'Page',
+      );
+      await createDocument(
+        'c2000000-0000-4000-8000-000000000003',
+        root,
+        'scale-sibling',
+        'Page',
+      );
+      await createDocument(
+        'c2000000-0000-4000-8000-000000000004',
+        root,
+        'scalex',
+        'Page',
+      );
+
+      await Document.replacePath('/scale', '/moved', global.txn!);
+
+      const paths = async (table: string, column: string) =>
+        (
+          await global.txn!(table)
+            .select(column)
+            .where(column, 'like', '/%scale%')
+            .orWhere(column, 'like', '/moved%')
+        )
+          .map((row: any) => row[column])
+          .sort();
+      expect(await paths('document', 'path')).toEqual([
+        '/moved/child',
+        '/scale',
+        '/scale-sibling',
+        '/scalex',
+      ]);
+      expect(await paths('catalog', '_path')).toEqual([
+        '/moved/child',
+        '/scale',
+        '/scale-sibling',
+        '/scalex',
+      ]);
+      expect(await paths('catalog', 'path')).toEqual([
+        '/moved/child',
+        '/scale',
+        '/scale-sibling',
+        '/scalex',
+      ]);
+      expect(await paths('redirect', 'path')).toEqual([
+        '/scale',
+        '/scale/child',
+      ]);
+    });
+
+    it('handles quotes and like wildcards in paths', async () => {
+      const Document = models.get('Document');
+      const root = await Document.fetchOne({ path: '/' }, {}, global.txn!);
+      const folder = await createDocument(
+        'c2000000-0000-4000-8000-000000000005',
+        root,
+        "it's_100%",
+        'Folder',
+      );
+      await createDocument(
+        'c2000000-0000-4000-8000-000000000006',
+        folder,
+        'child',
+        'Page',
+      );
+      await createDocument(
+        'c2000000-0000-4000-8000-000000000007',
+        root,
+        "it's-1000",
+        'Folder',
+      );
+
+      await Document.replacePath("/it's_100%", '/moved', global.txn!);
+
+      const child = await Document.fetchById(
+        'c2000000-0000-4000-8000-000000000006',
+        {},
+        global.txn!,
+      );
+      expect(child.path).toBe('/moved/child');
+      const sibling = await Document.fetchById(
+        'c2000000-0000-4000-8000-000000000007',
+        {},
+        global.txn!,
+      );
+      expect(sibling.path).toBe("/it's-1000");
     });
   });
 });

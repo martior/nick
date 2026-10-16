@@ -44,6 +44,7 @@ import { getFactoryFields } from '../../helpers/schema/schema';
 import { getRootUrl } from '../../helpers/url/url';
 import {
   isPromise,
+  likePrefix,
   mapAsync,
   mapSync,
   uniqueId,
@@ -381,7 +382,13 @@ export class Document extends Model {
   ): Promise<void> {
     const Redirect = models.get('Redirect');
     const documents: any = await this.fetchAll(
-      { path: ['~', `^${oldPath}`] },
+      {
+        path: [
+          'raw',
+          '(path = ? OR path LIKE ?)',
+          [oldPath, likePrefix(`${oldPath}/`)],
+        ],
+      },
       {},
       trx,
     );
@@ -398,14 +405,23 @@ export class Document extends Model {
       }),
     );
     const knex = Document.knex();
+    // Replace the path prefix of the documents below the old path
     await knex
       .raw(
-        `update document set path = regexp_replace(path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where path ~ '^${oldPath}/.*$'`,
+        'UPDATE document SET path = ? || substr(path, ?) WHERE path LIKE ?',
+        [newPath, oldPath.length + 1, likePrefix(`${oldPath}/`)],
       )
       .transacting(trx);
     await knex
       .raw(
-        `update catalog set _path = regexp_replace(_path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g'), path = regexp_replace(path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where _path ~ '^${oldPath}/.*$'`,
+        'UPDATE catalog SET "_path" = ? || substr("_path", ?), path = ? || substr(path, ?) WHERE "_path" LIKE ?',
+        [
+          newPath,
+          oldPath.length + 1,
+          newPath,
+          oldPath.length + 1,
+          likePrefix(`${oldPath}/`),
+        ],
       )
       .transacting(trx);
   }
@@ -1482,8 +1498,8 @@ export class Document extends Model {
         'workflow_state',
       )
       .where('uuid', self.uuid)
-      .orWhereRaw('starts_with(path, ?)', [
-        self.path === '/' ? '/' : `${self.path}/`,
+      .orWhereRaw('path LIKE ?', [
+        likePrefix(self.path === '/' ? '/' : `${self.path}/`),
       ])
       .orderByRaw('length(path)')
       .transacting(trx);
