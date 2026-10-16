@@ -327,14 +327,27 @@ export default [
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
       await req.document.fetchChildren({}, trx);
-      await req.document.fetchVersion(parseInt(req.params.version, 10), trx);
+      const version = parseInt(req.params.version, 10);
+      await req.document.fetchVersion(version, trx);
+      if (!req.document._version) {
+        throw new RequestException(404, {
+          message: req.i18n('Version not found.'),
+        });
+      }
       await req.document.fetchRelationLists(trx);
       return {
         json: await handleBlockReferences(
-          await req.document.toJson(
-            req,
-            await getComponents(req, trx, req.query?.expand?.split(',') || []),
-          ),
+          {
+            ...(await req.document.toJson(
+              req,
+              await getComponents(
+                req,
+                trx,
+                req.query?.expand?.split(',') || [],
+              ),
+            )),
+            version,
+          },
           trx,
         ),
         xkeys: [req.document.uuid],
@@ -699,6 +712,7 @@ export default [
             })),
             items_total: total,
             ...(links ? { batching: links } : {}),
+            version: 'current',
           },
           trx,
         ),

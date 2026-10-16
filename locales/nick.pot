@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T02:07:14.052Z\n"
+"POT-Creation-Date: 2026-10-16T02:20:27.538Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -441,7 +441,7 @@ msgid "Change Note"
 msgstr ""
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:996
+#: src/routes/content/content.ts:1010
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -761,7 +761,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:1040
+#: src/routes/content/content.ts:1054
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr ""
@@ -1143,7 +1143,7 @@ msgid "Internal server error"
 msgstr ""
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:743
+#: src/routes/content/content.ts:757
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1506,7 +1506,7 @@ msgid "No query supplied."
 msgstr ""
 
 #. Default: "No transition specified."
-#: src/routes/workflow/workflow.ts:175
+#: src/routes/workflow/workflow.ts:177
 msgctxt "Routes|Workflow"
 msgid "No transition specified."
 msgstr ""
@@ -1782,7 +1782,7 @@ msgid "Prompts"
 msgstr ""
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:727
+#: src/routes/content/content.ts:741
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -1944,7 +1944,7 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:757
+#: src/routes/content/content.ts:771
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
@@ -2410,14 +2410,14 @@ msgid "The following link takes you to a page where you can reset your password:
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:785
+#: src/routes/content/content.ts:799
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:774
-#: src/routes/content/content.ts:1058
+#: src/routes/content/content.ts:788
+#: src/routes/content/content.ts:1072
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2549,13 +2549,13 @@ msgid "The user viewing the querystring results"
 msgstr ""
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:820
+#: src/routes/content/content.ts:834
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:815
+#: src/routes/content/content.ts:829
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -2677,7 +2677,7 @@ msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:99
+#: src/routes/workflow/workflow.ts:101
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -2800,6 +2800,7 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:91
+#: src/routes/content/content.ts:334
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -2943,7 +2944,7 @@ msgid "Yes"
 msgstr ""
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:108
+#: src/routes/workflow/workflow.ts:110
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr ""
@@ -2964,7 +2965,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:806
+#: src/routes/content/content.ts:820
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -2995,7 +2996,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:1037
+#: src/routes/content/content.ts:1051
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr ""

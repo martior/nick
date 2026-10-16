@@ -74,5 +74,6 @@ Content-Type: application/json
     "description": "Congratulations! You have successfully installed Nick.",
     "review_state": "published"
   },
-  "items_total": 0
+  "items_total": 0,
+  "version": "current"
 }

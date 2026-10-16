@@ -31,7 +31,7 @@ This following fields are returned:
 
 - `action`: the workflow transition id, 'Edited' for versioning, or 'Create' for initial state.
 - `actor`: the user who performed the action. This contains a subobject with the details.
-- `comments`: a changenote
+- `comments`: the change note of a version (`null` if none was given), or the comment of a workflow transition. A revert has the comment 'Reverted to revision <version>'.
 - `@id`: link to the content endpoint of this specific version.
 - `may_revert`: true if the user has permission to revert.
 - `time`: when this action occured in ISO format.
@@ -39,9 +39,13 @@ This following fields are returned:
 - `type`: 'workflow' for workflow changes, or 'versioning' for editing
 - `version`: identifier for this specific version of the resource.
 
+The last entry is the creation of the resource ('Create', with the initial workflow state).
+
 ## Get a Historical Version
 
 Older versions of a resource can be retrieved by appending version to the `@history` endpoint url.
+
+The response contains the `version` number; the current content has `"version": "current"`. An unknown version returns `404 Not Found`.
 
 ```http
 {% include_relative examples/history/get_version.req %}
