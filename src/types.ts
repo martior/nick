@@ -63,6 +63,7 @@ export interface User extends Model {
   fullname: string;
   tokens: string[];
   update: (data: any, trx: Knex.Transaction) => Promise<void>;
+  lockTokens: (trx: Knex.Transaction) => Promise<void>;
   _groups: string[];
   getRoles: () => string[];
   fetchUserGroupRolesByDocument: (
