@@ -342,6 +342,7 @@
 - Fix scheduled jobs reusing the committed request transaction after they were created, changed or deleted through the API @martior
 - Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
 - Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
+- Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
 
 ### Internal
 

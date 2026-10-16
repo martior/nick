@@ -16,7 +16,7 @@ Background work (scheduled jobs, large security reindexes, jobs started through 
 - **Retries:** a job that throws is retried with exponential backoff (`backoff`, `2 × backoff`, `4 × backoff`, ... up to `maxBackoff` seconds) until it has used `maxAttempts` attempts. Then its status is `failed` and its `result` holds the error. A job is only `completed` when it succeeded.
 - **One transaction:** a job runs in its own transaction, and it is marked `completed` in the same transaction. A worker that lost its lease (because it stalled for longer than the lease) rolls its work back instead of completing a job another worker now owns.
 - **Idempotency:** jobs can carry a unique key (`jobs.add(..., { key })`). A second job with the same key is not added. The scheduler uses this to start a periodic job once per time slot.
-- **Abort:** `POST /@jobs/{id}/abort` marks the job `aborted` in the database. The worker running it notices at its next heartbeat, stops a child process if there is one, and rolls the job's transaction back.
+- **Abort:** `POST /@jobs/{id}/abort` marks the job `aborted` in the database, on whichever API process receives it. The worker running the job notices at its next heartbeat (every third of the lease), cancels the job's running database query or stops its child process, and rolls the job's transaction back.
 
 ## Scheduled jobs
 
