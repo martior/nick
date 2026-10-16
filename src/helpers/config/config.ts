@@ -211,6 +211,7 @@ class Config {
         pollInterval: parseInt(
           JOBS_POLL_INTERVAL || config.jobs?.pollInterval || '2',
         ),
+        refreshInterval: parseInt(config.jobs?.refreshInterval || '10'),
         apiPath:
           JOBS_API_PATH ||
           config.jobs?.apiPath ||

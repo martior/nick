@@ -18,6 +18,12 @@ Background work (scheduled jobs, large security reindexes, jobs started through 
 - **Idempotency:** jobs can carry a unique key (`jobs.add(..., { key })`). A second job with the same key is not added. The scheduler uses this to start a periodic job once per time slot.
 - **Abort:** `POST /@jobs/{id}/abort` marks the job `aborted` in the database. The worker running it notices at its next heartbeat, stops a child process if there is one, and rolls the job's transaction back.
 
+## Scheduled jobs
+
+[Scheduled jobs](/developer-guide/scheduled-jobs) are scheduled only by processes that run the worker; importing the API does not start a scheduler. Each worker registers a cron task per enabled scheduled job. When a task fires, the worker adds the job with the key `scheduled_job:<id>:<slot>`, where the slot is the scheduled time. All workers fire for the same slot, but the first one adds the job and the others find the key taken, so a periodic job runs once per slot however many workers run.
+
+Workers reread the `scheduled_job` table every `refreshInterval` seconds, so changes made through `@scheduled-jobs` on any process take effect within that time (immediately on a process that runs both the API and the worker). If no worker runs at the scheduled time, that slot is skipped.
+
 ## Statuses
 
 | Status      | Meaning                                                    |
@@ -32,12 +38,13 @@ Background work (scheduled jobs, large security reindexes, jobs started through 
 
 Settings go under `jobs` in `config.ts`; some can be set with environment variables.
 
-| Key            | Environment variable | Default                   | Description                                                                                                     |
-| -------------- | -------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `isolation`    | `JOBS_ISOLATION`     | `inline`                  | `inline` runs jobs in the worker process; `process` forks a child process per job (more isolation, slower)      |
-| `lease`        | `JOBS_LEASE`         | `60`                      | Seconds a worker holds a job without renewing the lease; after a crash a job is retried after at most this long |
-| `maxAttempts`  | `JOBS_MAX_ATTEMPTS`  | `3`                       | Attempts before a job is marked `failed`                                                                        |
-| `backoff`      |                      | `10`                      | Seconds before the first retry; doubles with every attempt                                                      |
-| `maxBackoff`   |                      | `3600`                    | Maximum seconds between attempts                                                                                |
-| `pollInterval` | `JOBS_POLL_INTERVAL` | `2`                       | Seconds between looks at the queue when it is empty                                                             |
-| `apiPath`      | `JOBS_API_PATH`      | `http://localhost:{port}` | Base URL used in the results of jobs that call an API method                                                    |
+| Key               | Environment variable | Default                   | Description                                                                                                     |
+| ----------------- | -------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `isolation`       | `JOBS_ISOLATION`     | `inline`                  | `inline` runs jobs in the worker process; `process` forks a child process per job (more isolation, slower)      |
+| `lease`           | `JOBS_LEASE`         | `60`                      | Seconds a worker holds a job without renewing the lease; after a crash a job is retried after at most this long |
+| `maxAttempts`     | `JOBS_MAX_ATTEMPTS`  | `3`                       | Attempts before a job is marked `failed`                                                                        |
+| `backoff`         |                      | `10`                      | Seconds before the first retry; doubles with every attempt                                                      |
+| `maxBackoff`      |                      | `3600`                    | Maximum seconds between attempts                                                                                |
+| `pollInterval`    | `JOBS_POLL_INTERVAL` | `2`                       | Seconds between looks at the queue when it is empty                                                             |
+| `refreshInterval` |                      | `10`                      | Seconds between rereads of the scheduled jobs by the workers                                                    |
+| `apiPath`         | `JOBS_API_PATH`      | `http://localhost:{port}` | Base URL used in the results of jobs that call an API method                                                    |

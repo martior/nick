@@ -1204,8 +1204,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Այս տարրի նկատմամբ իրավունքների մասին տեղեկություն։"
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:254
+#: src/app.ts:265
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Ներքին սերվերի սխալ"
@@ -2852,8 +2852,8 @@ msgstr "Այսօր"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/app.ts:163
+#: src/app.ts:180
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Գործառքի սխալ։"

@@ -313,6 +313,7 @@
 - Refuse aliases which are relative or the path of existing content or of another alias @martior
 - Record failed jobs as `failed` instead of `completed`, add the result location to completed jobs and return 404 when aborting an unknown job @martior
 - Fix scheduled jobs reusing the committed request transaction after they were created, changed or deleted through the API @martior
+- Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
 
 ### Internal
 

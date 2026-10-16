@@ -417,6 +417,7 @@ export type ConfigSettings = {
     backoff: number;
     maxBackoff: number;
     pollInterval: number;
+    refreshInterval: number;
     apiPath: string;
   };
   userschema: (req: Request) => Schema;

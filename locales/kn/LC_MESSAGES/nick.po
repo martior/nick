@@ -1204,8 +1204,8 @@ msgid "Information about rights held in and over this item."
 msgstr "ಈ ಐಟಂನಲ್ಲಿ ಮತ್ತು ಅದರ ಮೇಲೆ ಇರುವ ಹಕ್ಕುಗಳ ಬಗ್ಗೆ ಮಾಹಿತಿ."
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:254
+#: src/app.ts:265
 msgctxt "App"
 msgid "Internal server error"
 msgstr "ಆಂತರಿಕ ಸರ್ವರ್ ದೋಷ"
@@ -2852,8 +2852,8 @@ msgstr "ಇಂದು"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/app.ts:163
+#: src/app.ts:180
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "ವಹಿವಾಟು ದೋಷ."
