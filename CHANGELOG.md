@@ -178,6 +178,7 @@
 - Support S3-compatible blob storage (MinIO, R2, Ceph) with the `s3.endpoint` and `s3.forcePathStyle` settings, read the blob and S3 settings from `BLOBS` and `S3_*` environment variables, use the default AWS credential chain without static keys and reuse one S3 client @martior
 - Add a Postgres rate limit store (`rateLimit.store: postgres` or `RATE_LIMIT_STORE=postgres`), so rate limits count across API processes; the default stays in memory per process @martior
 - Profiles can declare `dependencies` in their metadata.json. Nick loads, installs and upgrades the profiles in dependency order, adds dependencies that are not listed and refuses dependency cycles. The `PROFILES` environment variable (comma separated) replaces `profiles` of `config.ts` @martior
+- Every package (core, add-on or project) has its own migration chain: the knex migrations in `nick.migrations` of its package.json, its own ledger `knex_migrations_<package>` and optionally its own Postgres schema (`nick.schema`). `nick --modules=migrate` runs core's chain and then the chains of the packages of the profiles in dependency order, every migration in its own transaction, so a failed migration exits non-zero and the next run resumes with it @martior
 
 ### Bugfix
 
@@ -345,6 +346,7 @@
 - Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
 - Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
 - The default profiles are `@plone/nick:core` only; the default `@plone/nick:default` profile never existed @martior
+- Find the core migrations when there is no knexfile.ts in the working directory @martior
 
 ### Internal
 
