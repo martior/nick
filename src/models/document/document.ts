@@ -219,6 +219,21 @@ export class Document extends Model {
   };
 
   /**
+   * Lock the document row until the end of the transaction and reload it,
+   * so concurrent changes of the document or its children are serialized.
+   * @method lockForUpdate
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<void>}
+   */
+  async lockForUpdate(trx: Knex.Transaction): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const fresh = await Document.query(trx).findById(self.uuid).forUpdate();
+    if (fresh) {
+      Object.assign(self, fresh);
+    }
+  }
+
+  /**
    * Fetch version
    * @method fetchVersion
    * @param {string} document Uuid of the document

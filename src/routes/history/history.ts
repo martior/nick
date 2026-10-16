@@ -53,6 +53,9 @@ export default [
     client: 'revertHistory',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
+
       // Check if locked
       const lock = req.document.lock;
       if (
