@@ -14,6 +14,7 @@
             "transitions": ["publish", "submit"],
             "permissions": {
               "Owner": ["View", "Modify"],
+              "Reader": ["View"],
               "Contributor": ["View"],
               "Editor": ["View", "Modify"],
               "Administrator": ["View", "Modify"]
@@ -25,6 +26,7 @@
             "transitions": ["publish", "reject", "retract"],
             "permissions": {
               "Owner": ["View"],
+              "Reader": ["View"],
               "Contributor": ["View"],
               "Editor": ["View"],
               "Reviewer": ["View", "Modify"],

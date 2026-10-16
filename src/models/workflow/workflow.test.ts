@@ -37,18 +37,18 @@ describe('Workflow', () => {
   });
 
   describe('applyPermissions', () => {
-    it('adds the state permissions to the global ones by default', () => {
-      const workflow = Workflow.fromJson({ id: 'test', json });
+    it('adds the state permissions to the global ones with the additive model', () => {
+      const workflow = Workflow.fromJson({
+        id: 'test',
+        json: { ...json, permission_model: 'additive' },
+      });
       expect(
         workflow.applyPermissions('restricted', ['Reader'], ['View', 'Add']),
       ).toEqual(['View', 'Add']);
     });
 
-    it('replaces global permissions with the acquire model', () => {
-      const workflow = Workflow.fromJson({
-        id: 'test',
-        json: { ...json, permission_model: 'acquire' },
-      });
+    it('replaces global permissions with the acquire model by default', () => {
+      const workflow = Workflow.fromJson({ id: 'test', json });
 
       // View is managed and not acquired, Add is not managed
       expect(
@@ -85,27 +85,43 @@ describe('Workflow', () => {
           .get('/news/page')
           .set('Accept', 'application/json')
           .set('Authorization', `Bearer ${reader}`);
-      const allowed = async () =>
-        (await global.txn!('catalog').where({ document: page.uuid }).first())
-          ._allowedUsersGroupsRoles;
+      const allowed = async () => {
+        await page.reindexSecurity(global.txn!);
+        return (
+          await global.txn!('catalog').where({ document: page.uuid }).first()
+        )._allowedUsersGroupsRoles;
+      };
 
-      // Additive: the global Reader role views the private page
+      // The core private state gives Reader View
       await get().expect(200);
       expect(await allowed()).toContain('Reader');
 
-      // Acquire: the private state doesn't give Reader View
+      // A private state without Reader hides the page from global Readers
       const workflow = await Workflow.fetchById(
         'simple_publication_workflow',
         {},
         global.txn!,
       );
+      const { Reader: _reader, ...permissions } =
+        workflow.json.states.private.permissions;
+      const json = {
+        ...workflow.json,
+        states: {
+          ...workflow.json.states,
+          private: { ...workflow.json.states.private, permissions },
+        },
+      };
+      await workflow.update({ json }, global.txn!);
+      await get().expect(401);
+      expect(await allowed()).not.toContain('Reader');
+
+      // Unless the workflow keeps the additive model
       await workflow.update(
-        { json: { ...workflow.json, permission_model: 'acquire' } },
+        { json: { ...json, permission_model: 'additive' } },
         global.txn!,
       );
-      await get().expect(401);
-      await page.reindexSecurity(global.txn!);
-      expect(await allowed()).not.toContain('Reader');
+      await get().expect(200);
+      expect(await allowed()).toContain('Reader');
     });
   });
 });

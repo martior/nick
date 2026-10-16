@@ -24,7 +24,7 @@ export class Workflow extends Model {
   static tableName: string = 'workflow';
 
   // Permission model of workflows that don't set one
-  static defaultPermissionModel: PermissionModel = 'additive';
+  static defaultPermissionModel: PermissionModel = 'acquire';
 
   // Declare properties
   declare json: WorkflowType;
