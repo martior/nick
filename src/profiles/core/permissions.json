@@ -72,6 +72,10 @@
     {
       "id": "Modify Own Comments",
       "title:i18n": "Modify Own Comments"
+    },
+    {
+      "id": "Review Comments",
+      "title:i18n": "Review Comments"
     }
   ]
 }

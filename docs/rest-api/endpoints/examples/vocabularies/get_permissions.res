@@ -61,6 +61,10 @@ Content-Type: application/json
       "token": "Review"
     },
     {
+      "title": "Review Comments",
+      "token": "Review Comments"
+    },
+    {
       "title": "Submit",
       "token": "Submit"
     },
@@ -77,5 +81,5 @@ Content-Type: application/json
       "token": "View History"
     }
   ],
-  "items_total": 18
+  "items_total": 19
 }
