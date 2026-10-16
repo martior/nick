@@ -38,6 +38,13 @@ const {
   JOBS_POLL_INTERVAL,
   JOBS_API_PATH,
   PORT,
+  BLOBS,
+  S3_BUCKET,
+  S3_REGION,
+  S3_ENDPOINT,
+  S3_FORCE_PATH_STYLE,
+  S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY,
 } = process.env;
 
 let config: any = {};
@@ -70,14 +77,18 @@ class Config {
         user: DB_USER || config.connection?.user || 'nick',
         password: DB_PASSWORD || config.connection?.password || 'nick',
       },
-      blobs: config.blobs || 'file',
+      blobs: (BLOBS || config.blobs || 'file') as 'file' | 'db' | 's3',
       blobsDir:
         BLOBS_DIR || config.blobsDir || `${__dirname}/../../../var/blobstorage`,
-      s3: config.s3 || {
-        bucket: 'my-bucket',
-        region: 'my-region',
-        accessKeyId: 'my-access-key-id',
-        secretAccessKey: 'my-secret-access-key',
+      s3: {
+        bucket: S3_BUCKET || config.s3?.bucket || 'my-bucket',
+        region: S3_REGION || config.s3?.region || 'us-east-1',
+        endpoint: S3_ENDPOINT || config.s3?.endpoint,
+        forcePathStyle: S3_FORCE_PATH_STYLE
+          ? S3_FORCE_PATH_STYLE === 'true'
+          : config.s3?.forcePathStyle || false,
+        accessKeyId: S3_ACCESS_KEY_ID || config.s3?.accessKeyId,
+        secretAccessKey: S3_SECRET_ACCESS_KEY || config.s3?.secretAccessKey,
       },
       localesDir:
         LOCALES_DIR || config.localesDir || `${__dirname}/../../../locales`,
