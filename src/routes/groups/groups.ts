@@ -26,7 +26,7 @@ export default [
       const group = await Group.fetchById(
         req.params.id,
         {
-          related: '_roles',
+          related: '[_roles, _users]',
         },
         trx,
       );

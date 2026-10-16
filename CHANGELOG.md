@@ -240,6 +240,7 @@
 - Answer 400 instead of 401 or 500 when a password is missing or too short on @users @martior
 - Answer 403 when resetting a password with a wrong old password or for another user instead of a silent 200 @martior
 - Answer 400 instead of 500 when a group is created without a name, with an existing name or with unknown roles or users @martior
+- List the members of a group in GET @groups/<id> @martior
 
 ### Internal
 
