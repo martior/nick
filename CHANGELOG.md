@@ -496,6 +496,7 @@
 ### Documentation
 
 - Use the `default` profile instead of the old `examplecontent` name in the deployment docs and the Dockerfile, and say that the image installs the demo site with an `admin`/`admin` user without `PROFILES` @robgietema
+- Document that `checkPermission` in workflow expressions is a Nick extension, Plone's DCWorkflow guards don't have it @martior
 - Added documentation for AI support @robgietema
 - Rearranged documention into sections @robgietema
 - Use different documention theme @robgietema
