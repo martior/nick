@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "このアイテムに関する権利情報。"
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "内部サーバーエラー"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:173
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "許可されていません"
@@ -2449,8 +2449,8 @@ msgstr "今日"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "トランザクションエラー。"
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "別のユーザーによってロックされているため、このドキュメントを保存する権限がありません。"
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "このドキュメントのロックを解除する権限がありません。"

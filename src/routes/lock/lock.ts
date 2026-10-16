@@ -157,29 +157,40 @@ export default [
     permission: 'Modify',
     client: 'deleteLock',
     cache: 'alter',
-    handler: async (req: Request, _trx: Knex.Transaction) => {
+    handler: async (req: Request, trx: Knex.Transaction) => {
       const lock = req.document.lock;
 
-      // If not locked just send lock status
-      if (
-        (lock.locked && lock.creator !== req.user.id) ||
-        (req.body?.force && lock.stealable === false)
-      ) {
-        // Send error
-        throw new RequestException(401, {
-          error: {
-            message: req.i18n(
-              'You don’t have permission to unlock this document.',
-            ),
-            type: req.i18n('Not allowed'),
+      // Unlock if locked by the current user or a stealable lock is forced
+      if (lock.locked && !lockExpired(req.document)) {
+        const owner = lock.creator === req.user.id;
+        if (!owner && !(req.body?.force && lock.stealable !== false)) {
+          // Send error
+          throw new RequestException(401, {
+            error: {
+              message: req.i18n(
+                'You don’t have permission to unlock this document.',
+              ),
+              type: req.i18n('Not allowed'),
+            },
+          });
+        }
+      }
+
+      // Remove lock
+      const unlocked = {
+        locked: false,
+        stealable: true,
+      };
+      if (lock.locked) {
+        await req.document.update(
+          {
+            lock: unlocked,
           },
-        });
+          trx,
+        );
       }
       return {
-        json: {
-          locked: false,
-          stealable: true,
-        },
+        json: unlocked,
       };
     },
   },

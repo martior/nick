@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "He pārongo mō ngā motika e pupurihia ana i roto i tēnei tūemi, mō tēnei tūemi hoki."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Hapa ā-roto o te tūmau"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:173
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Kāore e whakaaetia"
@@ -2449,8 +2449,8 @@ msgstr "Tēnei rā"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Hapa tauwhitinga."
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "Kāore ō whakaaetanga ki te tiaki i tēnei tuhinga nā te mea kua rakaina e tētahi atu kaiwhakamahi."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Kāore ō whakaaetanga ki te wetewete i tēnei tuhinga."

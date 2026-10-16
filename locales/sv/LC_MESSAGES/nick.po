@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Information om rättigheter som innehas i och över detta objekt."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Internt serverfel"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:173
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Inte tillåtet"
@@ -2449,8 +2449,8 @@ msgstr "Idag"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Transaktionsfel."
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "Du har inte behörighet att spara detta dokument eftersom det är låst av en annan användare."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Du har inte behörighet att låsa upp detta dokument."

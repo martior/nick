@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Інформація про права, що стосуються цього елемента."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Внутрішня помилка сервера"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:173
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Не дозволено"
@@ -2449,8 +2449,8 @@ msgstr "Сьогодні"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Помилка транзакції."
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "Ви не маєте дозволу зберігати цей документ, оскільки він заблокований іншим користувачем."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Ви не маєте дозволу розблокувати цей документ."

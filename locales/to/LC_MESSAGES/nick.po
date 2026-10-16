@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Fakamatala fekau'aki mo e ngaahi totonu 'oku ma'u 'i he me'a ni."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Hala 'i loto 'i he seva"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:173
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "'Oku 'ikai ngofua"
@@ -2449,8 +2449,8 @@ msgstr "'Aho ni"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Hala 'i he fefakatau'aki."
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "'Oku 'ikai fakangofua koe ke ke tauhi 'a e tohi ni koe'uhi kuo loka ia 'e ha tokotaha ngāue'aki kehe."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "'Oku 'ikai fakangofua koe ke ke vete 'a e loka 'o e tohi ni."

@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "এই আইটেমের উপর অধিকার সম্পর্কিত তথ্য।"
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "অভ্যন্তরীণ সার্ভার ত্রুটি"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:173
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "অনুমোদিত নয়"
@@ -2449,8 +2449,8 @@ msgstr "আজ"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "লেনদেন ত্রুটি।"
@@ -2766,7 +2766,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "এই ডকুমেন্টটি অন্য একজন ব্যবহারকারী দ্বারা লক করা আছে বলে আপনার এটি সংরক্ষণের অনুমতি নেই।"
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "এই ডকুমেন্টটি আনলক করার অনুমতি আপনার নেই।"
