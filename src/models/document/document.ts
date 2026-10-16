@@ -766,12 +766,46 @@ export class Document extends Model {
     req: Request,
     trx?: Knex.Transaction,
   ): Promise<any[]> {
+    const self: InstanceType<typeof Document> = this;
     const User = models.get('User');
+
+    // Fetch type and workflow
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+    const workflow = self._type._workflow.json;
+
+    // The creation is the first entry, like the history of plone.restapi;
+    // migrated content may have it already as an entry without an action
+    const history: any[] = [...self.workflow_history];
+    if (history.length === 0 || history[0].action) {
+      history.unshift({
+        time: self.created,
+        actor: self.owner,
+        review_state: workflow.initial_state,
+        state_title: workflow.states?.[workflow.initial_state || '']?.title,
+      });
+    }
+
     return await Promise.all(
-      this.workflow_history.map(async (item: any) => {
-        const user = await User.fetchById(item.actor, {}, trx);
+      history.map(async (item: any) => {
+        const user = item.actor
+          ? await User.fetchById(item.actor, {}, trx)
+          : undefined;
         return {
           ...item,
+          ...(item.action
+            ? {}
+            : {
+                action: 'Create',
+                transition_title: 'Create',
+              }),
+          ...(item.state_title
+            ? { state_title: req.i18n(item.state_title) }
+            : {}),
           actor: {
             '@id': `${getRootUrl(req)}/@users/${item.actor}`,
             fullname: user ? user.fullname : item.actor,
