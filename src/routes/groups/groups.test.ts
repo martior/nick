@@ -24,6 +24,26 @@ describe('Groups', () => {
   it('should get a list of groups by query', () =>
     testRequest(app, 'groups/list_query'));
 
+  it('should search groups case insensitive and limit the results', async () => {
+    const res = await request(app)
+      .get('/@groups?query=administ')
+      .set('Authorization', auth)
+      .expect(200);
+    expect(res.body.map((group: any) => group.id)).toEqual(['Administrators']);
+    for (const id of ['nicks1', 'nicks2']) {
+      await request(app)
+        .post('/@groups')
+        .set('Authorization', auth)
+        .send({ groupname: id, title: id })
+        .expect(201);
+    }
+    const limited = await request(app)
+      .get('/@groups?query=nicks&limit=1')
+      .set('Authorization', auth)
+      .expect(200);
+    expect(limited.body).toHaveLength(1);
+  });
+
   it('should get an error when not logged in', () =>
     testRequest(app, 'groups/list_anonymous'));
 

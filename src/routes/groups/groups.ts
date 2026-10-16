@@ -14,6 +14,8 @@ import { RequestException } from '../../helpers/error/error';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import models from '../../models';
 
+const defaultLimit = 25;
+
 export default [
   {
     op: 'get',
@@ -55,9 +57,21 @@ export default [
           error: req.i18n('Query must be at least 2 characters long.'),
         });
       }
+
+      // Check limit
+      const limit =
+        query || req.query.limit
+          ? parseInt(String(req.query.limit || defaultLimit), 10)
+          : undefined;
+      if (typeof limit !== 'undefined' && (isNaN(limit) || limit < 1)) {
+        throw new RequestException(400, {
+          error: req.i18n('Limit must be a positive number.'),
+        });
+      }
+
       const groups = await Group.fetchAll(
-        query ? { id: ['like', `%${query}%`] } : {},
-        { order: 'title', related: '_roles' },
+        query ? { id: ['ilike', `%${query.replace(/[\\%_]/g, '\\$&')}%`] } : {},
+        { order: 'title', related: '_roles', limit },
         trx,
       );
       return {
