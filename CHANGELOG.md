@@ -310,6 +310,7 @@
 - Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
 - Support the categories:list parameter of @actions @martior
 - Refuse aliases which are relative or the path of existing content or of another alias @martior
+- Validate content on create and update like plone.restapi: field types, required fields, text lines and maximum lengths (the title is a text line of at most 1024 characters, upgrade 1012), and explicit ids; a missing `@type` is a 400 and an unknown `@type` a 403. Text is normalized to NFC. Run `pnpm seed:upgrade` @martior
 
 ### Internal
 

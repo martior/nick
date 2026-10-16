@@ -53,7 +53,11 @@ If the resource could not be created, for instance because the title was missing
 {% include_relative endpoints/examples/content/post_badrequest.res %}
 ```
 
-The response body can contain information about why the request failed.
+The response body can contain information about why the request failed. As in plone.restapi, the field errors are a JSON encoded list in the `message`, each with the `field`, the `message` and the `error` (`ValidationError`). The values of the fields are checked against the schema of the type: the JSON type, required fields (also on `PATCH`, where `null` is not allowed for them), no line breaks in text lines like the title and the `maxLength` of a field (1024 for the title). Text is normalized to the NFC unicode form. Fields which are not in the schema are ignored.
+
+A missing `@type` gives `400 Bad Request`, an unknown `@type` gives `403 Forbidden`.
+
+An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()# @`, not `.` or `..`, not starting with `_` or `aq_` and not ending with `__`. An id which is already used in the folder gives `400 Bad Request`; only ids generated from the title are made unique.
 
 ### Server managed fields
 
