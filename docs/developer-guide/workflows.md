@@ -169,7 +169,20 @@ Scripts, group maps and permissions without a Nick equivalent are not converted;
 
 ### Conformance
 
-`src/helpers/dcworkflow/conformance.test.ts` loads the standard Plone 6.2 workflows (`simple_publication_workflow`, `one_state_workflow`, `intranet_workflow`, `intranet_folder_workflow`, `folder_workflow`, `plone_workflow`) from their definition.xml and checks, for every state, transition and role (Anonymous, Member, Owner, Reader, Contributor, Editor, Reviewer, Site Administrator, Manager), that `GET @workflow` offers the transition exactly when Plone 6.2 does. The reference matrix in `fixtures/workflow_matrix_plone62.json` was captured from Plone over HTTP with the restapi-suite's `tests/test_workflow_matrix.py`. The comment workflows of plone.app.discussion are generated from DCWorkflow semantics; in their states which acquire `View` from the commented item Nick differs, because it acquires from the global role permissions.
+`src/helpers/dcworkflow/conformance.test.ts` loads the standard Plone 6.2 workflows (`simple_publication_workflow`, `one_state_workflow`, `intranet_workflow`, `intranet_folder_workflow`, `folder_workflow`, `plone_workflow`) from their definition.xml and checks, for every state, transition and role (Anonymous, Member, Owner, Reader, Contributor, Editor, Reviewer, Site Administrator, Manager), that `GET @workflow` offers the transition exactly when Plone 6.2 does. The reference matrix in `src/helpers/dcworkflow/fixtures/workflow_matrix_plone62.json` holds only the answers (which role is offered which transition and can view the item in each state); it was captured from Plone over HTTP with the restapi-suite's `tests/test_workflow_matrix.py`. The comment workflows of plone.app.discussion are generated from DCWorkflow semantics; in their states which acquire `View` from the commented item Nick differs, because it acquires from the global role permissions.
+
+The definition.xml files belong to Products.CMFPlone and plone.app.discussion, which are GPL-2.0 licensed, so they are not part of Nick. Without them the test is skipped. To run it, clone both packages outside the Nick checkout and set `PLONE_WORKFLOWS_DIR` to their workflows directories, separated by `:`:
+
+```sh
+git clone --depth 1 https://github.com/plone/Products.CMFPlone.git /tmp/Products.CMFPlone
+git clone --depth 1 https://github.com/plone/plone.app.discussion.git /tmp/plone.app.discussion
+PLONE_WORKFLOWS_DIR=/tmp/Products.CMFPlone/src/Products/CMFPlone/profiles/default/workflows:/tmp/plone.app.discussion/src/plone/app/discussion/profiles/default/workflows \
+  pnpm test src/helpers/dcworkflow/conformance.test.ts
+```
+
+A workflow whose definition isn't found in these directories is skipped with a note. The matrix was captured with the 6.2 branch of Products.CMFPlone (3d13c6c) and plone.app.discussion (1365af4).
+
+The loader's own tests (`dcworkflow.test.ts`, the workflow seed and the `@worklists` tests) use workflows written for Nick in `src/helpers/dcworkflow/fixtures/workflows`.
 
 ## Permission models
 
