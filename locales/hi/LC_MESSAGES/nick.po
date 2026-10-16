@@ -135,7 +135,8 @@ msgid "Adds title and description fields."
 msgstr "शीर्षक और विवरण फ़ील्ड जोड़ता है।"
 
 #. Default: "Administrator"
-#: src/profiles/core/roles.json:64
+#: src/profiles/core/roles.json:70
+#: src/profiles/core/upgrades/1019/roles.json:11
 #: src/profiles/core/upgrades/1013/roles.json:20
 #: src/profiles/core/upgrades/1012/roles.json:26
 #: src/profiles/core/upgrades/1010/roles.json:16
@@ -2261,6 +2262,13 @@ msgctxt "Profiles|Core|Permissions"
 msgid "Review"
 msgstr "समीक्षा"
 
+#. Default: "Review Comments"
+#: src/profiles/core/permissions.json:94
+#: src/profiles/core/upgrades/1019/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Review Comments"
+msgstr ""
+
 #. Default: "Review state"
 #: src/profiles/core/catalog.json:495
 msgctxt "Profiles|Core|Catalog"
@@ -2269,6 +2277,7 @@ msgstr "समीक्षा स्थिति"
 
 #. Default: "Reviewer"
 #: src/profiles/core/roles.json:59
+#: src/profiles/core/upgrades/1019/roles.json:6
 #: src/profiles/core/upgrades/1012/roles.json:21
 #: src/profiles/core/upgrades/1009/roles.json:16
 #: src/profiles/core/upgrades/1002/roles.json:21
