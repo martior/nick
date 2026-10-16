@@ -241,6 +241,7 @@
 - Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
 - Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
 - Treat the token of a deleted user as anonymous instead of failing with a server error @martior
+- Set the password of a user on PATCH @users and apply the password policy @martior
 
 ### Internal
 

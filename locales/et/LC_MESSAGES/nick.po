@@ -1531,6 +1531,7 @@ msgstr "Parooli lähtestamise taotlus"
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:50
 #: src/routes/users/users.ts:208
+#: src/routes/users/users.ts:335
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -2096,7 +2097,7 @@ msgid "System group"
 msgstr "Süsteemigrupp"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:370
+#: src/routes/users/users.ts:383
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Süsteemikasutajad"
@@ -2754,7 +2755,7 @@ msgid "You can’t delete system groups."
 msgstr "Süsteemigruppe ei saa kustutada."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:369
+#: src/routes/users/users.ts:382
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Süsteemikasutajaid ei saa kustutada."

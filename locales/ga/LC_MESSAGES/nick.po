@@ -1531,6 +1531,7 @@ msgstr "Iarratas ar athshocrú pasfhocail"
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:50
 #: src/routes/users/users.ts:208
+#: src/routes/users/users.ts:335
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -2096,7 +2097,7 @@ msgid "System group"
 msgstr "Grúpa córais"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:370
+#: src/routes/users/users.ts:383
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Úsáideoirí córais"
@@ -2754,7 +2755,7 @@ msgid "You can’t delete system groups."
 msgstr "Ní féidir leat grúpaí córais a scriosadh."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:369
+#: src/routes/users/users.ts:382
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Ní féidir leat úsáideoirí córais a scriosadh."

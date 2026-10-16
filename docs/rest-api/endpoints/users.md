@@ -159,6 +159,24 @@ A successful response to a `PATCH` request will be indicated by a `204 No Conten
 {% include_relative examples/users/patch.res %}
 ```
 
+A user with the `Manage Users` permission can also set the password of a user:
+
+```http
+{% include_relative examples/users/patch_password.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/users/patch_password.ts %}
+```
+
+The password must be at least 8 characters long. A shorter password is refused with a `400 Bad Request`:
+
+```http
+{% include_relative examples/users/patch_password_short.res %}
+```
+
 ## Delete User
 
 To delete a user send a `DELETE` request to the `/@users` endpoint and append the user id of the user you want to delete, e.g. to delete the user with the id johndoe:
