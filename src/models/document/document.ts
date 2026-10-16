@@ -769,26 +769,9 @@ export class Document extends Model {
     const self: InstanceType<typeof Document> = this;
     const User = models.get('User');
 
-    // Fetch type and workflow
-    if (!self._type) {
-      await self.fetchRelated('_type', trx);
-    }
-    if (!self._type._workflow) {
-      await self._type.fetchRelated('_workflow', trx);
-    }
-    const workflow = self._type._workflow.json;
-
-    // The creation is the first entry, like the history of plone.restapi;
-    // migrated content may have it already as an entry without an action
-    const history: any[] = [...self.workflow_history];
-    if (history.length === 0 || history[0].action) {
-      history.unshift({
-        time: self.created,
-        actor: self.owner,
-        review_state: workflow.initial_state,
-        state_title: workflow.states?.[workflow.initial_state || '']?.title,
-      });
-    }
+    // The entry of the creation has no action, it is shown as "Create"
+    // like in plone.restapi
+    const history: any[] = self.workflow_history;
 
     return await Promise.all(
       history.map(async (item: any) => {
@@ -797,12 +780,12 @@ export class Document extends Model {
           : undefined;
         return {
           ...item,
-          ...(item.action
-            ? {}
-            : {
+          ...(!item.action && (!item.type || item.type === 'workflow')
+            ? {
                 action: 'Create',
                 transition_title: 'Create',
-              }),
+              }
+            : {}),
           ...(item.state_title
             ? { state_title: req.i18n(item.state_title) }
             : {}),

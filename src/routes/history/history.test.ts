@@ -157,7 +157,15 @@ describe('History', () => {
       [1, 'Changed title'],
       [0, 'Initial version'],
     ]);
-    const create = history.at(-1);
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'created', title: 'Created' })
+      .expect(201);
+    const create = (await get('/news/created/@history').expect(200)).body.at(
+      -1,
+    );
     expect([create.type, create.action, create.transition_title]).toStrictEqual(
       ['workflow', 'Create', 'Create'],
     );

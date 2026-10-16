@@ -137,7 +137,9 @@ describe('Content', () => {
       {},
       global.txn!,
     );
-    expect(document.workflow_history).toEqual([]);
+    expect(
+      document.workflow_history.map((item: any) => [item.action, item.actor]),
+    ).toEqual([[null, 'admin']]);
   });
 
   it('should only allow site managers to set the uuid', async () => {

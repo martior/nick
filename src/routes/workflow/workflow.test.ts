@@ -179,10 +179,7 @@ describe('Workflow', () => {
       .expect(200);
     expect(
       workflow.body.history.map((item: any) => [item.action, item.comments]),
-    ).toStrictEqual([
-      [null, ''],
-      ['publish', 'Published with dates'],
-    ]);
+    ).toStrictEqual([['publish', 'Published with dates']]);
 
     // Republishing keeps the effective date
     await transition('/news/dated', 'retract').expect(200);

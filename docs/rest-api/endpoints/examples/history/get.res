@@ -48,20 +48,5 @@ Content-Type: application/json
     "transition_title": "Edited",
     "type": "versioning",
     "version": 0
-  },
-  {
-    "time": "2022-04-02T20:22:00.000Z",
-    "actor": {
-      "@id": "http://localhost:8080/@users/admin",
-      "fullname": "Admin",
-      "id": "admin",
-      "username": "admin"
-    },
-    "review_state": "private",
-    "state_title": "Private",
-    "action": "Create",
-    "transition_title": "Create",
-    "comments": "",
-    "type": "workflow"
   }
 ]

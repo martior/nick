@@ -5,14 +5,6 @@ Content-Type: application/json
   "@id": "http://localhost:8080/news/@workflow",
   "history": [
     {
-      "action": null,
-      "actor": "admin",
-      "comments": "",
-      "review_state": "private",
-      "time": "2022-04-02T20:22:00.000Z",
-      "title": "Private"
-    },
-    {
       "action": "publish",
       "actor": "admin",
       "comments": "",
