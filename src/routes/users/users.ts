@@ -15,6 +15,7 @@ import jwt from 'jsonwebtoken';
 
 // Internal imports
 import config from '../../helpers/config/config';
+import { getControlpanelSettings } from '../../helpers/controlpanels/controlpanels';
 import events from '../../events';
 import { RequestException } from '../../helpers/error/error';
 import {
@@ -250,13 +251,22 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const User = models.get('User');
 
-      // Check permissions
+      // Check permissions; others than user managers can register
+      // themselves if self-registration is enabled
       const manageUsers = req.permissions.includes('Manage Users');
-      if (!config.settings.userRegistration && !manageUsers) {
+      const security = manageUsers
+        ? {}
+        : await getControlpanelSettings('security', trx);
+      if (
+        !manageUsers &&
+        !config.settings.userRegistration &&
+        !security.enable_self_reg
+      ) {
         throw new RequestException(401, {
           message: req.i18n('You don’t have permissions to add a user.'),
         });
       }
+      const choosePassword = manageUsers || !!security.enable_user_pwd_choice;
 
       // Check email
       if (
@@ -318,7 +328,7 @@ export default [
             fullname: req.body.fullname,
             email: req.body.email,
             json,
-            password: manageUsers ? password : '',
+            password: choosePassword ? password : '',
             _roles: manageUsers ? req.body.roles || [] : [],
             _groups: manageUsers ? req.body.groups || [] : [],
           },
