@@ -159,11 +159,11 @@ A worklist lists content waiting for a user, like a DCWorkflow worklist. The RES
 
 ```json
 "worklists": {
-  "reviewer_queue": {
-    "description": "Reviewer tasks",
-    "match": { "review_state": ["pending"] },
+  "desk_inbox": {
+    "description": "Stories for the desk",
+    "match": { "review_state": ["in_review"] },
     "guard": { "permissions": ["Review"] },
-    "action": { "name": "Pending (%(count)d)", "url": "%(portal_url)s/search?review_state=pending", "category": "global" }
+    "action": { "name": "Desk (%(count)d)", "url": "%(portal_url)s/search?review_state=in_review", "category": "global" }
   }
 }
 ```
