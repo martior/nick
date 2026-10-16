@@ -1166,8 +1166,8 @@ msgid "Internal server error"
 msgstr "ಆಂತರಿಕ ಸರ್ವರ್ ದೋಷ"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:87
-#: src/routes/authentication/authentication.ts:101
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "ಅಮಾನ್ಯ ರುಜುವಾತುಗಳು"
@@ -1180,7 +1180,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:136
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "ಅಮಾನ್ಯ ಸೆಷನ್"
@@ -1347,7 +1347,7 @@ msgid "Login"
 msgstr "ಲಾಗಿನ್"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:66
+#: src/routes/authentication/authentication.ts:67
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "ಲಾಗಿನ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಬಾಡಿಯಲ್ಲಿ ಒದಗಿಸಬೇಕು."
@@ -1445,7 +1445,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:65
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "ರುಜುವಾತುಗಳು ಕಾಣೆಯಾಗಿವೆ"
@@ -2818,7 +2818,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "ಬಳಕೆದಾರ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ ಅಥವಾ ಅಮಾನ್ಯ ರುಜುವಾತುಗಳು."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:137
+#: src/routes/authentication/authentication.ts:138
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "ಬಳಕೆದಾರ ಲಾಗಿನ್ ಆಗಿಲ್ಲ."
@@ -3007,8 +3007,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:88
-#: src/routes/authentication/authentication.ts:102
+#: src/routes/authentication/authentication.ts:89
+#: src/routes/authentication/authentication.ts:103
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "ತಪ್ಪಾದ ಲಾಗಿನ್ ಮತ್ತು/ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್."

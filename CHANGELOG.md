@@ -258,6 +258,7 @@
 - Refuse an invalid email address when creating a user @martior
 - Return the Location header when creating a user or group @martior
 - Lock the user while storing or removing a token, so concurrent logins of one user no longer invalidate each other's tokens @martior
+- Support the categories:list parameter of @actions @martior
 
 ### Internal
 

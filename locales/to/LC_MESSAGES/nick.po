@@ -1166,8 +1166,8 @@ msgid "Internal server error"
 msgstr "Hala 'i loto 'i he seva"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:87
-#: src/routes/authentication/authentication.ts:101
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Fakamoʻoni ta'etotonu"
@@ -1180,7 +1180,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:136
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Taimi ta'etotonu"
@@ -1347,7 +1347,7 @@ msgid "Login"
 msgstr "Login"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:66
+#: src/routes/authentication/authentication.ts:67
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "Kuo pau ke 'omai 'a e hingoa hū mo e lea fufuu 'i he sino."
@@ -1445,7 +1445,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:65
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "'Oku 'ikai 'i ai ha fakamoʻoni"
@@ -2818,7 +2818,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "'Oku 'ikai 'i ai 'a e tokotaha ngāue'aki pe ko e fakamoʻoni ta'etotonu."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:137
+#: src/routes/authentication/authentication.ts:138
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "'Oku 'ikai hū mai 'a e tokotaha ngāue'aki."
@@ -3007,8 +3007,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:88
-#: src/routes/authentication/authentication.ts:102
+#: src/routes/authentication/authentication.ts:89
+#: src/routes/authentication/authentication.ts:103
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Ko e hingoa hū mo/pe lea fufuu hala."

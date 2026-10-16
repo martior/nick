@@ -1166,8 +1166,8 @@ msgid "Internal server error"
 msgstr "Intern tenarfeil"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:87
-#: src/routes/authentication/authentication.ts:101
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Ugyldige innloggingsopplysningar"
@@ -1180,7 +1180,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:136
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Ugyldig økt"
@@ -1347,7 +1347,7 @@ msgid "Login"
 msgstr "Logg inn"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:66
+#: src/routes/authentication/authentication.ts:67
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "Brukarnamn og passord må oppgjevast i meldingsteksten."
@@ -1445,7 +1445,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:65
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Manglar innloggingsopplysningar"
@@ -2818,7 +2818,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "Brukaren finst ikkje eller ugyldige innloggingsopplysningar."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:137
+#: src/routes/authentication/authentication.ts:138
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "Brukaren er ikkje innlogga."
@@ -3007,8 +3007,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:88
-#: src/routes/authentication/authentication.ts:102
+#: src/routes/authentication/authentication.ts:89
+#: src/routes/authentication/authentication.ts:103
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Feil brukarnamn og/eller passord."

@@ -30,3 +30,19 @@ The server will respond with a 200 OK status code. The JSON response contains th
 ```http
 {% include_relative examples/actions/get_authenticated.res %}
 ```
+
+To get only some categories, pass them with the `categories:list` parameter (which can be repeated):
+
+```http
+{% include_relative examples/actions/get_categories.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/actions/get_categories.ts %}
+```
+
+```http
+{% include_relative examples/actions/get_categories.res %}
+```
