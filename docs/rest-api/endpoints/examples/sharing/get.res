@@ -30,7 +30,8 @@ Content-Type: application/json
         "Reader": false,
         "Reviewer": false
       },
-      "type": "group"
+      "type": "group",
+      "disabled": false
     }
   ],
   "inherit": true

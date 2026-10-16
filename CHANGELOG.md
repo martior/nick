@@ -299,6 +299,7 @@
 - Set the `effective` and `expires` dates sent with a workflow transition (also on children with `include_children`), refuse invalid dates with a 400, set the effective date when content is published the first time, and answer a POST to `@workflow` without a transition with a 400 instead of a 404 @martior
 - Store the comment of a workflow transition and return the workflow history in `@workflow` (it was always empty) @martior
 - Shape `@history` like plone.restapi: list the creation as a `Create` entry, give versions without a change note `null` comments, say 'revision' in the revert comment, add `version` to content (`current`) and to old versions, and answer an unknown version with a 404 @martior
+- Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
 
 ### Internal
 

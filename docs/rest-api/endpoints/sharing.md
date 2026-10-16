@@ -29,7 +29,7 @@ The `available_roles` property contains the list of roles that can be managed vi
 
 ## Searching for principles
 
-The `entries` list the users and groups with a local role on the object or one of the parents it inherits from. Users and/or groups without a sharing entry can be found by id, full name or group title by appending the argument `search` to the query string. ie `?search=admin`. Global roles are marked with the string `global`. Inherited roles are marked with the string `acquired`. Like in Plone, the group `AuthenticatedUsers` ("Logged-in users") is always listed: every authenticated user is a member of it, so a local role given to it applies to all logged-in users.
+The `entries` list the users and groups with a local role on the object or one of the parents it inherits from. Users and/or groups without a sharing entry can be found by id, full name or group title by appending the argument `search` to the query string. ie `?search=admin`. Global roles are marked with the string `global`. Inherited roles are marked with the string `acquired`. Like in Plone, the group `AuthenticatedUsers` ("Logged-in users") is always listed: every authenticated user is a member of it, so a local role given to it applies to all logged-in users. Each entry has a `disabled` flag, which is `true` for the entry of the current user: like in Plone, the sharing page shows it but doesn't let the user change it.
 
 ```http
 {% include_relative examples/sharing/get_search.req %}

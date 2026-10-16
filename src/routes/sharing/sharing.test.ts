@@ -196,6 +196,7 @@ describe('Sharing', () => {
         Reviewer: false,
       },
       type: 'group',
+      disabled: false,
     });
 
     await get('/news/members-only', jane).expect(403);
@@ -286,6 +287,7 @@ describe('Sharing', () => {
         .expect(200);
 
     const entries = (await get('/news')).body.entries;
+    expect(entries.map((entry: any) => entry.disabled)).toEqual([false, false]);
     expect(entries.map((entry: any) => entry.id)).toEqual([
       'AuthenticatedUsers',
       'jane',
@@ -301,6 +303,7 @@ describe('Sharing', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
+    expect(search.body.entries[0].disabled).toBe(true);
     expect(search.body.entries.map((entry: any) => entry.id)).toEqual([
       'admin',
       'Administrators',
