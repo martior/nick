@@ -13,6 +13,7 @@
 - The items of a folder are batched like in plone.restapi (`b_start`, `b_size`, default 25 items) with `items_total` and `batching`; clients that expect all children in `items` have to page or pass a larger `b_size` @martior
 - A @sharing entry is the complete set of the principal's local roles, like in Plone: roles not named in the entry are revoked. Clients that sent only the changed roles must send all roles @martior
 - The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1013) @martior
+- A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
 
 ### Feature
 
