@@ -251,6 +251,17 @@ describe('Content', () => {
     await patch({ description: null }).expect(204);
   });
 
+  it('should allow ids and titles longer than 255 characters', async () => {
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'a'.repeat(300), title: 'y'.repeat(1024) })
+      .expect(201);
+    expect(res.body.id).toBe('a'.repeat(300));
+    expect(res.body.title).toBe('y'.repeat(1024));
+  });
+
   it('should normalize text to the NFC form', async () => {
     const res = await request(app)
       .post('/news')

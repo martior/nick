@@ -28,5 +28,13 @@ describe('id_from_title', () => {
       id_from_title.setId.call(doc);
       expect(doc.id).toBe('my-title-test');
     });
+
+    it('cuts long ids at a dash', () => {
+      const doc = { id: '', json: { title: 'Lorem ipsum '.repeat(100) } };
+      id_from_title.setId.call(doc);
+      expect(doc.id.length).toBeLessThanOrEqual(255);
+      expect(doc.id.startsWith('lorem-ipsum-lorem')).toBe(true);
+      expect(doc.id.endsWith('-')).toBe(false);
+    });
   });
 });
