@@ -210,4 +210,22 @@ describe('Jobs', () => {
       .update({ status: 'aborted' });
     expect(await jobs.heartbeat(first, global.txn!)).toBe(false);
   });
+
+  it('should not retry a job that fails after it was aborted', async () => {
+    await insertJob(first);
+    const job = await jobs.claim(global.txn!);
+    await jobs.abort(first, global.txn!);
+
+    // The aborted job's query was cancelled, so it fails
+    expect(
+      await jobs.fail(
+        job,
+        'canceling statement due to user request',
+        global.txn!,
+      ),
+    ).toBe('lost');
+    const row = await getJob(first);
+    expect(row.status).toBe('aborted');
+    expect(row.result).toEqual({});
+  });
 });

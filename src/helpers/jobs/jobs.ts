@@ -303,7 +303,7 @@ class Jobs {
     const retry = job.attempts < job.max_attempts;
     const delay = Math.min(maxBackoff, backoff * 2 ** (job.attempts - 1));
     const status = retry ? 'created' : 'failed';
-    await db('job')
+    const updated = await db('job')
       .where({ uuid: job.uuid, locked_by: this.id, status: 'started' })
       .update({
         status,
@@ -314,6 +314,13 @@ class Jobs {
           : null,
         result: { error, attempts: job.attempts },
       });
+
+    // The job was aborted or another worker took it over
+    if (updated === 0) {
+      log.warn(`Job ${job.uuid} (${job.title}) stopped: ${error}`);
+      return 'lost';
+    }
+
     log.error(
       `Job ${job.uuid} (${job.title}) failed in attempt ${job.attempts}: ${error}${
         retry ? `, retrying in ${delay}s` : ''
@@ -375,6 +382,7 @@ class Jobs {
       Math.max(1, config.settings.jobs.lease / 3) * 1000,
     );
     heartbeat.unref?.();
+    let cancel: (() => void) | undefined;
 
     try {
       // Run the job in a child process
@@ -389,6 +397,15 @@ class Jobs {
 
       // Run the job in its own transaction, together with its completion
       const trx = await db.transaction();
+
+      // Cancel the running query of the job when it is aborted
+      const [{ pid }] = (await trx.raw('select pg_backend_pid() as pid')).rows;
+      cancel = () =>
+        db
+          .raw('select pg_cancel_backend(?)', [pid])
+          .catch(() => undefined) as any;
+      running.controller.signal.addEventListener('abort', cancel);
+
       try {
         const result = await this.execute(job, trx, running);
         if (running.controller.signal.aborted) {
@@ -410,6 +427,9 @@ class Jobs {
     } catch (err) {
       return await this.fail(job, errorMessage(err), db);
     } finally {
+      if (cancel) {
+        running.controller.signal.removeEventListener('abort', cancel);
+      }
       clearInterval(heartbeat);
       delete this.running[job.uuid];
     }
