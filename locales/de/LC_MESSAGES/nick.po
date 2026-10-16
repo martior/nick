@@ -975,6 +975,18 @@ msgctxt "Profiles|Core|Types|Feed"
 msgid "Feed"
 msgstr ""
 
+#. Default: "Field {id} already exists."
+#: src/routes/types/types.ts:226
+msgctxt "Routes|Types"
+msgid "Field {id} already exists."
+msgstr ""
+
+#. Default: "Fieldset {id} already exists."
+#: src/routes/types/types.ts:201
+msgctxt "Routes|Types"
+msgid "Fieldset {id} already exists."
+msgstr ""
+
 #. Default: "File"
 #: src/profiles/core/types/file.json:3
 #: src/profiles/core/types/file.json:19
@@ -1175,6 +1187,12 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:582
 msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
+msgstr ""
+
+#. Default: "Invalid parameter factory."
+#: src/routes/types/types.ts:221
+msgctxt "Routes|Types"
+msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
@@ -1407,6 +1425,12 @@ msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Fehlende Anmeldedaten"
 
+#. Default: "Missing parameter title."
+#: src/routes/types/types.ts:188
+msgctxt "Routes|Types"
+msgid "Missing parameter title."
+msgstr ""
+
 #. Default: "Modification date"
 #: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
@@ -1552,7 +1576,10 @@ msgstr ""
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:154
-#: src/routes/types/types.ts:45
+#: src/routes/types/types.ts:59
+#: src/routes/types/types.ts:166
+#: src/routes/types/types.ts:324
+#: src/routes/types/types.ts:371
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
 #: src/routes/recyclebin/recyclebin.ts:35
@@ -1677,7 +1704,7 @@ msgid "Pattern must be at least 1 character long."
 msgstr ""
 
 #. Default: "Pending review"
-#: src/profiles/core/workflows.json:23
+#: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Zur Redaktion eingereicht"
@@ -1804,13 +1831,13 @@ msgid "Provided block id is not valid."
 msgstr ""
 
 #. Default: "Publish"
-#: src/profiles/core/workflows.json:49
+#: src/profiles/core/workflows.json:52
 msgctxt "Profiles|Core|Workflows"
 msgid "Publish"
 msgstr "Veröffentlichen"
 
 #. Default: "Published"
-#: src/profiles/core/workflows.json:35
+#: src/profiles/core/workflows.json:37
 msgctxt "Profiles|Core|Workflows"
 msgid "Published"
 msgstr "Veröffentlicht"
@@ -1886,14 +1913,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:309
+#: src/routes/sharing/sharing.ts:313
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:310
+#: src/routes/sharing/sharing.ts:314
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -1960,7 +1987,7 @@ msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Retract"
-#: src/profiles/core/workflows.json:59
+#: src/profiles/core/workflows.json:62
 msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Zurückziehen"
@@ -2079,7 +2106,7 @@ msgid "Send an email on the triggering object"
 msgstr ""
 
 #. Default: "Send back"
-#: src/profiles/core/workflows.json:54
+#: src/profiles/core/workflows.json:57
 msgctxt "Profiles|Core|Workflows"
 msgid "Send back"
 msgstr "Zurückweisen"
@@ -2104,7 +2131,7 @@ msgid "Sharing"
 msgstr "Freigabe"
 
 #. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
-#: src/routes/sharing/sharing.ts:231
+#: src/routes/sharing/sharing.ts:235
 msgctxt "Routes|Sharing"
 msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
 msgstr ""
@@ -2219,7 +2246,7 @@ msgid "Submit"
 msgstr "Einreichen"
 
 #. Default: "Submit for publication"
-#: src/profiles/core/workflows.json:64
+#: src/profiles/core/workflows.json:67
 msgctxt "Profiles|Core|Workflows"
 msgid "Submit for publication"
 msgstr "Zur Veröffentlichung einreichen"
@@ -2861,13 +2888,13 @@ msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
-#: src/profiles/core/workflows.json:36
+#: src/profiles/core/workflows.json:38
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Sichtbar für alle, vom Besitzer zu bearbeiten"
 
 #. Default: "Waiting to be reviewed, not editable by the owner."
-#: src/profiles/core/workflows.json:24
+#: src/profiles/core/workflows.json:25
 msgctxt "Profiles|Core|Workflows"
 msgid "Waiting to be reviewed, not editable by the owner."
 msgstr "Wartet auf Reviewing, nicht vom Besitzer zu bearbeiten"
@@ -2959,6 +2986,7 @@ msgid "You are not authorization to access this resource."
 msgstr "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen."
 
 #. Default: "You are not authorized to access this resource."
+#: src/routes/types/types.ts:43
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -2968,10 +2996,10 @@ msgstr "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen."
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
 #: src/routes/content/content.ts:148
-#: src/helpers/handler/handler.ts:121
-msgctxt "Routes|Recyclebin"
+#: src/helpers/handler/handler.ts:122
+msgctxt "Routes|Types"
 msgid "You are not authorized to access this resource."
-msgstr "Du bist nicht berechtigt, auf diese Ressource zuzugreifen."
+msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
 #: src/routes/content/content.ts:820

@@ -165,6 +165,7 @@
 - Export site title, robots.txt and language settings @martior
 - Convert querystring operations of collections and listing blocks in export @martior
 - Add the `AuthenticatedUsers` group of all authenticated users, like Plone's: it is always listed in @sharing, and local roles given to it apply to every logged-in user, also in search @martior
+- Add field and fieldset lookup (`@types/<type>/<name>`) and through-the-web schema changes to @types: POST adds a field or a fieldset, PATCH changes it and DELETE removes it, like plone.restapi @martior
 
 ### Bugfix
 
@@ -302,6 +303,7 @@
 - Store the comment of a workflow transition and return the workflow history in `@workflow` (it was always empty) @martior
 - Shape `@history` like plone.restapi: list the creation as a `Create` entry, give versions without a change note `null` comments, say 'revision' in the revert comment, add `version` to content (`current`) and to old versions, and answer an unknown version with a 404 @martior
 - Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
+- @types is only available to authenticated users, list items have `id` and `immediately_addable`, and the schema has `type: object` and the content type `application/json+schema`, like plone.restapi @martior
 
 ### Internal
 
