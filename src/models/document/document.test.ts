@@ -65,6 +65,29 @@ describe('Document', () => {
     });
   });
 
+  describe('getAllowed', () => {
+    it('does not depend on the order of the local roles', () => {
+      const Document = models.get('Document');
+      const roles = [
+        { principal: 'user:john', role: 'Editor' },
+        { principal: 'group:staff', role: 'Reader' },
+        { principal: 'user:anna', role: 'Reader' },
+        { principal: 'user:carl', role: 'Owner' },
+      ];
+      const allowed = Document.getAllowed(['Reader', 'Editor'], roles, 'jane');
+      expect(allowed).toEqual([
+        'Reader',
+        'Editor',
+        'group:staff',
+        'user:anna',
+        'user:john',
+      ]);
+      expect(
+        Document.getAllowed(['Reader', 'Editor'], roles.reverse(), 'jane'),
+      ).toEqual(allowed);
+    });
+  });
+
   describe('fetchAllRestricted', () => {
     it('does not match a user or group named like a role', async () => {
       const Catalog = models.get('Catalog');

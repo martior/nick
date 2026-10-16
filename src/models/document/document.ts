@@ -1441,9 +1441,12 @@ export class Document extends Model {
   ): string[] {
     return uniq([
       ...viewRoles,
+      // Sorted, so the result doesn't depend on the order in which the
+      // local roles were collected (per document, by subtree or in batches)
       ...localRoles
         .filter((localRole) => viewRoles.includes(localRole.role))
-        .map((localRole) => localRole.principal),
+        .map((localRole) => localRole.principal)
+        .sort(),
       ...(owner && viewRoles.includes('Owner') ? [userToken(owner)] : []),
     ]);
   }
@@ -1629,6 +1632,175 @@ export class Document extends Model {
   }
 
   /**
+   * Reindex the catalog of all documents, or of the documents of some
+   * types, in batches. Types, workflows, indexes and local roles are
+   * fetched once, the permissions are computed from the paths and every
+   * batch is written with one statement in its own transaction, so other
+   * changes don't wait for the whole reindex.
+   * @method reindexCatalog
+   * @static
+   * @param {Object} options Types (default all), batch size and an abort
+   * signal.
+   * @return {Promise<number>} Number of reindexed documents.
+   */
+  static async reindexCatalog(
+    options: {
+      types?: string[];
+      batchSize?: number;
+      signal?: AbortSignal;
+    } = {},
+  ): Promise<number> {
+    const Index = models.get('Index');
+    const Type = models.get('Type');
+    const knex = Document.knex();
+    const batchSize = options.batchSize || 500;
+
+    // Fetch what is the same for all documents
+    const indexes = (await Index.fetchAll({}, {}, undefined)).models;
+    const types: Record<string, any> = Object.fromEntries(
+      (await Type.fetchAll({}, { related: '_workflow' })).map((type: any) => [
+        type.id,
+        type,
+      ]),
+    );
+    const globalRoles = await Document.fetchGlobalViewRoles();
+    const columns: Record<string, string> = Object.fromEntries(
+      (
+        await knex.raw(
+          `SELECT attname, format_type(atttypid, atttypmod) AS type FROM pg_attribute
+            WHERE attrelid = 'catalog'::regclass AND attnum > 0 AND NOT attisdropped`,
+        )
+      ).rows.map((row: any) => [row.attname, row.type]),
+    );
+
+    // Local roles and blocked inheritance by path, the other documents
+    // have no local roles and inherit
+    const local = new Map<
+      string,
+      { inherit: boolean; roles: { principal: string; role: string }[] }
+    >();
+    (
+      await knex.raw(
+        `SELECT d.path, d.inherit_roles, r."user", r."group", r.role FROM document d
+          LEFT JOIN (
+            SELECT document, "user", NULL AS "group", role FROM user_role_document
+            UNION ALL
+            SELECT document, NULL, "group", role FROM group_role_document
+          ) r ON r.document = d.uuid
+          WHERE r.document IS NOT NULL OR NOT d.inherit_roles`,
+      )
+    ).rows.forEach((row: any) => {
+      const entry = local.get(row.path) || {
+        inherit: row.inherit_roles,
+        roles: [],
+      };
+      if (row.role) {
+        entry.roles.push({
+          principal: row.user ? userToken(row.user) : groupToken(row.group),
+          role: row.role,
+        });
+      }
+      local.set(row.path, entry);
+    });
+    const localRoles = (document: any) => {
+      let path = document.path;
+      let roles = local.get(path)?.roles || [];
+      let inherit = document.inherit_roles;
+      while (inherit && path !== '/') {
+        path = path.substring(0, path.lastIndexOf('/')) || '/';
+        const entry = local.get(path);
+        roles = [...roles, ...(entry?.roles || [])];
+        inherit = entry ? entry.inherit : true;
+      }
+      return roles;
+    };
+
+    // Reindex the documents in batches ordered by uuid
+    let count = 0;
+    let lastUuid: string | undefined;
+    for (;;) {
+      if (options.signal?.aborted) {
+        throw new Error('Reindex aborted');
+      }
+      const documents: any[] = await Document.query()
+        .modify((query: any) => {
+          if (options.types) {
+            query.whereIn('type', options.types);
+          }
+          if (lastUuid) {
+            query.where('uuid', '>', lastUuid);
+          }
+        })
+        .orderBy('uuid')
+        .limit(batchSize);
+      if (documents.length === 0) {
+        break;
+      }
+
+      // Get the catalog fields of the documents
+      const kinds: Record<string, { type: string; metadata: boolean }> = {};
+      const rows = await mapAsync(documents, async (document: any) => {
+        document._type = types[document.type];
+        const fields = await document.getIndexFields(undefined, {
+          indexes,
+          values: {
+            allowedUsersGroupsRoles: Document.getAllowed(
+              Document.getViewRoles(
+                document._type?._workflow?.json,
+                document.workflow_state,
+                globalRoles,
+              ),
+              localRoles(document),
+              document.owner,
+            ),
+          },
+        });
+        Object.keys(fields).forEach((name: string) => {
+          kinds[name] = fields[name];
+        });
+        return {
+          ...mapValues(fields, (field: any) =>
+            field.type === 'embed' ? JSON.stringify(field.value) : field.value,
+          ),
+          document: document.uuid,
+        };
+      });
+
+      // Write the batch with one statement
+      const names = Object.keys(kinds).filter((name) => columns[name]);
+      const value = (name: string) => {
+        if (kinds[name].type === 'text' && !kinds[name].metadata) {
+          return `to_tsvector('nick', v."${name}")`;
+        }
+        return kinds[name].type === 'embed'
+          ? `v."${name}"::${columns[name]}`
+          : `v."${name}"`;
+      };
+      const recordType = (name: string) =>
+        kinds[name].type === 'embed' ||
+        (kinds[name].type === 'text' && !kinds[name].metadata)
+          ? 'text'
+          : columns[name];
+      await knex.transaction(async (trx: Knex.Transaction) => {
+        await trx.raw(
+          `INSERT INTO catalog (document, ${names.map((name) => `"${name}"`).join(', ')})
+            SELECT v.document, ${names.map(value).join(', ')}
+            FROM jsonb_to_recordset(?::jsonb) AS v(document uuid, ${names
+              .map((name) => `"${name}" ${recordType(name)}`)
+              .join(', ')})
+            ON CONFLICT (document) DO UPDATE SET ${names
+              .map((name) => `"${name}" = EXCLUDED."${name}"`)
+              .join(', ')}`,
+          [JSON.stringify(rows)],
+        );
+      });
+      count += documents.length;
+      lastUuid = documents[documents.length - 1].uuid;
+    }
+    return count;
+  }
+
+  /**
    * List of documents that are referenced by this document
    * @method isReferencing
    * @param {Knex.Transaction} trx Transaction object.
@@ -1795,14 +1967,19 @@ export class Document extends Model {
   }
 
   /**
-   * Index object
-   * @method index
+   * Get the catalog fields of the document
+   * @method getIndexFields
    * @param {Knex.Transaction} trx Transaction object.
-   * @param {boolean} insert Insert or update.
+   * @param {Object} options Indexes to use instead of fetching them and
+   * values to use for some attributes instead of computing them.
+   * @returns {Promise<Object>} Type, metadata flag and value by column.
    */
-  async index(trx: Knex.Transaction, insert = true): Promise<void> {
+  async getIndexFields(
+    trx?: Knex.Transaction,
+    options: { indexes?: any[]; values?: Record<string, any> } = {},
+  ): Promise<Record<string, any>> {
     const self: InstanceType<typeof Document> = this;
-    let fields: any = {};
+    const fields: any = {};
 
     // If type not found fetch type
     if (!self._type) {
@@ -1822,14 +1999,17 @@ export class Document extends Model {
 
     // Fetch indexes
     const Index = models.get('Index');
-    const indexes: any = await Index.fetchAll({}, {}, trx);
+    const indexes: any[] =
+      options.indexes || (await Index.fetchAll({}, {}, trx)).models;
 
     // Loop indexes
-    await mapAsync((indexes as any).models, async (index: any) => {
+    await mapAsync(indexes, async (index: any) => {
       const name = index.metadata ? index.name : `_${index.name}`;
       if (index.attr in self) {
         fields[name] = { type: index.type, metadata: index.metadata };
-        if (isFunction((self as any)[index.attr])) {
+        if (options.values && index.attr in options.values) {
+          fields[name].value = options.values[index.attr];
+        } else if (isFunction((self as any)[index.attr])) {
           const value = (self as any)[index.attr](trx);
           fields[name].value = isPromise(value) ? await value : value;
         } else {
@@ -1850,11 +2030,22 @@ export class Document extends Model {
       }
     });
 
+    // Remove undefined
+    return omitBy(fields, (field: any) => isUndefined(field.value));
+  }
+
+  /**
+   * Index object
+   * @method index
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {boolean} insert Insert or update.
+   */
+  async index(trx: Knex.Transaction, insert = true): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const fields = await self.getIndexFields(trx);
+
     // Get knex
     const knex = Document.knex();
-
-    // Remove undefined
-    fields = omitBy(fields, (field: any) => isUndefined(field.value));
 
     // Create catalog entry
     if (insert) {
