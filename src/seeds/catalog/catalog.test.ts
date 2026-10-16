@@ -76,7 +76,7 @@ describe('catalog gin migration', () => {
   it('should use the gin index for keyword queries', async () => {
     await global.txn!.raw('SET LOCAL enable_seqscan = off');
     const plan = await global.txn!.raw(
-      `EXPLAIN SELECT * FROM catalog WHERE "_Subject" && ?::varchar[]`,
+      `EXPLAIN SELECT * FROM catalog WHERE "_Subject" && ?::text[]`,
       [['news']],
     );
     expect(JSON.stringify(plan.rows)).toContain('catalog__subject_index');
