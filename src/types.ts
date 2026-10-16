@@ -110,6 +110,7 @@ export interface WorkflowState {
   title: string;
   description: string;
   permissions: { [key: string]: WorkflowPermission };
+  acquire?: string[];
   transitions: string[];
 }
 
@@ -123,7 +124,12 @@ export interface WorkflowTransition {
   };
 }
 
+export type PermissionModel = 'additive' | 'acquire';
+
 export interface WorkflowType {
+  permission_model?: PermissionModel;
+  managed_permissions?: string[];
+  initial_state?: string;
   states: { [key: string]: WorkflowState };
   transitions: { [key: string]: WorkflowTransition };
 }
