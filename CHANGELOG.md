@@ -331,6 +331,7 @@
 - Order search results without `sort_on` by the primary key instead of the unindexed UID metadata column (the same order), so a batch of results no longer sorts every match, and collect more statistics for the full text and keyword catalog columns, so Postgres still uses the full text index for rare words. Run `pnpm migrate` @martior
 - Filter the viewable children of a folder in linear time instead of comparing every child with every catalog entry, which took seconds for folders with thousands of items @martior
 - Skip the catalog query for the children of content without children and reuse the already fetched type when fetching children, two queries less per request for most pages @martior
+- Fetch the user of a request with its roles and groups, and the types along the path with their workflows, with one joined query each instead of one query per relation @martior
 
 ### Internal
 
