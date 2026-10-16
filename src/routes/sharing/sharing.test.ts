@@ -230,6 +230,37 @@ describe('Sharing', () => {
     await post({ entries: [{ id: 'admin', type: 'user' }] }).expect(400);
   });
 
+  it('should refuse roles for unknown users and groups', async () => {
+    const post = (body: any) =>
+      request(app)
+        .post('/news/@sharing')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    for (const type of ['user', 'group']) {
+      await post({
+        inherit: false,
+        entries: [
+          { id: 'admin', type: 'user', roles: { Reader: true } },
+          { id: 'nobody', type, roles: { Reader: true } },
+        ],
+      }).expect(400);
+    }
+
+    // Nothing is changed
+    const res = await request(app)
+      .get('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(res.body.inherit).toBe(true);
+    const admin = res.body.entries.find((entry: any) => entry.id === 'admin');
+    expect(admin?.roles?.Reader ?? false).toBe(false);
+    expect(res.body.entries.some((entry: any) => entry.id === 'nobody')).toBe(
+      false,
+    );
+  });
+
   it('should list principals with local roles', async () => {
     const Document = models.get('Document');
     await createUser('jane');
