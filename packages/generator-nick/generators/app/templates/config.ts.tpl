@@ -25,7 +25,7 @@ export const config = {
     accessKeyId: 'my-access-key-id>',
     secretAccessKey: 'my-secret-access-key',
   },
-  localesDir: `${__dirname}/src/develop/nick/locales`,
+  localesDir: `${__dirname}/node_modules/@plone/nick/locales`,
   port: 8080,
   secret: 'secret',
   systemUsers: ['admin', 'anonymous'],
@@ -55,6 +55,9 @@ export const config = {
   frontendUrl: 'http://localhost:3000',
   prefix: '',
   userRegistration: true,
+  // Profiles to install, in order; dependencies declared in a profile's
+  // metadata.json are installed first. PROFILES (comma separated)
+  // overrides this list.
   profiles: [
     '@plone/nick:core',
     /* '@plone/nick:ai', */
@@ -79,8 +82,6 @@ export const config = {
     trustProxy: 1,
   },
   recyclebin: false,
-  routes: false,
-  tasks: false,
   cache: {
     enabled: false,
     anonymousOnly: true,

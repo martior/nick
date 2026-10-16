@@ -13,10 +13,9 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@plone/nick": ["develop/nick/src"]
-    },
-    "baseUrl": "src"
-  }
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
