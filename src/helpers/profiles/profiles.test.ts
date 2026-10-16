@@ -56,6 +56,7 @@ describe('Profiles', () => {
 
   it('should resolve packages', async () => {
     const core = resolvePackage('@plone/nick');
+    expect(core.config.migrations).toBe('src/migrations');
     expect(core.profilesDir.endsWith('/src/profiles')).toBe(true);
 
     expect(() => resolvePackage('@plone/does-not-exist')).toThrow(

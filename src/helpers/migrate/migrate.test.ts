@@ -12,7 +12,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // Internal imports
 import models from '../../models';
 import { Profile } from '../../models/profile/profile';
-import { upgradeProfiles } from './migrate';
+import { resolvePackage } from '../profiles/profiles';
+import type { PackageInfo } from '../profiles/profiles';
+import { migrationChains, migrationTable, upgradeProfiles } from './migrate';
 
 declare global {
   var failUpgradeStep: boolean;
@@ -84,5 +86,65 @@ describe('upgradeProfiles', () => {
 
   it('should skip profiles which are not installed', async () => {
     expect(await upgradeProfiles(global.txn!, [profilePath])).toEqual([]);
+  });
+});
+
+describe('migrationChains', () => {
+  const core = resolvePackage('@plone/nick');
+  const addon: PackageInfo = {
+    name: '@acme/nick-addon',
+    root: '/srv/acme',
+    version: '1.0.0',
+    config: { migrations: 'src/migrations', schema: 'acme' },
+    profilesDir: '/srv/acme/src/profiles',
+  };
+
+  it('should name the ledger of a package', () => {
+    expect(migrationTable('@plone/nick-example-addon')).toBe(
+      'knex_migrations_plone_nick_example_addon',
+    );
+    const long = migrationTable(`@acme/${'x'.repeat(80)}`);
+    expect(long.length).toBeLessThanOrEqual(50);
+    expect(long).not.toBe(migrationTable(`@acme/${'x'.repeat(81)}`));
+  });
+
+  it('should run core first, then the packages in their order', async () => {
+    const other: PackageInfo = {
+      ...addon,
+      name: 'my_project',
+      root: '/srv/project',
+      config: { migrations: 'migrations', migrationsTable: 'project_ledger' },
+    };
+    const chains = await migrationChains([core, addon, other]);
+    expect(chains.slice(1)).toEqual([
+      {
+        package: '@acme/nick-addon',
+        directory: ['/srv/acme/src/migrations'],
+        tableName: 'knex_migrations_acme_nick_addon',
+        schema: 'acme',
+      },
+      {
+        package: 'my_project',
+        directory: ['/srv/project/migrations'],
+        tableName: 'project_ledger',
+        schema: undefined,
+      },
+    ]);
+    expect(chains[0].package).toBe('@plone/nick');
+    expect(chains[0].tableName).toBe('knex_migrations');
+    expect(chains[0].directory[0].endsWith('/src/migrations')).toBe(true);
+
+    // Packages without migrations have no chain; core only when asked for
+    expect(
+      await migrationChains([{ ...addon, config: {} }, other]),
+    ).toMatchObject([{ package: 'my_project' }]);
+  });
+
+  it('should skip directories which are in the core chain already', async () => {
+    const chains = await migrationChains([
+      core,
+      { ...addon, root: core.root, config: { migrations: 'src/migrations' } },
+    ]);
+    expect(chains.map((chain) => chain.package)).toEqual(['@plone/nick']);
   });
 });
