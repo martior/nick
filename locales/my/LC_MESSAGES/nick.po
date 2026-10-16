@@ -2812,6 +2812,12 @@ msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
+#. Default: "You can not filter by title and token at the same time."
+#: src/routes/vocabularies/vocabularies.ts:77
+msgctxt "Routes|Vocabularies"
+msgid "You can not filter by title and token at the same time."
+msgstr ""
+
 #. Default: "You can only change your own password."
 #: src/routes/users/users.ts:84
 msgctxt "Routes|Users"

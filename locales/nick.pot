@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T01:00:28.429Z\n"
+"POT-Creation-Date: 2026-10-16T01:04:16.262Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -2807,6 +2807,12 @@ msgstr ""
 #: src/helpers/handler/handler.ts:120
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
+msgstr ""
+
+#. Default: "You can not filter by title and token at the same time."
+#: src/routes/vocabularies/vocabularies.ts:77
+msgctxt "Routes|Vocabularies"
+msgid "You can not filter by title and token at the same time."
 msgstr ""
 
 #. Default: "You can only change your own password."
