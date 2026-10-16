@@ -170,6 +170,8 @@
 - Add the `AuthenticatedUsers` group of all authenticated users, like Plone's: it is always listed in @sharing, and local roles given to it apply to every logged-in user, also in search @martior
 - Add field and fieldset lookup (`@types/<type>/<name>`) and through-the-web schema changes to @types: POST adds a field or a fieldset, PATCH changes it and DELETE removes it, like plone.restapi @martior
 - Run jobs from a Postgres queue: workers claim the oldest job with `FOR UPDATE SKIP LOCKED`, hold a lease renewed by a heartbeat (jobs of a crashed worker are retried), retry failed jobs with exponential backoff up to `jobs.maxAttempts` and support idempotency keys. Jobs run in the worker process by default (`jobs.isolation`) @martior
+- Add the `nick` command with `--modules=migrate,api,worker` (default: all) to run the API, the job worker and migrations in one process or split over several; `migrate` runs the knex migrations, installs new profiles and runs profile upgrades under an advisory lock and exits non-zero on errors @martior
+- Read the port from the `PORT` environment variable @martior
 
 ### Bugfix
 
@@ -334,6 +336,7 @@
 - Record failed jobs as `failed` instead of `completed`, add the result location to completed jobs and return 404 when aborting an unknown job @martior
 - Fix scheduled jobs reusing the committed request transaction after they were created, changed or deleted through the API @martior
 - Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
+- Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
 
 ### Internal
 
@@ -410,6 +413,7 @@
 - Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 - Fix the url of the update scheduled job example @martior
 - Add the jobs admin guide @martior
+- Add the deployment admin guide @martior
 
 ## 2.8.0 (2022-07-17)
 

@@ -37,6 +37,7 @@ const {
   JOBS_MAX_ATTEMPTS,
   JOBS_POLL_INTERVAL,
   JOBS_API_PATH,
+  PORT,
 } = process.env;
 
 let config: any = {};
@@ -80,7 +81,7 @@ class Config {
       },
       localesDir:
         LOCALES_DIR || config.localesDir || `${__dirname}/../../../locales`,
-      port: config.port || 8080,
+      port: parseInt(PORT || config.port || '8080'),
       secret: SECRET || config.secret || 'secret',
       systemUsers: config.systemUsers || ['admin', 'anonymous'],
       systemGroups: config.systemGroups || ['Owner'],
@@ -215,7 +216,7 @@ class Config {
         apiPath:
           JOBS_API_PATH ||
           config.jobs?.apiPath ||
-          `http://localhost:${config.port || 8080}`,
+          `http://localhost:${PORT || config.port || 8080}`,
       },
       userschema: config.userschema || userschema,
     };
