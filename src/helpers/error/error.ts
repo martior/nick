@@ -38,3 +38,15 @@ export class RequestException {
     this.message = message;
   }
 }
+
+/**
+ * Check if an error is a database deadlock or serialization failure, which
+ * can be solved by running the transaction again.
+ * @method isRetryableError
+ * @param {any} err The error.
+ * @returns {boolean} True if the transaction can be retried.
+ */
+export function isRetryableError(err: any): boolean {
+  const code = err?.code || err?.nativeError?.code;
+  return code === '40P01' || code === '40001';
+}

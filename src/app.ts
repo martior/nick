@@ -15,7 +15,7 @@ import helmet from 'helmet';
 // Internal imports
 import { applyCache } from './helpers/cache/cache';
 import config from './helpers/config/config';
-import { RequestException } from './helpers/error/error';
+import { isRetryableError, RequestException } from './helpers/error/error';
 import { getTokenFromRequest } from './helpers/auth/auth';
 import { callHandler } from './helpers/handler/handler';
 import { initI18n } from './helpers/i18n/i18n';
@@ -126,6 +126,9 @@ middleware.use(app);
 
 app.set('trust proxy', config.settings.rateLimit.trustProxy || 1);
 
+// Number of attempts of a request that hits a database deadlock
+const retryAttempts = 3;
+
 // Add routes
 routes.routes.map((route: Route) => {
   app[route.op](
@@ -133,113 +136,138 @@ routes.routes.map((route: Route) => {
     route.middleware ||
       ((_req: Request, _res: Response, next: NextFunction) => next()),
     async (req: any, res: Response): Promise<any> => {
-      // Start transaction
       const Document = models.get('Document');
-      const trx = await Document.startTransaction();
-      let requestId = '';
       req.apiPath = `${req.protocol}://${req.headers.host}`;
       req.token = getTokenFromRequest(req.headers);
       req.documentPath = req.params.path?.join('/') || '/';
 
-      try {
-        if (req.body?.stream === true) {
-          res.writeHead(200, {
-            'Transfer-Encoding': 'chunked',
-            'Access-Control-Allow-Origin': config.settings.cors.allowOrigin,
-          });
-          callHandler(req, trx, route, async (data: any) => {
-            res.write(data);
-            const result = JSON.parse(data);
-            if (result.done) {
-              res.end();
+      // Run the request, again if the transaction hit a deadlock
+      for (let attempt = 1; ; attempt++) {
+        // Start transaction
+        const trx = await Document.startTransaction();
+        let requestId = '';
 
-              // Try to commit the transaction
-              try {
-                await trx.commit();
-              } catch (_err) {
-                throw new RequestException(500, {
-                  message: req.i18n('Transaction error.'),
-                });
-              }
-            }
-          });
-        } else {
-          requestId = requests.register({ url: req.url });
-          let view = await callHandler(req, trx, route, () => {});
-
-          // Try to commit the transaction
-          try {
-            await trx.commit();
-          } catch (_err) {
-            throw new RequestException(500, {
-              message: req.i18n('Transaction error.'),
+        try {
+          if (req.body?.stream === true) {
+            res.writeHead(200, {
+              'Transfer-Encoding': 'chunked',
+              'Access-Control-Allow-Origin': config.settings.cors.allowOrigin,
             });
+            callHandler(req, trx, route, async (data: any) => {
+              res.write(data);
+              const result = JSON.parse(data);
+              if (result.done) {
+                res.end();
+
+                // Try to commit the transaction
+                try {
+                  await trx.commit();
+                } catch (_err) {
+                  throw new RequestException(500, {
+                    message: req.i18n('Transaction error.'),
+                  });
+                }
+              }
+            });
+          } else {
+            requestId = requests.register({ url: req.url });
+            let view = await callHandler(req, trx, route, () => {});
+
+            // Try to commit the transaction
+            try {
+              await trx.commit();
+            } catch (err) {
+              if (isRetryableError(err)) {
+                throw err;
+              }
+              throw new RequestException(500, {
+                message: req.i18n('Transaction error.'),
+              });
+            }
+
+            // Add headers if specified
+            if (view && view.headers) {
+              res.set(view.headers);
+            }
+
+            // Add caching
+            view = applyCache(req, res, route, view);
+
+            if (view && view.json) {
+              // Send json data
+              res.status(view.status || 200).send(view.json);
+            } else if (view && view.binary) {
+              // Send binary data
+              res.statusCode = view.status || 200;
+              res.write(view.binary, 'binary');
+              res.end(undefined, 'binary');
+            } else if (view && view.status) {
+              // Send just the status code with no data
+              res.status(view.status).send();
+            } else if (view && view.html) {
+              res.status(view.status || 200).send(view.html);
+            }
+            // Mark transaction as done
+            requests.done(requestId);
+          }
+          return;
+        } catch (err) {
+          // Rollback transaction
+          if (!trx.isCompleted()) {
+            await trx.rollback();
           }
 
-          // Add headers if specified
-          if (view && view.headers) {
-            res.set(view.headers);
-          }
-
-          // Add caching
-          view = applyCache(req, res, route, view);
-
-          if (view && view.json) {
-            // Send json data
-            res.status(view.status || 200).send(view.json);
-          } else if (view && view.binary) {
-            // Send binary data
-            res.statusCode = view.status || 200;
-            res.write(view.binary, 'binary');
-            res.end(undefined, 'binary');
-          } else if (view && view.status) {
-            // Send just the status code with no data
-            res.status(view.status).send();
-          } else if (view && view.html) {
-            res.status(view.status || 200).send(view.html);
-          }
           // Mark transaction as done
           requests.done(requestId);
-        }
-      } catch (err) {
-        // Rollback transaction
-        await trx.rollback();
 
-        // Mark transaction as done
-        requests.done(requestId);
-
-        // Check if request exception
-        if (err instanceof RequestException) {
-          // Log error
-          log.error(
-            `${err.status} ${
-              isObject(err.message) ? JSON.stringify(err.message) : err.message
-            }`,
-          );
-
-          // Set location header in redirect
-          if (err.status === 301 || err.status === 302) {
-            if (typeof err.message === 'string') {
-              res.setHeader('Location', err.message);
-            }
-            return res.status(err.status).send();
+          // Retry on deadlocks and serialization failures
+          if (
+            isRetryableError(err) &&
+            attempt < retryAttempts &&
+            !res.headersSent
+          ) {
+            log.info(`Retrying ${req.method} ${req.url} after a conflict`);
+            await new Promise((resolve) =>
+              setTimeout(resolve, Math.random() * 50 * attempt),
+            );
+            continue;
           }
 
-          // Return error message
-          const message =
-            process.env.NODE_ENV === 'production' && err.status >= 500
-              ? { message: req.i18n('Internal server error') }
-              : err.message;
-          return res.status(err.status).send(message);
-        } else {
-          // Log error
-          log.error(err);
-          console.log(err);
+          // Check if request exception
+          if (err instanceof RequestException) {
+            // Log error
+            log.error(
+              `${err.status} ${
+                isObject(err.message)
+                  ? JSON.stringify(err.message)
+                  : err.message
+              }`,
+            );
 
-          // Return internal server error
-          return res
-            .status(500)
-            .send({ message: req.i18n('Internal server error') });
+            // Set location header in redirect
+            if (err.status === 301 || err.status === 302) {
+              if (typeof err.message === 'string') {
+                res.setHeader('Location', err.message);
+              }
+              return res.status(err.status).send();
+            }
+
+            // Return error message
+            const message =
+              process.env.NODE_ENV === 'production' && err.status >= 500
+                ? { message: req.i18n('Internal server error') }
+                : err.message;
+            return res.status(err.status).send(message);
+          } else {
+            // Log error
+            log.error(err);
+            console.log(err);
+
+            // Return internal server error
+            return res
+              .status(500)
+              .send({ message: req.i18n('Internal server error') });
+          }
         }
       }
     },
