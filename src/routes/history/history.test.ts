@@ -55,12 +55,33 @@ describe('History', () => {
       response.body.find((item: any) => item.type === 'workflow').comments,
     ).toBe('Approved');
   });
-  it('should require the revert permission', async () => {
+
+  it('should require the view history permission', async () => {
     const member = await createUser('member');
-    const history = await request(app)
+    await request(app)
       .get('/news/@history')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${member}`)
+      .expect(403);
+    await request(app)
+      .get('/news/@history/0')
+      .set('Accept', 'application/json')
+      .expect(401);
+  });
+
+  it('should require the revert permission', async () => {
+    const Document = models.get('Document');
+    const contributor = await createUser('contributor');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await news
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Contributor', user: 'contributor' });
+
+    // A contributor may see the history but not revert
+    const history = await request(app)
+      .get('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${contributor}`)
       .expect(200);
     expect(
       history.body
@@ -71,7 +92,7 @@ describe('History', () => {
     await request(app)
       .patch('/news/@history')
       .set('Accept', 'application/json')
-      .set('Authorization', `Bearer ${member}`)
+      .set('Authorization', `Bearer ${contributor}`)
       .send({ version: 0 })
       .expect(403);
     await request(app)

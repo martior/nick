@@ -38,6 +38,10 @@
       "title:i18n": "Delete"
     },
     {
+      "id": "View History",
+      "title:i18n": "View History"
+    },
+    {
       "id": "Revert",
       "title:i18n": "Revert"
     },

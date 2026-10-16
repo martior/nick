@@ -1,0 +1,7 @@
+{
+  "id": "@plone/nick:core",
+  "title": "Nick Core",
+  "description": "Core functionality of Nick",
+  "version": 1011,
+  "upgrade": "Add the view history permission."
+}
