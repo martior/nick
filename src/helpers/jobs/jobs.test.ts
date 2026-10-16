@@ -108,7 +108,8 @@ describe('Jobs', () => {
     const job = await getJob(first);
     expect(job.status).toBe('completed');
     expect(job.finished).not.toBeNull();
-    expect(job.locked_by).toBeNull();
+    expect(job.locked_by).toBe(jobs.id);
+    expect(job.locked_until).toBeNull();
     expect(job.result).toEqual({ result: { status: 'success' } });
     expect(handler).toHaveBeenCalledWith(
       { path: '/news' },
