@@ -222,9 +222,23 @@ describe('Content', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ '@type': 'Page', id, title: 'x' });
 
-    for (const id of ['slash/inside', '_underscore', '..', 'aq_parent']) {
+    for (const id of [
+      'slash/inside',
+      '_underscore',
+      '..',
+      'aq_parent',
+      '@search',
+    ]) {
       await post(id).expect(400);
     }
+
+    // The service is not hidden by a child
+    const search = await request(app)
+      .get('/news/@search')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(search.body.items).toBeDefined();
     await post('has space').expect(201);
     expect((await post('has space').expect(400)).body.message).toBe(
       'The id “has space” is invalid - it is already in use.',

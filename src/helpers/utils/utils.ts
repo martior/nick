@@ -171,7 +171,9 @@ export function bytesToNumber(bytes: string): number {
 /**
  * Check if an id is valid, like Zope's checkValidId: only characters which
  * are allowed in urls, traversable, and not starting with an underscore or
- * `aq_` or ending with two underscores.
+ * `aq_` or ending with two underscores. Ids starting with `@` are refused
+ * too, because such path segments address services: a child called
+ * `@search` would hide the search service of its folder.
  * @method isValidId
  * @param {any} id Id to check.
  * @returns {boolean} True if the id is valid.
@@ -184,6 +186,7 @@ export function isValidId(id: any): boolean {
     id !== '.' &&
     id !== '..' &&
     !id.startsWith('_') &&
+    !id.startsWith('@') &&
     !id.startsWith('aq_') &&
     id !== 'REQUEST' &&
     !id.endsWith('__')
