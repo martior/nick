@@ -188,4 +188,69 @@ describe('Content', () => {
       .set('Authorization', `Bearer ${editor}`)
       .expect(204);
   });
+
+  it('should check the permissions on the sources of copy and move', async () => {
+    const Document = models.get('Document');
+    const events = await Document.fetchOne(
+      { path: '/events' },
+      {},
+      global.txn!,
+    );
+    await createDocument(
+      '0123abcd-0000-4000-8000-000000000003',
+      events,
+      'secret',
+      'Page',
+    );
+    const contributor = await createUser('contributor');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await news
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Contributor', user: 'contributor' });
+
+    // A private source that can't be viewed is skipped
+    const copy = await request(app)
+      .post('/news/@copy')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${contributor}`)
+      .send({ source: '/events/secret' })
+      .expect(200);
+    expect(copy.body).toEqual([]);
+    expect(
+      await Document.fetchOne({ path: '/news/secret' }, {}, global.txn!),
+    ).toBeUndefined();
+
+    // Moving a viewable source requires the delete permission
+    await request(app)
+      .post('/news/@move')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${contributor}`)
+      .send({ source: 'http://localhost:8080/events/event-1' })
+      .expect(403);
+
+    // An item can't be moved into itself
+    await request(app)
+      .post('/events/@move')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ source: '/events' })
+      .expect(400);
+
+    // Sources can be urls, paths or uuids
+    const move = await request(app)
+      .post('/news/@move')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        source: [
+          'http://localhost:8080/events/event-1',
+          '0123abcd-0000-4000-8000-000000000003',
+        ],
+      })
+      .expect(200);
+    expect(move.body.map((item: any) => item.target)).toEqual([
+      'http://localhost:8080/news/event-1',
+      'http://localhost:8080/news/secret',
+    ]);
+  });
 });

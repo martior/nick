@@ -242,6 +242,7 @@
 - Check workflow transitions against the current state and the permissions on every child with `include_children`, return 400 for unknown or unavailable transitions and require View @martior
 - Require the new Revert permission to revert to a previous version, report it in `may_revert`, reindex after a revert and keep the path of top level items; run `pnpm seed:upgrade` to add it @martior
 - Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
+- Check View on the sources of @copy and @move and Delete on the sources of @move, accept urls and uuids as sources and reindex the permissions of moved content @martior
 
 ### Internal
 

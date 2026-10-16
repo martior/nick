@@ -49,6 +49,43 @@ function getDisposition(req: Request, filename: string): string {
   return `${type}; filename="${filename}"`;
 }
 
+/**
+ * Get the source document of a copy or move by url, path or uuid. Returns
+ * undefined when not found or not viewable by the current user.
+ * @method fetchSource
+ * @param {Request} req The request object.
+ * @param {string} source Url, path or uuid of the source.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @returns {Promise<Object>} Source document and permissions.
+ */
+async function fetchSource(
+  req: Request,
+  source: string,
+  trx: Knex.Transaction,
+): Promise<{ document: any; permissions: string[] } | undefined> {
+  const Document = models.get('Document');
+  const root = getRootUrl(req);
+  let document;
+  if (typeof source !== 'string') {
+    return undefined;
+  } else if (source.startsWith(`${root}/`) || source === root) {
+    document = await Document.fetchOne(
+      { path: source.slice(root.length) || '/' },
+      {},
+      trx,
+    );
+  } else if (source.startsWith('/')) {
+    document = await Document.fetchOne({ path: source }, {}, trx);
+  } else if (/^[0-9a-f-]{32,36}$/i.test(source)) {
+    document = await Document.fetchById(source, {}, trx);
+  }
+  if (!document) {
+    return undefined;
+  }
+  const permissions = await document.fetchUserPermissions(req.user, trx);
+  return permissions.includes('View') ? { document, permissions } : undefined;
+}
+
 export default [
   {
     op: 'post',
@@ -72,15 +109,52 @@ export default [
       const sources = Array.isArray(req.body.source)
         ? req.body.source
         : [req.body.source];
+      const documents = [] as any[];
       await mapAsync(sources, async (source: string) => {
-        // Get item to be moved
-        const document = await Document.fetchOne({ path: source }, {}, trx);
+        // Get item to be moved, skip if not found or not viewable
+        const found = await fetchSource(req, source, trx);
+        if (!found) {
+          return;
+        }
 
-        // If moved to same folder or subfolder do nothing
+        // Moving requires the delete permission on the item or its parent
+        if (!found.permissions.includes('Delete')) {
+          const parent = await Document.fetchById(
+            found.document.parent,
+            {},
+            trx,
+          );
+          if (
+            !parent ||
+            !(await parent.fetchUserPermissions(req.user, trx)).includes(
+              'Delete',
+            )
+          ) {
+            throw new RequestException(403, {
+              message: req.i18n(
+                'You are not authorized to access this resource.',
+              ),
+            });
+          }
+        }
+
+        // An item can't be moved into itself or its children
         if (
-          req.document.uuid === document.parent ||
-          req.document.path.includes(document.path)
+          req.document.uuid === found.document.uuid ||
+          req.document.path.startsWith(`${found.document.path}/`)
         ) {
+          throw new RequestException(400, {
+            message: req.i18n('An item can’t be moved into itself.'),
+          });
+        }
+        documents.push(found.document);
+      });
+
+      await mapAsync(documents, async (document: any) => {
+        const source = document.path;
+
+        // If moved to same folder do nothing
+        if (req.document.uuid === document.parent) {
           items.push({
             source,
             target: source,
@@ -109,6 +183,9 @@ export default [
             },
             trx,
           );
+
+          // Reindex the permissions inherited from the new parent
+          await document.reindexSecurity(trx);
 
           // Fetch children of previous parent
           await parent.fetchChildren({}, trx, false);
@@ -165,9 +242,14 @@ export default [
       const sources = Array.isArray(req.body.source)
         ? req.body.source
         : [req.body.source];
-      await mapAsync(sources, async (source: string) => {
-        // Get item to be copied
-        const document = await Document.fetchOne({ path: source }, {}, trx);
+      await mapAsync(sources, async (key: string) => {
+        // Get item to be copied, skip if not found or not viewable
+        const found = await fetchSource(req, key, trx);
+        if (!found) {
+          return;
+        }
+        const document = found.document;
+        const source = document.path;
 
         // Calculate new id and path
         const path = req.document.path;
