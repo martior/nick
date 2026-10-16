@@ -29,7 +29,7 @@ The `available_roles` property contains the list of roles that can be managed vi
 
 ## Searching for principles
 
-Users and/or groups without a sharing entry can be found by appending the argument `search` to the query string. ie `?search=admin`. Global roles are marked with the string `global`. Inherited roles are marked with the string `acquired`.
+The `entries` list the users and groups with a local role on the object or one of the parents it inherits from. Users and/or groups without a sharing entry can be found by id, full name or group title by appending the argument `search` to the query string. ie `?search=admin`. Global roles are marked with the string `global`. Inherited roles are marked with the string `acquired`.
 
 ```http
 {% include_relative examples/sharing/get_search.req %}

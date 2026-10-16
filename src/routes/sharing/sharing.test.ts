@@ -194,4 +194,44 @@ describe('Sharing', () => {
     });
     expect(roles.map((role: any) => role.role)).toEqual(['Reader']);
   });
+
+  it('should list principals with local roles', async () => {
+    const Document = models.get('Document');
+    await createUser('jane');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await createDocument(
+      '0f2c9a41-6d3e-4c55-8f6a-2b7d9e1c4a03',
+      news,
+      'child',
+      'Page',
+    );
+    await share('/news', {
+      entries: [{ id: 'jane', type: 'user', roles: { Reader: true } }],
+    });
+    const get = (path: string) =>
+      request(app)
+        .get(`${path}/@sharing`)
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+    const entries = (await get('/news')).body.entries;
+    expect(entries.map((entry: any) => entry.id)).toEqual(['jane']);
+    expect(entries[0].roles.Reader).toBe(true);
+
+    const child = (await get('/news/child')).body.entries;
+    expect(child[0].roles.Reader).toBe('acquired');
+
+    // Search by id
+    const search = await request(app)
+      .get('/news/@sharing?search=adm')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(search.body.entries.map((entry: any) => entry.id)).toEqual([
+      'admin',
+      'Administrators',
+      'jane',
+    ]);
+  });
 });
