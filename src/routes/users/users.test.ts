@@ -93,6 +93,9 @@ describe('User', () => {
   it('should not add a user with a short password', () =>
     testRequest(app, 'users/post_short_password'));
 
+  it('should not add a user with an invalid email address', () =>
+    testRequest(app, 'users/post_invalid_email'));
+
   it('should not add a user without a password', () =>
     testRequest(app, 'users/post_without_password'));
 

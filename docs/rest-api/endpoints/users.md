@@ -113,7 +113,7 @@ If the user has been created successfully, the server will respond with a status
 {% include_relative examples/users/post.res %}
 ```
 
-The password must be at least 8 characters long. When no password is given, `"sendPasswordReset": true` must be passed so the user can set one. Otherwise the server responds with a `400 Bad Request`:
+The email address must be valid. The password must be at least 8 characters long. When no password is given, `"sendPasswordReset": true` must be passed so the user can set one. Otherwise the server responds with a `400 Bad Request`:
 
 ```http
 {% include_relative examples/users/post_short_password.res %}
