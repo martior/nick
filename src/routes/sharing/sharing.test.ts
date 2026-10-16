@@ -165,6 +165,51 @@ describe('Sharing', () => {
     expect(await roles()).toStrictEqual([]);
   });
 
+  it('should share with all authenticated users', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await createDocument(
+      '0123abcd-0000-4000-8000-000000000401',
+      news,
+      'members-only',
+      'Page',
+    );
+    const jane = await createUser('jane');
+    const get = (path: string, auth?: string) => {
+      const req = request(app).get(path).set('Accept', 'application/json');
+      return auth ? req.set('Authorization', `Bearer ${auth}`) : req;
+    };
+
+    // The group is always listed
+    const sharing = await get('/news/members-only/@sharing', token).expect(200);
+    expect(
+      sharing.body.entries.find(
+        (entry: any) => entry.id === 'AuthenticatedUsers',
+      ),
+    ).toStrictEqual({
+      id: 'AuthenticatedUsers',
+      title: 'Logged-in users',
+      roles: {
+        Contributor: false,
+        Editor: false,
+        Reader: false,
+        Reviewer: false,
+      },
+      type: 'group',
+    });
+
+    await get('/news/members-only', jane).expect(403);
+    await share('/news/members-only', {
+      entries: [
+        { id: 'AuthenticatedUsers', type: 'group', roles: { Reader: true } },
+      ],
+    });
+    await get('/news/members-only', jane).expect(200);
+    await get('/news/members-only').expect(401);
+    const search = await get('/@search?path.query=/news/members-only', jane);
+    expect(search.body.items_total).toBe(1);
+  });
+
   it('should refuse invalid sharing data', async () => {
     const post = (body: any) =>
       request(app)
@@ -241,11 +286,14 @@ describe('Sharing', () => {
         .expect(200);
 
     const entries = (await get('/news')).body.entries;
-    expect(entries.map((entry: any) => entry.id)).toEqual(['jane']);
-    expect(entries[0].roles.Reader).toBe(true);
+    expect(entries.map((entry: any) => entry.id)).toEqual([
+      'AuthenticatedUsers',
+      'jane',
+    ]);
+    expect(entries[1].roles.Reader).toBe(true);
 
     const child = (await get('/news/child')).body.entries;
-    expect(child[0].roles.Reader).toBe('acquired');
+    expect(child[1].roles.Reader).toBe('acquired');
 
     // Search by id
     const search = await request(app)
@@ -256,6 +304,7 @@ describe('Sharing', () => {
     expect(search.body.entries.map((entry: any) => entry.id)).toEqual([
       'admin',
       'Administrators',
+      'AuthenticatedUsers',
       'jane',
     ]);
   });

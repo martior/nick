@@ -12,6 +12,7 @@ import { uniq } from 'es-toolkit/array';
 import { isObject } from 'es-toolkit/compat';
 
 // Internal imports
+import { authenticatedUsers } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { RequestException } from '../../helpers/error/error';
 import jobs from '../../helpers/jobs/jobs';
@@ -173,6 +174,16 @@ export default [
         trx,
       );
 
+      // The group of all authenticated users is always listed, like in Plone
+      if (!groups.some((group: any) => group.id === authenticatedUsers)) {
+        groups.push({
+          id: authenticatedUsers,
+          title: req.i18n('Logged-in users'),
+          roles: Object.fromEntries(roles.map((role: any) => [role.id, false])),
+          type: 'group',
+        });
+      }
+
       // Return sharing data
       return {
         json: {
@@ -240,6 +251,21 @@ export default [
       const roles = (await fetchDelegatableRoles(req, trx)).map(
         (role: any) => role.id,
       );
+
+      // Create the group of all authenticated users when it gets roles
+      if (
+        entries.some(
+          (entry: any) =>
+            entry.type === 'group' && entry.id === authenticatedUsers,
+        ) &&
+        !(await Group.fetchById(authenticatedUsers, {}, trx))
+      ) {
+        await Group.create(
+          { id: authenticatedUsers, title: 'Logged-in users' },
+          {},
+          trx,
+        );
+      }
 
       // Update local roles: an entry is the complete set of the roles the
       // user may delegate, roles not set to true are removed

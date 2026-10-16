@@ -13,6 +13,7 @@ import { compact, flattenDeep, uniq } from 'es-toolkit/array';
 // Internal imports
 import models from '../';
 import { Model } from '../_model/_model';
+import { authenticatedUsers } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { removeFile } from '../../helpers/fs/fs';
 import { getFactoryFields } from '../../helpers/schema/schema';
@@ -102,13 +103,19 @@ export class User extends Model {
   }
 
   /**
-   * Get groups of the user.
+   * Get groups of the user. Authenticated users are member of the
+   * `AuthenticatedUsers` group, like in Plone.
    * @method getGroups
    * @returns {string[]} Array of groups.
    */
   getGroups(): string[] {
     const self: InstanceType<typeof User> = this;
-    return self._groups ? self._groups.map((group: any) => group.id) : [];
+    const groups = self._groups
+      ? self._groups.map((group: any) => group.id)
+      : [];
+    return self.id === 'anonymous' || groups.includes(authenticatedUsers)
+      ? groups
+      : [...groups, authenticatedUsers];
   }
 
   /**

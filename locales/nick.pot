@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T02:20:27.538Z\n"
+"POT-Creation-Date: 2026-10-16T02:30:49.365Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1293,6 +1293,12 @@ msgctxt "Profiles|Core|Actions"
 msgid "Log out"
 msgstr ""
 
+#. Default: "Logged-in users"
+#: src/routes/sharing/sharing.ts:181
+msgctxt "Routes|Sharing"
+msgid "Logged-in users"
+msgstr ""
+
 #. Default: "Logger"
 #: src/content_rules/actions/logger.ts:13
 msgctxt "Content rules|Actions|Logger"
@@ -1877,14 +1883,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:289
+#: src/routes/sharing/sharing.ts:309
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:290
+#: src/routes/sharing/sharing.ts:310
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -2095,7 +2101,7 @@ msgid "Sharing"
 msgstr ""
 
 #. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
-#: src/routes/sharing/sharing.ts:220
+#: src/routes/sharing/sharing.ts:231
 msgctxt "Routes|Sharing"
 msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
 msgstr ""

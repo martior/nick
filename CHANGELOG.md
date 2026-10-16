@@ -162,6 +162,7 @@
 - Export comments of documents @martior
 - Export site title, robots.txt and language settings @martior
 - Convert querystring operations of collections and listing blocks in export @martior
+- Add the `AuthenticatedUsers` group of all authenticated users, like Plone's: it is always listed in @sharing, and local roles given to it apply to every logged-in user, also in search @martior
 
 ### Bugfix
 
