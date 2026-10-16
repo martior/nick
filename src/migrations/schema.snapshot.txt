@@ -43,6 +43,7 @@ column public.catalog._getId text  # profile
 column public.catalog._getObjPositionInParent integer  # profile
 column public.catalog._getRawRelatedItems uuid[]  # profile
 column public.catalog._id text  # profile
+column public.catalog._isFolderish boolean  # profile
 column public.catalog._isReferencing uuid[]  # profile
 column public.catalog._is_folderish boolean  # profile
 column public.catalog._modified timestamp with time zone  # profile
@@ -305,6 +306,7 @@ index public.catalog.catalog__getobjpositioninparent_index CREATE INDEX catalog_
 index public.catalog.catalog__getrawrelateditems_index CREATE INDEX catalog__getrawrelateditems_index ON public.catalog USING gin ("_getRawRelatedItems")  # profile
 index public.catalog.catalog__id_index CREATE INDEX catalog__id_index ON public.catalog USING btree (_id)  # profile
 index public.catalog.catalog__is_folderish_index CREATE INDEX catalog__is_folderish_index ON public.catalog USING btree (_is_folderish)  # profile
+index public.catalog.catalog__isfolderish_index CREATE INDEX catalog__isfolderish_index ON public.catalog USING btree ("_isFolderish")  # profile
 index public.catalog.catalog__isreferencing_index CREATE INDEX catalog__isreferencing_index ON public.catalog USING gin ("_isReferencing")  # profile
 index public.catalog.catalog__modified_index CREATE INDEX catalog__modified_index ON public.catalog USING btree (_modified)  # profile
 index public.catalog.catalog__parent_index CREATE INDEX catalog__parent_index ON public.catalog USING btree (_parent)  # profile
