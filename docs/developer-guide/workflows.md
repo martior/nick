@@ -141,6 +141,32 @@ Unsupported expressions are refused, never ignored:
 - The definition.xml loader keeps an unsupported expression and adds `"unsupported": "<reason>"` to the guard. Such a guard is accepted with a warning and denies at runtime, so the transition is offered to nobody until the method is registered (or the guard is rewritten).
 - An expression that fails at runtime (a missing method, a type error) denies and is logged.
 
+## DCWorkflow definitions
+
+A profile can also contain Plone workflow definitions in the GenericSetup layout: `workflows/<id>/definition.xml`, and optionally a `workflows.xml` binding workflows to types. They are loaded after `workflows.json` and replace existing workflows with the same id. The id of a workflow is the name of its directory.
+
+```
+src/profiles/default/
+  workflows/
+    intranet_workflow/definition.xml
+  workflows.xml      <object name="portal_workflow"><bindings><type type_id="Page"><bound-workflow workflow_id="intranet_workflow"/></type></bindings></object>
+```
+
+`pnpm workflows:import <definition.xml or directory>...` imports definitions into the database directly (`--type=<type>` binds the first one to a type), `--json` prints them as a `workflows.json` instead. The export from Plone (`pnpm export`) uses the same loader.
+
+| DCWorkflow                                                          | Nick                                                                                                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `<permission>` (managed permissions)                                | `managed_permissions`, for the permissions with a Nick equivalent (see [Expressions](#expressions))                                              |
+| `permission-map`, `permission-role`                                 | the state's `permissions`; `Manager` and `Site Administrator` become `Administrator`, `Member` `Authenticated`, `Anonymous` also `Authenticated` |
+| `acquired="True"`, a managed permission without a map               | the state's `acquire` (from the global role permissions)                                                                                         |
+| `exit-transition`                                                   | the state's `transitions`                                                                                                                        |
+| `transition`, `action`                                              | `title` (the action name), `new_state` (empty stays), `hidden` without an action in the `workflow` category                                      |
+| `trigger="AUTOMATIC"`, `"WORKFLOW"`                                 | `trigger: automatic`, `hidden`                                                                                                                   |
+| `guard-permission`, `guard-role`, `guard-group`, `guard-expression` | the transition's `guard`                                                                                                                         |
+| `manager_bypass="True"`                                             | `manager_bypass`                                                                                                                                 |
+
+Scripts, group maps and permissions without a Nick equivalent are not converted; the loader prints a warning for each. Unsupported guard expressions are kept with `"unsupported": "<reason>"` and deny.
+
 ## Permission models
 
 The permissions of a user on a content object combine the permissions of the user's roles (global roles, local roles from `@sharing` and `Owner`) from `roles.json` with the permissions the workflow state gives those roles.

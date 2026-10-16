@@ -35,6 +35,7 @@
 
 ### Feature
 
+- Load Plone DCWorkflow definitions: `workflows/<id>/definition.xml` and `workflows.xml` bindings in a profile and `pnpm workflows:import`. The export from Plone uses the same loader, so migrated sites keep their guards (permissions, roles, groups, expressions), acquired permissions, hidden and automatic transitions. Adds the `Review Comments` permission for Reviewer and Administrator; run `pnpm seed:upgrade` (upgrade 1019) @martior
 - Add DCWorkflow guards to workflow transitions: one of a list of permissions, roles or groups and an expression, plus `manager_bypass`, `hidden` and automatic transitions. Expressions use a safe evaluator for the TALES subset of DCWorkflow definitions (`python:`, path, `not:`, `exists:`, `string:`); add-ons can provide content methods with `registerExpressionMethod`, and unsupported expressions are refused when a workflow is seeded @martior
 - Add the `host` setting (`BIND_HOST`) to listen on one address, for example `127.0.0.1` behind a reverse proxy, instead of on every interface @mpalomaki
 - Support range requests on `@@download`, so audio and video players can seek without downloading the file from the start @mpalomaki

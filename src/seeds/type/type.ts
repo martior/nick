@@ -16,6 +16,7 @@ import { dirExists } from '../../helpers/fs/fs';
 import { stripI18n } from '../../helpers/i18n/i18n';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
+import { seedWorkflowBindings } from '../workflow/workflow';
 
 export const seedType = async (
   trx: Knex.Transaction,
@@ -79,4 +80,7 @@ export const seedType = async (
     });
     console.log('Types imported');
   }
+
+  // Bind workflows to the types
+  await seedWorkflowBindings(trx, profilePath);
 };

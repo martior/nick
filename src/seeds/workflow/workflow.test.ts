@@ -4,14 +4,20 @@
  */
 
 // External imports
-import { mkdtempSync, rmSync, writeFileSync } from 'fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'fs';
 import { tmpdir } from 'os';
 import { describe, it, expect } from 'vitest';
 
 // Internal imports
 import '../../app';
 import models from '../../models';
-import { seedWorkflow } from './workflow';
+import { seedWorkflow, seedWorkflowBindings } from './workflow';
 
 const json = {
   initial_state: 'private',
@@ -108,5 +114,54 @@ describe('seedWorkflow', () => {
       global.txn!,
     );
     expect(workflow.json.transitions.hide.guard.unsupported).toBeDefined();
+  });
+
+  it('imports DCWorkflow definitions and bindings of a profile', async () => {
+    const Type = models.get('Type');
+    const Workflow = models.get('Workflow');
+    const path = mkdtempSync(`${tmpdir()}/nick-seed-`);
+    mkdirSync(`${path}/workflows/my_intranet_workflow`, { recursive: true });
+    writeFileSync(
+      `${path}/workflows/my_intranet_workflow/definition.xml`,
+      readFileSync(
+        `${import.meta.dirname}/../../helpers/dcworkflow/fixtures/workflows/intranet_workflow/definition.xml`,
+      ),
+    );
+    writeFileSync(
+      `${path}/workflows.xml`,
+      `<object name="portal_workflow">
+ <bindings>
+  <type type_id="Page"><bound-workflow workflow_id="my_intranet_workflow"/></type>
+  <type type_id="NoSuchType"><bound-workflow workflow_id="my_intranet_workflow"/></type>
+ </bindings>
+</object>`,
+    );
+    try {
+      await seedWorkflow(global.txn!, path);
+      await seedWorkflowBindings(global.txn!, path);
+    } finally {
+      rmSync(path, { recursive: true, force: true });
+    }
+
+    // The id is the name of the directory
+    const workflow = await Workflow.fetchById(
+      'my_intranet_workflow',
+      {},
+      global.txn!,
+    );
+    expect(workflow.title).toBe('Intranet/Extranet Workflow');
+    expect(Object.keys(workflow.json.states).sort()).toEqual([
+      'external',
+      'internal',
+      'internally_published',
+      'pending',
+      'private',
+    ]);
+    expect(workflow.json.transitions.submit.guard).toEqual({
+      permissions: ['Submit'],
+    });
+    expect((await Type.fetchById('Page', {}, global.txn!)).workflow).toBe(
+      'my_intranet_workflow',
+    );
   });
 });
