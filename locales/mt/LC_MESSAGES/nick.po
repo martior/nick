@@ -240,7 +240,7 @@ msgid "An error occurred while creating the user."
 msgstr ""
 
 #. Default: "An item can’t be moved into itself."
-#: src/routes/content/content.ts:150
+#: src/routes/content/content.ts:156
 msgctxt "Routes|Content"
 msgid "An item can’t be moved into itself."
 msgstr ""
@@ -460,6 +460,12 @@ msgstr ""
 #: src/routes/userschema/userschema.ts:115
 msgctxt "Routes|Userschema"
 msgid "Confirm password"
+msgstr ""
+
+#. Default: "Constraint not satisfied"
+#: src/helpers/schema/schema.ts:205
+msgctxt "Helpers|Schema"
+msgid "Constraint not satisfied"
 msgstr ""
 
 #. Default: "Contact"
@@ -752,7 +758,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:900
+#: src/routes/content/content.ts:948
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokument imsakkar"
@@ -1132,6 +1138,12 @@ msgstr "Informazzjoni dwar id-drittijiet miżmuma f'dan l-oġġett u fuqu."
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Żball intern tas-server"
+
+#. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
+#: src/routes/content/content.ts:702
+msgctxt "Routes|Content"
+msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
+msgstr ""
 
 #. Default: "Invalid credentials"
 #: src/routes/authentication/authentication.ts:86
@@ -1548,6 +1560,12 @@ msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
 msgstr ""
 
+#. Default: "Object is of wrong type."
+#: src/helpers/schema/schema.ts:198
+msgctxt "Helpers|Schema"
+msgid "Object is of wrong type."
+msgstr ""
+
 #. Default: "Open End"
 #: src/profiles/core/types/event.json:54
 msgctxt "Profiles|Core|Types|Event"
@@ -1748,6 +1766,12 @@ msgctxt "Profiles|Ai|Controlpanels"
 msgid "Prompts"
 msgstr "Prompts"
 
+#. Default: "Property '@type' is required."
+#: src/routes/content/content.ts:686
+msgctxt "Routes|Content"
+msgid "Property '@type' is required."
+msgstr ""
+
 #. Default: "Provided block id is not valid."
 #: src/routes/form/form.ts:48
 #: src/routes/form/form.ts:99
@@ -1904,11 +1928,12 @@ msgctxt "Routes|Replace"
 msgid "Replacement must be provided."
 msgstr ""
 
-#. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:700
+#. Default: "Required input is missing."
+#: src/routes/content/content.ts:716
+#: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
-msgid "Required field(s) missing."
-msgstr "Oqsma meħtieġa nieqsa."
+msgid "Required input is missing."
+msgstr ""
 
 #. Default: "Retract"
 #: src/profiles/core/workflows.json:59
@@ -2369,6 +2394,19 @@ msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
 
+#. Default: "The id “{id}” is invalid - it is already in use."
+#: src/routes/content/content.ts:744
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid - it is already in use."
+msgstr ""
+
+#. Default: "The id “{id}” is invalid."
+#: src/routes/content/content.ts:733
+#: src/routes/content/content.ts:966
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid."
+msgstr ""
+
 #. Default: "The item’s title, transformed for sorting"
 #: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
@@ -2562,7 +2600,7 @@ msgstr "Tip: tista' tuża * biex tlesti awtomatikament."
 
 #. Default: "Title"
 #: src/profiles/core/catalog.json:271
-#: src/profiles/core/behaviors/basic.json:22
+#: src/profiles/core/behaviors/basic.json:24
 #: src/profiles/ai/controlpanels/ai.json:29
 msgctxt "Profiles|Core|Catalog"
 msgid "Title"
@@ -2634,12 +2672,6 @@ msgstr "Isem tat-Tip"
 msgctxt "Helpers|Handler"
 msgid "Type of the current document is not found."
 msgstr "It-tip tad-dokument kurrenti ma nstabx."
-
-#. Default: "Type {type} not found."
-#: src/routes/content/content.ts:689
-msgctxt "Routes|Content"
-msgid "Type {type} not found."
-msgstr ""
 
 #. Default: "Use '../' to navigate to parent objects."
 #: src/profiles/core/catalog.json:27
@@ -2719,6 +2751,12 @@ msgstr ""
 #: src/content_rules/conditions/user_role.ts:13
 msgctxt "Content rules|Conditions|User role"
 msgid "User’s role"
+msgstr ""
+
+#. Default: "Value is too long"
+#: src/helpers/schema/schema.ts:210
+msgctxt "Helpers|Schema"
+msgid "Value is too long"
 msgstr ""
 
 #. Default: "Version item"
@@ -2892,14 +2930,14 @@ msgstr "M'intix awtorizzat biex taċċessa din ir-riżorsa."
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:137
+#: src/routes/content/content.ts:143
 #: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Recyclebin"
 msgid "You are not authorized to access this resource."
 msgstr "M'intix awtorizzat biex taċċessa din ir-riżorsa."
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:716
+#: src/routes/content/content.ts:763
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -2930,7 +2968,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:897
+#: src/routes/content/content.ts:945
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "M'għandekx permess issalva dan id-dokument għax imsakkar minn utent ieħor."

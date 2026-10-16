@@ -156,3 +156,25 @@ export function bytesToNumber(bytes: string): number {
 
   return units[unit] ? value * units[unit] : value;
 }
+
+/**
+ * Check if an id is valid, like Zope's checkValidId: only characters which
+ * are allowed in urls, traversable, and not starting with an underscore or
+ * `aq_` or ending with two underscores.
+ * @method isValidId
+ * @param {any} id Id to check.
+ * @returns {boolean} True if the id is valid.
+ */
+export function isValidId(id: any): boolean {
+  return (
+    typeof id === 'string' &&
+    id !== '' &&
+    !/[^a-zA-Z0-9\-_~,.$()# @]/.test(id) &&
+    id !== '.' &&
+    id !== '..' &&
+    !id.startsWith('_') &&
+    !id.startsWith('aq_') &&
+    id !== 'REQUEST' &&
+    !id.endsWith('__')
+  );
+}

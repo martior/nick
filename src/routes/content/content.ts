@@ -11,7 +11,7 @@ import type { Knex } from 'knex';
 import express from 'express';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { drop, intersection } from 'es-toolkit/array';
+import { difference, drop } from 'es-toolkit/array';
 import { omit, pick } from 'es-toolkit/object';
 import { v4 as uuid } from 'uuid';
 
@@ -31,7 +31,13 @@ import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
 import { getRootUrl } from '../../helpers/url/url';
-import { mapAsync, uniqueId, bytesToNumber } from '../../helpers/utils/utils';
+import { normalizeFields, validateFields } from '../../helpers/schema/schema';
+import {
+  bytesToNumber,
+  isValidId,
+  mapAsync,
+  uniqueId,
+} from '../../helpers/utils/utils';
 import models from '../../models';
 
 dayjs.extend(utc);
@@ -674,6 +680,13 @@ export default [
       // Lock the parent to serialize the creation of its children
       await req.document.lockForUpdate(trx);
 
+      // Check if a type is specified
+      if (typeof req.body?.['@type'] !== 'string') {
+        throw new RequestException(400, {
+          message: req.i18n("Property '@type' is required."),
+        });
+      }
+
       // Get content type date
       const type = await Type.fetchById(
         req.body['@type'],
@@ -685,27 +698,61 @@ export default [
 
       // Check if valid type
       if (!type) {
-        throw new RequestException(400, {
-          message: req.i18n('Type {type} not found.', {
-            type: req.body['@type'],
-          }),
+        throw new RequestException(403, {
+          message: req.i18n(
+            "Invalid '@type' parameter. No content type with the name “{type}” found.",
+            {
+              type: req.body['@type'],
+            },
+          ),
         });
       }
 
-      // Check required fields
-      const required = type._schema.required;
-      const requiredPosted = intersection(required, Object.keys(req.body));
-      if (required.length !== requiredPosted.length) {
+      // Check required fields and the values of the fields
+      const errors = [
+        ...difference(type._schema.required || [], Object.keys(req.body)).map(
+          (field: string) => ({
+            field,
+            message: req.i18n('Required input is missing.'),
+            error: 'ValidationError',
+          }),
+        ),
+        ...validateFields(req.body, type._schema, req.i18n),
+      ];
+      if (errors.length > 0) {
         throw new RequestException(400, {
-          message: req.i18n('Required field(s) missing.'),
+          message: JSON.stringify(errors),
         });
+      }
+
+      // Check the id if specified
+      await req.document.fetchChildren({}, trx);
+      if (typeof req.body.id !== 'undefined') {
+        if (!isValidId(req.body.id)) {
+          throw new RequestException(400, {
+            message: req.i18n('The id “{id}” is invalid.', {
+              id: `${req.body.id}`,
+            }),
+          });
+        }
+        if (
+          req.document._children.some(
+            (child: InstanceType<typeof Document>) => child.id === req.body.id,
+          )
+        ) {
+          throw new RequestException(400, {
+            message: req.i18n(
+              'The id “{id}” is invalid - it is already in use.',
+              {
+                id: req.body.id,
+              },
+            ),
+          });
+        }
       }
 
       // Set creation time
       const created = dayjs.utc().format();
-
-      // Get child nodes
-      await req.document.fetchChildren({}, trx);
 
       // Get json data
       const properties = type._schema.properties;
@@ -738,9 +785,10 @@ export default [
       }
 
       // Remove fields which are not in the schema
-      let json = {
-        ...omit(pick(req.body, Object.keys(properties)), omitProperties),
-      };
+      let json = normalizeFields(
+        omit(pick(req.body, Object.keys(properties)), omitProperties),
+        type._schema,
+      );
 
       // Handle files, images and relation lists
       const schema = type._schema;
@@ -902,6 +950,25 @@ export default [
         });
       }
 
+      // Check the values of the fields and the id
+      const errors = validateFields(req.body || {}, req.type._schema, req.i18n);
+      if (errors.length > 0) {
+        throw new RequestException(400, {
+          message: JSON.stringify(errors),
+        });
+      }
+      if (
+        typeof req.body.id !== 'undefined' &&
+        req.body.id !== req.document.id &&
+        !isValidId(req.body.id)
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n('The id “{id}” is invalid.', {
+            id: `${req.body.id}`,
+          }),
+        });
+      }
+
       // Get id and path variables of document, parent and siblings
       await req.document.fetchRelated('_parent', trx);
       if (req.document._parent) {
@@ -931,9 +998,12 @@ export default [
       // Handle file uploads
       let json = {
         ...req.document.json,
-        ...omit(
-          pick(req.body, Object.keys(req.type._schema.properties)),
-          omitProperties,
+        ...normalizeFields(
+          omit(
+            pick(req.body, Object.keys(req.type._schema.properties)),
+            omitProperties,
+          ),
+          req.type._schema,
         ),
       };
       const schema = req.type._schema;

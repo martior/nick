@@ -287,6 +287,7 @@
 - Run a request again, up to three times, when its transaction hits a database deadlock or serialization failure instead of returning 500 @martior
 - Accept @sharing posts without entries or inherit, ignore unknown roles and return 400 instead of 500 for invalid sharing data @martior
 - List users and groups with local or acquired roles in the @sharing entries and search principals by id too @martior
+- Validate content on create and update like plone.restapi: field types, required fields, text lines and maximum lengths (the title is a text line of at most 1024 characters, upgrade 1014), and explicit ids; a missing `@type` is a 400 and an unknown `@type` a 403. Text is normalized to NFC. Run `pnpm seed:upgrade` @martior
 
 ### Internal
 
