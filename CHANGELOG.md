@@ -312,6 +312,7 @@
 - Add documentation on how to setup limits @robgietema
 - Add documentation on how to setup caching @robgietema
 - Add documentation about profiles @robgietema
+- Fix the url of the update scheduled job example @martior
 
 ## 2.8.0 (2022-07-17)
 
