@@ -14,5 +14,6 @@
     "strict": true,
     "noImplicitAny": true,
     "skipLibCheck": true
-  }
+  },
+  "exclude": ["node_modules", "packages"]
 }
