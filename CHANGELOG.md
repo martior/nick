@@ -386,6 +386,7 @@
 ### Internal
 
 - Reword the descriptions of the self-registration settings of the security control panel in Nick's own words @martior
+- Add a workflow conformance test: every state, transition and role of the standard Plone 6.2 workflows, loaded from their definition.xml, against a matrix captured from Plone 6.2 over HTTP @martior
 - Upgraded dependencies @robgietema
 - Update node dependency requirement @robgietema
 - Split profiles in core and default @robgietema

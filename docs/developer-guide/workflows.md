@@ -167,6 +167,10 @@ src/profiles/default/
 
 Scripts, group maps and permissions without a Nick equivalent are not converted; the loader prints a warning for each. Unsupported guard expressions are kept with `"unsupported": "<reason>"` and deny.
 
+### Conformance
+
+`src/helpers/dcworkflow/conformance.test.ts` loads the standard Plone 6.2 workflows (`simple_publication_workflow`, `one_state_workflow`, `intranet_workflow`, `intranet_folder_workflow`, `folder_workflow`, `plone_workflow`) from their definition.xml and checks, for every state, transition and role (Anonymous, Member, Owner, Reader, Contributor, Editor, Reviewer, Site Administrator, Manager), that `GET @workflow` offers the transition exactly when Plone 6.2 does. The reference matrix in `fixtures/workflow_matrix_plone62.json` was captured from Plone over HTTP with the restapi-suite's `tests/test_workflow_matrix.py`. The comment workflows of plone.app.discussion are generated from DCWorkflow semantics; in their states which acquire `View` from the commented item Nick differs, because it acquires from the global role permissions.
+
 ## Permission models
 
 The permissions of a user on a content object combine the permissions of the user's roles (global roles, local roles from `@sharing` and `Owner`) from `roles.json` with the permissions the workflow state gives those roles.
