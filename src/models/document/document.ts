@@ -1580,24 +1580,6 @@ export class Document extends Model {
   }
 
   /**
-   * Fetch local users and groups.
-   * @method fetchLocalUsersGroups
-   * @param {Array} viewRoles List of roles with the view permission.
-   * @param {Knex.Transaction} trx Transaction object.
-   * @return {Promise<string[]>} List of allowed users and groups.
-   */
-  async fetchLocalUsersGroups(
-    viewRoles: string[],
-    trx?: Knex.Transaction,
-  ): Promise<string[]> {
-    return uniq(
-      (await this.fetchLocalRoles(trx))
-        .filter((localRole) => viewRoles.includes(localRole.role))
-        .map((localRole) => localRole.principal),
-    );
-  }
-
-  /**
    * Re index children
    * @method reindexChildren
    * @param {Knex.Transaction} trx Transaction object.
