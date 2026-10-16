@@ -916,6 +916,23 @@ export default [
       await req.document.fetchRelated('_parent', trx);
       const parent = req.document._parent;
 
+      // Check if locked
+      const lock = req.document.lock;
+      if (
+        lock.locked &&
+        !lockExpired(req.document) &&
+        req.headers['lock-token'] !== lock.token
+      ) {
+        throw new RequestException(423, {
+          error: {
+            message: req.i18n('Object “{id}” is locked.', {
+              id: req.document.id,
+            }),
+            type: req.i18n('Document locked'),
+          },
+        });
+      }
+
       // Trigger onBeforeDelete
       await events.trigger(
         'onBeforeDelete',

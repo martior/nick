@@ -72,7 +72,11 @@ describe('Locking', () => {
     await testRequest(app, 'content/post');
   });
   afterEach(async () => {
-    await testRequest(app, 'content/delete');
+    await request(app)
+      .delete(path)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Lock-Token', 'a95388f2-e4b3-4292-98aa-62656cbd5b9c')
+      .expect(204);
   });
 
   it('should lock an item', () => testRequest(app, 'locking/post'));
@@ -163,6 +167,12 @@ describe('Locking', () => {
   it('should not update a locked document without the lock token', async () => {
     await testRequest(app, 'locking/post');
     return testRequest(app, 'locking/update_locked');
+  });
+
+  it('should not delete a locked document', async () => {
+    await testRequest(app, 'locking/post');
+    await testRequest(app, 'locking/delete_content_locked');
+    await testRequest(app, 'locking/delete');
   });
 
   it('should keep the lock after an update with the lock token', async () => {
