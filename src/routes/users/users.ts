@@ -25,9 +25,11 @@ import {
 } from '../../helpers/content/content';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import { sendMail } from '../../helpers/mail/mail';
+import { getRootUrl } from '../../helpers/url/url';
 import models from '../../models';
 
 const userFields = ['id', 'fullname', 'email'];
+const defaultLimit = 25;
 
 export default [
   {
@@ -182,18 +184,60 @@ export default [
       const User = models.get('User');
       const query =
         typeof req.query.query === 'string' ? req.query.query : undefined;
-      if (query && query.length < 2) {
+      const search =
+        typeof req.query.search === 'string' ? req.query.search : undefined;
+      const groupsFilter = [
+        req.query['groups-filter:list'] || req.query['groups-filter'] || [],
+      ].flat() as string[];
+      const filtered =
+        query || search || groupsFilter.length > 0 || req.query.limit;
+
+      // Check query length
+      if ((query && query.length < 2) || (search && search.length < 2)) {
         throw new RequestException(400, {
           error: req.i18n('Query must be at least 2 characters long.'),
         });
       }
-      const users = await User.fetchAll(
-        query ? { id: ['like', `%${query}%`] } : {},
-        { order: 'fullname', related: '[_roles, _groups]' },
+
+      // Check limit
+      const limit = filtered
+        ? parseInt(String(req.query.limit || defaultLimit), 10)
+        : undefined;
+      if (typeof limit !== 'undefined' && (isNaN(limit) || limit < 1)) {
+        throw new RequestException(400, {
+          error: req.i18n('Limit must be a positive number.'),
+        });
+      }
+
+      // Build query
+      const like = (value: string) => `%${value.replace(/[\\%_]/g, '\\$&')}%`;
+      let users = User.buildQuery(
+        query ? { id: ['ilike', like(query)] } : {},
+        { order: 'fullname', related: '[_roles, _groups]', limit },
         trx,
       );
+      if (search) {
+        users = users.where((builder: Knex.QueryBuilder) =>
+          builder
+            .whereILike('id', like(search))
+            .orWhereILike('fullname', like(search))
+            .orWhereILike('email', like(search)),
+        );
+      }
+      if (groupsFilter.length > 0) {
+        users = users.whereIn(
+          'id',
+          trx('user_group').select('user').whereIn('group', groupsFilter),
+        );
+      }
+      const items = await new User.collection(await users).toJson(req);
+
       return {
-        json: await users.toJson(req),
+        json: {
+          '@id': `${getRootUrl(req)}/@users`,
+          items,
+          items_total: items.length,
+        },
         xkeys: ['users', 'groups'],
       };
     },
