@@ -35,6 +35,7 @@
 
 ### Feature
 
+- Add DCWorkflow worklists to workflows and the `@worklists` endpoint: the worklists the user passes the guard of, with the matching content they can view (by state and workflow variables, batched). The loader converts worklists @martior
 - Add DCWorkflow variables to workflows: `for_status` variables with default values and expressions, values set by states and expressions of transitions, stored with the history and in the new `document_workflow_status` table, `info_guard` (`review_history` hides the `@workflow` history like Plone) and `getInfoFor` in expressions. The loader converts variables and the export keeps them in the history. Run `pnpm migrate` @martior
 - Load Plone DCWorkflow definitions: `workflows/<id>/definition.xml` and `workflows.xml` bindings in a profile and `pnpm workflows:import`. The export from Plone uses the same loader, so migrated sites keep their guards (permissions, roles, groups, expressions), acquired permissions, hidden and automatic transitions. Adds the `Review Comments` permission for Reviewer and Administrator; run `pnpm seed:upgrade` (upgrade 1019) @martior
 - Add DCWorkflow guards to workflow transitions: one of a list of permissions, roles or groups and an expression, plus `manager_bypass`, `hidden` and automatic transitions. Expressions use a safe evaluator for the TALES subset of DCWorkflow definitions (`python:`, path, `not:`, `exists:`, `string:`); add-ons can provide content methods with `registerExpressionMethod`, and unsupported expressions are refused when a workflow is seeded @martior
