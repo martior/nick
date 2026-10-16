@@ -53,7 +53,7 @@ Run `nick` (all modules) as the only process. It migrates on start, serves the A
 ## Larger sites: split the modules
 
 - Run `nick --modules=migrate` once per deployment, before the new version starts (for example as a Kubernetes Job or an init container). Stop the deployment if it fails.
-- Run as many `nick --modules=api` replicas behind a load balancer as you need. The API keeps no state in the process that other replicas need, except what [Limits](/admin-guide/limits) and [Health](/admin-guide/health) describe.
+- Run as many `nick --modules=api` replicas behind a load balancer as you need. The API keeps no state in the process that other replicas need: tokens, locks, jobs and job aborts are in the database. Set `RATE_LIMIT_STORE=postgres` so rate limits count across replicas ([Limits](/admin-guide/limits)); `@health` reports on the replica that answers ([Health](/admin-guide/health)). Store blobs in `db` or S3, not on the local disk.
 - Run one or more `nick --modules=worker` replicas. Workers share the queue safely; a periodic job runs once per time slot however many workers run.
 
 The processes stop gracefully on `SIGTERM`: the API stops accepting connections and the worker finishes the job it is running.

@@ -45,6 +45,7 @@ const {
   S3_FORCE_PATH_STYLE,
   S3_ACCESS_KEY_ID,
   S3_SECRET_ACCESS_KEY,
+  RATE_LIMIT_STORE,
 } = process.env;
 
 let config: any = {};
@@ -146,6 +147,8 @@ class Config {
         trustProxy: parseInt(
           TRUST_PROXY || config.rateLimit?.trustProxy || '1',
         ),
+        store: (RATE_LIMIT_STORE || config.rateLimit?.store || 'memory') as
+          'memory' | 'postgres',
       },
       recyclebin: config.recyclebin || false,
       cache: config.cache || {
