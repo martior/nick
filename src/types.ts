@@ -114,6 +114,8 @@ export interface WorkflowState {
   permissions: { [key: string]: WorkflowPermission };
   acquire?: string[];
   transitions: string[];
+  // Values of workflow variables set when the state is entered
+  variables?: { [key: string]: any };
 }
 
 export type WorkflowPermission = string[];
@@ -144,6 +146,26 @@ export interface WorkflowTransition {
   trigger?: 'user' | 'automatic';
   // Hidden transitions are not offered in @workflow (no action in DCWorkflow)
   hidden?: boolean;
+  // Expressions setting workflow variables
+  variables?: { [key: string]: string };
+}
+
+/**
+ * Workflow variable, like a DCWorkflow variable. Variables `for_status`
+ * are stored with every transition (in the history entry and the workflow
+ * status of the document).
+ */
+export interface WorkflowVariable {
+  description?: string;
+  default_value?: any;
+  default_expr?: string;
+  for_catalog?: boolean;
+  for_status?: boolean;
+  update_always?: boolean;
+  // Who may read the variable (getInfoFor, the history of @workflow)
+  info_guard?: WorkflowGuard;
+  // Set by the definition.xml loader when an expression is not supported
+  unsupported?: string;
 }
 
 export type PermissionModel = 'additive' | 'acquire';
@@ -153,6 +175,7 @@ export interface WorkflowType {
   managed_permissions?: string[];
   manager_bypass?: boolean;
   initial_state?: string;
+  variables?: { [key: string]: WorkflowVariable };
   states: { [key: string]: WorkflowState };
   transitions: { [key: string]: WorkflowTransition };
 }

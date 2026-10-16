@@ -317,6 +317,31 @@ describe('export', () => {
   });
 
   describe('convertWorkflowHistory', () => {
+    it('keeps the other workflow variables', () => {
+      expect(
+        convertWorkflowHistory([
+          {
+            action: 'submit',
+            actor: { id: 'jane' },
+            comments: '',
+            review_state: 'pending',
+            time: '2026-01-01T10:00:00+00:00',
+            title: 'Pending',
+            reviewer: 'john',
+          },
+        ])[0],
+      ).toEqual({
+        action: 'submit',
+        actor: 'jane',
+        comments: '',
+        review_state: 'pending',
+        reviewer: 'john',
+        state_title: 'Pending',
+        time: '2026-01-01T10:00:00+00:00',
+        transition_title: 'submit',
+      });
+    });
+
     it('converts the workflow history with titles and comments', () => {
       const workflow = {
         json: {
