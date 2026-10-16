@@ -24,3 +24,21 @@ Example response:
 ```http
 {% include_relative examples/navigation/get.res %}
 ```
+
+Each item has an `@id`, `title`, `description`, `review_state` and the catalog metadata. A depth which is not a number results in a bad request:
+
+```http
+{% include_relative examples/navigation/get_invalid_depth.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/navigation/get_invalid_depth.ts %}
+```
+
+Example response:
+
+```http
+{% include_relative examples/navigation/get_invalid_depth.res %}
+```

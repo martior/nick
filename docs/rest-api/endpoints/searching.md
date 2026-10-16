@@ -45,6 +45,26 @@ This will return all content object:
 {% include_relative examples/search/get_news.res %}
 ```
 
+## Searching text with operators
+
+The `SearchableText` parameter follows the Plone query syntax: multiple terms are combined with `AND`, the `AND`, `OR` and `NOT` keywords and parentheses can be used to combine terms, `"quoted text"` searches for a phrase and a trailing `*` searches for words starting with the term. Any other character is treated as plain text, so a search never fails because of its input. Accents are ignored when the `unaccent` extension is available in PostgreSQL, so `creme` will find `Crème`:
+
+```http
+{% include_relative examples/search/get_operators.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_operators.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_operators.res %}
+```
+
 ## Sorting on title
 
 You can also sort the search results on title:
@@ -145,9 +165,109 @@ This will return all content object:
 {% include_relative examples/search/get_depth.res %}
 ```
 
+## Searching on keywords
+
+Keyword indexes like `Subject` match when any of the given values is set. Use `Subject.operator=and` to require all values:
+
+```http
+{% include_relative examples/search/get_subject.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_subject.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_subject.res %}
+```
+
+## Searching on path
+
+By default the search is limited to the current context and its children. Use `path.query` to search one or more other paths and `path.depth` to limit the depth. A depth of `0` returns only the path itself, a depth of `1` its direct children and so on:
+
+```http
+{% include_relative examples/search/get_path.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_path.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_path.res %}
+```
+
+## Searching on date ranges
+
+Date (and number) indexes can be queried with a range by specifying `<index>.query` and `<index>.range`, the range being `min`, `max` or `min:max`:
+
+```http
+{% include_relative examples/search/get_range.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_range.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_range.res %}
+```
+
+## Selecting metadata fields
+
+By default all metadata of the catalog is returned for every item. When `metadata_fields` is specified only `@id`, `@type`, `title`, `description` and `review_state` plus the requested metadata fields are returned. Use `metadata_fields=_all` to get all metadata:
+
+```http
+{% include_relative examples/search/get_metadata_fields.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_metadata_fields.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_metadata_fields.res %}
+```
+
+## Returning full objects
+
+With `fullobjects=1` the full serialization of the content objects is returned instead of the catalog metadata, including a summary of the parent:
+
+```http
+{% include_relative examples/search/get_fullobjects.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_fullobjects.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_fullobjects.res %}
+```
+
 ## Sorting using batching
 
-You can specify the batch size when searching:
+Results are batched with a default batch size of 25. You can specify the batch size (`b_size`) and the batch start (`b_start`) when searching. `items_total` is the total number of results; when there is more than one batch a `batching` object with links to the current, first, last, next and previous batch is added:
 
 ```http
 {% include_relative examples/search/get_batch.req %}
@@ -223,6 +343,80 @@ This will return all content object:
 
 ```http
 {% include_relative examples/search/post.res %}
+```
+
+## Querystring operations
+
+The operations can be specified by their full `plone.app.querystring` name, which is what Volto sends, or by their short name (for example `selection.any`). Path operations accept a depth suffix (`.::1`), multiple path rows are combined with `OR`, and the context itself is excluded from the results:
+
+```http
+{% include_relative examples/search/post_operations.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/post_operations.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/post_operations.res %}
+```
+
+The querystring search supports the same batching parameters in the body and a `limit` to cap the total number of results:
+
+```http
+{% include_relative examples/search/post_batch.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/post_batch.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/post_batch.res %}
+```
+
+The querystring search can also be called with a `GET` request, passing the JSON encoded body in the `query` parameter:
+
+```http
+{% include_relative examples/search/get_querystring.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/get_querystring.ts %}
+```
+
+This will return the matching content objects:
+
+```http
+{% include_relative examples/search/get_querystring.res %}
+```
+
+When no query is supplied or an operation is unknown a bad request is returned:
+
+```http
+{% include_relative examples/search/post_invalid.req %}
+```
+
+Or use the client directly:
+
+```ts
+{% include_relative examples/search/post_invalid.ts %}
+```
+
+Example response:
+
+```http
+{% include_relative examples/search/post_invalid.res %}
 ```
 
 ## Searching using an embedding model
