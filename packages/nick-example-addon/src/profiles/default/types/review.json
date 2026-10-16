@@ -1,0 +1,19 @@
+{
+  "id": "Review",
+  "title:i18n": "Review",
+  "description": "A review with a rating",
+  "global_allow": true,
+  "filter_content_types": false,
+  "allowed_content_types": [],
+  "schema": {
+    "behaviors": [
+      "dublin_core",
+      "blocks",
+      "short_name",
+      "id_from_title",
+      "example_rating"
+    ],
+    "layouts": []
+  },
+  "workflow": "simple_publication_workflow"
+}
