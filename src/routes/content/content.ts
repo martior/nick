@@ -675,15 +675,32 @@ export default [
       // Get json data
       const properties = type._schema.properties;
 
-      // Only site managers may choose the uuid
-      if (req.body.uuid && !req.permissions.includes('Manage Site')) {
+      // Only site managers may choose the uuid, as `UID` (like
+      // plone.restapi) or `uuid`
+      const requestedUuid = req.body.UID ?? req.body.uuid;
+      if (requestedUuid && !req.permissions.includes('Manage Site')) {
         throw new RequestException(403, {
           message: req.i18n('You are not authorized to set the uuid.'),
         });
       }
+      if (requestedUuid) {
+        if (
+          typeof requestedUuid !== 'string' ||
+          !/^[0-9a-f]{8}-?([0-9a-f]{4}-?){3}[0-9a-f]{12}$/i.test(requestedUuid)
+        ) {
+          throw new RequestException(400, {
+            message: req.i18n('The uuid is invalid.'),
+          });
+        }
+        if (await Document.fetchById(requestedUuid, {}, trx)) {
+          throw new RequestException(400, {
+            message: req.i18n('The uuid is already in use.'),
+          });
+        }
+      }
 
       // Set uuid
-      const newUuid = req.body.uuid || uuid();
+      const newUuid = requestedUuid || uuid();
 
       // Set translation
       let translation_group = newUuid;
