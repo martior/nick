@@ -281,11 +281,11 @@ export class Document extends Model {
       trx,
       req,
     );
-    const restrictedPaths = items.map(
-      (item: InstanceType<typeof Catalog>) => item._path,
+    const restrictedPaths = new Set(
+      items.map((item: InstanceType<typeof Catalog>) => item._path),
     );
     self._restrictedChildren = (self._children || []).filter((child: any) =>
-      restrictedPaths.includes(child.path),
+      restrictedPaths.has(child.path),
     );
   }
 

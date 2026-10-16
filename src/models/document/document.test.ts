@@ -362,4 +362,40 @@ describe('Document', () => {
       expect(result.document.uuid).toBe(uuid(4));
     });
   });
+
+  describe('restrictChildren', () => {
+    it('keeps the viewable children in their order', async () => {
+      const Document = models.get('Document');
+      const root = await Document.fetchOne({ path: '/' }, {}, global.txn!);
+      const folder = await createDocument(
+        'c2000000-0000-4000-8000-000000000301',
+        root,
+        'restrict',
+        'Folder',
+        { workflow_state: 'published' },
+      );
+      for (const [n, state] of [
+        [2, 'published'],
+        [3, 'private'],
+        [4, 'published'],
+      ]) {
+        await createDocument(
+          `c2000000-0000-4000-8000-00000000030${n}`,
+          folder,
+          `child-${n}`,
+          'Page',
+          { workflow_state: state, position_in_parent: 10 - (n as number) },
+        );
+      }
+      await folder.fetchChildren({}, global.txn!);
+      const req: any = {
+        user: { id: 'anonymous', getRoles: () => ['Anonymous'] },
+      };
+      await folder.restrictChildren(req, global.txn!);
+      expect(folder._restrictedChildren.map((child: any) => child.id)).toEqual([
+        'child-4',
+        'child-2',
+      ]);
+    });
+  });
 });
