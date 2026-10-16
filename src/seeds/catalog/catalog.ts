@@ -66,10 +66,19 @@ export const seedCatalog = async (
             table.dateTime(field).index();
             break;
           case 'string[]':
-            table.specificType(field, 'character varying(255)[]').index();
+            // The tokens of the permission filter match most documents
+            // (Anonymous, Authenticated), a GIN index makes the planner
+            // read all of them instead of using a selective index
+            if (index.name === 'allowedUsersGroupsRoles') {
+              table.specificType(field, 'character varying(255)[]').index();
+            } else {
+              table
+                .specificType(field, 'character varying(255)[]')
+                .index(null, 'GIN');
+            }
             break;
           case 'uuid[]':
-            table.specificType(field, 'uuid[]').index();
+            table.specificType(field, 'uuid[]').index(null, 'GIN');
             break;
           case 'embed':
             table.specificType(

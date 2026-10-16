@@ -323,6 +323,7 @@
 - Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
 - Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
 - Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
+- Index the keyword catalog columns (Subject, isReferencing, block_types, ...) with GIN instead of btree, so keyword queries such as a listing by Subject can use their index on large sites; the permission tokens keep their btree index. Run `pnpm migrate` @martior
 
 ### Internal
 
