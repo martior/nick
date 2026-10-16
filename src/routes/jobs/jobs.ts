@@ -7,19 +7,12 @@
 import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
-// External imports
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import { v4 as uuid } from 'uuid';
-
 // Internal imports
 import { RequestException } from '../../helpers/error/error';
 import jobs from '../../helpers/jobs/jobs';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import { getUrl } from '../../helpers/url/url';
 import models from '../../models';
-
-dayjs.extend(utc);
 
 export default [
   {
@@ -48,7 +41,7 @@ export default [
       }
 
       return {
-        ...(job.status === 'success'
+        ...(job.status === 'completed'
           ? {
               headers: {
                 location: `${getUrl(req)}/@jobs/${req.params.id}/result`,
@@ -156,6 +149,9 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Job = models.get('Job');
       const job = await Job.fetchById(req.params.id, {}, trx);
+      if (!job) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
 
       // Check permission
       if (
@@ -168,7 +164,7 @@ export default [
       }
 
       // Abort job
-      await jobs.abort(req.params.id);
+      await jobs.abort(req.params.id, trx);
 
       return {
         status: 204,
@@ -198,26 +194,8 @@ export default [
         });
       }
 
-      const newUuid = uuid();
-      const created = dayjs.utc().format();
-      await Job.create(
-        {
-          uuid: newUuid,
-          title: job.title,
-          description: job.description,
-          params: job.params,
-          actor: job.actor,
-          created,
-          started: null,
-          finished: null,
-          status: 'created',
-          result: {},
-        },
-        {},
-        trx,
-      );
-
-      await jobs.check(trx);
+      // Queue a new job; it starts when the transaction is committed
+      await jobs.add(job.title, job.description, job.params, job.actor, trx);
 
       return {
         status: 204,

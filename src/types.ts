@@ -135,7 +135,17 @@ export interface ScheduledJobAction {
   getDescription(req: Request): string;
   getSummary(req: Request, params: Params): string;
   schema: Json;
-  handler(params: Params, actor: any, trx: Knex.Transaction): Promise<any>;
+  handler(
+    params: Params,
+    actor: any,
+    trx: Knex.Transaction,
+    context?: ScheduledJobContext,
+  ): Promise<any>;
+}
+
+export interface ScheduledJobContext {
+  job: string;
+  signal: AbortSignal;
 }
 
 export interface ContentRuleAction {
@@ -314,8 +324,10 @@ export type ConfigSettings = {
   s3: {
     bucket: string;
     region: string;
-    accessKeyId: string;
-    secretAccessKey: string;
+    endpoint?: string;
+    forcePathStyle?: boolean;
+    accessKeyId?: string;
+    secretAccessKey?: string;
   };
   localesDir: string;
   port: number;
@@ -350,6 +362,7 @@ export type ConfigSettings = {
     api: number;
     auth: number;
     trustProxy: number;
+    store?: 'memory' | 'postgres';
   };
   recyclebin: boolean;
   cache: {
@@ -400,6 +413,16 @@ export type ConfigSettings = {
     batch: number;
   };
   reindexSecurityLimit?: number;
+  jobs: {
+    isolation: 'inline' | 'process';
+    lease: number;
+    maxAttempts: number;
+    backoff: number;
+    maxBackoff: number;
+    pollInterval: number;
+    refreshInterval: number;
+    apiPath: string;
+  };
   userschema: (req: Request) => Schema;
   [key: string]: unknown;
 };

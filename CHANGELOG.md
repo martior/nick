@@ -17,6 +17,7 @@
 - The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1015) @martior
 - A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
 - @contextnavigation has the shape and the tree of plone.restapi's: an envelope with `available`, `has_custom_name`, `title` and `url`, items with `href`, `type`, `normalized_id`, `is_current`, `is_in_path` and `is_folderish` instead of catalog metadata, and the `topLevel`, `currentFolderOnly` and `name` parameters @martior
+- Importing `src/app.ts` no longer schedules or runs jobs, and jobs no longer run in a child process per job by default. Run a worker with `nick --modules=worker` (`src/server.ts` and `pnpm start` run the API and a worker); set `jobs.isolation` to `process` to keep the child processes. Run `pnpm migrate` for the job queue and rate limit tables @martior
 
 ### Feature
 
@@ -172,6 +173,13 @@
 - Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
 - Add the `AuthenticatedUsers` group of all authenticated users, like Plone's: it is always listed in @sharing, and local roles given to it apply to every logged-in user, also in search @martior
 - Add field and fieldset lookup (`@types/<type>/<name>`) and through-the-web schema changes to @types: POST adds a field or a fieldset, PATCH changes it and DELETE removes it, like plone.restapi @martior
+- Run jobs from a Postgres queue: workers claim the oldest job with `FOR UPDATE SKIP LOCKED`, hold a lease renewed by a heartbeat (jobs of a crashed worker are retried), retry failed jobs with exponential backoff up to `jobs.maxAttempts` and support idempotency keys. Jobs run in the worker process by default (`jobs.isolation`) @martior
+- Add the `nick` command with `--modules=migrate,api,worker` (default: all) to run the API, the job worker and migrations in one process or split over several; `migrate` runs the knex migrations, installs new profiles and runs profile upgrades under an advisory lock and exits non-zero on errors @martior
+- Read the port from the `PORT` environment variable @martior
+- Run every profile upgrade step in its own transaction and record it as the profile version, so a failed upgrade keeps the steps before it and resumes at the failed step @martior
+- Add a production Dockerfile: multi-stage, production dependencies only, non-root, `nick` as entrypoint and a health check on @health @martior
+- Support S3-compatible blob storage (MinIO, R2, Ceph) with the `s3.endpoint` and `s3.forcePathStyle` settings, read the blob and S3 settings from `BLOBS` and `S3_*` environment variables, use the default AWS credential chain without static keys and reuse one S3 client @martior
+- Add a Postgres rate limit store (`rateLimit.store: postgres` or `RATE_LIMIT_STORE=postgres`), so rate limits count across API processes; the default stays in memory per process @martior
 
 ### Bugfix
 
@@ -330,6 +338,11 @@
 - Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
 - @types is only available to authenticated users, list items have `id` and `immediately_addable`, and the schema has `type: object` and the content type `application/json+schema`, like plone.restapi @martior
 - Record the creation of content as the first workflow history entry (without action) like Plone, instead of deriving a `Create` entry, so migrated histories are shown unchanged @martior
+- Record failed jobs as `failed` instead of `completed`, add the result location to completed jobs and return 404 when aborting an unknown job @martior
+- Fix scheduled jobs reusing the committed request transaction after they were created, changed or deleted through the API @martior
+- Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
+- Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
+- Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
 
 ### Internal
 
@@ -386,6 +399,9 @@
 - Fix TypeScript type errors @martior
 - Remove the unused `Document.fetchLocalUsersGroups` @martior
 - Add a `typecheck` script and run it in CI @martior
+- Check in CI that the previous version migrates and upgrades to the pushed version @martior
+- Move nodemon to the development dependencies @martior
+- Run the development docker-compose service from the node image @martior
 
 ### Documentation
 
@@ -406,6 +422,9 @@
 - Add documentation about profiles @robgietema
 - Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 - Fix the url of the update scheduled job example @martior
+- Add the jobs admin guide @martior
+- Add the deployment admin guide @martior
+- Document which state is per process when Nick runs several API processes @martior
 
 ## 2.8.0 (2022-07-17)
 

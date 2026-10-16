@@ -1204,8 +1204,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Infurmaziuns davart dretgs che valan per quest element."
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:254
+#: src/app.ts:265
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Errur interna dal server"
@@ -1682,14 +1682,15 @@ msgstr ""
 #: src/routes/users/users.ts:417
 #: src/routes/users/users.ts:484
 #: src/routes/types/types.ts:45
-#: src/routes/scheduled_jobs/scheduled_jobs.ts:50
-#: src/routes/scheduled_jobs/scheduled_jobs.ts:70
+#: src/routes/scheduled_jobs/scheduled_jobs.ts:43
+#: src/routes/scheduled_jobs/scheduled_jobs.ts:63
 #: src/routes/recyclebin/recyclebin.ts:35
 #: src/routes/recyclebin/recyclebin.ts:104
 #: src/routes/recyclebin/recyclebin.ts:202
-#: src/routes/jobs/jobs.ts:37
-#: src/routes/jobs/jobs.ts:77
-#: src/routes/jobs/jobs.ts:188
+#: src/routes/jobs/jobs.ts:30
+#: src/routes/jobs/jobs.ts:70
+#: src/routes/jobs/jobs.ts:153
+#: src/routes/jobs/jobs.ts:184
 #: src/routes/groups/groups.ts:37
 #: src/routes/groups/groups.ts:194
 #: src/routes/groups/groups.ts:238
@@ -2851,8 +2852,8 @@ msgstr "Oz"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/app.ts:163
+#: src/app.ts:180
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Errur da transacziun."
@@ -3200,11 +3201,11 @@ msgstr ""
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
-#: src/routes/jobs/jobs.ts:46
-#: src/routes/jobs/jobs.ts:86
-#: src/routes/jobs/jobs.ts:138
-#: src/routes/jobs/jobs.ts:166
-#: src/routes/jobs/jobs.ts:197
+#: src/routes/jobs/jobs.ts:39
+#: src/routes/jobs/jobs.ts:79
+#: src/routes/jobs/jobs.ts:131
+#: src/routes/jobs/jobs.ts:162
+#: src/routes/jobs/jobs.ts:193
 #: src/routes/content/content.ts:137
 #: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Users"

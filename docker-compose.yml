@@ -1,7 +1,10 @@
+# Development: Nick from the working copy with auto-reload, and Postgres.
+# For production, build the image (Dockerfile) and see
+# docs/admin-guide/deployment.md.
 services:
   nick-backend:
-    build:
-      context: .
+    image: node:26.2.0
+    working_dir: /app
     depends_on:
       - db
     environment:
@@ -17,6 +20,8 @@ services:
       - .:/app
     command: >
       sh -c "
+      npm install -g corepack@latest &&
+      corepack enable &&
       pnpm install &&
       pnpm bootstrap &&
       pnpm start

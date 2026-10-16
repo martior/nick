@@ -19,6 +19,9 @@
       "require": "./*"
     }
   },
+  "bin": {
+    "nick": "./scripts/nick.ts"
+  },
   "license": "MIT",
   "version": "2.8.0",
   "repository": {
@@ -44,6 +47,7 @@
     "knex": "tsx ./node_modules/knex/bin/cli.js",
     "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}'",
     "migrate": "pnpm knex migrate:latest",
+    "nick": "tsx scripts/nick.ts",
     "migrate:list": "pnpm knex migrate:list",
     "permissions:dry-run": "tsx scripts/permissions.ts",
     "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}'",
@@ -84,6 +88,7 @@
     "eslint-plugin-prettier": "5.5.6",
     "glob": "13.0.6",
     "jiti": "2.7.0",
+    "nodemon": "3.1.14",
     "pofile": "1.1.4",
     "prettier": "3.9.6",
     "supertest": "7.2.2",
@@ -109,7 +114,6 @@
     "mime-types": "3.0.2",
     "node-cron": "4.6.0",
     "nodemailer": "9.0.5",
-    "nodemon": "3.1.14",
     "objection": "3.1.5",
     "pdf-parse": "2.4.5",
     "pg": "8.23.0",

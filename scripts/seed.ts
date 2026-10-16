@@ -14,8 +14,8 @@ import { last } from 'es-toolkit/array';
 import { fileExists } from '../src/helpers/fs/fs';
 import { stripI18n } from '../src/helpers/i18n/i18n';
 import { knex } from '../src/helpers/knex/knex';
+import { upgradeProfiles } from '../src/helpers/migrate/migrate';
 import { initProfiles, mapProfiles } from '../src/helpers/profiles/profiles';
-import { mapAsync } from '../src/helpers/utils/utils';
 import models from '../src/models';
 import seeds from '../src/seeds';
 
@@ -29,8 +29,21 @@ const underline = '\x1b[4m';
  */
 async function main() {
   const command = last(process.argv);
-  const trx = await knex.transaction();
   await initProfiles();
+
+  // Run the upgrade steps
+  if (command === 'upgrade') {
+    try {
+      await upgradeProfiles();
+    } catch (err) {
+      console.error(err);
+      process.exitCode = 1;
+    }
+    await knex.destroy();
+    return;
+  }
+
+  const trx = await knex.transaction();
   const Profile = models.get('Profile');
 
   try {
@@ -55,31 +68,6 @@ async function main() {
               ).padEnd(10)}${`${metadata.version}`.padEnd(10)}`,
             );
             break;
-          case 'upgrade':
-            if (!profile) {
-              console.log('Profile is not installed yet');
-            } else if (metadata.version === parseInt(profile.version)) {
-              console.log('Profile already up to date');
-            } else {
-              return mapAsync(
-                Array.apply(null, {
-                  length: metadata.version - parseInt(profile.version),
-                } as any),
-                async (value, index) => {
-                  const version = parseInt(profile.version) + 1 + index;
-                  const upgradePath = `${profilePath}/upgrades/${version}`;
-                  console.log(`Upgrading ${profilePath} to ${version}`);
-                  await seeds.run(trx, upgradePath);
-
-                  // Run custom upgrade code if available
-                  if (await fileExists(`${upgradePath}/index`)) {
-                    const upgrade = await import(`${upgradePath}/index`);
-                    await upgrade.init(trx);
-                  }
-                },
-              );
-            }
-            break;
           default:
             console.log(`Applying profile ${metadata.id}`);
             if (profile && metadata.version === parseInt(profile.version)) {
@@ -98,7 +86,8 @@ async function main() {
   } catch (err) {
     await trx.rollback();
     knex.destroy();
-    console.log(err);
+    console.error(err);
+    process.exitCode = 1;
   }
 }
 
