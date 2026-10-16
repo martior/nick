@@ -296,6 +296,36 @@ export interface QueryParam {
   [key: string]: string;
 }
 
+/**
+ * Contents of a profile's metadata.json.
+ */
+export interface ProfileMetadata {
+  /** Profile id, `<package>:<profile>`. */
+  id: string;
+  title?: string;
+  description?: string;
+  /** Version of the profile; upgrade steps live in `upgrades/<version>`. */
+  version: number;
+  /** Profiles which have to be installed first, like `@plone/nick:core`. */
+  dependencies?: string[];
+  /** Description of an upgrade step (in `upgrades/<version>/metadata.json`). */
+  upgrade?: string;
+}
+
+/**
+ * The `nick` field in the package.json of Nick, an add-on or a project.
+ */
+export interface NickPackageConfig {
+  /** Directory of the profiles (default: `profiles` next to the entry point). */
+  profiles?: string;
+  /** Directory of the knex migrations of the package. */
+  migrations?: string;
+  /** Postgres schema of the tables of the package, created before migrating. */
+  schema?: string;
+  /** Name of the migration ledger (default: `knex_migrations_<package>`). */
+  migrationsTable?: string;
+}
+
 export type Task = {
   name: string;
   schedule: string;
