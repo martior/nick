@@ -168,6 +168,19 @@ export interface WorkflowVariable {
   unsupported?: string;
 }
 
+/**
+ * Worklist, like a DCWorkflow worklist: the content of the types of the
+ * workflow whose variables match (`review_state` or other variables), for
+ * users who pass the guard on the site root.
+ */
+export interface WorkflowWorklist {
+  title?: string;
+  description?: string;
+  match: { [key: string]: string[] };
+  guard?: WorkflowGuard;
+  action?: { name?: string; url?: string; category?: string };
+}
+
 export type PermissionModel = 'additive' | 'acquire';
 
 export interface WorkflowType {
@@ -176,6 +189,7 @@ export interface WorkflowType {
   manager_bypass?: boolean;
   initial_state?: string;
   variables?: { [key: string]: WorkflowVariable };
+  worklists?: { [key: string]: WorkflowWorklist };
   states: { [key: string]: WorkflowState };
   transitions: { [key: string]: WorkflowTransition };
 }

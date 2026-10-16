@@ -265,12 +265,58 @@ function convertVariables(
 }
 
 /**
+ * Convert the worklists of a DCWorkflow definition.
+ * @method convertWorklists
+ * @param {XmlElement} definition Definition.
+ * @param {string} workflowId Id of the workflow.
+ * @param {string[]} warnings Warnings, added to.
+ * @returns {Object} Worklists by id.
+ */
+function convertWorklists(
+  definition: XmlElement,
+  workflowId: string,
+  warnings: string[],
+): Record<string, any> {
+  const worklists: Record<string, any> = {};
+  children(definition, 'worklist').map((element) => {
+    const id = element.attributes.worklist_id;
+    const action = children(element, 'action')[0];
+    const guard = convertGuard(
+      element,
+      `${workflowId}, worklist ${id}`,
+      warnings,
+    );
+    worklists[id] = {
+      title: element.attributes.title || '',
+      description: childText(element, 'description'),
+      match: Object.fromEntries(
+        children(element, 'match').map((match) => [
+          match.attributes.name,
+          (match.attributes.values || '').split(/;\s*/),
+        ]),
+      ),
+      ...(guard ? { guard } : {}),
+      ...(action
+        ? {
+            action: {
+              name: action.text.trim(),
+              url: action.attributes.url || '',
+              category: action.attributes.category || 'global',
+            },
+          }
+        : {}),
+    };
+  });
+  return worklists;
+}
+
+/**
  * Convert a DCWorkflow definition (GenericSetup `definition.xml`). The
  * permission maps of the states become Nick's role to permissions mapping
  * (only permissions with a Nick equivalent, see `permissionMapping`),
  * `acquired` permission maps the state's `acquire` list, and the guards of
  * the transitions Nick guards, the variables and their assignments Nick
- * variables. Scripts and group maps are not converted, they are listed in
+ * variables, and the worklists Nick worklists. Scripts and group maps are not converted, they are listed in
  * the warnings.
  * @method convertDefinition
  * @param {string} xml Workflow definition.
@@ -443,6 +489,9 @@ export function convertDefinition(
         ],
         ...(children(definition, 'variable').length > 0
           ? { variables: convertVariables(definition, workflowId, warnings) }
+          : {}),
+        ...(children(definition, 'worklist').length > 0
+          ? { worklists: convertWorklists(definition, workflowId, warnings) }
           : {}),
         states,
         transitions,

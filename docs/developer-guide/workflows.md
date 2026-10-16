@@ -43,6 +43,7 @@ Each item in the `workflows` array has:
 | `permission_model`    | `string`  | `additive` or `acquire`, see [Permission models](#permission-models).                                          |
 | `managed_permissions` | `array`   | Permissions managed by the workflow with the `acquire` model. Defaults to every permission used in the states. |
 | `variables`           | `object`  | Workflow variables by id, see [Variables](#variables).                                                         |
+| `worklists`           | `object`  | Worklists by id, see [Worklists](#worklists).                                                                  |
 | `manager_bypass`      | `boolean` | Administrators pass every guard.                                                                               |
 
 #### State definition
@@ -125,6 +126,29 @@ Workflow variables work like DCWorkflow's. A variable with `for_status` is compu
 
 `action`, `actor`, `comments`, `time` and `review_state` are always in a history entry. Other variables are added to the entries of the `history` of `@workflow`. When the workflow defines `review_history` with an `info_guard`, users who don't pass it get an empty `history`, like in Plone (the standard Plone workflows require `Request review` or `Review portal content`). Expressions read variables with `here.portal_workflow.getInfoFor(here, 'reviewed_by', '')`.
 
+## Worklists
+
+A worklist lists content waiting for a user, like a DCWorkflow worklist. The REST API serves them at [`@worklists`](/rest-api/endpoints/worklists).
+
+| Field         | Type     | Description                                                                                                                                                          |
+| ------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`       | `string` | Title.                                                                                                                                                               |
+| `description` | `string` | Description.                                                                                                                                                         |
+| `match`       | `object` | Values by variable: `review_state` matches the state, other ids the stored [variables](#variables). A value can be an expression, for example `python:user.getId()`. |
+| `guard`       | `object` | [Guard](#guards), checked on the site root.                                                                                                                          |
+| `action`      | `object` | `name`, `url` and `category`, like in DCWorkflow; `%(count)d` and `%(portal_url)s` are replaced.                                                                     |
+
+```json
+"worklists": {
+  "reviewer_queue": {
+    "description": "Reviewer tasks",
+    "match": { "review_state": ["pending"] },
+    "guard": { "permissions": ["Review"] },
+    "action": { "name": "Pending (%(count)d)", "url": "%(portal_url)s/search?review_state=pending", "category": "global" }
+  }
+}
+```
+
 ## Expressions
 
 Guards (and workflow variables) can use expressions in the subset of TALES that DCWorkflow definitions use. They are parsed and checked by Nick's own evaluator, nothing is passed to `eval`: an expression can only use the names, attributes and methods listed here.
@@ -198,7 +222,7 @@ src/profiles/default/
 | `guard-permission`, `guard-role`, `guard-group`, `guard-expression` | the transition's `guard`                                                                                                                         |
 | `manager_bypass="True"`                                             | `manager_bypass`                                                                                                                                 |
 
-Variables (`variable`, `assignment` of states and transitions) are converted too. Scripts, group maps and permissions without a Nick equivalent are not converted; the loader prints a warning for each. Unsupported guard expressions are kept with `"unsupported": "<reason>"` and deny.
+Variables (`variable`, `assignment` of states and transitions) and worklists are converted too. Scripts, group maps and permissions without a Nick equivalent are not converted; the loader prints a warning for each. Unsupported guard expressions are kept with `"unsupported": "<reason>"` and deny.
 
 ### Conformance
 

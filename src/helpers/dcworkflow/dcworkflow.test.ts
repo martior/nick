@@ -234,6 +234,28 @@ describe('DCWorkflow', () => {
       ]);
     });
 
+    it('converts worklists', () => {
+      const { workflow } = convertDefinition(
+        readFileSync(
+          `${import.meta.dirname}/fixtures/workflows/simple_publication_workflow/definition.xml`,
+          'utf8',
+        ),
+      );
+      expect(workflow.json.worklists).toEqual({
+        reviewer_queue: {
+          title: '',
+          description: 'Reviewer tasks',
+          match: { review_state: ['pending'] },
+          guard: { permissions: ['Review'] },
+          action: {
+            name: 'Pending (%(count)d)',
+            url: '%(portal_url)s/search?review_state=pending',
+            category: 'global',
+          },
+        },
+      });
+    });
+
     it('refuses other xml', () => {
       expect(() => convertDefinition('<object name="x"/>')).toThrow(
         /Not a DCWorkflow definition/,

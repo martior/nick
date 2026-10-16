@@ -157,6 +157,9 @@ export class Workflow extends Model {
       );
       checkGuardExpression(`variable ${id}`, variable.info_guard);
     });
+    Object.entries(json?.worklists || {}).map(([id, worklist]) =>
+      checkGuardExpression(`worklist ${id}`, worklist.guard),
+    );
     return problems;
   }
 
