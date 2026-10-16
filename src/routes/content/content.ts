@@ -32,7 +32,6 @@ import {
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
-import { lockExpired } from '../../helpers/lock/lock';
 import { getBatching, getBatchParams } from '../../helpers/query/query';
 import { getRootUrl, getUrl } from '../../helpers/url/url';
 import { normalizeFields, validateFields } from '../../helpers/schema/schema';
@@ -970,12 +969,7 @@ export default [
       }
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(403, {
           error: {
             message: req.i18n('Resource is locked.'),
@@ -1144,12 +1138,7 @@ export default [
       await req.document.lockForUpdate(trx);
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(423, {
           error: {
             message: req.i18n('Object “{id}” is locked.', {
