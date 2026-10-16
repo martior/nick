@@ -357,6 +357,7 @@
 
 ### Internal
 
+- Reword the descriptions of the self-registration settings of the security control panel in Nick's own words @martior
 - Upgraded dependencies @robgietema
 - Update node dependency requirement @robgietema
 - Split profiles in core and default @robgietema
