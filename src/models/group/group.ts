@@ -29,6 +29,7 @@ export class Group extends Model {
   declare description: string;
   declare email: string;
   declare _roles: any[];
+  declare _users: any[];
 
   // Set relation mappings
   static get relationMappings() {
@@ -92,6 +93,15 @@ export class Group extends Model {
       description: req.i18n(self.description),
       email: self.email,
       roles: self._roles ? self._roles.map((role: any) => role.id) : [],
+      ...(self._users
+        ? {
+            members: {
+              '@id': `${getRootUrl(req)}/@groups/${self.id}`,
+              items: self._users.map((user: any) => user.id).sort(),
+              items_total: self._users.length,
+            },
+          }
+        : {}),
     } as Json;
   }
 

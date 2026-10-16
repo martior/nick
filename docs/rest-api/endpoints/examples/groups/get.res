@@ -10,5 +10,10 @@ Content-Type: application/json
   "email": "",
   "roles": [
     "Administrator"
-  ]
+  ],
+  "members": {
+    "@id": "http://localhost:8080/@groups/Administrators",
+    "items": [],
+    "items_total": 0
+  }
 }

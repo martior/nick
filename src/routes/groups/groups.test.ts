@@ -4,11 +4,15 @@
  */
 
 // External imports
-import { afterEach, describe, it } from 'vitest';
+import request from 'supertest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
 import { testRequest } from '../../helpers/tests/tests';
+
+const auth =
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
 
 describe('Groups', () => {
   afterEach(async () => {
@@ -24,6 +28,23 @@ describe('Groups', () => {
     testRequest(app, 'groups/list_anonymous'));
 
   it('should get an individual group', () => testRequest(app, 'groups/get'));
+
+  it('should list the members of a group', async () => {
+    await request(app)
+      .post('/@groups')
+      .set('Authorization', auth)
+      .send({ groupname: 'nicks', title: 'Nicks', users: ['admin'] })
+      .expect(201);
+    const res = await request(app)
+      .get('/@groups/nicks')
+      .set('Authorization', auth)
+      .expect(200);
+    expect(res.body.members).toEqual({
+      '@id': 'http://localhost:8080/@groups/nicks',
+      items: ['admin'],
+      items_total: 1,
+    });
+  });
 
   it('should not get a group when not logged in', () =>
     testRequest(app, 'groups/get_anonymous'));
