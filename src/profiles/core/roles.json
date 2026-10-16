@@ -57,7 +57,13 @@
     {
       "id": "Reviewer",
       "title:i18n": "Reviewer",
-      "permissions": ["Review", "Modify Comments", "Revert", "View History"]
+      "permissions": [
+        "Review",
+        "Modify Comments",
+        "Revert",
+        "View History",
+        "Review Comments"
+      ]
     },
     {
       "id": "Administrator",
@@ -75,7 +81,8 @@
         "Delegate Reader",
         "Delegate Contributor",
         "Delegate Editor",
-        "Delegate Reviewer"
+        "Delegate Reviewer",
+        "Review Comments"
       ]
     }
   ]

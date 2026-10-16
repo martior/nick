@@ -26,6 +26,11 @@
 
 ### Feature
 
+- Support several workflows per type (workflow chains, `workflows` in a type profile and `workflows.xml`, the new `type_workflow` table). Further workflows keep their state in the workflow status of the document, `@workflow` offers the transitions of all workflows like plone.restapi and takes a transition in the first workflow providing it, and the permissions of all states apply in turn. The export keeps the chains. Run `pnpm migrate` @martior
+- Add DCWorkflow worklists to workflows and the `@worklists` endpoint: the worklists the user passes the guard of, with the matching content they can view (by state and workflow variables, batched). The loader converts worklists @martior
+- Add DCWorkflow variables to workflows: `for_status` variables with default values and expressions, values set by states and expressions of transitions, stored with the history and in the new `document_workflow_status` table, `info_guard` (`review_history` hides the `@workflow` history like Plone) and `getInfoFor` in expressions. The loader converts variables and the export keeps them in the history. Run `pnpm migrate` @martior
+- Load Plone DCWorkflow definitions: `workflows/<id>/definition.xml` and `workflows.xml` bindings in a profile and `pnpm workflows:import`. The export from Plone uses the same loader, so migrated sites keep their guards (permissions, roles, groups, expressions), acquired permissions, hidden and automatic transitions. Adds the `Review Comments` permission for Reviewer and Administrator; run `pnpm seed:upgrade` (upgrade 1019) @martior
+- Add DCWorkflow guards to workflow transitions: one of a list of permissions, roles or groups and an expression, plus `manager_bypass`, `hidden` and automatic transitions. Expressions use a safe evaluator for the TALES subset of DCWorkflow definitions (`python:`, path, `not:`, `exists:`, `string:`); add-ons can provide content methods with `registerExpressionMethod`, and unsupported expressions are refused when a workflow is seeded @martior
 - Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1018 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
 - Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1017) @martior
 - Add an `acquire` permission model to workflows (`permission_model`, `managed_permissions` and per state `acquire`), where the roles of a state replace the global role permissions like in Plone @martior
@@ -381,6 +386,7 @@
 
 ### Internal
 
+- Add a workflow conformance test: every state, transition and role of the standard Plone 6.2 workflows, loaded from their definition.xml, against a matrix captured from Plone 6.2 over HTTP @martior
 - Upgraded dependencies @robgietema
 - Update node dependency requirement @robgietema
 - Split profiles in core and default @robgietema
@@ -442,6 +448,7 @@
 
 ### Documentation
 
+- Document that `checkPermission` in workflow expressions is a Nick extension, Plone's DCWorkflow guards don't have it @martior
 - Added documentation for AI support @robgietema
 - Rearranged documention into sections @robgietema
 - Use different documention theme @robgietema
