@@ -281,7 +281,8 @@ class Jobs {
       .where({ uuid: jobUuid, locked_by: this.id, status: 'started' })
       .update({
         status: 'completed',
-        finished: db.fn.now(),
+        // Runs in the job's transaction, where now() is its start time
+        finished: db.raw('clock_timestamp()'),
         locked_until: null,
         result: result ?? {},
       });

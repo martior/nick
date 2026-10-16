@@ -107,7 +107,9 @@ describe('Jobs', () => {
 
     const job = await getJob(first);
     expect(job.status).toBe('completed');
-    expect(job.finished).not.toBeNull();
+    expect(new Date(job.finished).getTime()).toBeGreaterThan(
+      new Date(job.started).getTime(),
+    );
     expect(job.locked_by).toBe(jobs.id);
     expect(job.locked_until).toBeNull();
     expect(job.result).toEqual({ result: { status: 'success' } });
