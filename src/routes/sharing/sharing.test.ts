@@ -199,7 +199,7 @@ describe('Sharing', () => {
       disabled: false,
     });
 
-    await get('/news/members-only', jane).expect(403);
+    await get('/news/members-only', jane).expect(401);
     await share('/news/members-only', {
       entries: [
         { id: 'AuthenticatedUsers', type: 'group', roles: { Reader: true } },

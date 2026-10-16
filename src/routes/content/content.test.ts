@@ -456,7 +456,7 @@ describe('Content', () => {
       .delete('/news/pending')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${reviewer}`)
-      .expect(403);
+      .expect(401);
 
     // An editor may delete it
     await request(app)

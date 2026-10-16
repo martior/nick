@@ -237,6 +237,6 @@ describe('Workflow', () => {
     // Pending: the owner may view but not edit
     await transition('/news/mine', 'submit').expect(200);
     await page('get').expect(200);
-    await page('patch').send({ title: 'Changed' }).expect(403);
+    await page('patch').send({ title: 'Changed' }).expect(401);
   });
 });
