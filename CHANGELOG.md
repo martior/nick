@@ -324,6 +324,7 @@
 - Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
 - Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
 - Index the keyword catalog columns (Subject, isReferencing, block_types, ...) with GIN instead of btree, so keyword queries such as a listing by Subject can use their index on large sites; the permission tokens keep their btree index. Run `pnpm migrate` @martior
+- Index the paths of documents and the catalog with the pattern operator class and query subtrees with `LIKE` prefixes instead of `starts_with` and regular expressions, so path and `path.depth` queries use an index. Run `pnpm migrate` @martior
 
 ### Internal
 
