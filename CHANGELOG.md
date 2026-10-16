@@ -277,6 +277,7 @@
 - Require the new Revert permission to revert to a previous version, report it in `may_revert`, reindex after a revert and keep the path of top level items; run `pnpm seed:upgrade` to add it @martior
 - Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
 - Keep the content, children, versions and jobs of a deleted user instead of deleting them, the owner and actor are set to null @martior
+- Lock the user while storing or removing a token, so concurrent logins of one user no longer invalidate each other's tokens @martior
 
 ### Internal
 
