@@ -37,7 +37,7 @@ Or use the client directly:
 {% include_relative examples/workflow/post.res %}
 ```
 
-A transition requires the `View` permission on the object and the permission of the transition. The transition must be one of the transitions of the current state; an unknown transition or a transition that is not available in the current state returns `400 Bad Request` with an error of type `WorkflowException`:
+A transition requires the `View` permission on the object and has to pass the guard of the transition (its permissions, roles, groups and expression, see [Workflows](/developer-guide/workflows#guards)); `GET @workflow` only lists the transitions whose guard passes. The transition must be one of the transitions of the current state; an unknown transition or a transition that is not available in the current state returns `400 Bad Request` with an error of type `WorkflowException`:
 
 ```json
 {

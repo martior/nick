@@ -25,6 +25,7 @@
 
 ### Feature
 
+- Add DCWorkflow guards to workflow transitions: one of a list of permissions, roles or groups and an expression, plus `manager_bypass`, `hidden` and automatic transitions. Expressions use a safe evaluator for the TALES subset of DCWorkflow definitions (`python:`, path, `not:`, `exists:`, `string:`); add-ons can provide content methods with `registerExpressionMethod`, and unsupported expressions are refused when a workflow is seeded @martior
 - Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1016 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
 - Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1015) @martior
 - Add an `acquire` permission model to workflows (`permission_model`, `managed_permissions` and per state `acquire`), where the roles of a state replace the global role permissions like in Plone @martior

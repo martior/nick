@@ -55,13 +55,91 @@ Each item in the `workflows` array has:
 
 #### Transition definition
 
-| Field        | Type     | Description                                                         |
-| ------------ | -------- | ------------------------------------------------------------------- |
-| `title:i18n` | `string` | Display label for the transition.                                   |
-| `new_state`  | `string` | The state ID the content moves to when this transition is executed. |
-| `permission` | `string` | The permission required to execute this transition.                 |
+| Field        | Type      | Description                                                                                                  |
+| ------------ | --------- | ------------------------------------------------------------------------------------------------------------ |
+| `title:i18n` | `string`  | Display label for the transition.                                                                            |
+| `new_state`  | `string`  | The state ID the content moves to when this transition is executed. An empty string stays in the same state. |
+| `permission` | `string`  | Shorthand for a guard with one permission: `"guard": { "permissions": ["Review"] }`.                         |
+| `guard`      | `object`  | Who may take the transition, see [Guards](#guards).                                                          |
+| `trigger`    | `string`  | `user` (default) or `automatic`. Automatic transitions are not offered in `@workflow`.                       |
+| `hidden`     | `boolean` | Not offered in `@workflow` (a DCWorkflow transition without an action), it can still be posted.              |
+
+The workflow json can also set `manager_bypass: true`: users with the `Administrator` role then pass every guard, like DCWorkflow's "Manager role bypasses guards".
 
 If a workflow with the same `id` already exists, it is updated (merged) with the new definition.
+
+## Guards
+
+A guard decides if a user may take a transition, like a DCWorkflow guard. Every part that is set must pass; an empty or missing part is not checked:
+
+| Field         | Type     | Description                                                                                                   |
+| ------------- | -------- | ------------------------------------------------------------------------------------------------------------- |
+| `permissions` | `array`  | The user needs one of these permissions on the content (in its current state).                                |
+| `roles`       | `array`  | The user needs one of these roles on the content: global, local (from `@sharing`, also inherited) or `Owner`. |
+| `groups`      | `array`  | The user must be in one of these groups. Every logged in user is in `AuthenticatedUsers`.                     |
+| `expr`        | `string` | An expression that must be true, see [Expressions](#expressions).                                             |
+
+```json
+"publish": {
+  "title:i18n": "Publish",
+  "new_state": "published",
+  "guard": {
+    "permissions": ["Review", "Modify"],
+    "expr": "python:user.has_role('Owner', here) or checkPermission('Review portal content', here)"
+  }
+}
+```
+
+`GET @workflow` offers the exit transitions of the current state whose guard passes, `POST @workflow/<transition>` answers `401 Unauthorized` when the guard doesn't.
+
+## Expressions
+
+Guards (and workflow variables) can use expressions in the subset of TALES that DCWorkflow definitions use. They are parsed and checked by Nick's own evaluator, nothing is passed to `eval`: an expression can only use the names, attributes and methods listed here.
+
+| Expression type | Example                                                 |
+| --------------- | ------------------------------------------------------- |
+| path            | `here/title`, `user/getId`, `transition/getId\|nothing` |
+| `python:`       | `python:getattr(here, 'old_state', None) == 'pending'`  |
+| `not:`          | `not:here/subjects`                                     |
+| `exists:`       | `exists:here/expires`                                   |
+| `string:`       | `string:${here/title} by ${user/getId}`                 |
+
+`python:` supports literals (strings, numbers, lists, tuples, dicts, `None`, `True`, `False`), `and`, `or`, `not`, comparisons (`==`, `!=`, `<`, `>`, `<=`, `>=`, `in`, `not in`, `is`, `is not`), `+ - * / %`, `a if b else c`, indexing, attribute access and calls of the methods below, and the functions `checkPermission(permission, object)`, `getattr`, `hasattr` (with a literal name), `len`, `str`, `int`, `float`, `bool`, `test`, `same_type`, `DateTime`, `list`, `tuple`, `min` and `max`. Lambdas, comprehensions, slices, imports, `modules` and names or attributes starting with `_` are not supported.
+
+| Name                                                                | Attributes and methods                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `here`, `object`, `context`, `container`, `folder`, `portal`        | Any field as an attribute (`here.title`, a missing field is an `AttributeError`, so use `getattr(here, 'field', None)`), `id`, `portal_type`, `review_state`, `aq_parent`, `aq_inner`, `REQUEST`, `portal_membership`, `portal_workflow`, `getId()`, `Title()`, `Description()`, `UID()`, `Creator()`, `listCreators()`, `Subject()`, `Language()`, `getPortalTypeName()`, `getParentNode()`, `absolute_url()`, `getPhysicalPath()`, `effective()`, `expires()`, `created()`, `modified()`, `isExpired()`. In a path only the standard fields (`title`, `description`, `subjects`, `effective`, `expires`, `language`, ...) can be traversed, other names are ambiguous between a field and a method. |
+| `user`, `member`, `here.portal_membership.getAuthenticatedMember()` | `getId()`, `getUserName()`, `getRoles()`, `getRolesInContext(object)`, `getGroups()`, `has_role(role, object)`, `has_permission(permission, object)`, `checkPermission(permission, object)`, `allowed(object, roles)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `here.portal_membership`                                            | `getAuthenticatedMember()`, `isAnonymousUser()`, `checkPermission(permission, object)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `here.portal_workflow`                                              | `getInfoFor(object, name, default)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `request`, `REQUEST`, `here.REQUEST`                                | `get(name, default)`, `form`: the query parameters and the body of the request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `state_change`                                                      | `kwargs` (the request body, `comment`), `status`, `transition`, `old_state`, `new_state`, `object`, `workflow`, `getHistory()`, `getDateTime()`, `getPortal()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `transition`, `workflow`                                            | `id`, `title`, `getId()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `nothing`, `None`                                                   | `null`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+Plone names are accepted: the permissions `Modify portal content`, `Review portal content`, `Request review`, `Add portal content`, `Delete objects`, `Reply to item` and `Review comments` are checked as `Modify`, `Review`, `Submit`, `Add`, `Delete`, `Add Comment` and `Review Comments`, and roles include `Manager` and `Site Administrator` for `Administrator` and `Member` for `Authenticated`.
+
+### Methods of add-ons
+
+Many add-on workflows call Python methods of their content classes, for example `python:here.guard_handler('submit')` or `here/isValid`. Such expressions are unsupported until an add-on registers the method in TypeScript:
+
+```ts
+import { registerExpressionMethod } from '@plone/nick';
+
+registerExpressionMethod('isValid', (content) => !!content.document.json.title);
+registerExpressionMethod('@@can-be-closed', async (content) => {
+  // content.document, content.user, content.trx, content.req
+  return content.document.workflow_state === 'open';
+});
+```
+
+### Unsupported expressions
+
+Unsupported expressions are refused, never ignored:
+
+- Seeding a `workflows.json` with an unsupported expression fails with an error naming the workflow, the transition and the reason.
+- The definition.xml loader keeps an unsupported expression and adds `"unsupported": "<reason>"` to the guard. Such a guard is accepted with a warning and denies at runtime, so the transition is offered to nobody until the method is registered (or the guard is rewritten).
+- An expression that fails at runtime (a missing method, a type error) denies and is logged.
 
 ## Permission models
 
