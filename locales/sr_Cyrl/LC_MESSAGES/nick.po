@@ -819,7 +819,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/workflow/workflow.ts:121
-#: src/routes/history/history.ts:76
+#: src/routes/history/history.ts:84
 #: src/routes/content/content.ts:1064
 #: src/routes/content/content.ts:1235
 msgctxt "Routes|Workflow"
@@ -1763,7 +1763,7 @@ msgid "Not authorized"
 msgstr ""
 
 #. Default: "Not found"
-#: src/routes/history/history.ts:97
+#: src/routes/history/history.ts:105
 msgctxt "Routes|History"
 msgid "Not found"
 msgstr ""
@@ -2890,7 +2890,7 @@ msgid "The uuid is invalid."
 msgstr ""
 
 #. Default: "The version is missing or invalid."
-#: src/routes/history/history.ts:62
+#: src/routes/history/history.ts:70
 msgctxt "Routes|History"
 msgid "The version is missing or invalid."
 msgstr ""
@@ -3171,7 +3171,7 @@ msgid "Version item with comment {comment}"
 msgstr ""
 
 #. Default: "Version not found."
-#: src/routes/history/history.ts:96
+#: src/routes/history/history.ts:104
 #: src/routes/content/content.ts:332
 #: src/routes/content/content.ts:340
 msgctxt "Routes|History"
@@ -3363,6 +3363,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:131
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
+#: src/routes/history/history.ts:59
 #: src/routes/content/content.ts:148
 #: src/helpers/handler/handler.ts:120
 msgctxt "Routes|Users"
@@ -3412,7 +3413,7 @@ msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:73
+#: src/routes/history/history.ts:81
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Немате дозволу да сачувате овај документ јер је закључан од стране другог корисника."

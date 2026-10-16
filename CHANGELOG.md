@@ -4,6 +4,7 @@
 
 ### Breaking
 
+- Reverting with `@history` also requires the Modify permission in the current state, so a revert can't change content the workflow doesn't let the user edit (for example an Editor on a pending item); `may_revert` follows @martior
 - A workflow transition of content locked by another user is refused with `403 Resource is locked.`, like edits and deletes @martior
 - A lock token only lets the creator of the lock edit, revert or delete the locked content; another user who learned the token is refused. The token is no longer shown in `@lock` and in the `lock` of the content to users without the Modify permission @martior
 - @sharing only lists and changes the roles the user may delegate, with the new Delegate Reader, Delegate Contributor, Delegate Editor and Delegate Reviewer permissions, so a local Editor can no longer grant Reviewer or Administrator. Roles without a Delegate permission (Anonymous, Authenticated, Owner, Administrator) are no longer offered. Run `pnpm seed:upgrade` @martior
