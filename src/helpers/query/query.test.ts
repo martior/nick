@@ -7,7 +7,13 @@
 import { describe, it, expect } from 'vitest';
 
 // Internal imports
-import { pathCondition, textToTsquery } from './query';
+import '../../app';
+import {
+  pathCondition,
+  querystringToQuery,
+  queryparamToQuery,
+  textToTsquery,
+} from './query';
 
 describe('Query', () => {
   describe('textToTsquery', () => {
@@ -180,6 +186,31 @@ describe('Query', () => {
       expect(JSON.stringify(plan.rows)).toContain(
         'catalog__path_pattern_index',
       );
+    });
+  });
+
+  describe('default order', () => {
+    const req: any = { apiPath: 'http://localhost:8080', user: {} };
+
+    it('should order by the primary key without sort_on', async () => {
+      const [, params] = await queryparamToQuery({}, '/', req, global.txn!);
+      expect(params.order).toEqual({ column: 'document', reverse: false });
+      const [, querystring] = await querystringToQuery(
+        { query: [] } as any,
+        '/',
+        req,
+        global.txn!,
+      );
+      expect(querystring.order).toEqual({ column: 'document', reverse: false });
+    });
+
+    it('should use the primary key index for a limited query', async () => {
+      await global.txn!.raw('SET LOCAL enable_seqscan = off');
+      await global.txn!.raw('SET LOCAL enable_sort = off');
+      const plan = await global.txn!.raw(
+        `EXPLAIN SELECT * FROM catalog WHERE "_deleted" = false ORDER BY "document" LIMIT 25`,
+      );
+      expect(JSON.stringify(plan.rows)).toContain('catalog_pkey');
     });
   });
 });
