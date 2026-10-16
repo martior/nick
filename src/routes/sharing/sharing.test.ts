@@ -11,7 +11,11 @@ import { describe, expect, it, vi } from 'vitest';
 import app from '../../app';
 import config from '../../helpers/config/config';
 import jobs from '../../helpers/jobs/jobs';
-import { createDocument, testRequest } from '../../helpers/tests/tests';
+import {
+  createDocument,
+  createUser,
+  testRequest,
+} from '../../helpers/tests/tests';
 import models from '../../models';
 
 const token =
@@ -149,5 +153,45 @@ describe('Sharing', () => {
       400,
     );
     await post({ entries: [{ id: 'admin', type: 'user' }] }).expect(400);
+  });
+
+  it('should only delegate roles the user may delegate', async () => {
+    const Document = models.get('Document');
+    const editor = await createUser('editor');
+    await createUser('jane');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await news
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Editor', user: 'editor' });
+
+    const res = await request(app)
+      .get('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .expect(200);
+    expect(res.body.available_roles.map((role: any) => role.id)).toEqual([
+      'Editor',
+      'Reader',
+    ]);
+
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .send({
+        entries: [
+          {
+            id: 'jane',
+            type: 'user',
+            roles: { Reviewer: true, Administrator: true, Reader: true },
+          },
+        ],
+      })
+      .expect(204);
+    const roles = await global.txn!('user_role_document').where({
+      user: 'jane',
+      document: news.uuid,
+    });
+    expect(roles.map((role: any) => role.role)).toEqual(['Reader']);
   });
 });

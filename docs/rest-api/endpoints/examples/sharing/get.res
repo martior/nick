@@ -4,22 +4,6 @@ Content-Type: application/json
 {
   "available_roles": [
     {
-      "id": "Anonymous",
-      "title": "Anonymous"
-    },
-    {
-      "id": "Authenticated",
-      "title": "Authenticated"
-    },
-    {
-      "id": "Owner",
-      "title": "Owner"
-    },
-    {
-      "id": "Reader",
-      "title": "Reader"
-    },
-    {
       "id": "Contributor",
       "title": "Contributor"
     },
@@ -28,12 +12,12 @@ Content-Type: application/json
       "title": "Editor"
     },
     {
-      "id": "Reviewer",
-      "title": "Reviewer"
+      "id": "Reader",
+      "title": "Reader"
     },
     {
-      "id": "Administrator",
-      "title": "Administrator"
+      "id": "Reviewer",
+      "title": "Reviewer"
     }
   ],
   "entries": [],

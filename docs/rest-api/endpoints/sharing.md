@@ -25,7 +25,7 @@ Or use the client directly:
 {% include_relative examples/sharing/get.res %}
 ```
 
-The `available_roles` property contains the list of roles that can be managed via the sharing page. It contains dictionaries with the role ID and its translated `title` (as it appears on the sharing page).
+The `available_roles` property contains the list of roles that can be managed via the sharing page. Only roles the current user may delegate are listed: a role is delegatable with the `Delegate <role>` permission, like the `Sharing page: Delegate <role> role` permissions of Plone. The core profile gives `Delegate Reader` and `Delegate Editor` to `Editor`, `Delegate Reader`, `Delegate Contributor` and `Delegate Editor` to `Owner`, and all four to `Administrator`. Roles in a POST that the user may not delegate are ignored, so for example a local Editor can't grant `Reviewer`. It contains dictionaries with the role ID and its translated `title` (as it appears on the sharing page).
 
 ## Searching for principles
 

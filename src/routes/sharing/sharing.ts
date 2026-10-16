@@ -96,6 +96,26 @@ async function fetchPrincipals(
   );
 }
 
+/**
+ * Fetch the roles the current user may delegate: the roles with a
+ * `Delegate <role>` permission the user has on the document, like the
+ * "Sharing page: Delegate <role> role" permissions of Plone.
+ * @method fetchDelegatableRoles
+ * @param {Request} req Request object.
+ * @param {Object} trx transaction object.
+ * @returns {Promise<Object[]>} Roles sorted by id.
+ */
+async function fetchDelegatableRoles(
+  req: Request,
+  trx: Knex.Transaction,
+): Promise<any[]> {
+  const Role = models.get('Role');
+  const roles = await Role.fetchAll({}, { order: 'id' }, trx);
+  return roles
+    .map((role: any) => role)
+    .filter((role: any) => req.permissions.includes(`Delegate ${role.id}`));
+}
+
 export default [
   {
     op: 'get',
@@ -105,12 +125,11 @@ export default [
     cache: 'manage',
     middleware: apiLimiter,
     handler: async (req: Request, trx: Knex.Transaction) => {
-      const Role = models.get('Role');
       const User = models.get('User');
       const Group = models.get('Group');
 
-      // Get roles
-      const roles = await Role.fetchAll({}, { order: 'order' }, trx);
+      // Get the roles the user may delegate
+      const roles = await fetchDelegatableRoles(req, trx);
 
       // Get user roles
       const users = await fetchPrincipals(
@@ -157,7 +176,6 @@ export default [
     client: 'updateSharing',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
-      const Role = models.get('Role');
       const User = models.get('User');
       const Group = models.get('Group');
 
@@ -198,8 +216,8 @@ export default [
         );
       }
 
-      // Get the roles that can be shared, other roles are ignored
-      const roles = (await Role.fetchAll({}, {}, trx)).map(
+      // Get the roles the user may delegate, other roles are ignored
+      const roles = (await fetchDelegatableRoles(req, trx)).map(
         (role: any) => role.id,
       );
 

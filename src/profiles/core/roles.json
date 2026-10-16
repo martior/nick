@@ -26,7 +26,10 @@
         "Modify Comments",
         "Revert",
         "Delete",
-        "View History"
+        "View History",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor"
       ]
     },
     {
@@ -42,7 +45,14 @@
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Submit", "Revert", "Delete", "View History"]
+      "permissions": [
+        "Submit",
+        "Revert",
+        "Delete",
+        "View History",
+        "Delegate Reader",
+        "Delegate Editor"
+      ]
     },
     {
       "id": "Reviewer",
@@ -61,7 +71,11 @@
         "Modify Comments",
         "Revert",
         "Delete",
-        "View History"
+        "View History",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor",
+        "Delegate Reviewer"
       ]
     }
   ]
