@@ -250,6 +250,7 @@
 - Lock the user while storing or removing a token, so concurrent logins of one user no longer invalidate each other's tokens @martior
 - Lock the document for changes and the parent for changes of its children, so concurrent edits no longer fail on duplicate versions and concurrent creates and deletes in one folder no longer deadlock @martior
 - Run a request again, up to three times, when its transaction hits a database deadlock or serialization failure instead of returning 500 @martior
+- Accept @sharing posts without entries or inherit, ignore unknown roles and return 400 instead of 500 for invalid sharing data @martior
 
 ### Internal
 

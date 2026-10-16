@@ -7,8 +7,12 @@
 import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
+// External imports
+import { isObject } from 'es-toolkit/compat';
+
 // Internal imports
 import config from '../../helpers/config/config';
+import { RequestException } from '../../helpers/error/error';
 import jobs from '../../helpers/jobs/jobs';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import { mapAsync } from '../../helpers/utils/utils';
@@ -153,29 +157,60 @@ export default [
     client: 'updateSharing',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      const Role = models.get('Role');
       const User = models.get('User');
       const Group = models.get('Group');
 
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
 
+      // Validate input
+      const body = req.body || {};
+      const entries = body.entries ?? [];
+      if (
+        (body.inherit !== undefined && typeof body.inherit !== 'boolean') ||
+        !Array.isArray(entries) ||
+        !entries.every(
+          (entry: any) =>
+            isObject(entry) &&
+            typeof (entry as any).id === 'string' &&
+            ['user', 'group'].includes((entry as any).type) &&
+            isObject((entry as any).roles),
+        )
+      ) {
+        throw new RequestException(400, {
+          message: req.i18n(
+            'Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles.',
+          ),
+        });
+      }
+
       // Update inherit
-      if (req.document.inherit_roles !== req.body.inherit) {
+      if (
+        typeof body.inherit === 'boolean' &&
+        req.document.inherit_roles !== body.inherit
+      ) {
         await req.document.update(
           {
-            inherit_roles: req.body.inherit,
+            inherit_roles: body.inherit,
           },
           trx,
         );
       }
 
+      // Get the roles that can be shared, other roles are ignored
+      const roles = (await Role.fetchAll({}, {}, trx)).map(
+        (role: any) => role.id,
+      );
+
       // Update local roles
-      await Promise.all(
-        req.body.entries.map(async (entry: any) => {
-          const Model = entry.type === 'user' ? User : Group;
-          const principal = await Model.fetchById(entry.id, {}, trx);
-          if (principal) {
-            await mapAsync(Object.keys(entry.roles), async (role: any) => {
+      await mapAsync(entries, async (entry: any) => {
+        const Model = entry.type === 'user' ? User : Group;
+        const principal = await Model.fetchById(entry.id, {}, trx);
+        if (principal) {
+          await mapAsync(
+            Object.keys(entry.roles).filter((role) => roles.includes(role)),
+            async (role: any) => {
               // If should relate
               if (entry.roles[role] === true) {
                 const existing = await principal
@@ -194,10 +229,10 @@ export default [
                   .unrelate()
                   .where({ role, document: req.document.uuid });
               }
-            });
-          }
-        }),
-      );
+            },
+          );
+        }
+      });
 
       // Reindex the permissions of the document and the documents below it,
       // in a job if the subtree is large

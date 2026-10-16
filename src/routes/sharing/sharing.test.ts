@@ -114,4 +114,40 @@ describe('Sharing', () => {
     expect(check).toHaveBeenCalled();
     check.mockRestore();
   });
+
+  it('should accept partial sharing data', async () => {
+    const Document = models.get('Document');
+    await share('/news', {});
+    await share('/news', { inherit: false });
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    expect(news.inherit_roles).toBe(false);
+    await share('/news', {
+      entries: [
+        {
+          id: 'admin',
+          type: 'user',
+          roles: { NoSuchRole: true, Reader: true },
+        },
+      ],
+    });
+    const roles = await global.txn!('user_role_document').where({
+      document: news.uuid,
+    });
+    expect(roles.map((role: any) => role.role)).toEqual(['Reader']);
+  });
+
+  it('should refuse invalid sharing data', async () => {
+    const post = (body: any) =>
+      request(app)
+        .post('/news/@sharing')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    await post({ inherit: 'yes' }).expect(400);
+    await post({ entries: 'admin' }).expect(400);
+    await post({ entries: [{ id: 'admin', type: 'robot', roles: {} }] }).expect(
+      400,
+    );
+    await post({ entries: [{ id: 'admin', type: 'user' }] }).expect(400);
+  });
 });
