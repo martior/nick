@@ -107,6 +107,7 @@ export async function callHandler(
   req.document = document;
   req.navroot = result.navroot;
   req.type = type;
+  req.roles = mergedRoles;
   req.permissions = type._workflow.applyPermissions(
     document.workflow_state,
     mergedRoles,

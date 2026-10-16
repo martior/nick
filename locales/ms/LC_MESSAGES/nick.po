@@ -818,7 +818,7 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/workflow/workflow.ts:121
+#: src/routes/workflow/workflow.ts:140
 #: src/routes/history/history.ts:84
 #: src/routes/content/content.ts:1093
 #: src/routes/content/content.ts:1264
@@ -1276,7 +1276,7 @@ msgid "Invalid credentials"
 msgstr "Kelayakan tidak sah"
 
 #. Default: "Invalid date for {field}."
-#: src/routes/workflow/workflow.ts:79
+#: src/routes/workflow/workflow.ts:96
 msgctxt "Routes|Workflow"
 msgid "Invalid date for {field}."
 msgstr ""
@@ -1734,7 +1734,7 @@ msgid "No query supplied."
 msgstr ""
 
 #. Default: "No transition specified."
-#: src/routes/workflow/workflow.ts:187
+#: src/routes/workflow/workflow.ts:207
 msgctxt "Routes|Workflow"
 msgid "No transition specified."
 msgstr ""
@@ -2236,7 +2236,7 @@ msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/workflow/workflow.ts:120
+#: src/routes/workflow/workflow.ts:139
 #: src/routes/content/content.ts:1092
 msgctxt "Routes|Workflow"
 msgid "Resource is locked."
@@ -3054,13 +3054,13 @@ msgid "Transition workflow state"
 msgstr ""
 
 #. Default: "Transition {transition} is not available for {path}."
-#: src/routes/workflow/workflow.ts:44
+#: src/routes/workflow/workflow.ts:50
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:101
+#: src/routes/workflow/workflow.ts:120
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -3379,7 +3379,7 @@ msgid "You are not allowed to set roles or groups."
 msgstr ""
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:110
+#: src/routes/workflow/workflow.ts:129
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Anda tidak dibenarkan untuk mengakses sumber ini."
@@ -3403,7 +3403,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:193
 #: src/routes/history/history.ts:59
 #: src/routes/content/content.ts:148
-#: src/helpers/handler/handler.ts:120
+#: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""

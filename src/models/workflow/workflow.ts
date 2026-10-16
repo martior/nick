@@ -4,16 +4,26 @@
  */
 
 // Type imports
-import type { Json, PermissionModel, Request, WorkflowType } from '../../types';
+import type {
+  Json,
+  PermissionModel,
+  Request,
+  WorkflowGuard,
+  WorkflowType,
+} from '../../types';
 
 // External imports
 import { flatten, uniq } from 'es-toolkit/array';
 import { isObject } from 'es-toolkit/compat';
-import { mapValues, pick, pickBy } from 'es-toolkit/object';
 
 // Internal imports
 import { Model } from '../_model/_model';
 import { getUrl } from '../../helpers/url/url';
+import { checkExpression } from '../../helpers/expression/expression';
+import {
+  type WorkflowContext,
+  checkGuard,
+} from '../../helpers/workflow/workflow';
 
 /**
  * A model for Workflow.
@@ -33,9 +43,10 @@ export class Workflow extends Model {
    * Returns JSON data.
    * @method toJson
    * @param {Request} req Request object
+   * @param {string[]} transitions Ids of the available transitions.
    * @returns {Json} JSON object.
    */
-  toJson(req: Request): Json {
+  toJson(req: Request, transitions: string[] = []): Json {
     const self: InstanceType<typeof Workflow> = this;
     const current_state_id = req.document.workflow_state;
     const current_state = (self.json.states || {})[current_state_id] || {};
@@ -61,21 +72,122 @@ export class Workflow extends Model {
         id: current_state_id,
         title: req.i18n(current_state.title),
       },
-      transitions: Object.entries(
-        mapValues(
-          pick(
-            pickBy(self.json.transitions || {}, (transition: any) =>
-              req.permissions.includes(transition.permission),
-            ),
-            current_state.transitions || [],
-          ),
-          (item: any) => item.title,
-        ),
-      ).map((transition) => ({
-        '@id': `${getUrl(req)}/@workflow/${transition[0]}`,
-        title: req.i18n(transition[1]),
+      transitions: transitions.map((transition) => ({
+        '@id': `${getUrl(req)}/@workflow/${transition}`,
+        title: req.i18n(self.json.transitions[transition].title),
       })),
     } as Json;
+  }
+
+  /**
+   * Check the expressions of a workflow definition: every guard
+   * expression must be supported by the expression evaluator. Guards which
+   * the definition.xml loader marked `unsupported` are reported as
+   * acknowledged, they deny at runtime.
+   * @method checkExpressions
+   * @static
+   * @param {WorkflowType} json Workflow json.
+   * @returns {Object[]} Problems: where, the expression, the reason and if
+   * it was acknowledged.
+   */
+  static checkExpressions(json: WorkflowType): {
+    where: string;
+    expr: string;
+    reason: string;
+    acknowledged: boolean;
+  }[] {
+    const problems: {
+      where: string;
+      expr: string;
+      reason: string;
+      acknowledged: boolean;
+    }[] = [];
+    const checkGuardExpression = (where: string, guard?: WorkflowGuard) => {
+      if (guard?.expr) {
+        const reason = checkExpression(guard.expr);
+        if (reason) {
+          problems.push({
+            where,
+            expr: guard.expr,
+            reason,
+            acknowledged: !!guard.unsupported,
+          });
+        }
+      }
+    };
+    Object.entries(json?.transitions || {}).map(([id, transition]) =>
+      checkGuardExpression(`transition ${id}`, transition.guard),
+    );
+    return problems;
+  }
+
+  /**
+   * Get the guard of a transition. `permission` is a shorthand for a guard
+   * with one permission.
+   * @method getGuard
+   * @param {string} transition Transition id.
+   * @returns {WorkflowGuard | undefined} Guard.
+   */
+  getGuard(transition: string): WorkflowGuard | undefined {
+    const self: InstanceType<typeof Workflow> = this;
+    const definition = self.json.transitions?.[transition];
+    if (!definition) {
+      return undefined;
+    }
+    if (definition.guard) {
+      return definition.guard;
+    }
+    return definition.permission
+      ? { permissions: [definition.permission] }
+      : undefined;
+  }
+
+  /**
+   * Check the guard of a transition.
+   * @method checkTransitionGuard
+   * @param {string} transition Transition id.
+   * @param {WorkflowContext} context Document, user and transaction.
+   * @returns {Promise<boolean>} True if the guard passes.
+   */
+  async checkTransitionGuard(
+    transition: string,
+    context: WorkflowContext,
+  ): Promise<boolean> {
+    const self: InstanceType<typeof Workflow> = this;
+    return await checkGuard(self.getGuard(transition), {
+      ...context,
+      workflow: self,
+      transition,
+    });
+  }
+
+  /**
+   * Get the transitions a user can take in a state: the exit transitions
+   * of the state which are triggered by the user, not hidden and whose
+   * guard passes.
+   * @method getAvailableTransitions
+   * @param {string} state Current state.
+   * @param {WorkflowContext} context Document, user and transaction.
+   * @returns {Promise<string[]>} Transition ids, sorted like DCWorkflow.
+   */
+  async getAvailableTransitions(
+    state: string,
+    context: WorkflowContext,
+  ): Promise<string[]> {
+    const self: InstanceType<typeof Workflow> = this;
+    const available: string[] = [];
+    for (const transition of self.json.states?.[state]?.transitions || []) {
+      const definition = self.json.transitions?.[transition];
+      if (
+        definition &&
+        definition.trigger !== 'automatic' &&
+        !definition.hidden &&
+        (await self.checkTransitionGuard(transition, context))
+      ) {
+        available.push(transition);
+      }
+    }
+    return available.sort();
   }
 
   /**
