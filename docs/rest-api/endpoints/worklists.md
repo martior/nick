@@ -5,7 +5,7 @@ parent: Endpoints
 
 # Worklists
 
-Workflows can define worklists, like DCWorkflow: for example the review queue of `simple_publication_workflow` lists the pending content for users with the `Review` permission. plone.restapi has no endpoint for worklists; Nick lists the worklists of the current user with a `GET` request to `@worklists` on any context:
+Workflows can define worklists, like DCWorkflow: for example a desk inbox that lists the content waiting for review to users with the `Review` permission. plone.restapi has no endpoint for worklists; Nick lists the worklists of the current user with a `GET` request to `@worklists` on any context:
 
 ```http
 GET /@worklists HTTP/1.1
@@ -18,22 +18,22 @@ Authorization: Bearer <token>
   "@id": "http://localhost:8080/@worklists",
   "items": [
     {
-      "@id": "http://localhost:8080/@worklists/simple_publication_workflow/reviewer_queue",
-      "id": "reviewer_queue",
-      "workflow": "simple_publication_workflow",
-      "title": "Reviewer tasks",
-      "description": "Reviewer tasks",
+      "@id": "http://localhost:8080/@worklists/editorial_workflow/desk_inbox",
+      "id": "desk_inbox",
+      "workflow": "editorial_workflow",
+      "title": "Stories for the desk",
+      "description": "Stories for the desk",
       "action": {
-        "title": "Pending (2)",
-        "url": "http://localhost:8080/search?review_state=pending",
+        "title": "Desk (2)",
+        "url": "http://localhost:8080/search?review_state=in_review",
         "category": "global"
       },
       "items": [
         {
           "@id": "http://localhost:8080/news/item-0",
-          "@type": "Page",
+          "@type": "Story",
           "title": "Item 0",
-          "review_state": "pending"
+          "review_state": "in_review"
         }
       ],
       "items_total": 2
