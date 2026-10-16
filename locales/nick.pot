@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-16T00:34:22.899Z\n"
+"POT-Creation-Date: 2026-10-16T00:46:32.690Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -709,6 +709,7 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
 #: src/routes/content/content.ts:797
+#: src/routes/content/content.ts:927
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr ""
@@ -1465,6 +1466,12 @@ msgstr ""
 #: src/helpers/handler/handler.ts:79
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
+msgstr ""
+
+#. Default: "Object “{id}” is locked."
+#: src/routes/content/content.ts:924
+msgctxt "Routes|Content"
+msgid "Object “{id}” is locked."
 msgstr ""
 
 #. Default: "Open End"

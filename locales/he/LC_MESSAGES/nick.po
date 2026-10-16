@@ -712,6 +712,7 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
 #: src/routes/content/content.ts:797
+#: src/routes/content/content.ts:927
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "המסמך ננעל"
@@ -1468,6 +1469,12 @@ msgstr "לא נמצא."
 #: src/helpers/handler/handler.ts:79
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
+msgstr ""
+
+#. Default: "Object “{id}” is locked."
+#: src/routes/content/content.ts:924
+msgctxt "Routes|Content"
+msgid "Object “{id}” is locked."
 msgstr ""
 
 #. Default: "Open End"
