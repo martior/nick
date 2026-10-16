@@ -20,7 +20,7 @@ import config from '../config/config';
 import { readProfileFile, writeFile, writeImage } from '../fs/fs';
 import { getFactoryFields } from '../schema/schema';
 import { mapAsync } from '../utils/utils';
-import { getUrl } from '../../helpers/url/url';
+import { getUrl, getUrlByPath } from '../../helpers/url/url';
 import models from '../../models';
 import { handler as actions } from '../../routes/actions/actions';
 import { handler as breadcrumbs } from '../../routes/breadcrumbs/breadcrumbs';
@@ -66,6 +66,45 @@ export function isProfileFile(value: any): boolean {
     !('data' in value) &&
     !('uuid' in value)
   );
+}
+
+/**
+ * Get the summary of a parent, like the `parent` of plone.restapi.
+ * @method parentSummary
+ * @param {Request} req Request object.
+ * @param {Object} parent Parent document.
+ * @returns {Object} Summary of the parent.
+ */
+export function parentSummary(req: Request, parent: any): Record<string, any> {
+  return {
+    '@id': getUrlByPath(req, parent.path),
+    '@type': parent.type,
+    title: parent.json.title,
+    description: parent.json.description || '',
+    review_state: parent.workflow_state,
+  };
+}
+
+/**
+ * Fetch the summary of the parent of a document.
+ * @method fetchParentSummary
+ * @param {Request} req Request object.
+ * @param {Object} document Document.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @returns {Promise<Object>} Object with the parent, empty for the root.
+ */
+export async function fetchParentSummary(
+  req: Request,
+  document: any,
+  trx: Knex.Transaction,
+): Promise<Record<string, any>> {
+  if (!document.parent) {
+    return {};
+  }
+  const Document = models.get('Document');
+  const parent =
+    document._parent || (await Document.fetchById(document.parent, {}, trx));
+  return parent ? { parent: parentSummary(req, parent) } : {};
 }
 
 /**

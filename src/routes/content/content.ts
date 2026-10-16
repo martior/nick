@@ -20,17 +20,20 @@ import events from '../../events';
 import { checkETag } from '../../helpers/cache/cache';
 import config from '../../helpers/config/config';
 import {
+  fetchParentSummary,
   getComponents,
   handleBlockReferences,
   handleBlocks,
   handleFiles,
   handleImages,
   handleRelationLists,
+  parentSummary,
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
-import { getRootUrl } from '../../helpers/url/url';
+import { getBatching, getBatchParams } from '../../helpers/query/query';
+import { getRootUrl, getUrl } from '../../helpers/url/url';
 import { normalizeFields, validateFields } from '../../helpers/schema/schema';
 import {
   bytesToNumber,
@@ -654,13 +657,49 @@ export default [
         };
       }
 
-      const json = await req.document.toJson(
+      // Batch the items
+      const { start, size } = getBatchParams(
+        req.query?.b_start,
+        req.query?.b_size,
+      );
+      const total = req.document._restrictedChildren.length;
+      req.document._restrictedChildren = req.document._restrictedChildren.slice(
+        start,
+        start + size,
+      );
+      const fullobjects = ['1', 'true', 'True'].includes(
+        req.query?.fullobjects,
+      );
+
+      const json: any = await req.document.toJson(
         req,
         await getComponents(req, trx, req.query?.expand?.split(',') || []),
       );
+      const links = getBatching(
+        getUrl(req),
+        req.query || {},
+        total,
+        start,
+        size,
+      );
       return {
         xkeys: [req.document.uuid],
-        json: await handleBlockReferences(json, trx),
+        json: await handleBlockReferences(
+          {
+            ...json,
+            ...(await fetchParentSummary(req, req.document, trx)),
+            items: json.items.map((item: any) => ({
+              ...item,
+              description: item.description || '',
+              ...(fullobjects
+                ? { parent: parentSummary(req, req.document) }
+                : {}),
+            })),
+            items_total: total,
+            ...(links ? { batching: links } : {}),
+          },
+          trx,
+        ),
       };
     },
   },
@@ -907,12 +946,19 @@ export default [
       );
 
       // Send data back to client
+      const result: any = await document.toJson(
+        req,
+        await getComponents(req, trx, req.query?.expand?.split(',') || []),
+      );
       return {
         status: 201,
-        json: await document.toJson(
-          req,
-          await getComponents(req, trx, req.query?.expand?.split(',') || []),
-        ),
+        headers: {
+          Location: result['@id'],
+        },
+        json: {
+          ...result,
+          parent: parentSummary(req, req.document),
+        },
       };
     },
   },
@@ -1090,6 +1136,23 @@ export default [
 
       // Trigger onAfterModified
       await events.trigger('onAfterModified', req.document, req.user, trx, req);
+
+      // Return the content if asked for
+      if (req.headers.prefer === 'return=representation') {
+        await req.document.fetchRelationLists(trx);
+        await req.document.fetchChildren(req, trx);
+        await req.document.restrictChildren(req, trx);
+        return {
+          status: 200,
+          json: {
+            ...(await req.document.toJson(
+              req,
+              await getComponents(req, trx, []),
+            )),
+            ...(await fetchParentSummary(req, req.document, trx)),
+          },
+        };
+      }
 
       // Send ok
       return {
