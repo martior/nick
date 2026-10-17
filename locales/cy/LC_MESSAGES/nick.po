@@ -217,8 +217,7 @@ msgid "Allows users to login with their email address instead of specifying a se
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:119
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "Eisoes wedi'i gloi"
@@ -1082,8 +1081,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Gwybodaeth am hawliau a ddelir yn yr eitem hon a drosti."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Gwall mewnol y gweinydd"
@@ -1430,7 +1429,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:170
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Heb ei ganiatáu"
@@ -2367,8 +2366,7 @@ msgid "The workflow states to check for."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:116
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "Mae'r ddogfen hon eisoes wedi'i chloi gan ddefnyddiwr arall."
@@ -2449,8 +2447,8 @@ msgstr "Heddiw"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Gwall trafodion."
@@ -2766,7 +2764,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "Nid oes gennych ganiatâd i gadw'r ddogfen hon oherwydd ei bod wedi'i chloi gan ddefnyddiwr arall."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:167
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Nid oes gennych ganiatâd i ddatgloi'r ddogfen hon."

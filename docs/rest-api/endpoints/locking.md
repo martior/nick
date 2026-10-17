@@ -38,6 +38,8 @@ If the lock operation succeeds, the server will respond with status `200 OK` and
 {% include_relative examples/locking/post.res %}
 ```
 
+If the object is already locked by another user, the server responds with status `200 OK` and returns the information about the existing lock, without the lock token. The lock itself is left unchanged.
+
 By default, locks are stealable. That means that another user can unlock the object. If you want to create a non-stealable lock, pass `"stealable": false` in the request body.
 
 To create a lock with a non-default timeout, you can pass the the timeout value in seconds in the request body.
