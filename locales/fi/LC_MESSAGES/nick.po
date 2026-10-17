@@ -711,7 +711,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:799
+#: src/routes/content/content.ts:862
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Asiakirja lukittu"
@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Tietoa tähän kohteeseen liittyvistä oikeuksista."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Sisäinen palvelinvirhe"
@@ -1460,6 +1460,7 @@ msgstr "Ei sallittu"
 #: src/routes/controlpanels/controlpanels.ts:622
 #: src/routes/controlpanels/controlpanels.ts:669
 #: src/routes/controlpanels/controlpanels.ts:707
+#: src/routes/content/content.ts:393
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Ei löytynyt."
@@ -1791,7 +1792,7 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:609
+#: src/routes/content/content.ts:672
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Pakollinen kenttä/kentät puuttuu."
@@ -2449,8 +2450,8 @@ msgstr "Tänään"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Transaktiovirhe."
@@ -2486,7 +2487,7 @@ msgid "Type of the current document is not found."
 msgstr "Nykyisen asiakirjan tyyppiä ei löytynyt."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:598
+#: src/routes/content/content.ts:661
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2760,7 +2761,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:796
+#: src/routes/content/content.ts:859
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Sinulla ei ole oikeutta tallentaa tätä asiakirjaa, koska se on toisen käyttäjän lukitsema."

@@ -4,12 +4,17 @@
  */
 
 // External imports
-import { v4 as uuid } from 'uuid';
+import request from 'supertest';
+import { v4 as uuid, validate } from 'uuid';
 import { afterEach, beforeEach, describe, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import { adminToken, testRequest } from '../../helpers/tests/tests';
+
+// A 1x1 pixel png image
+const png =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
 describe('Content', () => {
   beforeEach(() => {
@@ -81,4 +86,41 @@ describe('Content', () => {
 
   it('should export a markdown file for an object', () =>
     testRequest(app, 'content/markdown'));
+
+  it('should only serve images of the document itself', async () => {
+    // Add a private image, all uuids are mocked
+    vi.mocked(validate).mockReturnValue(true);
+    const imageUuid = uuid();
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        '@type': 'Image',
+        id: 'private-image',
+        title: 'Private Image',
+        image: {
+          data: png,
+          encoding: 'base64',
+          'content-type': 'image/png',
+          filename: 'private.png',
+        },
+      })
+      .expect(201);
+
+    // Not through a published item or the site root
+    await request(app).get(`/news/@@images/${imageUuid}.png`).expect(404);
+    await request(app).get(`/@@images/${imageUuid}.png`).expect(404);
+
+    // Not for anonymous on the private image itself
+    await request(app)
+      .get(`/news/private-image/@@images/${imageUuid}.png`)
+      .expect(401);
+
+    // But for the admin on the image itself
+    return request(app)
+      .get(`/news/private-image/@@images/${imageUuid}.png`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+  });
 });
