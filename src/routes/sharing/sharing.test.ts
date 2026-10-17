@@ -50,4 +50,53 @@ describe('Sharing', () => {
       'Editor',
     ]);
   });
+
+  it('should only delegate roles the user may delegate', async () => {
+    const token = await createUserWithToken('editor');
+    await createUserWithToken('other');
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        entries: [{ id: 'editor', type: 'user', roles: { Editor: true } }],
+        inherit: true,
+      })
+      .expect(204);
+
+    // The editor only gets the roles it may delegate
+    const res = await request(app)
+      .get('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(res.body.available_roles.map((role: any) => role.id)).toEqual([
+      'Editor',
+      'Reader',
+    ]);
+
+    // Other roles are ignored
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        entries: [
+          {
+            id: 'other',
+            type: 'user',
+            roles: { Administrator: true, Reviewer: true, Editor: true },
+          },
+        ],
+        inherit: true,
+      })
+      .expect(204);
+    const other = await User.fetchById('other', {}, global.txn!);
+    expect(
+      await other.fetchRolesByDocument(
+        '32215c67-86de-462a-8cc0-eabcd2b39c26',
+        global.txn!,
+      ),
+    ).toEqual(['Editor']);
+  });
 });

@@ -135,7 +135,8 @@ msgid "Adds title and description fields."
 msgstr "Menambahkan bidang judul dan deskripsi."
 
 #. Default: "Administrator"
-#: src/profiles/core/roles.json:47
+#: src/profiles/core/roles.json:54
+#: src/profiles/core/upgrades/1007/roles.json:20
 #: src/profiles/core/upgrades/1002/roles.json:26
 msgctxt "Profiles|Core|Roles"
 msgid "Administrator"
@@ -519,7 +520,7 @@ msgid "Contents"
 msgstr "Konten"
 
 #. Default: "Contributor"
-#: src/profiles/core/roles.json:32
+#: src/profiles/core/roles.json:39
 msgctxt "Profiles|Core|Roles"
 msgid "Contributor"
 msgstr "Kontributor"
@@ -643,6 +644,34 @@ msgctxt "Profiles|Core|Types|Event"
 msgid "Define the event recurrence rule."
 msgstr ""
 
+#. Default: "Delegate Contributor"
+#: src/profiles/core/permissions.json:66
+#: src/profiles/core/upgrades/1007/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Contributor"
+msgstr ""
+
+#. Default: "Delegate Editor"
+#: src/profiles/core/permissions.json:70
+#: src/profiles/core/upgrades/1007/permissions.json:10
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Editor"
+msgstr ""
+
+#. Default: "Delegate Reader"
+#: src/profiles/core/permissions.json:74
+#: src/profiles/core/upgrades/1007/permissions.json:14
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reader"
+msgstr ""
+
+#. Default: "Delegate Reviewer"
+#: src/profiles/core/permissions.json:78
+#: src/profiles/core/upgrades/1007/permissions.json:18
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reviewer"
+msgstr ""
+
 #. Default: "Delete"
 #: src/profiles/core/actions.json:54
 msgctxt "Profiles|Core|Actions"
@@ -760,7 +789,8 @@ msgid "Edit"
 msgstr "Edit"
 
 #. Default: "Editor"
-#: src/profiles/core/roles.json:37
+#: src/profiles/core/roles.json:44
+#: src/profiles/core/upgrades/1007/roles.json:15
 msgctxt "Profiles|Core|Roles"
 msgid "Editor"
 msgstr "Editor"
@@ -1500,6 +1530,7 @@ msgstr "Urutan dalam pelipat"
 
 #. Default: "Owner"
 #: src/profiles/core/roles.json:22
+#: src/profiles/core/upgrades/1007/roles.json:6
 #: src/profiles/core/upgrades/1002/roles.json:16
 msgctxt "Profiles|Core|Roles"
 msgid "Owner"
@@ -1722,7 +1753,7 @@ msgid "Re-enter the password. Make sure the passwords are identical."
 msgstr ""
 
 #. Default: "Reader"
-#: src/profiles/core/roles.json:27
+#: src/profiles/core/roles.json:34
 msgctxt "Profiles|Core|Roles"
 msgid "Reader"
 msgstr "Pembaca"
@@ -1837,7 +1868,7 @@ msgid "Review state"
 msgstr "Status tinjauan"
 
 #. Default: "Reviewer"
-#: src/profiles/core/roles.json:42
+#: src/profiles/core/roles.json:49
 #: src/profiles/core/upgrades/1002/roles.json:21
 msgctxt "Profiles|Core|Roles"
 msgid "Reviewer"
