@@ -238,6 +238,7 @@
 - Only show uploaded files inline when their content type is safe to show inline, so uploaded html can't run scripts on the api origin @martior
 - Skip ancestors the user can't view in the @inherit endpoint @martior
 - Only list items the user can view in the @navroot endpoint @martior
+- Only list items and breaches the user can view in the @linkintegrity endpoint @martior
 
 ### Internal
 
