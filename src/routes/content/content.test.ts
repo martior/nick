@@ -329,4 +329,29 @@ describe('Content', () => {
       .send({ source: '/news' })
       .expect(403);
   });
+
+  it('should serve an image with a non-ascii filename by uuid', async () => {
+    vi.mocked(validate).mockReturnValue(true);
+    const imageUuid = uuid();
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        '@type': 'Image',
+        id: 'image',
+        title: 'Image',
+        image: {
+          data: png,
+          encoding: 'base64',
+          'content-type': 'image/png',
+          filename: 'bild-æøå.png',
+        },
+      })
+      .expect(201);
+    return request(app)
+      .get(`/news/image/@@images/${imageUuid}.png`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+  });
 });

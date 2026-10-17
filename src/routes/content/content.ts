@@ -499,9 +499,15 @@ export default [
       return {
         headers: {
           'content-type': image['content-type'],
-          'content-disposition': `${
-            isInlineContentType(image['content-type']) ? 'inline' : 'attachment'
-          }; filename="${image.filename}"`,
+          // Other types are downloaded, the filename is encoded because a
+          // header can't contain non-ascii characters
+          ...(isInlineContentType(image['content-type'])
+            ? {}
+            : {
+                'content-disposition': `attachment; filename*=UTF-8''${encodeURIComponent(
+                  image.filename || '',
+                )}`,
+              }),
         },
         etag: uuid,
         xkeys: [req.document.uuid],
