@@ -25,6 +25,8 @@ If the copy operation succeeds, the server will respond with status 200 (OK) and
 {% include_relative examples/copymove/copy.res %}
 ```
 
+A folder can be copied into one of its own subfolders. The copy contains the original children of the folder, but not the copy itself.
+
 ## Moving an object
 
 To move a content object send a `POST` request to the `/@move` endpoint at the destinations url with the source object specified in the request body. The source object can be specified either by path.

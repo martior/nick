@@ -208,4 +208,46 @@ describe('Content', () => {
     const res = await admin(request(app).get('/news/page')).expect(200);
     expect(related(res)).toEqual([events, privatePage].sort());
   });
+
+  it('should copy a folder into its own subfolder once', async () => {
+    const admin = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`);
+    const add = (path: string, type: string, id: string, uid: string) =>
+      admin(request(app).post(path))
+        .send({ '@type': type, id, uuid: uid, title: id })
+        .expect(201);
+    await add('/news', 'Folder', 'f', '9a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c01');
+    await add(
+      '/news/f',
+      'Folder',
+      'sub',
+      '9a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c02',
+    );
+    await add('/news/f', 'Page', 'c', '9a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c03');
+
+    // Give every copy its own uuid
+    let i = 10;
+    vi.mocked(uuid).mockImplementation(
+      (() => `9a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c${i++}`) as any,
+    );
+
+    await admin(request(app).post('/news/f/sub/@copy'))
+      .send({ source: '/news/f' })
+      .expect(200);
+    vi.mocked(uuid).mockReturnValue(
+      'a95388f2-e4b3-4292-98aa-62656cbd5b9c' as any,
+    );
+
+    // The copy has the original children, but not itself again
+    const ids = (res: request.Response) =>
+      res.body.items.map((item: any) => item.id).sort();
+    expect(
+      ids(await admin(request(app).get('/news/f/sub/f')).expect(200)),
+    ).toEqual(['c', 'sub']);
+    expect(
+      ids(await admin(request(app).get('/news/f/sub/f/sub')).expect(200)),
+    ).toEqual([]);
+  });
 });
