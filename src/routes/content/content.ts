@@ -366,7 +366,7 @@ export default [
   {
     op: 'get',
     view: '/@@videos/:field',
-    // permission: 'View',
+    permission: 'View',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const field = req.document.json[req.params.field];
       const uuid = field.uuid;

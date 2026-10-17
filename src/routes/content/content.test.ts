@@ -250,4 +250,32 @@ describe('Content', () => {
       ids(await admin(request(app).get('/news/f/sub/f/sub')).expect(200)),
     ).toEqual([]);
   });
+
+  it('should not stream a private video to anonymous', async () => {
+    vi.mocked(validate).mockReturnValue(true);
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        '@type': 'Video',
+        id: 'private-video',
+        title: 'Private Video',
+        video: {
+          data: Buffer.from('video').toString('base64'),
+          encoding: 'base64',
+          'content-type': 'video/mp4',
+          filename: 'private.mp4',
+        },
+      })
+      .expect(201);
+    await request(app)
+      .get('/news/private-video/@@videos/video')
+      .set('Accept', 'application/json')
+      .expect(401);
+    return request(app)
+      .get('/news/private-video/@@videos/video')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+  });
 });
