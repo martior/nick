@@ -82,7 +82,7 @@ The server responds with status 200 OK and returns the lock information.
 {% include_relative examples/locking/delete.res %}
 ```
 
-Only the user who created the lock can unlock the object this way. Other users get a `401 Unauthorized` and the lock stays in place.
+Only the user who created the lock can unlock the object this way. If the object is locked by another user and `force` is not set, the lock is left unchanged. The server responds with status `200 OK` and returns the information about the existing lock, without the lock token.
 
 To unlock an object locked by another user send a force `DELETE` request to the `/@lock` endpoint. This only works for stealable locks; a non-stealable lock can only be removed by its creator or expires after its timeout.
 
