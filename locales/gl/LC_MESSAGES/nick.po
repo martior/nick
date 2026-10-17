@@ -711,8 +711,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:195
-#: src/routes/content/content.ts:946
+#: src/routes/content/content.ts:210
+#: src/routes/content/content.ts:967
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Documento bloqueado"
@@ -1475,7 +1475,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:466
+#: src/routes/content/content.ts:487
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Non atopado."
@@ -1807,13 +1807,13 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:756
+#: src/routes/content/content.ts:777
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Faltan campo(s) obrigatorio(s)."
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:194
+#: src/routes/content/content.ts:209
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2508,7 +2508,7 @@ msgid "Type of the current document is not found."
 msgstr "O tipo do documento actual non se atopou."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:745
+#: src/routes/content/content.ts:766
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2758,6 +2758,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
+#: src/routes/content/content.ts:195
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -2791,7 +2792,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:943
+#: src/routes/content/content.ts:964
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Non ten permiso para gardar este documento porque está bloqueado por outro usuario."

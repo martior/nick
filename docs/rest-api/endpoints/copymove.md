@@ -49,6 +49,8 @@ If the move operation succeeds, the server will respond with status `200 OK` and
 
 A locked object can only be moved with the `Lock-Token` header of the lock, otherwise the server answers `423 Locked`.
 
+Sources the current user can't view are skipped. Moving also needs the `Modify` permission on the source, otherwise the server answers `403 Forbidden`.
+
 ## Copying/moving multiple objects
 
 Multiple objects can be moved/copied by giving a list of sources.
