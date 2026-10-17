@@ -1096,8 +1096,8 @@ msgid "Invalid credentials"
 msgstr "Taarifa za kuingia si sahihi"
 
 #. Default: "Invalid move."
-#: src/routes/controlpanels/controlpanels.ts:529
-#: src/routes/controlpanels/controlpanels.ts:582
+#: src/routes/controlpanels/controlpanels.ts:537
+#: src/routes/controlpanels/controlpanels.ts:590
 msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
 msgstr ""
@@ -1450,16 +1450,16 @@ msgstr "Hairuhusiwi"
 #: src/routes/groups/groups.ts:34
 #: src/routes/email/email.ts:75
 #: src/routes/controlpanels/controlpanels.ts:167
-#: src/routes/controlpanels/controlpanels.ts:367
-#: src/routes/controlpanels/controlpanels.ts:404
-#: src/routes/controlpanels/controlpanels.ts:436
-#: src/routes/controlpanels/controlpanels.ts:455
-#: src/routes/controlpanels/controlpanels.ts:486
-#: src/routes/controlpanels/controlpanels.ts:522
-#: src/routes/controlpanels/controlpanels.ts:574
-#: src/routes/controlpanels/controlpanels.ts:622
-#: src/routes/controlpanels/controlpanels.ts:669
-#: src/routes/controlpanels/controlpanels.ts:707
+#: src/routes/controlpanels/controlpanels.ts:375
+#: src/routes/controlpanels/controlpanels.ts:412
+#: src/routes/controlpanels/controlpanels.ts:444
+#: src/routes/controlpanels/controlpanels.ts:463
+#: src/routes/controlpanels/controlpanels.ts:494
+#: src/routes/controlpanels/controlpanels.ts:530
+#: src/routes/controlpanels/controlpanels.ts:582
+#: src/routes/controlpanels/controlpanels.ts:630
+#: src/routes/controlpanels/controlpanels.ts:677
+#: src/routes/controlpanels/controlpanels.ts:715
 #: src/routes/content/content.ts:452
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
