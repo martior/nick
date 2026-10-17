@@ -95,6 +95,19 @@ describe('Locking', () => {
     return testRequest(app, 'locking/delete_force');
   });
 
+  it('should return the lock of another user without the token', async () => {
+    const token = await editorToken();
+    await testRequest(app, 'locking/post');
+    const res = await request(app)
+      .post(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(res.body.locked).toBe(true);
+    expect(res.body.creator).toBe('admin');
+    expect(res.body.token).toBeUndefined();
+    return testRequest(app, 'locking/get');
+  });
+
   it('should steal a stealable lock of another user with force', async () => {
     const token = await editorToken();
     await request(app)

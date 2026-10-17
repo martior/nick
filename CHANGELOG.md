@@ -239,6 +239,7 @@
 - Keep the lock when locked content is saved with the lock token @martior
 - Return 403 "Resource is locked." when locked content is saved without the lock token @martior
 - Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
+- Return the existing lock when locking content locked by another user @martior
 
 ### Internal
 
