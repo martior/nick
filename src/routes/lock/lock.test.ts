@@ -118,16 +118,19 @@ describe('Locking', () => {
     expect((await getLock()).locked).toBe(false);
   });
 
-  it('should not unlock a lock of another user without force', async () => {
+  it('should keep the lock of another user on unlock without force', async () => {
     const token = await editorToken();
     await request(app)
       .post(`${path}/@lock`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
-    await request(app)
+    const res = await request(app)
       .delete(`${path}/@lock`)
       .set('Authorization', `Bearer ${adminToken}`)
-      .expect(401);
+      .expect(200);
+    expect(res.body.locked).toBe(true);
+    expect(res.body.creator).toBe('editor');
+    expect(res.body.token).toBeUndefined();
     expect((await getLock()).locked).toBe(true);
   });
 

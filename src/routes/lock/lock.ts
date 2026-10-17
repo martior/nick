@@ -153,6 +153,18 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const lock = req.document.lock;
 
+      // Keep the lock of another user without force and send its info
+      if (
+        lock.locked &&
+        !lockExpired(req.document) &&
+        lock.creator !== req.user.id &&
+        !req.body?.force
+      ) {
+        return {
+          json: omit(lock, ['token']),
+        };
+      }
+
       // Unlock if locked by the current user or a stealable lock is forced
       if (lock.locked && !lockExpired(req.document)) {
         const owner = lock.creator === req.user.id;
