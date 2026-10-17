@@ -223,8 +223,7 @@ msgid "Allows users to login with their email address instead of specifying a se
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:58
-#: src/routes/lock/lock.ts:117
+#: src/routes/lock/lock.ts:113
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "လော့ခ်ချပြီးသား"
@@ -1744,7 +1743,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:158
+#: src/routes/lock/lock.ts:166
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "ခွင့်မပြုပါ"
@@ -2940,8 +2939,7 @@ msgid "The {type} “{id}” is not found."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:55
-#: src/routes/lock/lock.ts:114
+#: src/routes/lock/lock.ts:110
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "ဤစာရွက်စာတမ်းကို အခြားအသုံးပြုသူက လော့ခ်ချထားပြီးဖြစ်သည်။"
@@ -3466,7 +3464,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "ဤစာရွက်စာတမ်းကို အခြားအသုံးပြုသူက လော့ခ်ချထားသောကြောင့် သိမ်းဆည်းခွင့် မရှိပါ။"
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:155
+#: src/routes/lock/lock.ts:163
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "ဤစာရွက်စာတမ်းကို လော့ခ်ဖွင့်ရန် ခွင့်ပြုချက် မရှိပါ။"

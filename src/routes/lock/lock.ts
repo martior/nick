@@ -10,6 +10,7 @@ import type { Request } from '../../types';
 // External imports
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import { omit } from 'es-toolkit/compat';
 import { v4 as uuid } from 'uuid';
 
 // Internal imports
@@ -49,15 +50,10 @@ export default [
             json: lock,
           };
         } else {
-          // Send error
-          throw new RequestException(401, {
-            error: {
-              message: req.i18n(
-                'This document is already locked by another user.',
-              ),
-              type: req.i18n('Already locked'),
-            },
-          });
+          // Send the lock of the other user without the token
+          return {
+            json: omit(lock, ['token']),
+          };
         }
       } else {
         const newLock = {
@@ -144,6 +140,18 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const lock = req.document.lock;
+
+      // Keep the lock of another user without force and send its info
+      if (
+        lock.locked &&
+        !lockExpired(req.document) &&
+        lock.creator !== req.user.id &&
+        !req.body?.force
+      ) {
+        return {
+          json: omit(lock, ['token']),
+        };
+      }
 
       // Unlock if locked by the current user or a stealable lock is forced
       if (lock.locked && !lockExpired(req.document)) {

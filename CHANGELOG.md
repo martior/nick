@@ -383,6 +383,8 @@
 - Fetch the user of a request with its roles and groups, and the types along the path with their workflows, with one joined query each instead of one query per relation @martior
 - Count search results faster: a catalog index by type and state that includes the permission columns and Subject lets Postgres count listings by type, state and subject and searches of the whole site without reading the catalog rows, and a search of the whole site no longer adds a path condition. Run `pnpm migrate` @martior
 - Filter search results before sorting them when the search matches at most 5000 items, so a selective search no longer walks an index in sort order through most of the catalog @martior
+- Return the existing lock when locking content locked by another user @martior
+- Return the existing lock when unlocking content locked by another user without force @martior
 
 ### Internal
 

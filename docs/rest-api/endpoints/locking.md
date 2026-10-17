@@ -38,6 +38,8 @@ If the lock operation succeeds, the server will respond with status `200 OK` and
 {% include_relative examples/locking/post.res %}
 ```
 
+If the object is already locked by another user, the server responds with status `200 OK` and returns the information about the existing lock, without the lock token. The lock itself is left unchanged.
+
 By default, locks are stealable. That means that another user can unlock the object. If you want to create a non-stealable lock, pass `"stealable": false` in the request body.
 
 To create a lock with a non-default timeout, you can pass the the timeout value in seconds in the request body.
@@ -80,7 +82,7 @@ The server responds with status 200 OK and returns the lock information.
 {% include_relative examples/locking/delete.res %}
 ```
 
-Only the user who created the lock can unlock the object this way. Other users get a `401 Unauthorized` and the lock stays in place.
+Only the user who created the lock can unlock the object this way. If the object is locked by another user and `force` is not set, the lock is left unchanged. The server responds with status `200 OK` and returns the information about the existing lock, without the lock token.
 
 To unlock an object locked by another user send a force `DELETE` request to the `/@lock` endpoint. This only works for stealable locks; a non-stealable lock can only be removed by its creator or expires after its timeout.
 
