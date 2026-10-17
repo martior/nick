@@ -2759,6 +2759,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
 #: src/routes/comments/comments.ts:54
+#: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
 msgctxt "Routes|Translations"
 msgid "You are not authorized to access this resource."
