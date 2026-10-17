@@ -8,6 +8,7 @@
 - Require the Manage Site permission for the @content-rules endpoints @martior
 - Require the Modify permission for the users and groups vocabularies, like Plone @martior
 - Require the Modify permission to list the aliases of an item, and Manage Site to list all aliases of the site @martior
+- Only use the default secret 'secret' when NODE_ENV is development or test, use a random secret otherwise when none is configured @martior
 
 ### Feature
 
