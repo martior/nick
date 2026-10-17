@@ -252,6 +252,7 @@
 - Fix copying a folder into its own subfolder, which recursed without end @martior
 - Hide expired and not yet effective items in @search and @querystring-search from users who can't edit the context @martior
 - Refuse to move items locked by another user, and don't copy the lock of an item to its copy @martior
+- Use dedicated single-use tokens for password resets, login tokens can no longer reset a password @martior
 
 ### Internal
 

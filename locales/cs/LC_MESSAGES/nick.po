@@ -230,7 +230,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Subjekt odpovědný za zpřístupnění této položky."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:261
+#: src/routes/users/users.ts:249
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -1450,7 +1450,7 @@ msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:154
+#: src/routes/users/users.ts:142
 #: src/routes/types/types.ts:45
 #: src/routes/translations/translations.ts:33
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
@@ -1531,15 +1531,15 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:114
-#: src/routes/users/users.ts:287
+#: src/routes/users/users.ts:102
+#: src/routes/users/users.ts:268
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Žádost o resetování hesla"
 
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:50
-#: src/routes/users/users.ts:208
+#: src/routes/users/users.ts:196
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1708,7 +1708,7 @@ msgid "Query"
 msgstr ""
 
 #. Default: "Query must be at least 2 characters long."
-#: src/routes/users/users.ts:175
+#: src/routes/users/users.ts:163
 #: src/routes/principals/principals.ts:30
 #: src/routes/groups/groups.ts:55
 msgctxt "Routes|Users"
@@ -2105,7 +2105,7 @@ msgid "System group"
 msgstr "Systémová skupina"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:370
+#: src/routes/users/users.ts:351
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Systémoví uživatelé"
@@ -2256,8 +2256,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:115
-#: src/routes/users/users.ts:288
+#: src/routes/users/users.ts:103
+#: src/routes/users/users.ts:269
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2540,7 +2540,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:75
+#: src/routes/users/users.ts:70
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "Uživatel neexistuje nebo neplatné přihlašovací údaje."
@@ -2772,7 +2772,7 @@ msgid "You can’t delete system groups."
 msgstr "Systémové skupiny nelze smazat."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:369
+#: src/routes/users/users.ts:350
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Systémové uživatele nelze smazat."
@@ -2803,13 +2803,13 @@ msgid "You don’t have permission to unlock this document."
 msgstr "Nemáte oprávnění odemknout tento dokument."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:201
+#: src/routes/users/users.ts:189
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Nemáte oprávnění přidat uživatele."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:142
+#: src/routes/users/users.ts:130
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""
