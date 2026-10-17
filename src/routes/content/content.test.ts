@@ -166,4 +166,46 @@ describe('Content', () => {
       'inline; filename="text.txt"',
     );
   });
+
+  it('should only serialize related items the user can view', async () => {
+    const events = '1a2123ba-14e8-4910-8e6b-c04a40d72a41';
+    const privatePage = '7d2c4e6f-8a9b-4c1d-9e2f-3a4b5c6d7e01';
+    const admin = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+    // A private page and a published page relating to it and to events
+    await admin(request(app).post('/news'))
+      .send({
+        '@type': 'Page',
+        id: 'private-page',
+        uuid: privatePage,
+        title: 'Private Page',
+      })
+      .expect(201);
+    await admin(request(app).post('/news'))
+      .send({
+        '@type': 'Page',
+        id: 'page',
+        uuid: '7d2c4e6f-8a9b-4c1d-9e2f-3a4b5c6d7e02',
+        title: 'Page',
+        relatedItems: [privatePage, events],
+      })
+      .expect(201);
+    await admin(request(app).post('/news/page/@workflow/publish')).expect(200);
+    const related = (res: request.Response) =>
+      res.body.relatedItems.map((item: any) => item.UID).sort();
+
+    // Anonymous only gets the published events folder
+    const anonymous = await request(app)
+      .get('/news/page')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(related(anonymous)).toEqual([events]);
+
+    // Admin gets both
+    const res = await admin(request(app).get('/news/page')).expect(200);
+    expect(related(res)).toEqual([events, privatePage].sort());
+  });
 });

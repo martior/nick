@@ -239,6 +239,7 @@
 - Skip ancestors the user can't view in the @inherit endpoint @martior
 - Only list items the user can view in the @navroot endpoint @martior
 - Only list items and breaches the user can view in the @linkintegrity endpoint @martior
+- Only serialize related items the user can view in relation list fields @martior
 
 ### Internal
 
