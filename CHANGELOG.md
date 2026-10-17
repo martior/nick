@@ -246,6 +246,7 @@
 - Only serialize related items the user can view in relation list fields @martior
 - Don't return stored passwords like the ESMTP password in control panels @martior
 - Only list subjects of items the user can view in the subjects vocabulary @martior
+- Require the View permission on the item to read, add or reply to comments @martior
 
 ### Internal
 
