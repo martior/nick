@@ -6,6 +6,7 @@
 
 - Require the Manage Site permission and the site root for the @email-send and @users/<id>/@email-notification endpoints @martior
 - Require the Manage Site permission for the @content-rules endpoints @martior
+- Require the Modify permission for the users and groups vocabularies, like Plone @martior
 
 ### Feature
 

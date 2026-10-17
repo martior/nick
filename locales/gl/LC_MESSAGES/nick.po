@@ -1435,6 +1435,18 @@ msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Non permitido"
 
+#. Default: "Not authenticated"
+#: src/routes/vocabularies/vocabularies.ts:86
+msgctxt "Routes|Vocabularies"
+msgid "Not authenticated"
+msgstr ""
+
+#. Default: "Not authorized"
+#: src/routes/vocabularies/vocabularies.ts:87
+msgctxt "Routes|Vocabularies"
+msgid "Not authorized"
+msgstr ""
+
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:154
@@ -2722,6 +2734,12 @@ msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Non ten autorización para acceder a este recurso."
 
+#. Default: "You are not authorized to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:93
+msgctxt "Routes|Vocabularies"
+msgid "You are not authorized to access the vocabulary “{id}”."
+msgstr ""
+
 #. Default: "You are not authorized to access this resource."
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
@@ -2783,6 +2801,12 @@ msgstr "Non ten permisos para engadir un usuario."
 #: src/routes/users/users.ts:142
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
+msgstr ""
+
+#. Default: "You need to be authenticated to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:89
+msgctxt "Routes|Vocabularies"
+msgid "You need to be authenticated to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "Your location - either city and country - or in a company setting, where your office is located."
