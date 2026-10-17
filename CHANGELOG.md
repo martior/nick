@@ -235,6 +235,7 @@
 - Fix navroot structure @robgietema
 - Fix mail debug print link issue @robgietema
 - Return the existing lock when locking content locked by another user @martior
+- Return the existing lock when unlocking content locked by another user without force @martior
 
 ### Internal
 

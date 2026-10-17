@@ -1429,7 +1429,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:182
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "不允許"
@@ -2764,7 +2764,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "您沒有儲存此文件的權限，因為它已被其他使用者鎖定。"
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:167
+#: src/routes/lock/lock.ts:179
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "您沒有解鎖此文件的權限。"

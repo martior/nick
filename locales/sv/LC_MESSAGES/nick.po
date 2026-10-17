@@ -1429,7 +1429,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:182
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Inte tillåtet"
@@ -2764,7 +2764,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "Du har inte behörighet att spara detta dokument eftersom det är låst av en annan användare."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:167
+#: src/routes/lock/lock.ts:179
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Du har inte behörighet att låsa upp detta dokument."

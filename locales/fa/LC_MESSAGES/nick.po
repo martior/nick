@@ -1429,7 +1429,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:182
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "مجاز نیست"
@@ -2764,7 +2764,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "شما مجوز ذخیره این سند را ندارید زیرا توسط کاربر دیگری قفل شده است."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:167
+#: src/routes/lock/lock.ts:179
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "شما مجوز باز کردن قفل این سند را ندارید."

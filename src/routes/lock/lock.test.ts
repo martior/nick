@@ -90,6 +90,19 @@ describe('Locking', () => {
     return testRequest(app, 'locking/get');
   });
 
+  it('should keep the lock of another user on unlock without force', async () => {
+    const token = await editorToken();
+    await testRequest(app, 'locking/post');
+    const res = await request(app)
+      .delete(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(res.body.locked).toBe(true);
+    expect(res.body.creator).toBe('admin');
+    expect(res.body.token).toBeUndefined();
+    return testRequest(app, 'locking/get');
+  });
+
   it('should refresh a lock', async () => {
     await testRequest(app, 'locking/post');
     return testRequest(app, 'locking/patch');

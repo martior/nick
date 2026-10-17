@@ -1429,7 +1429,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:182
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "అనుమతించబడలేదు"
@@ -2764,7 +2764,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "ఈ పత్రం మరొక వినియోగదారు ద్వారా లాక్ చేయబడి ఉన్నందున దానిని సేవ్ చేయడానికి మీకు అనుమతి లేదు."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:167
+#: src/routes/lock/lock.ts:179
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "ఈ పత్రాన్ని అన్‌లాక్ చేయడానికి మీకు అనుమతి లేదు."

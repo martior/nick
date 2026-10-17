@@ -82,6 +82,8 @@ The server responds with status 200 OK and returns the lock information.
 {% include_relative examples/locking/delete.res %}
 ```
 
+If the object is locked by another user and `force` is not set, the lock is left unchanged. The server responds with status `200 OK` and returns the information about the existing lock, without the lock token.
+
 To unlock an object locked by another user send a force `DELETE` request to the `/@lock` endpoint.
 
 ```http

@@ -1429,7 +1429,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:170
+#: src/routes/lock/lock.ts:182
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "ಅನುಮತಿಸಲಾಗಿಲ್ಲ"
@@ -2764,7 +2764,7 @@ msgid "You don’t have permission to save this document because it is locked by
 msgstr "ಈ ಡಾಕ್ಯುಮೆಂಟ್ ಇನ್ನೊಬ್ಬ ಬಳಕೆದಾರರಿಂದ ಲಾಕ್ ಆಗಿರುವುದರಿಂದ ಅದನ್ನು ಉಳಿಸಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:167
+#: src/routes/lock/lock.ts:179
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "ಈ ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ."
