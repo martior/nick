@@ -250,6 +250,7 @@
 - Only list translations the user can view, and require Modify on the other item to link or unlink translations @martior
 - Fix copying a folder into its own subfolder, which recursed without end @martior
 - Hide expired and not yet effective items in @search and @querystring-search from users who can't edit the context @martior
+- Refuse to move items locked by another user, and don't copy the lock of an item to its copy @martior
 
 ### Internal
 
