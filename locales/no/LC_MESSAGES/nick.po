@@ -1003,6 +1003,18 @@ msgctxt "Profiles|Core|Types|Feed"
 msgid "Feed"
 msgstr ""
 
+#. Default: "Field {id} already exists."
+#: src/routes/types/types.ts:231
+msgctxt "Routes|Types"
+msgid "Field {id} already exists."
+msgstr ""
+
+#. Default: "Fieldset {id} already exists."
+#: src/routes/types/types.ts:206
+msgctxt "Routes|Types"
+msgid "Fieldset {id} already exists."
+msgstr ""
+
 #. Default: "File"
 #: src/profiles/core/types/file.json:3
 #: src/profiles/core/types/file.json:19
@@ -1215,6 +1227,12 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:582
 msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
+msgstr ""
+
+#. Default: "Invalid parameter factory."
+#: src/routes/types/types.ts:226
+msgctxt "Routes|Types"
+msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
@@ -1509,6 +1527,12 @@ msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Manglende påloggingsopplysninger"
 
+#. Default: "Missing parameter title."
+#: src/routes/types/types.ts:193
+msgctxt "Routes|Types"
+msgid "Missing parameter title."
+msgstr ""
+
 #. Default: "Modification date"
 #: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
@@ -1578,10 +1602,11 @@ msgid "Name of a person to contact about this event."
 msgstr ""
 
 #. Default: "Navigation"
+#: src/routes/contextnavigation/contextnavigation.ts:233
 #: src/profiles/core/controlpanels/navigation.json:3
-msgctxt "Profiles|Core|Controlpanels|Navigation"
+msgctxt "Routes|Contextnavigation"
 msgid "Navigation"
-msgstr "Navigasjon"
+msgstr ""
 
 #. Default: "Navigation path"
 #: src/profiles/core/catalog.json:20
@@ -1680,7 +1705,10 @@ msgstr ""
 #: src/routes/users/users.ts:168
 #: src/routes/users/users.ts:410
 #: src/routes/users/users.ts:477
-#: src/routes/types/types.ts:45
+#: src/routes/types/types.ts:59
+#: src/routes/types/types.ts:171
+#: src/routes/types/types.ts:329
+#: src/routes/types/types.ts:376
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
 #: src/routes/recyclebin/recyclebin.ts:35
@@ -3238,6 +3266,7 @@ msgstr ""
 
 #. Default: "You are not authorized to access this resource."
 #: src/routes/users/users.ts:393
+#: src/routes/types/types.ts:43
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
