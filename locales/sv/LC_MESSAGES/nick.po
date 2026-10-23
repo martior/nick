@@ -220,8 +220,7 @@ msgid "Allows users to login with their email address instead of specifying a se
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:125
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "Redan låst"
@@ -717,7 +716,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:818
+#: src/routes/content/content.ts:816
+#: src/routes/content/content.ts:953
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokument låst"
@@ -1466,7 +1466,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:178
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Inte tillåtet"
@@ -1510,6 +1510,12 @@ msgstr "Hittades inte."
 #: src/helpers/handler/handler.ts:79
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
+msgstr ""
+
+#. Default: "Object “{id}” is locked."
+#: src/routes/content/content.ts:950
+msgctxt "Routes|Content"
+msgid "Object “{id}” is locked."
 msgstr ""
 
 #. Default: "Open End"
@@ -1872,6 +1878,12 @@ msgstr ""
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Obligatoriskt fält saknas."
+
+#. Default: "Resource is locked."
+#: src/routes/content/content.ts:815
+msgctxt "Routes|Content"
+msgid "Resource is locked."
+msgstr ""
 
 #. Default: "Retract"
 #: src/profiles/core/workflows.json:57
@@ -2459,8 +2471,7 @@ msgid "The workflow states to check for."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:122
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "Detta dokument är redan låst av en annan användare."
@@ -2886,13 +2897,12 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:815
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Du har inte behörighet att spara detta dokument eftersom det är låst av en annan användare."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:175
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Du har inte behörighet att låsa upp detta dokument."
