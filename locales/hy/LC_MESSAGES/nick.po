@@ -1895,7 +1895,7 @@ msgid "Pattern must be at least 1 character long."
 msgstr ""
 
 #. Default: "Pending review"
-#: src/profiles/core/workflows.json:23
+#: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Սպասում է վերանայում"
@@ -2035,13 +2035,13 @@ msgid "Provided block id is not valid."
 msgstr ""
 
 #. Default: "Publish"
-#: src/profiles/core/workflows.json:50
+#: src/profiles/core/workflows.json:52
 msgctxt "Profiles|Core|Workflows"
 msgid "Publish"
 msgstr "Հրապարակել"
 
 #. Default: "Published"
-#: src/profiles/core/workflows.json:35
+#: src/profiles/core/workflows.json:37
 msgctxt "Profiles|Core|Workflows"
 msgid "Published"
 msgstr "Հրապարակված"
@@ -2197,7 +2197,7 @@ msgid "Resource is locked."
 msgstr ""
 
 #. Default: "Retract"
-#: src/profiles/core/workflows.json:60
+#: src/profiles/core/workflows.json:62
 msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Հետ վերցնել"
@@ -2335,7 +2335,7 @@ msgid "Send an email on the triggering object"
 msgstr ""
 
 #. Default: "Send back"
-#: src/profiles/core/workflows.json:55
+#: src/profiles/core/workflows.json:57
 msgctxt "Profiles|Core|Workflows"
 msgid "Send back"
 msgstr "Հետ ուղարկել"
@@ -2487,7 +2487,7 @@ msgid "Submit"
 msgstr "Ներկայացնել"
 
 #. Default: "Submit for publication"
-#: src/profiles/core/workflows.json:65
+#: src/profiles/core/workflows.json:67
 msgctxt "Profiles|Core|Workflows"
 msgid "Submit for publication"
 msgstr "Ներկայացվել հրապարակման"
@@ -3214,7 +3214,7 @@ msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
-#: src/profiles/core/workflows.json:36
+#: src/profiles/core/workflows.json:38
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Տեսանելի է բոլորի համար, խմբագրելի է սեփականատիրոջի կողմից։"
@@ -3227,7 +3227,7 @@ msgid "Visitors can create their own account. When this is off, only administrat
 msgstr ""
 
 #. Default: "Waiting to be reviewed, not editable by the owner."
-#: src/profiles/core/workflows.json:24
+#: src/profiles/core/workflows.json:25
 msgctxt "Profiles|Core|Workflows"
 msgid "Waiting to be reviewed, not editable by the owner."
 msgstr "Սպասում է վերանայտման, խմբագրելի չէ սեփականատիրոջի կողմից։"
@@ -3362,7 +3362,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
 #: src/routes/history/history.ts:59
-#: src/helpers/handler/handler.ts:119
+#: src/helpers/handler/handler.ts:120
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
