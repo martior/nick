@@ -170,28 +170,45 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
   // top level in the path from the navigation root to the context
   const navroot =
     req.navroot || (await Document.fetchOne({ parent: null }, {}, trx));
+
+  // The root_path (the "Root node" of Plone's navigation portlet) replaces
+  // the navigation root; the site root is used if it can't be viewed
+  const rootPath = param('root_path')?.replace(/^\/+|\/+$/g, '');
+  let base = navroot;
+  if (rootPath) {
+    const document = await Document.fetchOne({ path: `/${rootPath}` }, {}, trx);
+    const viewable =
+      document &&
+      (await document.fetchUserPermissions(req.user, trx)).includes('View');
+    base = viewable
+      ? document
+      : await Document.fetchOne({ parent: null }, {}, trx);
+  }
+
   let root: any;
   if (currentFolderOnly) {
     root = req.document.isFolderish()
       ? req.document
       : await Document.fetchById(req.document.parent, {}, trx);
   } else {
+    const inBase =
+      req.document.path === base.path || isBelow(req.document.path, base.path);
     const slugs = req.document.path
-      .slice(navroot.path === '/' ? 1 : navroot.path.length + 1)
+      .slice(base.path === '/' ? 1 : base.path.length + 1)
       .split('/')
       .filter((slug: string) => slug !== '');
     const level = isNaN(topLevel) || topLevel < 0 ? 0 : topLevel;
     const path = [
-      navroot.path === '/' ? '' : navroot.path,
+      base.path === '/' ? '' : base.path,
       ...slugs.slice(0, level),
     ].join('/');
 
     // Nothing is shown when the context is above the top level
     root =
-      slugs.length < level
-        ? undefined
-        : level === 0
-          ? navroot
+      level === 0
+        ? base
+        : !inBase || slugs.length < level
+          ? undefined
           : await Document.fetchOne({ path: path || '/' }, {}, trx);
   }
 
@@ -217,7 +234,9 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
       url:
         currentFolderOnly && root
           ? getUrlByPath(req, root.path)
-          : `${getRootUrl(req)}${navroot.path === '/' ? '' : navroot.path}/sitemap`,
+          : rootPath && root && root.uuid !== navroot.uuid && root.parent
+            ? getUrlByPath(req, root.path)
+            : `${getRootUrl(req)}${navroot.path === '/' ? '' : navroot.path}/sitemap`,
     },
   };
 };

@@ -113,5 +113,23 @@ describe('Context Navigation', () => {
     expect(current.has_custom_name).toBe(true);
     expect(current.url).toBe('http://localhost:8080/news');
     expect(tree(current.items)).toStrictEqual(['news', 'folder', 'page']);
+
+    // A root path replaces the navigation root
+    const rooted = await get(
+      '/news/folder',
+      '?expand.contextnavigation.root_path=/news/folder&expand.contextnavigation.topLevel=0',
+    );
+    expect(rooted.url).toBe('http://localhost:8080/news/folder');
+    expect(tree(rooted.items)).toStrictEqual([['sub', ['deep']]]);
+    const top = await get(
+      '/news/folder',
+      '?expand.contextnavigation.root_path=/news/folder&expand.contextnavigation.topLevel=0&expand.contextnavigation.includeTop=true',
+    );
+    expect(tree(top.items)).toStrictEqual(['folder', ['sub', ['deep']]]);
+    const level = await get(
+      '/news/folder/sub/deep',
+      '?expand.contextnavigation.root_path=/news&expand.contextnavigation.topLevel=1',
+    );
+    expect(tree(level.items)).toStrictEqual([['sub', ['deep']]]);
   });
 });
