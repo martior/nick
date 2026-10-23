@@ -471,7 +471,7 @@ msgid "Change Note"
 msgstr "Nota de alteração"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:939
+#: src/routes/content/content.ts:940
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -776,8 +776,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:981
-#: src/routes/content/content.ts:1157
+#: src/routes/content/content.ts:982
+#: src/routes/content/content.ts:1158
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Documento bloqueado"
@@ -1207,7 +1207,7 @@ msgid "Internal server error"
 msgstr "Erro interno do servidor"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:675
+#: src/routes/content/content.ts:676
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1245,8 +1245,8 @@ msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:150
-#: src/routes/search/search.ts:297
+#: src/routes/search/search.ts:168
+#: src/routes/search/search.ts:315
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1664,7 +1664,7 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:145
+#: src/routes/search/search.ts:163
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
@@ -1754,7 +1754,7 @@ msgid "Not found."
 msgstr "Não encontrado."
 
 #. Default: "Not found: {url}"
-#: src/helpers/handler/handler.ts:79
+#: src/helpers/handler/handler.ts:75
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
 msgstr ""
@@ -1778,7 +1778,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1154
+#: src/routes/content/content.ts:1155
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2003,7 +2003,7 @@ msgid "Prompts"
 msgstr "Prompts"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:659
+#: src/routes/content/content.ts:660
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2170,14 +2170,14 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:689
+#: src/routes/content/content.ts:690
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:980
+#: src/routes/content/content.ts:981
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2691,14 +2691,14 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:717
+#: src/routes/content/content.ts:718
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:706
-#: src/routes/content/content.ts:999
+#: src/routes/content/content.ts:707
+#: src/routes/content/content.ts:1000
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2830,13 +2830,13 @@ msgid "The user viewing the querystring results"
 msgstr "O utilizador que está a ver o resultado da pesquisa"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:752
+#: src/routes/content/content.ts:753
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:747
+#: src/routes/content/content.ts:748
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -2999,7 +2999,7 @@ msgid "Type Name"
 msgstr "Nome do Tipo"
 
 #. Default: "Type of the current document is not found."
-#: src/helpers/handler/handler.ts:98
+#: src/helpers/handler/handler.ts:94
 msgctxt "Helpers|Handler"
 msgid "Type of the current document is not found."
 msgstr "O tipo do documento atual não foi encontrado."
@@ -3117,7 +3117,7 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:91
-#: src/routes/content/content.ts:252
+#: src/routes/content/content.ts:253
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3314,13 +3314,13 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:131
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
-#: src/helpers/handler/handler.ts:121
+#: src/helpers/handler/handler.ts:119
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:738
+#: src/routes/content/content.ts:739
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
