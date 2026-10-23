@@ -135,7 +135,8 @@ msgid "Adds title and description fields."
 msgstr "ခေါင်းစဉ်နှင့် ဖော်ပြချက်အကွက်များ ထည့်ပေးသည်။"
 
 #. Default: "Administrator"
-#: src/profiles/core/roles.json:54
+#: src/profiles/core/roles.json:60
+#: src/profiles/core/upgrades/1018/roles.json:11
 #: src/profiles/core/upgrades/1011/roles.json:26
 #: src/profiles/core/upgrades/1010/roles.json:16
 #: src/profiles/core/upgrades/1009/roles.json:21
@@ -207,7 +208,7 @@ msgid "After today"
 msgstr "ယနေ့ပြီးနောက်"
 
 #. Default: "Allowed Content Types"
-#: src/models/type/type.ts:158
+#: src/models/type/type.ts:211
 msgctxt "Models|Type"
 msgid "Allowed Content Types"
 msgstr "ခွင့်ပြုထားသော အကြောင်းအရာအမျိုးအစားများ"
@@ -416,7 +417,7 @@ msgid "Before today"
 msgstr "ယနေ့မတိုင်မီ"
 
 #. Default: "Behaviors"
-#: src/models/type/type.ts:141
+#: src/models/type/type.ts:194
 msgctxt "Models|Type"
 msgid "Behaviors"
 msgstr "အပြုအမူများ"
@@ -471,7 +472,7 @@ msgid "Change Note"
 msgstr "ပြောင်းလဲမှုမှတ်စု"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:945
+#: src/routes/content/content.ts:948
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -728,7 +729,7 @@ msgid "Delete the triggering item"
 msgstr ""
 
 #. Default: "Description"
-#: src/models/type/type.ts:165
+#: src/models/type/type.ts:218
 #: src/profiles/core/catalog.json:233
 #: src/profiles/core/behaviors/basic.json:16
 #: src/profiles/ai/controlpanels/ai.json:33
@@ -775,10 +776,10 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/workflow/workflow.ts:121
+#: src/routes/workflow/workflow.ts:168
 #: src/routes/history/history.ts:84
-#: src/routes/content/content.ts:1011
-#: src/routes/content/content.ts:1182
+#: src/routes/content/content.ts:1014
+#: src/routes/content/content.ts:1185
 msgctxt "Routes|Workflow"
 msgid "Document locked"
 msgstr ""
@@ -1051,7 +1052,7 @@ msgid "File extension is {extension}"
 msgstr ""
 
 #. Default: "Filter Contained Types"
-#: src/models/type/type.ts:171
+#: src/models/type/type.ts:224
 msgctxt "Models|Type"
 msgid "Filter Contained Types"
 msgstr "ပါဝင်သော အမျိုးအစားများ စစ်ထုတ်ရန်"
@@ -1225,7 +1226,7 @@ msgid "Invalid credentials"
 msgstr "အထောက်အထားမမှန်ကန်ပါ"
 
 #. Default: "Invalid date for {field}."
-#: src/routes/workflow/workflow.ts:79
+#: src/routes/workflow/workflow.ts:122
 msgctxt "Routes|Workflow"
 msgid "Invalid date for {field}."
 msgstr ""
@@ -1276,7 +1277,7 @@ msgid "Is"
 msgstr "ဖြစ်သည်"
 
 #. Default: "Items of this type can act as a folder containing other items. What content types should be allowed inside?"
-#: src/models/type/type.ts:172
+#: src/models/type/type.ts:225
 msgctxt "Models|Type"
 msgid "Items of this type can act as a folder containing other items. What content types should be allowed inside?"
 msgstr "ဤအမျိုးအစား၏ အရာများသည် အခြားအရာများ ပါဝင်သည့် ဖိုင်တွဲအဖြစ် ဆောင်ရွက်နိုင်သည်။ မည်သည့် အကြောင်းအရာအမျိုးအစားများကို အတွင်းတွင် ခွင့်ပြုသင့်သနည်း။"
@@ -1683,7 +1684,7 @@ msgid "No query supplied."
 msgstr ""
 
 #. Default: "No transition specified."
-#: src/routes/workflow/workflow.ts:187
+#: src/routes/workflow/workflow.ts:239
 msgctxt "Routes|Workflow"
 msgid "No transition specified."
 msgstr ""
@@ -1791,7 +1792,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1179
+#: src/routes/content/content.ts:1182
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2190,8 +2191,8 @@ msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/workflow/workflow.ts:120
-#: src/routes/content/content.ts:1010
+#: src/routes/workflow/workflow.ts:167
+#: src/routes/content/content.ts:1013
 msgctxt "Routes|Workflow"
 msgid "Resource is locked."
 msgstr ""
@@ -2215,6 +2216,13 @@ msgctxt "Profiles|Core|Permissions"
 msgid "Review"
 msgstr "သုံးသပ်ရန်"
 
+#. Default: "Review Comments"
+#: src/profiles/core/permissions.json:78
+#: src/profiles/core/upgrades/1018/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Review Comments"
+msgstr ""
+
 #. Default: "Review state"
 #: src/profiles/core/catalog.json:495
 msgctxt "Profiles|Core|Catalog"
@@ -2223,6 +2231,7 @@ msgstr "သုံးသပ်မှုအခြေအနေ"
 
 #. Default: "Reviewer"
 #: src/profiles/core/roles.json:49
+#: src/profiles/core/upgrades/1018/roles.json:6
 #: src/profiles/core/upgrades/1011/roles.json:21
 #: src/profiles/core/upgrades/1009/roles.json:16
 #: src/profiles/core/upgrades/1002/roles.json:21
@@ -2668,7 +2677,7 @@ msgid "The date an item was created"
 msgstr "အရာတစ်ခု ဖန်တီးခဲ့သည့် ရက်စွဲ"
 
 #. Default: "The delta has to be top, bottom or an integer."
-#: src/routes/content/content.ts:973
+#: src/routes/content/content.ts:976
 msgctxt "Routes|Content"
 msgid "The delta has to be top, bottom or an integer."
 msgstr ""
@@ -2724,13 +2733,13 @@ msgstr ""
 
 #. Default: "The id “{id}” is invalid."
 #: src/routes/content/content.ts:712
-#: src/routes/content/content.ts:1029
+#: src/routes/content/content.ts:1032
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
 
 #. Default: "The item “{id}” is not found."
-#: src/routes/content/content.ts:961
+#: src/routes/content/content.ts:964
 msgctxt "Routes|Content"
 msgid "The item “{id}” is not found."
 msgstr ""
@@ -3007,13 +3016,13 @@ msgid "Transition workflow state"
 msgstr ""
 
 #. Default: "Transition {transition} is not available for {path}."
-#: src/routes/workflow/workflow.ts:44
+#: src/routes/workflow/workflow.ts:51
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:101
+#: src/routes/workflow/workflow.ts:148
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -3037,7 +3046,7 @@ msgid "Type"
 msgstr "အမျိုးအစား"
 
 #. Default: "Type Name"
-#: src/models/type/type.ts:180
+#: src/models/type/type.ts:233
 msgctxt "Models|Type"
 msgid "Type Name"
 msgstr "အမျိုးအစားအမည်"
@@ -3339,7 +3348,7 @@ msgid "You are not allowed to set roles or groups."
 msgstr ""
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:110
+#: src/routes/workflow/workflow.ts:157
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "ဤအရင်းအမြစ်ကို ဝင်ရောက်ရန် ခွင့်ပြုချက် မရှိပါ။"
@@ -3362,7 +3371,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
 #: src/routes/history/history.ts:59
-#: src/helpers/handler/handler.ts:120
+#: src/helpers/handler/handler.ts:122
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
