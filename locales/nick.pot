@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-23T11:10:16.386Z\n"
+"POT-Creation-Date: 2026-10-23T11:10:18.397Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1090,6 +1090,12 @@ msgstr ""
 #: src/routes/authentication/authentication.ts:99
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
+msgstr ""
+
+#. Default: "Invalid depth."
+#: src/routes/navigation/navigation.ts:79
+msgctxt "Routes|Navigation"
+msgid "Invalid depth."
 msgstr ""
 
 #. Default: "Invalid move."
