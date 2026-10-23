@@ -1082,15 +1082,15 @@ msgid "Information about rights held in and over this item."
 msgstr "ဤအရာအပေါ် ပိုင်ဆိုင်ထားသော အခွင့်အရေးများအကြောင်း အချက်အလက်။"
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "ဆာဗာအတွင်းပိုင်း အမှားအယွင်း"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "အထောက်အထားမမှန်ကန်ပါ"
@@ -1103,7 +1103,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "session မမှန်ကန်ပါ"
@@ -1227,7 +1227,7 @@ msgid "Login"
 msgstr "Login"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:67
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "အကောင့်ဝင်မည့်အမည်နှင့် စကားဝှက်ကို body တွင် ပေးရမည်။"
@@ -1306,7 +1306,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "အထောက်အထားများ မပါဝင်ပါ"
@@ -2449,8 +2449,8 @@ msgstr "ယနေ့"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "လွှဲပြောင်းမှု အမှားအယွင်း။"
@@ -2524,7 +2524,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "အသုံးပြုသူ မရှိပါ သို့မဟုတ် အထောက်အထား မမှန်ကန်ပါ။"
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:138
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "အသုံးပြုသူ ဝင်ရောက်မထားပါ။"
@@ -2701,8 +2701,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:89
+#: src/routes/authentication/authentication.ts:103
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "အကောင့်ဝင်မည့်အမည် နှင့်/သို့မဟုတ် စကားဝှက် မှားယွင်းနေသည်။"

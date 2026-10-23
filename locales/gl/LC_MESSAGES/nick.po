@@ -1082,15 +1082,15 @@ msgid "Information about rights held in and over this item."
 msgstr "Información sobre os dereitos que se posúen sobre este elemento."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Erro interno do servidor"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Credenciais non válidas"
@@ -1103,7 +1103,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Sesión non válida"
@@ -1227,7 +1227,7 @@ msgid "Login"
 msgstr "Iniciar sesión"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:67
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "O nome de usuario e o contrasinal deben proporcionarse no corpo da solicitude."
@@ -1306,7 +1306,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Credenciais ausentes"
@@ -2449,8 +2449,8 @@ msgstr "Hoxe"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Erro de transacción."
@@ -2524,7 +2524,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "O usuario non existe ou as credenciais non son válidas."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:138
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "O usuario non está conectado."
@@ -2701,8 +2701,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:89
+#: src/routes/authentication/authentication.ts:103
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Nome de usuario e/ou contrasinal incorrectos."

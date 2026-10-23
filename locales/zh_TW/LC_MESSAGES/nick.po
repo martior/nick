@@ -1082,15 +1082,15 @@ msgid "Information about rights held in and over this item."
 msgstr "此項目所持有的權利資訊。"
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "內部伺服器錯誤"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "無效的認證資訊"
@@ -1103,7 +1103,7 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "無效的工作階段"
@@ -1227,7 +1227,7 @@ msgid "Login"
 msgstr "登入方框"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:67
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "必須在請求主體中提供帳號和密碼。"
@@ -1306,7 +1306,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "缺少認證資訊"
@@ -2449,8 +2449,8 @@ msgstr "今天"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "交易錯誤。"
@@ -2524,7 +2524,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "使用者不存在或認證資訊無效。"
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:138
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "使用者尚未登入。"
@@ -2701,8 +2701,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:89
+#: src/routes/authentication/authentication.ts:103
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "帳號或密碼錯誤。"
