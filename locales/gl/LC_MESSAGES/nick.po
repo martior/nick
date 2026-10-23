@@ -716,8 +716,8 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:806
+#: src/routes/history/history.ts:71
+#: src/routes/content/content.ts:818
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Documento bloqueado"
@@ -1091,15 +1091,15 @@ msgid "Information about rights held in and over this item."
 msgstr "Información sobre os dereitos que se posúen sobre este elemento."
 
 #. Default: "Internal server error"
-#: src/app.ts:231
-#: src/app.ts:242
+#: src/app.ts:258
+#: src/app.ts:269
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Erro interno do servidor"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:86
+#: src/routes/authentication/authentication.ts:100
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Credenciais non válidas"
@@ -1125,7 +1125,7 @@ msgid "Invalid query."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:135
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Sesión non válida"
@@ -1249,7 +1249,7 @@ msgid "Login"
 msgstr "Iniciar sesión"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "O nome de usuario e o contrasinal deben proporcionarse no corpo da solicitude."
@@ -1336,7 +1336,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:64
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Credenciais ausentes"
@@ -1472,7 +1472,7 @@ msgid "Not allowed"
 msgstr "Non permitido"
 
 #. Default: "Not found"
-#: src/routes/history/history.ts:89
+#: src/routes/history/history.ts:92
 msgctxt "Routes|History"
 msgid "Not found"
 msgstr ""
@@ -1801,14 +1801,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:213
+#: src/routes/sharing/sharing.ts:216
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:214
+#: src/routes/sharing/sharing.ts:217
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -1868,7 +1868,7 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:609
+#: src/routes/content/content.ts:618
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Faltan campo(s) obrigatorio(s)."
@@ -2538,8 +2538,8 @@ msgstr "Hoxe"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:161
-#: src/app.ts:175
+#: src/app.ts:167
+#: src/app.ts:184
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Erro de transacción."
@@ -2563,7 +2563,7 @@ msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:84
+#: src/routes/workflow/workflow.ts:87
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -2587,7 +2587,7 @@ msgid "Type of the current document is not found."
 msgstr "O tipo do documento actual non se atopou."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:598
+#: src/routes/content/content.ts:607
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2625,7 +2625,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "O usuario non existe ou as credenciais non son válidas."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "O usuario non está conectado."
@@ -2685,7 +2685,7 @@ msgid "Version item with comment {comment}"
 msgstr ""
 
 #. Default: "Version not found."
-#: src/routes/history/history.ts:88
+#: src/routes/history/history.ts:91
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -2815,8 +2815,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Nome de usuario e/ou contrasinal incorrectos."
@@ -2829,7 +2829,7 @@ msgid "Yes"
 msgstr "Si"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:93
+#: src/routes/workflow/workflow.ts:96
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Non ten autorización para acceder a este recurso."
@@ -2849,7 +2849,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:625
+#: src/routes/content/content.ts:634
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -2879,8 +2879,8 @@ msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:803
+#: src/routes/history/history.ts:68
+#: src/routes/content/content.ts:815
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Non ten permiso para gardar este documento porque está bloqueado por outro usuario."
