@@ -1098,8 +1098,8 @@ msgid "Internal server error"
 msgstr "Iekšēja servera kļūda"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:88
+#: src/routes/authentication/authentication.ts:102
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Nederīgi akreditācijas dati"
@@ -1125,7 +1125,7 @@ msgid "Invalid query."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:137
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Nederīga sesija"
@@ -1249,7 +1249,7 @@ msgid "Login"
 msgstr "Pieteikšanās"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:65
+#: src/routes/authentication/authentication.ts:67
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "Pieteikšanās vārds un parole jānorāda ķermenī."
@@ -1336,7 +1336,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:66
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Trūkst akreditācijas datu"
@@ -2642,7 +2642,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "Lietotājs neeksistē vai nederīgi akreditācijas dati."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:136
+#: src/routes/authentication/authentication.ts:138
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "Lietotājs nav pieteicies."
@@ -2832,8 +2832,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:87
-#: src/routes/authentication/authentication.ts:101
+#: src/routes/authentication/authentication.ts:89
+#: src/routes/authentication/authentication.ts:103
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Nepareiza pieteikšanās un/vai parole."
