@@ -7,9 +7,23 @@
 import { describe, it, expect } from 'vitest';
 
 // Internal imports
-import { textToTsquery } from './query';
+import { parseBoolean, textToTsquery } from './query';
 
 describe('Query', () => {
+  describe('parseBoolean', () => {
+    it('should read the plone.restapi true strings as true', () => {
+      ['true', 'True', '1', 'yes', 'on', 'y', 't', 'active', 'enabled'].map(
+        (value) => expect(parseBoolean(value)).toBe(true),
+      );
+    });
+
+    it('should read any other value as false', () => {
+      ['false', '0', 'no', 'off', 'n', 'f', 'inactive', 'maybe', ''].map(
+        (value) => expect(parseBoolean(value)).toBe(false),
+      );
+    });
+  });
+
   describe('textToTsquery', () => {
     it('should combine terms with and', () => {
       expect(textToTsquery('alpha zebra')).toBe("('alpha' & 'zebra')");
