@@ -246,6 +246,7 @@
 - Let users update their own properties with PATCH @users @martior
 - Refuse an invalid email address when creating a user @martior
 - Return the Location header when creating a user or group @martior
+- Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
 
 ### Internal
 

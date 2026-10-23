@@ -42,6 +42,19 @@ describe('User', () => {
   it('should get a list of users by query', () =>
     testRequest(app, 'users/list_query'));
 
+  it('should search users with a single character', async () => {
+    await testRequest(app, 'users/post');
+    for (const param of ['query', 'search']) {
+      const res = await request(app)
+        .get(`/@users?${param}=h`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      expect(res.body.items.map((user: any) => user.id)).toContain(
+        'headlessnick',
+      );
+    }
+  });
+
   it('should search users by fullname', async () => {
     await testRequest(app, 'users/post');
     return testRequest(app, 'users/list_search');

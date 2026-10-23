@@ -192,13 +192,6 @@ export default [
       const filtered =
         query || search || groupsFilter.length > 0 || req.query.limit;
 
-      // Check query length
-      if ((query && query.length < 2) || (search && search.length < 2)) {
-        throw new RequestException(400, {
-          error: req.i18n('Query must be at least 2 characters long.'),
-        });
-      }
-
       // Check limit
       const limit = filtered
         ? parseInt(String(req.query.limit || defaultLimit), 10)

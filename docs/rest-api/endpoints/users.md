@@ -91,7 +91,7 @@ Or use the client directly:
 {% include_relative examples/users/list_groups_filter.ts %}
 ```
 
-When `query`, `search`, `groups-filter:list` or `limit` is used, at most `limit` users are returned, 25 by default. The `query` and `search` values must be at least 2 characters long.
+When `query`, `search`, `groups-filter:list` or `limit` is used, at most `limit` users are returned, 25 by default.
 
 ## Create User
 
