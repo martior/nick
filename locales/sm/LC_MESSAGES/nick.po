@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Faʻamatalaga e uiga i aia tatau o loʻo umia i totonu ma luga o lenei mea."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Sese i totonu o le server"
@@ -1094,6 +1094,12 @@ msgstr "Sese i totonu o le server"
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Faʻamaoniga le aoga"
+
+#. Default: "Invalid depth."
+#: src/routes/navigation/navigation.ts:79
+msgctxt "Routes|Navigation"
+msgid "Invalid depth."
+msgstr ""
 
 #. Default: "Invalid move."
 #: src/routes/controlpanels/controlpanels.ts:529
@@ -2449,8 +2455,8 @@ msgstr "Aso nei"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Sese i le faatulagaga."
