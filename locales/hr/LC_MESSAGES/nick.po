@@ -221,7 +221,7 @@ msgid "Allows users to login with their email address instead of specifying a se
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:125
+#: src/routes/lock/lock.ts:113
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "Već zaključano"
@@ -471,7 +471,7 @@ msgid "Change Note"
 msgstr "Bilješka o promjeni"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:940
+#: src/routes/content/content.ts:945
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -775,12 +775,13 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/history/history.ts:71
+#: src/routes/workflow/workflow.ts:121
+#: src/routes/history/history.ts:84
 #: src/routes/content/content.ts:982
-#: src/routes/content/content.ts:1158
-msgctxt "Routes|History"
+#: src/routes/content/content.ts:1153
+msgctxt "Routes|Workflow"
 msgid "Document locked"
-msgstr "Dokument zaključan"
+msgstr ""
 
 #. Default: "Document modified"
 #: src/profiles/core/vocabularies/events.json:10
@@ -1207,7 +1208,7 @@ msgid "Internal server error"
 msgstr "Interna pogreška poslužitelja"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:676
+#: src/routes/content/content.ts:681
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1245,8 +1246,8 @@ msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:168
-#: src/routes/search/search.ts:315
+#: src/routes/search/search.ts:172
+#: src/routes/search/search.ts:319
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1664,13 +1665,13 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:163
+#: src/routes/search/search.ts:167
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
 
 #. Default: "No transition specified."
-#: src/routes/workflow/workflow.ts:177
+#: src/routes/workflow/workflow.ts:187
 msgctxt "Routes|Workflow"
 msgid "No transition specified."
 msgstr ""
@@ -1693,7 +1694,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:178
+#: src/routes/lock/lock.ts:166
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Nije dopušteno"
@@ -1711,7 +1712,7 @@ msgid "Not authorized"
 msgstr ""
 
 #. Default: "Not found"
-#: src/routes/history/history.ts:92
+#: src/routes/history/history.ts:105
 msgctxt "Routes|History"
 msgid "Not found"
 msgstr ""
@@ -1778,7 +1779,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1155
+#: src/routes/content/content.ts:1150
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2003,7 +2004,7 @@ msgid "Prompts"
 msgstr "Upiti"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:660
+#: src/routes/content/content.ts:665
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2170,15 +2171,16 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:690
+#: src/routes/content/content.ts:695
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
+#: src/routes/workflow/workflow.ts:120
 #: src/routes/content/content.ts:981
-msgctxt "Routes|Content"
+msgctxt "Routes|Workflow"
 msgid "Resource is locked."
 msgstr ""
 
@@ -2691,13 +2693,13 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:718
+#: src/routes/content/content.ts:723
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:707
+#: src/routes/content/content.ts:712
 #: src/routes/content/content.ts:1000
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
@@ -2830,15 +2832,21 @@ msgid "The user viewing the querystring results"
 msgstr "Korisnik koji pregledava rezultate upita"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:753
+#: src/routes/content/content.ts:758
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:748
+#: src/routes/content/content.ts:753
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
+msgstr ""
+
+#. Default: "The version is missing or invalid."
+#: src/routes/history/history.ts:70
+msgctxt "Routes|History"
+msgid "The version is missing or invalid."
 msgstr ""
 
 #. Default: "The workflow states to check for."
@@ -2848,7 +2856,7 @@ msgid "The workflow states to check for."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:122
+#: src/routes/lock/lock.ts:110
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "Ovaj dokument je već zaključao drugi korisnik."
@@ -3116,8 +3124,9 @@ msgid "Version item with comment {comment}"
 msgstr ""
 
 #. Default: "Version not found."
-#: src/routes/history/history.ts:91
-#: src/routes/content/content.ts:253
+#: src/routes/history/history.ts:104
+#: src/routes/content/content.ts:250
+#: src/routes/content/content.ts:258
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3314,13 +3323,14 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:131
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
+#: src/routes/history/history.ts:59
 #: src/helpers/handler/handler.ts:119
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:739
+#: src/routes/content/content.ts:744
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -3362,13 +3372,13 @@ msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:68
+#: src/routes/history/history.ts:81
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Nemate dopuštenje za spremanje ovog dokumenta jer ga je zaključao drugi korisnik."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:175
+#: src/routes/lock/lock.ts:163
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Nemate dopuštenje za otključavanje ovog dokumenta."
