@@ -656,6 +656,21 @@ export const querystringToQuery = async (
 };
 
 /**
+ * Values plone.restapi reads as true for a boolean index, any other value is
+ * false.
+ */
+const TRUE_STRINGS = ['true', '1', 'yes', 'on', 'y', 't', 'active', 'enabled'];
+
+/**
+ * Convert a parameter value of a boolean index to a boolean.
+ * @method parseBoolean
+ * @param {any} value Parameter value.
+ * @returns {boolean} True if the value is one of the true strings.
+ */
+export const parseBoolean = (value: any): boolean =>
+  TRUE_STRINGS.includes(`${value}`.toLowerCase());
+
+/**
  * Convert a parameter value to a typed list of values for an index.
  * @method typedValues
  * @param {string} type Index type.
@@ -671,7 +686,7 @@ const typedValues = (type: string, value: any): any[] =>
         case 'float':
           return parseFloat(item);
         case 'boolean':
-          return ['true', '1', 'yes', 'on'].includes(`${item}`.toLowerCase());
+          return parseBoolean(item);
         case 'date':
           return parseDate(item);
         case 'uuid':
