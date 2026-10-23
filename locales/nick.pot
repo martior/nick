@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-23T11:12:06.026Z\n"
+"POT-Creation-Date: 2026-10-23T11:12:48.760Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -210,9 +210,10 @@ msgid "Allowed Content Types"
 msgstr ""
 
 #. Default: "Allows users to login with their email address instead of specifying a separate login name."
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:30
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:16
-#: src/profiles/core/controlpanels/security.json:16
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+#: src/profiles/core/controlpanels/security.json:30
+msgctxt "Profiles|Core|Upgrades|1014|Controlpanels|Security"
 msgid "Allows users to login with their email address instead of specifying a separate login name."
 msgstr ""
 
@@ -229,7 +230,7 @@ msgid "An entity responsible for making this item available."
 msgstr ""
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:332
+#: src/routes/users/users.ts:353
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -673,6 +674,7 @@ msgstr ""
 #: src/content_rules/actions/transition_workflow.ts:26
 #: src/content_rules/actions/send_email.ts:30
 #: src/constants/userschema.ts:13
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:14
 #: src/profiles/core/upgrades/1001/controlpanels/usergroup.json:10
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:10
 #: src/profiles/core/types/video.json:13
@@ -681,7 +683,7 @@ msgstr ""
 #: src/profiles/core/types/feed.json:13
 #: src/profiles/core/types/event.json:25
 #: src/profiles/core/controlpanels/usergroup.json:10
-#: src/profiles/core/controlpanels/security.json:10
+#: src/profiles/core/controlpanels/security.json:14
 #: src/profiles/core/behaviors/versioning.json:10
 #: src/profiles/core/behaviors/preview_image_link.json:10
 #: src/profiles/core/behaviors/basic.json:10
@@ -835,7 +837,7 @@ msgid "Effective date"
 msgstr ""
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:269
+#: src/routes/users/users.ts:290
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -869,6 +871,13 @@ msgstr ""
 #: src/content_rules/actions/send_email.ts:59
 msgctxt "Content rules|Actions|Send email"
 msgid "Email source"
+msgstr ""
+
+#. Default: "Enable self-registration"
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:19
+#: src/profiles/core/controlpanels/security.json:19
+msgctxt "Profiles|Core|Upgrades|1014|Controlpanels|Security"
+msgid "Enable self-registration"
 msgstr ""
 
 #. Default: "Enables Volto Blocks support"
@@ -1325,6 +1334,13 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Less than"
 msgstr ""
 
+#. Default: "Let users select their own passwords"
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:24
+#: src/profiles/core/controlpanels/security.json:24
+msgctxt "Profiles|Core|Upgrades|1014|Controlpanels|Security"
+msgid "Let users select their own passwords"
+msgstr ""
+
 #. Default: "Lets you upload a file to the site."
 #: src/profiles/core/types/file.json:4
 msgctxt "Profiles|Core|Types|File"
@@ -1332,7 +1348,7 @@ msgid "Lets you upload a file to the site."
 msgstr ""
 
 #. Default: "Limit must be a positive number."
-#: src/routes/users/users.ts:201
+#: src/routes/users/users.ts:203
 #: src/routes/groups/groups.ts:69
 msgctxt "Routes|Users"
 msgid "Limit must be a positive number."
@@ -1699,9 +1715,9 @@ msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:168
-#: src/routes/users/users.ts:410
-#: src/routes/users/users.ts:477
+#: src/routes/users/users.ts:170
+#: src/routes/users/users.ts:431
+#: src/routes/users/users.ts:498
 #: src/routes/types/types.ts:59
 #: src/routes/types/types.ts:171
 #: src/routes/types/types.ts:329
@@ -1824,16 +1840,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:128
-#: src/routes/users/users.ts:358
+#: src/routes/users/users.ts:130
+#: src/routes/users/users.ts:379
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr ""
 
 #. Default: "Password should be at least 8 characters long."
-#: src/routes/users/users.ts:52
-#: src/routes/users/users.ts:279
-#: src/routes/users/users.ts:420
+#: src/routes/users/users.ts:54
+#: src/routes/users/users.ts:300
+#: src/routes/users/users.ts:441
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1866,6 +1882,13 @@ msgstr ""
 #: src/profiles/core/workflows.json:23
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
+msgstr ""
+
+#. Default: "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:25
+#: src/profiles/core/controlpanels/security.json:25
+msgctxt "Profiles|Core|Upgrades|1014|Controlpanels|Security"
+msgid "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
 msgstr ""
 
 #. Default: "Perform a workflow transition on the triggering object"
@@ -2263,9 +2286,10 @@ msgid "Secure"
 msgstr ""
 
 #. Default: "Security"
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:3
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:3
 #: src/profiles/core/controlpanels/security.json:3
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+msgctxt "Profiles|Core|Upgrades|1014|Controlpanels|Security"
 msgid "Security"
 msgstr ""
 
@@ -2500,7 +2524,7 @@ msgid "System group"
 msgstr ""
 
 #. Default: "System users"
-#: src/routes/users/users.ts:469
+#: src/routes/users/users.ts:490
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr ""
@@ -2651,8 +2675,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:129
-#: src/routes/users/users.ts:359
+#: src/routes/users/users.ts:131
+#: src/routes/users/users.ts:380
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2996,9 +3020,10 @@ msgid "Use '../' to navigate to parent objects."
 msgstr ""
 
 #. Default: "Use email address as login name"
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:29
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:15
-#: src/profiles/core/controlpanels/security.json:15
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+#: src/profiles/core/controlpanels/security.json:29
+msgctxt "Profiles|Core|Upgrades|1014|Controlpanels|Security"
 msgid "Use email address as login name"
 msgstr ""
 
@@ -3016,7 +3041,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:77
+#: src/routes/users/users.ts:79
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr ""
@@ -3146,6 +3171,13 @@ msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr ""
 
+#. Default: "Visitors can create their own account. When this is off, only administrators can add users."
+#: src/profiles/core/upgrades/1014/controlpanels/security.json:20
+#: src/profiles/core/controlpanels/security.json:20
+msgctxt "Profiles|Core|Upgrades|1014|Controlpanels|Security"
+msgid "Visitors can create their own account. When this is off, only administrators can add users."
+msgstr ""
+
 #. Default: "Waiting to be reviewed, not editable by the owner."
 #: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
@@ -3238,7 +3270,7 @@ msgid "Wrong login and/or password."
 msgstr ""
 
 #. Default: "Wrong password."
-#: src/routes/users/users.ts:95
+#: src/routes/users/users.ts:97
 msgctxt "Routes|Users"
 msgid "Wrong password."
 msgstr ""
@@ -3248,6 +3280,12 @@ msgstr ""
 #: src/profiles/core/vocabularies/boolean.json:5
 msgctxt "Profiles|Core|Catalog"
 msgid "Yes"
+msgstr ""
+
+#. Default: "You are not allowed to set roles or groups."
+#: src/routes/users/users.ts:271
+msgctxt "Routes|Users"
+msgid "You are not allowed to set roles or groups."
 msgstr ""
 
 #. Default: "You are not authorization to access this resource."
@@ -3263,7 +3301,7 @@ msgid "You are not authorized to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
-#: src/routes/users/users.ts:393
+#: src/routes/users/users.ts:414
 #: src/routes/types/types.ts:43
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
@@ -3291,7 +3329,7 @@ msgid "You can not filter by title and token at the same time."
 msgstr ""
 
 #. Default: "You can only change your own password."
-#: src/routes/users/users.ts:84
+#: src/routes/users/users.ts:86
 msgctxt "Routes|Users"
 msgid "You can only change your own password."
 msgstr ""
@@ -3303,7 +3341,7 @@ msgid "You can’t delete system groups."
 msgstr ""
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:468
+#: src/routes/users/users.ts:489
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr ""
@@ -3333,19 +3371,19 @@ msgid "You don’t have permission to unlock this document."
 msgstr ""
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:250
+#: src/routes/users/users.ts:260
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr ""
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:156
+#: src/routes/users/users.ts:158
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""
 
 #. Default: "You must enter a valid email address."
-#: src/routes/users/users.ts:261
+#: src/routes/users/users.ts:282
 msgctxt "Routes|Users"
 msgid "You must enter a valid email address."
 msgstr ""
