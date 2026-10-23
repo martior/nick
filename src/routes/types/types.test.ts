@@ -10,6 +10,7 @@ import { describe, expect, it } from 'vitest';
 // Internal imports
 import app from '../../app';
 import { createUser, testRequest } from '../../helpers/tests/tests';
+import models from '../../models';
 
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
@@ -33,6 +34,21 @@ function call(
 
 describe('Types', () => {
   it('should return a list of types', () => testRequest(app, 'types/list'));
+
+  it('should sort the list of types on title', async () => {
+    const Type = models.get('Type');
+    const video = await Type.fetchById('Video', {}, global.txn!);
+    await video.update({ title: 'A video' }, global.txn!);
+    const titles = (await call('get', '/@types').expect(200)).body.map(
+      (type: any) => type.title,
+    );
+    expect(titles[0]).toBe('A video');
+    expect(titles).toEqual(
+      [...titles].sort((a, b) =>
+        a.toLowerCase().localeCompare(b.toLowerCase()),
+      ),
+    );
+  });
 
   it('should return a type', () => testRequest(app, 'types/get'));
 

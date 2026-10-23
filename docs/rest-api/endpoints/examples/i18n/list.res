@@ -3,6 +3,20 @@ Content-Type: application/json
 
 [
   {
+    "@id": "http://localhost:8080/@types/Image",
+    "addable": true,
+    "title": "Afbeelding",
+    "id": "Image",
+    "immediately_addable": true
+  },
+  {
+    "@id": "http://localhost:8080/@types/File",
+    "addable": true,
+    "title": "Bestand",
+    "id": "File",
+    "immediately_addable": true
+  },
+  {
     "@id": "http://localhost:8080/@types/Event",
     "addable": true,
     "title": "Evenement",
@@ -17,24 +31,10 @@ Content-Type: application/json
     "immediately_addable": false
   },
   {
-    "@id": "http://localhost:8080/@types/File",
-    "addable": true,
-    "title": "Bestand",
-    "id": "File",
-    "immediately_addable": true
-  },
-  {
     "@id": "http://localhost:8080/@types/Folder",
     "addable": true,
     "title": "Map",
     "id": "Folder",
-    "immediately_addable": true
-  },
-  {
-    "@id": "http://localhost:8080/@types/Image",
-    "addable": true,
-    "title": "Afbeelding",
-    "id": "Image",
     "immediately_addable": true
   },
   {

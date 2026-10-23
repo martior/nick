@@ -329,6 +329,7 @@
 - Record the creation of content as the first workflow history entry (without action) like Plone, instead of deriving a `Create` entry, so migrated histories are shown unchanged @martior
 - Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
 - @types is only available to authenticated users, list items have `id` and `immediately_addable`, and the schema has `type: object` and the content type `application/json+schema`, like plone.restapi @martior
+- Sort the @types list on the translated title, like Plone @martior
 
 ### Internal
 
