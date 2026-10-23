@@ -292,6 +292,18 @@ msgctxt "Content rules|Conditions|User group"
 msgid "Apply only when the current user is in the given group"
 msgstr ""
 
+#. Default: "Apr"
+#: src/vocabularies/months/months.ts:52
+msgctxt "Vocabularies|Months"
+msgid "Apr"
+msgstr ""
+
+#. Default: "April"
+#: src/vocabularies/months/months.ts:25
+msgctxt "Vocabularies|Months"
+msgid "April"
+msgstr ""
+
 #. Default: "As a path relative to the portal root."
 #: src/content_rules/actions/move_item.ts:41
 #: src/content_rules/actions/copy_item.ts:37
@@ -303,6 +315,18 @@ msgstr ""
 #: src/profiles/core/types/event.json:81
 msgctxt "Profiles|Core|Types|Event"
 msgid "Attendees"
+msgstr ""
+
+#. Default: "Aug"
+#: src/vocabularies/months/months.ts:56
+msgctxt "Vocabularies|Months"
+msgid "Aug"
+msgstr ""
+
+#. Default: "August"
+#: src/vocabularies/months/months.ts:29
+msgctxt "Vocabularies|Months"
+msgid "August"
 msgstr ""
 
 #. Default: "Authenticated"
@@ -615,6 +639,18 @@ msgstr "Tarihler"
 msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "Debug"
 msgstr "Hata Ayıklama"
+
+#. Default: "Dec"
+#: src/vocabularies/months/months.ts:60
+msgctxt "Vocabularies|Months"
+msgid "Dec"
+msgstr ""
+
+#. Default: "December"
+#: src/vocabularies/months/months.ts:33
+msgctxt "Vocabularies|Months"
+msgid "December"
+msgstr ""
 
 #. Default: "Default"
 #: src/routes/userschema/userschema.ts:26
@@ -937,6 +973,18 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Expiration date"
 msgstr "Bitiş tarihi"
 
+#. Default: "Feb"
+#: src/vocabularies/months/months.ts:50
+msgctxt "Vocabularies|Months"
+msgid "Feb"
+msgstr ""
+
+#. Default: "February"
+#: src/vocabularies/months/months.ts:23
+msgctxt "Vocabularies|Months"
+msgid "February"
+msgstr ""
+
 #. Default: "Feed"
 #: src/profiles/core/types/feed.json:3
 msgctxt "Profiles|Core|Types|Feed"
@@ -1003,6 +1051,18 @@ msgstr "Klasör benzeri"
 #: src/profiles/core/controlpanels/form.json:3
 msgctxt "Profiles|Core|Upgrades|1003|Controlpanels|Form"
 msgid "Form"
+msgstr ""
+
+#. Default: "Fri"
+#: src/vocabularies/weekdays/weekdays.ts:48
+msgctxt "Vocabularies|Weekdays"
+msgid "Fri"
+msgstr ""
+
+#. Default: "Friday"
+#: src/vocabularies/weekdays/weekdays.ts:26
+msgctxt "Vocabularies|Weekdays"
+msgid "Friday"
 msgstr ""
 
 #. Default: "From and message are required fields."
@@ -1158,6 +1218,42 @@ msgstr "Eşittir"
 msgctxt "Models|Type"
 msgid "Items of this type can act as a folder containing other items. What content types should be allowed inside?"
 msgstr "Bu türdeki öğeler, diğer öğeleri içeren bir klasör gibi davranabilir. Hangi içerik türlerine izin verilmelidir?"
+
+#. Default: "Jan"
+#: src/vocabularies/months/months.ts:49
+msgctxt "Vocabularies|Months"
+msgid "Jan"
+msgstr ""
+
+#. Default: "January"
+#: src/vocabularies/months/months.ts:22
+msgctxt "Vocabularies|Months"
+msgid "January"
+msgstr ""
+
+#. Default: "Jul"
+#: src/vocabularies/months/months.ts:55
+msgctxt "Vocabularies|Months"
+msgid "Jul"
+msgstr ""
+
+#. Default: "July"
+#: src/vocabularies/months/months.ts:28
+msgctxt "Vocabularies|Months"
+msgid "July"
+msgstr ""
+
+#. Default: "Jun"
+#: src/vocabularies/months/months.ts:54
+msgctxt "Vocabularies|Months"
+msgid "Jun"
+msgstr ""
+
+#. Default: "June"
+#: src/vocabularies/months/months.ts:27
+msgctxt "Vocabularies|Months"
+msgid "June"
+msgstr ""
 
 #. Default: "Language"
 #: src/profiles/core/controlpanels/language.json:3
@@ -1328,6 +1424,18 @@ msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Usergroup"
 msgid "Many users?"
 msgstr ""
 
+#. Default: "Mar"
+#: src/vocabularies/months/months.ts:51
+msgctxt "Vocabularies|Months"
+msgid "Mar"
+msgstr ""
+
+#. Default: "March"
+#: src/vocabularies/months/months.ts:24
+msgctxt "Vocabularies|Months"
+msgid "March"
+msgstr ""
+
 #. Default: "Matches all conditions"
 #: src/profiles/core/catalog.json:299
 msgctxt "Profiles|Core|Catalog"
@@ -1349,6 +1457,13 @@ msgstr "Herhangi bir koşulla eşleşir"
 #: src/profiles/core/catalog.json:483
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches none of"
+msgstr ""
+
+#. Default: "May"
+#: src/vocabularies/months/months.ts:26
+#: src/vocabularies/months/months.ts:53
+msgctxt "Vocabularies|Months"
+msgid "May"
 msgstr ""
 
 #. Default: "Message"
@@ -1388,6 +1503,18 @@ msgstr ""
 #: src/profiles/core/upgrades/1002/permissions.json:18
 msgctxt "Profiles|Core|Permissions"
 msgid "Modify Own Comments"
+msgstr ""
+
+#. Default: "Mon"
+#: src/vocabularies/weekdays/weekdays.ts:44
+msgctxt "Vocabularies|Weekdays"
+msgid "Mon"
+msgstr ""
+
+#. Default: "Monday"
+#: src/vocabularies/weekdays/weekdays.ts:22
+msgctxt "Vocabularies|Weekdays"
+msgid "Monday"
 msgstr ""
 
 #. Default: "Move the triggering item to a specific folder"
@@ -1494,6 +1621,18 @@ msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "İzin verilmiyor"
 
+#. Default: "Not authenticated"
+#: src/routes/vocabularies/vocabularies.ts:76
+msgctxt "Routes|Vocabularies"
+msgid "Not authenticated"
+msgstr ""
+
+#. Default: "Not authorized"
+#: src/routes/vocabularies/vocabularies.ts:77
+msgctxt "Routes|Vocabularies"
+msgid "Not authorized"
+msgstr ""
+
 #. Default: "Not found"
 #: src/routes/history/history.ts:92
 msgctxt "Routes|History"
@@ -1539,10 +1678,34 @@ msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
 msgstr ""
 
+#. Default: "Nov"
+#: src/vocabularies/months/months.ts:59
+msgctxt "Vocabularies|Months"
+msgid "Nov"
+msgstr ""
+
+#. Default: "November"
+#: src/vocabularies/months/months.ts:32
+msgctxt "Vocabularies|Months"
+msgid "November"
+msgstr ""
+
 #. Default: "Object “{id}” is locked."
 #: src/routes/content/content.ts:950
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
+msgstr ""
+
+#. Default: "Oct"
+#: src/vocabularies/months/months.ts:58
+msgctxt "Vocabularies|Months"
+msgid "Oct"
+msgstr ""
+
+#. Default: "October"
+#: src/vocabularies/months/months.ts:31
+msgctxt "Vocabularies|Months"
+msgid "October"
 msgstr ""
 
 #. Default: "Open End"
@@ -2000,6 +2163,18 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "SMTP server"
 msgstr "SMTP sunucusu"
 
+#. Default: "Sat"
+#: src/vocabularies/weekdays/weekdays.ts:49
+msgctxt "Vocabularies|Weekdays"
+msgid "Sat"
+msgstr ""
+
+#. Default: "Saturday"
+#: src/vocabularies/weekdays/weekdays.ts:27
+msgctxt "Vocabularies|Weekdays"
+msgid "Saturday"
+msgstr ""
+
 #. Default: "Searchable text"
 #: src/profiles/core/catalog.json:252
 msgctxt "Profiles|Core|Catalog"
@@ -2053,6 +2228,18 @@ msgstr "Geri gönder"
 #: src/content_rules/actions/send_email.ts:18
 msgctxt "Content rules|Actions|Send email"
 msgid "Send email"
+msgstr ""
+
+#. Default: "Sep"
+#: src/vocabularies/months/months.ts:57
+msgctxt "Vocabularies|Months"
+msgid "Sep"
+msgstr ""
+
+#. Default: "September"
+#: src/vocabularies/months/months.ts:30
+msgctxt "Vocabularies|Months"
+msgid "September"
 msgstr ""
 
 #. Default: "Settings"
@@ -2217,6 +2404,18 @@ msgstr ""
 #: src/routes/content_rules/content_rules.ts:190
 msgctxt "Routes|Content rules"
 msgid "Successfully enabled rules {rules} to subfolders"
+msgstr ""
+
+#. Default: "Sun"
+#: src/vocabularies/weekdays/weekdays.ts:50
+msgctxt "Vocabularies|Weekdays"
+msgid "Sun"
+msgstr ""
+
+#. Default: "Sunday"
+#: src/vocabularies/weekdays/weekdays.ts:28
+msgctxt "Vocabularies|Weekdays"
+msgid "Sunday"
 msgstr ""
 
 #. Default: "System group"
@@ -2558,6 +2757,18 @@ msgctxt "Profiles|Core|Controlpanels|Site"
 msgid "This shows up in the title bar of browsers and in syndication feeds."
 msgstr "Tarayıcıların başlık çubuklarında ve sendikasyon beslemelerinde görünür."
 
+#. Default: "Thu"
+#: src/vocabularies/weekdays/weekdays.ts:47
+msgctxt "Vocabularies|Weekdays"
+msgid "Thu"
+msgstr ""
+
+#. Default: "Thursday"
+#: src/vocabularies/weekdays/weekdays.ts:25
+msgctxt "Vocabularies|Weekdays"
+msgid "Thursday"
+msgstr ""
+
 #. Default: "Tip: you can use * to autocomplete."
 #: src/profiles/core/catalog.json:297
 #: src/profiles/core/catalog.json:303
@@ -2628,6 +2839,18 @@ msgstr ""
 #: src/routes/workflow/workflow.ts:87
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
+msgstr ""
+
+#. Default: "Tue"
+#: src/vocabularies/weekdays/weekdays.ts:45
+msgctxt "Vocabularies|Weekdays"
+msgid "Tue"
+msgstr ""
+
+#. Default: "Tuesday"
+#: src/vocabularies/weekdays/weekdays.ts:23
+msgctxt "Vocabularies|Weekdays"
+msgid "Tuesday"
 msgstr ""
 
 #. Default: "Type"
@@ -2835,6 +3058,18 @@ msgctxt "Profiles|Core|Types|Event"
 msgid "Web address with more info about the event. Add http:// for external links."
 msgstr ""
 
+#. Default: "Wed"
+#: src/vocabularies/weekdays/weekdays.ts:46
+msgctxt "Vocabularies|Weekdays"
+msgid "Wed"
+msgstr ""
+
+#. Default: "Wednesday"
+#: src/vocabularies/weekdays/weekdays.ts:24
+msgctxt "Vocabularies|Weekdays"
+msgid "Wednesday"
+msgstr ""
+
 #. Default: "When this date is reached, the content will no longer be visible in listings and searches."
 #: src/profiles/core/behaviors/dates.json:21
 msgctxt "Profiles|Core|Behaviors|Dates"
@@ -2914,6 +3149,12 @@ msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Bu kaynağa erişim yetkiniz yok."
 
+#. Default: "You are not authorized to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:83
+msgctxt "Routes|Vocabularies"
+msgid "You are not authorized to access the vocabulary “{id}”."
+msgstr ""
+
 #. Default: "You are not authorized to access this resource."
 #: src/routes/users/users.ts:393
 #: src/routes/recyclebin/recyclebin.ts:45
@@ -2933,6 +3174,12 @@ msgstr ""
 #: src/routes/content/content.ts:634
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
+msgstr ""
+
+#. Default: "You can not filter by title and token at the same time."
+#: src/routes/vocabularies/vocabularies.ts:98
+msgctxt "Routes|Vocabularies"
+msgid "You can not filter by title and token at the same time."
 msgstr ""
 
 #. Default: "You can only change your own password."
@@ -2993,6 +3240,12 @@ msgstr ""
 #: src/routes/users/users.ts:261
 msgctxt "Routes|Users"
 msgid "You must enter a valid email address."
+msgstr ""
+
+#. Default: "You need to be authenticated to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:79
+msgctxt "Routes|Vocabularies"
+msgid "You need to be authenticated to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "Your location - either city and country - or in a company setting, where your office is located."
