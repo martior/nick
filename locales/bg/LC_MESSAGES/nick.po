@@ -232,7 +232,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Субект, отговорен за предоставянето на този елемент."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:261
+#: src/routes/users/users.ts:332
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -318,6 +318,16 @@ msgstr "Удостоверен"
 msgctxt "Profiles|Core|Controlpanels|Language"
 msgid "Available languages"
 msgstr "Налични езици"
+
+#. Default: "Bad request"
+#: src/routes/groups/groups.ts:99
+#: src/routes/groups/groups.ts:107
+#: src/routes/groups/groups.ts:119
+#: src/routes/groups/groups.ts:133
+#: src/routes/groups/groups.ts:149
+msgctxt "Routes|Groups"
+msgid "Bad request"
+msgstr ""
 
 #. Default: "Basic metadata"
 #: src/profiles/core/behaviors/basic.json:3
@@ -779,6 +789,12 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
 msgstr "Дата на влизане в сила"
 
+#. Default: "Either a password or sendPasswordReset must be provided."
+#: src/routes/users/users.ts:269
+msgctxt "Routes|Users"
+msgid "Either a password or sendPasswordReset must be provided."
+msgstr ""
+
 #. Default: "Email"
 #: src/routes/userschema/userschema.ts:40
 #: src/routes/userschema/userschema.ts:93
@@ -1180,6 +1196,13 @@ msgctxt "Profiles|Core|Types|File"
 msgid "Lets you upload a file to the site."
 msgstr "Позволява ви да качите файл в сайта."
 
+#. Default: "Limit must be a positive number."
+#: src/routes/users/users.ts:201
+#: src/routes/groups/groups.ts:69
+msgctxt "Routes|Users"
+msgid "Limit must be a positive number."
+msgstr ""
+
 #. Default: "List of attendees."
 #: src/profiles/core/types/event.json:73
 msgctxt "Profiles|Core|Types|Event"
@@ -1479,7 +1502,9 @@ msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:154
+#: src/routes/users/users.ts:168
+#: src/routes/users/users.ts:410
+#: src/routes/users/users.ts:477
 #: src/routes/types/types.ts:45
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
@@ -1489,7 +1514,9 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:37
 #: src/routes/jobs/jobs.ts:77
 #: src/routes/jobs/jobs.ts:188
-#: src/routes/groups/groups.ts:34
+#: src/routes/groups/groups.ts:37
+#: src/routes/groups/groups.ts:194
+#: src/routes/groups/groups.ts:238
 #: src/routes/email/email.ts:75
 #: src/routes/controlpanels/controlpanels.ts:167
 #: src/routes/controlpanels/controlpanels.ts:367
@@ -1566,15 +1593,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:114
-#: src/routes/users/users.ts:287
+#: src/routes/users/users.ts:128
+#: src/routes/users/users.ts:358
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Заявка за нулиране на парола"
 
 #. Default: "Password should be at least 8 characters long."
-#: src/routes/users/users.ts:50
-#: src/routes/users/users.ts:208
+#: src/routes/users/users.ts:52
+#: src/routes/users/users.ts:279
+#: src/routes/users/users.ts:420
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1717,6 +1745,12 @@ msgctxt "Profiles|Ai|Controlpanels"
 msgid "Prompts"
 msgstr "Подкани"
 
+#. Default: "Property “groupname” is required."
+#: src/routes/groups/groups.ts:100
+msgctxt "Routes|Groups"
+msgid "Property “groupname” is required."
+msgstr ""
+
 #. Default: "Provided block id is not valid."
 #: src/routes/form/form.ts:48
 #: src/routes/form/form.ts:99
@@ -1755,10 +1789,9 @@ msgid "Query"
 msgstr ""
 
 #. Default: "Query must be at least 2 characters long."
-#: src/routes/users/users.ts:175
 #: src/routes/principals/principals.ts:30
-#: src/routes/groups/groups.ts:55
-msgctxt "Routes|Users"
+#: src/routes/groups/groups.ts:58
+msgctxt "Routes|Principals"
 msgid "Query must be at least 2 characters long."
 msgstr ""
 
@@ -1935,6 +1968,12 @@ msgstr "Robots.txt"
 #: src/content_rules/conditions/user_role.ts:45
 msgctxt "Content rules|Conditions|User role"
 msgid "Roles"
+msgstr ""
+
+#. Default: "Roles and users must be lists."
+#: src/routes/groups/groups.ts:120
+msgctxt "Routes|Groups"
+msgid "Roles and users must be lists."
 msgstr ""
 
 #. Default: "Roles are: {roles}"
@@ -2181,13 +2220,13 @@ msgid "Successfully enabled rules {rules} to subfolders"
 msgstr ""
 
 #. Default: "System group"
-#: src/routes/groups/groups.ts:142
+#: src/routes/groups/groups.ts:231
 msgctxt "Routes|Groups"
 msgid "System group"
 msgstr "Системна група"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:370
+#: src/routes/users/users.ts:469
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Системни потребители"
@@ -2338,10 +2377,16 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:115
-#: src/routes/users/users.ts:288
+#: src/routes/users/users.ts:129
+#: src/routes/users/users.ts:359
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
+msgstr ""
+
+#. Default: "The group name you entered already exists."
+#: src/routes/groups/groups.ts:108
+msgctxt "Routes|Groups"
+msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"
@@ -2609,6 +2654,18 @@ msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
 
+#. Default: "Unknown roles: {roles}"
+#: src/routes/groups/groups.ts:134
+msgctxt "Routes|Groups"
+msgid "Unknown roles: {roles}"
+msgstr ""
+
+#. Default: "Unknown users: {users}"
+#: src/routes/groups/groups.ts:150
+msgctxt "Routes|Groups"
+msgid "Unknown users: {users}"
+msgstr ""
+
 #. Default: "Use '../' to navigate to parent objects."
 #: src/profiles/core/catalog.json:27
 msgctxt "Profiles|Core|Catalog"
@@ -2636,7 +2693,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:75
+#: src/routes/users/users.ts:77
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "Потребителят не съществува или невалидни идентификационни данни."
@@ -2838,6 +2895,12 @@ msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Грешен вход и/или парола."
 
+#. Default: "Wrong password."
+#: src/routes/users/users.ts:95
+msgctxt "Routes|Users"
+msgid "Wrong password."
+msgstr ""
+
 #. Default: "Yes"
 #: src/profiles/core/catalog.json:371
 #: src/profiles/core/vocabularies/boolean.json:5
@@ -2852,6 +2915,7 @@ msgid "You are not authorization to access this resource."
 msgstr "Нямате право на достъп до този ресурс."
 
 #. Default: "You are not authorized to access this resource."
+#: src/routes/users/users.ts:393
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -2861,9 +2925,9 @@ msgstr "Нямате право на достъп до този ресурс."
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
 #: src/helpers/handler/handler.ts:120
-msgctxt "Routes|Recyclebin"
+msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
-msgstr "Нямате разрешение за достъп до този ресурс."
+msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
 #: src/routes/content/content.ts:634
@@ -2871,14 +2935,20 @@ msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
 
+#. Default: "You can only change your own password."
+#: src/routes/users/users.ts:84
+msgctxt "Routes|Users"
+msgid "You can only change your own password."
+msgstr ""
+
 #. Default: "You can’t delete system groups."
-#: src/routes/groups/groups.ts:141
+#: src/routes/groups/groups.ts:230
 msgctxt "Routes|Groups"
 msgid "You can’t delete system groups."
 msgstr "Не можете да изтривате системни групи."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:369
+#: src/routes/users/users.ts:468
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Не можете да изтривате системни потребители."
@@ -2908,15 +2978,21 @@ msgid "You don’t have permission to unlock this document."
 msgstr "Нямате разрешение да отключите този документ."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:201
+#: src/routes/users/users.ts:250
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Нямате разрешения за добавяне на потребител."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:142
+#: src/routes/users/users.ts:156
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
+msgstr ""
+
+#. Default: "You must enter a valid email address."
+#: src/routes/users/users.ts:261
+msgctxt "Routes|Users"
+msgid "You must enter a valid email address."
 msgstr ""
 
 #. Default: "Your location - either city and country - or in a company setting, where your office is located."
