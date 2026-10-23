@@ -217,8 +217,7 @@ msgid "Allows users to login with their email address instead of specifying a se
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:125
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "Već zaključano"
@@ -711,7 +710,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:799
+#: src/routes/content/content.ts:797
+#: src/routes/content/content.ts:931
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokument zaključan"
@@ -1082,8 +1082,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Informacije o pravima nad ovom stavkom."
 
 #. Default: "Internal server error"
-#: src/app.ts:233
-#: src/app.ts:244
+#: src/app.ts:231
+#: src/app.ts:242
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Interna greška servera"
@@ -1430,7 +1430,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:178
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Nije dozvoljeno"
@@ -1468,6 +1468,12 @@ msgstr "Nije pronađeno."
 #: src/helpers/handler/handler.ts:79
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
+msgstr ""
+
+#. Default: "Object “{id}” is locked."
+#: src/routes/content/content.ts:928
+msgctxt "Routes|Content"
+msgid "Object “{id}” is locked."
 msgstr ""
 
 #. Default: "Open End"
@@ -1795,6 +1801,12 @@ msgstr ""
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Nedostaju obavezna polja."
+
+#. Default: "Resource is locked."
+#: src/routes/content/content.ts:796
+msgctxt "Routes|Content"
+msgid "Resource is locked."
+msgstr ""
 
 #. Default: "Retract"
 #: src/profiles/core/workflows.json:57
@@ -2367,8 +2379,7 @@ msgid "The workflow states to check for."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:122
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "Ovaj dokument je već zaključan od strane drugog korisnika."
@@ -2449,8 +2460,8 @@ msgstr "Danas"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:163
-#: src/app.ts:177
+#: src/app.ts:161
+#: src/app.ts:175
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Greška transakcije."
@@ -2760,13 +2771,12 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:796
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Nemate dozvolu da sačuvate ovaj dokument jer je zaključan od strane drugog korisnika."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:175
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Nemate dozvolu da otključate ovaj dokument."
