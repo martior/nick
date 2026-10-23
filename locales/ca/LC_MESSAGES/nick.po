@@ -1191,8 +1191,8 @@ msgid "Information about rights held in and over this item."
 msgstr "Informació sobre els drets d'aquest element."
 
 #. Default: "Internal server error"
-#: src/app.ts:268
-#: src/app.ts:280
+#: src/app.ts:264
+#: src/app.ts:276
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Error intern del servidor"
@@ -1709,14 +1709,15 @@ msgstr ""
 #: src/routes/types/types.ts:171
 #: src/routes/types/types.ts:329
 #: src/routes/types/types.ts:376
-#: src/routes/scheduled_jobs/scheduled_jobs.ts:50
-#: src/routes/scheduled_jobs/scheduled_jobs.ts:70
+#: src/routes/scheduled_jobs/scheduled_jobs.ts:43
+#: src/routes/scheduled_jobs/scheduled_jobs.ts:63
 #: src/routes/recyclebin/recyclebin.ts:35
 #: src/routes/recyclebin/recyclebin.ts:104
 #: src/routes/recyclebin/recyclebin.ts:202
-#: src/routes/jobs/jobs.ts:37
-#: src/routes/jobs/jobs.ts:77
-#: src/routes/jobs/jobs.ts:188
+#: src/routes/jobs/jobs.ts:30
+#: src/routes/jobs/jobs.ts:70
+#: src/routes/jobs/jobs.ts:153
+#: src/routes/jobs/jobs.ts:184
 #: src/routes/groups/groups.ts:37
 #: src/routes/groups/groups.ts:194
 #: src/routes/groups/groups.ts:238
@@ -2745,7 +2746,7 @@ msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "El port del vostre servidor SMTP local (correu de sortida). Normalment '25'."
 
 #. Default: "The request body is not valid JSON."
-#: src/app.ts:298
+#: src/app.ts:294
 msgctxt "App"
 msgid "The request body is not valid JSON."
 msgstr ""
@@ -2919,8 +2920,8 @@ msgstr "Avui"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:172
-#: src/app.ts:189
+#: src/app.ts:168
+#: src/app.ts:185
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Error de transacció."
@@ -3270,11 +3271,11 @@ msgstr ""
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
-#: src/routes/jobs/jobs.ts:46
-#: src/routes/jobs/jobs.ts:86
-#: src/routes/jobs/jobs.ts:138
-#: src/routes/jobs/jobs.ts:166
-#: src/routes/jobs/jobs.ts:197
+#: src/routes/jobs/jobs.ts:39
+#: src/routes/jobs/jobs.ts:79
+#: src/routes/jobs/jobs.ts:131
+#: src/routes/jobs/jobs.ts:162
+#: src/routes/jobs/jobs.ts:193
 #: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
