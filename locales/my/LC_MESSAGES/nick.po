@@ -470,7 +470,7 @@ msgid "Change Note"
 msgstr "ပြောင်းလဲမှုမှတ်စု"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:914
+#: src/routes/content/content.ts:939
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -774,8 +774,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:956
-#: src/routes/content/content.ts:1132
+#: src/routes/content/content.ts:981
+#: src/routes/content/content.ts:1157
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "စာရွက်စာတမ်း လော့ခ်ချထားသည်"
@@ -1186,7 +1186,7 @@ msgid "Internal server error"
 msgstr "ဆာဗာအတွင်းပိုင်း အမှားအယွင်း"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:661
+#: src/routes/content/content.ts:675
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1197,6 +1197,12 @@ msgstr ""
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "အထောက်အထားမမှန်ကန်ပါ"
+
+#. Default: "Invalid date for {field}."
+#: src/routes/workflow/workflow.ts:79
+msgctxt "Routes|Workflow"
+msgid "Invalid date for {field}."
+msgstr ""
 
 #. Default: "Invalid depth."
 #: src/routes/navigation/navigation.ts:79
@@ -1616,6 +1622,12 @@ msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
 
+#. Default: "No transition specified."
+#: src/routes/workflow/workflow.ts:177
+msgctxt "Routes|Workflow"
+msgid "No transition specified."
+msgstr ""
+
 #. Default: "None"
 #: src/scheduled_jobs/actions/reindex.ts:24
 #: src/content_rules/conditions/workflow_state.ts:18
@@ -1715,7 +1727,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1129
+#: src/routes/content/content.ts:1154
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1933,7 +1945,7 @@ msgid "Prompts"
 msgstr "Prompt များ"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:645
+#: src/routes/content/content.ts:659
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2100,14 +2112,14 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:675
+#: src/routes/content/content.ts:689
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:955
+#: src/routes/content/content.ts:980
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2620,14 +2632,14 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:703
+#: src/routes/content/content.ts:717
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:692
-#: src/routes/content/content.ts:974
+#: src/routes/content/content.ts:706
+#: src/routes/content/content.ts:999
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2759,13 +2771,13 @@ msgid "The user viewing the querystring results"
 msgstr "querystring ရလဒ်များကို ကြည့်ရှုနေသော အသုံးပြုသူ"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:738
+#: src/routes/content/content.ts:752
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:733
+#: src/routes/content/content.ts:747
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -2892,13 +2904,13 @@ msgid "Transition workflow state"
 msgstr ""
 
 #. Default: "Transition {transition} is not available for {path}."
-#: src/routes/workflow/workflow.ts:43
+#: src/routes/workflow/workflow.ts:44
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:87
+#: src/routes/workflow/workflow.ts:101
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -3045,6 +3057,7 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:91
+#: src/routes/content/content.ts:252
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3206,7 +3219,7 @@ msgid "Yes"
 msgstr "ဟုတ်သည်"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:96
+#: src/routes/workflow/workflow.ts:110
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "ဤအရင်းအမြစ်ကို ဝင်ရောက်ရန် ခွင့်ပြုချက် မရှိပါ။"
@@ -3233,7 +3246,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:724
+#: src/routes/content/content.ts:738
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
