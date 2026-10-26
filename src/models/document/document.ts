@@ -886,16 +886,25 @@ export class Document extends Model {
    * @param {string} path New path.
    * @param {string} id New id.
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} created Uuids of the copies created by this copy, they
+   * are never copied again (when copying into a descendant of itself).
    */
   async copy(
     parent: string,
     path: string,
     id: string,
     trx?: Knex.Transaction,
+    created: string[] = [],
   ): Promise<any> {
     const self: InstanceType<typeof Document> = this;
     // Get json
     let json: any = self.json;
+
+    // Get the children before the copy is created, it can be one of them
+    await self.fetchChildren({}, trx, false);
+    const children = self._children.filter(
+      (child: any) => !created.includes(child.uuid),
+    );
 
     // Get type information
     await self.fetchRelated('_type', trx);
@@ -969,6 +978,7 @@ export class Document extends Model {
       {},
       trx,
     );
+    created.push(document.uuid);
 
     // Copy versions
     await self.fetchRelated('_versions', trx);
@@ -1006,13 +1016,18 @@ export class Document extends Model {
       }),
     );
 
-    // Copy children
-    await self.fetchChildren({}, trx, false);
-    await Promise.all(
-      self._children.map(async (child: any) => {
-        await child.copy(document.uuid, `${path}/${child.id}`, child.id, trx);
-      }),
-    );
+    // Copy children, one by one so copies created inside the tree are known
+    for (const child of children) {
+      if (!created.includes(child.uuid)) {
+        await child.copy(
+          document.uuid,
+          `${path}/${child.id}`,
+          child.id,
+          trx,
+          created,
+        );
+      }
+    }
 
     // Index document
     await document.index(trx);
