@@ -240,6 +240,7 @@
 - Only list items the user can view in the @navroot endpoint @martior
 - Only list items and breaches the user can view in the @linkintegrity endpoint @martior
 - Only serialize related items the user can view in relation list fields @martior
+- Don't return stored passwords like the ESMTP password in control panels @martior
 
 ### Internal
 
