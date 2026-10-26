@@ -741,7 +741,7 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
 #: src/routes/content/content.ts:210
-#: src/routes/content/content.ts:967
+#: src/routes/content/content.ts:973
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "დოკუმენტი დაბლოკილია"
@@ -1838,7 +1838,7 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:777
+#: src/routes/content/content.ts:783
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "სავალდებულო ველ(ებ)ი არ არის შევსებული."
@@ -2539,7 +2539,7 @@ msgid "Type of the current document is not found."
 msgstr "მიმდინარე დოკუმენტის ტიპი ვერ მოიძებნა."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:766
+#: src/routes/content/content.ts:772
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2823,7 +2823,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:964
+#: src/routes/content/content.ts:970
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "თქვენ არ გაქვთ ამ დოკუმენტის შენახვის უფლება, რადგან ის დაბლოკილია სხვა მომხმარებლის მიერ."
