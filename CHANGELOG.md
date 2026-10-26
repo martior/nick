@@ -4,6 +4,8 @@
 
 ### Breaking
 
+- Require the Manage Site permission and the site root for the @email-send and @users/<id>/@email-notification endpoints @martior
+
 ### Feature
 
 - Add support for multiple profiles @robgietema
