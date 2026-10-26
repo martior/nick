@@ -7,7 +7,7 @@
 import type { Request, User } from '../../types';
 
 // External imports
-import { createHash, createHmac } from 'crypto';
+import { createHmac } from 'crypto';
 import { isUndefined } from 'es-toolkit/predicate';
 import jwt from 'jsonwebtoken';
 import { Knex } from 'knex';
@@ -150,7 +150,7 @@ function getResetSecret(): string {
  * @returns {string} Fingerprint.
  */
 function getPasswordFingerprint(user: User): string {
-  return createHash('sha256')
+  return createHmac('sha256', getResetSecret())
     .update(`${user.id}:${(user as any).password || ''}`)
     .digest('hex');
 }
