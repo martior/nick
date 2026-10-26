@@ -240,6 +240,7 @@
 - Fix job runner import @robgietema
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
+- Fix PostgreSQL 18 volume mount @sneridagh
 - Fix mail debug print link issue @robgietema
 - Only serve images by uuid that belong to the item, its versions or a control panel, so private images can't be read through another item @martior
 - Only show uploaded files inline when their content type is safe to show inline, so uploaded html can't run scripts on the api origin @martior
