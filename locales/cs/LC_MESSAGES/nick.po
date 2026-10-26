@@ -1451,6 +1451,7 @@ msgstr ""
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:154
 #: src/routes/types/types.ts:45
+#: src/routes/translations/translations.ts:33
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
 #: src/routes/recyclebin/recyclebin.ts:35
@@ -2741,6 +2742,7 @@ msgid "You are not authorized to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
+#: src/routes/translations/translations.ts:39
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -2751,9 +2753,9 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:197
 #: src/routes/comments/comments.ts:54
 #: src/helpers/handler/handler.ts:120
-msgctxt "Routes|Recyclebin"
+msgctxt "Routes|Translations"
 msgid "You are not authorized to access this resource."
-msgstr "Nemáte oprávnění k přístupu k tomuto zdroji."
+msgstr ""
 
 #. Default: "You can’t delete system groups."
 #: src/routes/groups/groups.ts:141
