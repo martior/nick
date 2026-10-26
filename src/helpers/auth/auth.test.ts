@@ -12,7 +12,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Internal imports
 import * as configModule from '../config/config';
-import { hasPermission, getUserId, addToken, removeToken } from './auth';
+import {
+  hasPermission,
+  getUserId,
+  addToken,
+  removeToken,
+  createResetToken,
+  verifyResetToken,
+} from './auth';
 
 describe('Auth', () => {
   const testSecret = 'test-secret-key';
@@ -159,6 +166,39 @@ describe('Auth', () => {
       await removeToken(user, token1, trx);
 
       expect(updateSpy).toHaveBeenCalledWith({ tokens: [] }, trx);
+    });
+  });
+
+  describe('reset tokens', () => {
+    const user = { id: 'jane', password: 'hash' } as unknown as User;
+
+    it('should only accept a reset token of the user with the same password', () => {
+      // Use real tokens, jwt.sign is mocked in the test setup
+      vi.mocked(jwt.sign).mockRestore();
+      const token = createResetToken(user);
+      expect(verifyResetToken(token, user)).toBe(true);
+
+      // Another user
+      expect(
+        verifyResetToken(token, { ...user, id: 'john' } as unknown as User),
+      ).toBe(false);
+
+      // The password changed, so the token was used
+      expect(
+        verifyResetToken(token, {
+          ...user,
+          password: 'new',
+        } as unknown as User),
+      ).toBe(false);
+
+      // A login token
+      const login = jwt.sign({ sub: 'jane' }, testSecret, {
+        algorithm: 'HS256',
+      });
+      expect(verifyResetToken(login, user)).toBe(false);
+
+      // A reset token is not a login token
+      expect(getUserId({ token } as Request)).toBe('anonymous');
     });
   });
 });
