@@ -16,7 +16,6 @@ import models from '../../models';
 
 interface MailConfig {
   debug: boolean;
-  mailDebug?: boolean;
   host: string;
   port: number;
   secure: boolean;
@@ -76,7 +75,7 @@ export async function sendMail(
   log.info(`Mail sent: ${info.messageId}`);
 
   // If debug
-  if (config.mailDebug) {
+  if (config.debug) {
     log.info(`Mail preview url: ${nodemailer.getTestMessageUrl(info)}`);
   }
 }

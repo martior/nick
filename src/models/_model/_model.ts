@@ -15,6 +15,7 @@ import { Model as ObjectionModel } from 'objection';
 
 // Internal imports
 import { Collection } from '../../collections/_collection/_collection';
+import config from '../../helpers/config/config';
 import { formatAttribute } from '../../helpers/format/format';
 import { knex } from '../../helpers/knex/knex';
 import { log } from '../../helpers/log/log';
@@ -162,7 +163,10 @@ export class Model extends ObjectionModel {
     // Add paging options
     if (options.limit) {
       query = query.limit(
-        Math.min(1000, Math.max(1, parseInt(String(options.limit), 10) || 1)),
+        Math.min(
+          config.settings.requestLimit?.batch || 1000,
+          Math.max(1, parseInt(String(options.limit), 10) || 1),
+        ),
       );
     }
     if (options.offset) {

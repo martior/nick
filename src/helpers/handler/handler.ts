@@ -63,7 +63,7 @@ export async function callHandler(
   const result = await root.traverse(
     compact(getPath(req).split('/')), // Slugs
     req.user,
-    await req.user.fetchUserGroupRolesByDocument(root.uuid), // Root roles
+    await req.user.fetchUserGroupRolesByDocument(root.uuid, trx), // Root roles
     root,
     trx,
   );

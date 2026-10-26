@@ -192,7 +192,7 @@ export const querystringToQuery = async (
   // Check batch size
   if (querystring.b_size) {
     options.limit = Math.min(
-      1000,
+      config.settings.requestLimit?.batch || 1000,
       Math.max(1, parseInt(querystring.b_size, 10) || 1),
     );
   }
@@ -285,6 +285,7 @@ export const queryparamToQuery = async (
           switch (indexes[key].type) {
             case 'string':
             case 'integer':
+            case 'float':
             case 'path':
             case 'uuid':
             case 'boolean':
@@ -320,7 +321,10 @@ export const queryparamToQuery = async (
           ];
           break;
         case 'b_size':
-          options.limit = Math.min(1000, Math.max(1, parseInt(value, 10) || 1));
+          options.limit = Math.min(
+            config.settings.requestLimit?.batch || 1000,
+            Math.max(1, parseInt(value, 10) || 1),
+          );
           break;
         case 'b_start':
           options.offset = parseInt(value, 10) || 0;

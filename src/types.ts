@@ -65,7 +65,10 @@ export interface User extends Model {
   update: (data: any, trx: Knex.Transaction) => Promise<void>;
   _groups: string[];
   getRoles: () => string[];
-  fetchUserGroupRolesByDocument: (uuid: string) => Promise<void>;
+  fetchUserGroupRolesByDocument: (
+    uuid: string,
+    trx?: Knex.Transaction,
+  ) => Promise<string[]>;
 }
 
 export interface Request extends express.Request {
@@ -387,6 +390,7 @@ export type ConfigSettings = {
     files: string;
     api: string;
     chunk: string;
+    batch: number;
   };
   userschema: (req: Request) => Schema;
   [key: string]: unknown;

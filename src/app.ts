@@ -16,6 +16,7 @@ import helmet from 'helmet';
 import { applyCache } from './helpers/cache/cache';
 import config from './helpers/config/config';
 import { RequestException } from './helpers/error/error';
+import { getTokenFromRequest } from './helpers/auth/auth';
 import { callHandler } from './helpers/handler/handler';
 import { initI18n } from './helpers/i18n/i18n';
 import { log } from './helpers/log/log';
@@ -137,10 +138,7 @@ routes.routes.map((route: Route) => {
       const trx = await Document.startTransaction();
       let requestId = '';
       req.apiPath = `${req.protocol}://${req.headers.host}`;
-      if (req.headers.authorization) {
-        const match = req.headers.authorization.match(/^Bearer (.*)$/);
-        req.token = match ? match[1] : undefined;
-      }
+      req.token = getTokenFromRequest(req.headers);
       req.documentPath = req.params.path?.join('/') || '/';
 
       try {

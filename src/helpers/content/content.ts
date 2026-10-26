@@ -361,7 +361,7 @@ export async function getComponents(
     if (req.document._children) {
       await mapAsync(req.document._children, async (child: any) => {
         await child.fetchRelated('_catalog', trx);
-        await child.fetchRelationLists(trx);
+        await child.fetchRelationLists(trx, req);
       });
     }
     components.catalog = {

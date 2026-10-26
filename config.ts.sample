@@ -85,6 +85,7 @@ export const config = {
     api: '1mb',
     files: '10mb',
     chunk: '1mb',
+    batch: 1000,
   },
   rateLimit: {
     api: API_RATE_LIMIT || 100,

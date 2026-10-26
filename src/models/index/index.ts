@@ -35,6 +35,7 @@ export class Index extends Model {
   declare type:
     | 'string'
     | 'integer'
+    | 'float'
     | 'path'
     | 'uuid'
     | 'boolean'

@@ -50,6 +50,9 @@ export const seedCatalog = async (
           case 'integer':
             table.integer(field).index();
             break;
+          case 'float':
+            table.float(field).index();
+            break;
           case 'path':
             table.string(field).index();
             break;
@@ -104,6 +107,9 @@ export const seedCatalog = async (
             break;
           case 'string':
             table.string(metadata.name);
+            break;
+          case 'float':
+            table.float(metadata.name);
             break;
           case 'date':
             table.dateTime(metadata.name);

@@ -83,11 +83,10 @@ describe('Mail', () => {
     expect(sendMailSpy).toHaveBeenCalled();
   });
 
-  it('should log preview url when mailDebug is enabled', async () => {
+  it('should log preview url when debug is enabled', async () => {
     vi.spyOn(Controlpanel, 'fetchById').mockResolvedValue({
       data: {
-        debug: false,
-        mailDebug: true,
+        debug: true,
         host: 'smtp.example.com',
         port: 587,
         secure: true,

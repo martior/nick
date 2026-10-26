@@ -7,11 +7,21 @@
 import type { AllMethods } from 'supertest/types';
 
 // External imports
+import { createHmac } from 'crypto';
 import { indexOf, isEmpty } from 'es-toolkit/compat';
 import { Application } from 'express';
 import fs from 'fs';
 import request, { Response } from 'supertest';
 import { expect } from 'vitest';
+
+// Internal imports
+import { addToken } from '../auth/auth';
+import config from '../config/config';
+import models from '../../models';
+
+// Token of the admin user, added to the admin user in the test setup
+export const adminToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
 
 interface FileData {
   request: string;
@@ -132,4 +142,42 @@ export function testRequest(app: Application, filename: string): request.Test {
   } else {
     return result.expect(status);
   }
+}
+
+/**
+ * Create a user with a valid login token. The token is signed here because
+ * `jwt.sign` is mocked in the test setup.
+ * @method createUserWithToken
+ * @param {string} id Id of the user.
+ * @param {string[]} roles Global roles of the user.
+ * @returns {Promise<string>} Token of the user.
+ */
+export async function createUserWithToken(
+  id: string,
+  roles: string[] = [],
+): Promise<string> {
+  const User = models.get('User');
+  const encode = (data: object) =>
+    Buffer.from(JSON.stringify(data)).toString('base64url');
+  const unsigned = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({
+    sub: id,
+    fullname: id,
+    iat: 1649312449,
+  })}`;
+  const token = `${unsigned}.${createHmac('sha256', config.settings.secret)
+    .update(unsigned)
+    .digest('base64url')}`;
+  const user = await User.create(
+    {
+      id,
+      fullname: id,
+      email: `${id}@example.com`,
+      password: '',
+      _roles: roles,
+    },
+    { related: ['_roles'] },
+    global.txn!,
+  );
+  await addToken(user, token, global.txn!);
+  return token;
 }

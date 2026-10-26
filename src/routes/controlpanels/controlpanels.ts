@@ -324,6 +324,14 @@ export default [
 
       const controlpanel = await Controlpanel.fetchById(req.params.id, {}, trx);
 
+      // Keep stored passwords when no new value is sent, they are never
+      // returned so clients send them back empty
+      controlpanel.getPasswordFields().forEach((field: string) => {
+        if (json[field] === null || json[field] === undefined) {
+          delete json[field];
+        }
+      });
+
       // Handle images
       json = await handleBlocks(json);
       json = await handleFiles(json, controlpanel.schema, trx);
