@@ -711,7 +711,7 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:862
+#: src/routes/content/content.ts:932
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "పత్రం లాక్ చేయబడింది"
@@ -1460,7 +1460,7 @@ msgstr "అనుమతించబడలేదు"
 #: src/routes/controlpanels/controlpanels.ts:622
 #: src/routes/controlpanels/controlpanels.ts:669
 #: src/routes/controlpanels/controlpanels.ts:707
-#: src/routes/content/content.ts:393
+#: src/routes/content/content.ts:452
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "కనుగొనబడలేదు."
@@ -1792,7 +1792,7 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:672
+#: src/routes/content/content.ts:742
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "తప్పనిసరి ఫీల్డ్(లు) లేవు."
@@ -2487,7 +2487,7 @@ msgid "Type of the current document is not found."
 msgstr "ప్రస్తుత పత్రం యొక్క రకం కనుగొనబడలేదు."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:661
+#: src/routes/content/content.ts:731
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2761,7 +2761,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:859
+#: src/routes/content/content.ts:929
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "ఈ పత్రం మరొక వినియోగదారు ద్వారా లాక్ చేయబడి ఉన్నందున దానిని సేవ్ చేయడానికి మీకు అనుమతి లేదు."

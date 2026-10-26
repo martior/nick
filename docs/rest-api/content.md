@@ -192,7 +192,7 @@ The `download` urls of image fields and their scales have the form `<item url>/@
 
 File downloads (including `@export`, `ics_view`, `rss_view`, `markdown_view`, and the file, image, and video download endpoints) are served with a `Content-Disposition: attachment` header by default, prompting the browser to download the file.
 
-To have the browser render the content inline instead, add the `disposition=inline` query parameter to the request:
+To have the browser render the content inline instead, add the `disposition=inline` query parameter to the request. For uploaded files, images and videos this only works for content types that are safe to show inline (images other than svg, pdf, plain text, audio and video). Other files, for example html or svg, are always served as an attachment, so they can't run scripts on the origin of the api:
 
 ```http
 {% include_relative endpoints/examples/content/export_inline.req %}

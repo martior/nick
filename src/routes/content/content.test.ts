@@ -6,7 +6,7 @@
 // External imports
 import request from 'supertest';
 import { v4 as uuid, validate } from 'uuid';
-import { afterEach, beforeEach, describe, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
@@ -122,5 +122,48 @@ describe('Content', () => {
       .get(`/news/private-image/@@images/${imageUuid}.png`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(200);
+  });
+
+  it('should not show uploaded html inline', async () => {
+    vi.mocked(validate).mockReturnValue(true);
+    const addFile = (id: string, contentType: string) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          '@type': 'File',
+          id,
+          uuid: id === 'html' ? uuid() : '1f6bc2f4-4a0c-4c4e-9a3c-2b8c1b7d6e01',
+          title: id,
+          file: {
+            data: Buffer.from('<script>alert(1)</script>').toString('base64'),
+            encoding: 'base64',
+            'content-type': contentType,
+            filename: `${id}.txt`,
+          },
+        })
+        .expect(201);
+
+    // Html is always an attachment
+    await addFile('html', 'text/html');
+    const html = await request(app)
+      .get('/news/html/@@download/file?disposition=inline')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    expect(html.headers['content-disposition']).toBe(
+      'attachment; filename="html.txt"',
+    );
+    expect(html.headers['x-content-type-options']).toBe('nosniff');
+
+    // Plain text can be shown inline
+    await addFile('text', 'text/plain');
+    const text = await request(app)
+      .get('/news/text/@@download/file?disposition=inline')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    expect(text.headers['content-disposition']).toBe(
+      'inline; filename="text.txt"',
+    );
   });
 });

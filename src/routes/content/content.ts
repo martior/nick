@@ -39,71 +39,121 @@ dayjs.extend(utc);
 
 const omitProperties = ['@type', 'id', 'changeNote', 'language'];
 
+// Content types which are safe to show inline in the browser, other types
+// (like html or svg) could run scripts on the origin of the api
+const inlineContentTypes = [
+  'application/pdf',
+  'audio/mpeg',
+  'audio/ogg',
+  'audio/wav',
+  'audio/webm',
+  'image/avif',
+  'image/bmp',
+  'image/gif',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'text/plain',
+  'video/mp4',
+  'video/ogg',
+  'video/quicktime',
+  'video/webm',
+];
+
 /**
- * Get the content-disposition header value.
+ * Check if a content type is safe to show inline.
+ * @param {string} contentType The content type.
+ * @returns {boolean} True if safe to show inline.
+ */
+function isInlineContentType(contentType: string): boolean {
+  return inlineContentTypes.includes(
+    (contentType || '').split(';')[0].trim().toLowerCase(),
+  );
+}
+
+/**
+ * Get the content-disposition header value. Uploaded files are only shown
+ * inline when their content type is safe to show inline.
  * @param {Request} req The request object.
  * @param {string} filename The filename to disposition.
+ * @param {string} contentType Content type of an uploaded file.
  * @returns {string} The content-disposition header value.
  */
-function getDisposition(req: Request, filename: string): string {
-  const type = req.query?.disposition === 'inline' ? 'inline' : 'attachment';
+function getDisposition(
+  req: Request,
+  filename: string,
+  contentType?: string,
+): string {
+  const type =
+    req.query?.disposition === 'inline' &&
+    (contentType === undefined || isInlineContentType(contentType))
+      ? 'inline'
+      : 'attachment';
   return `${type}; filename="${filename}"`;
 }
 
 /**
- * Check if an image (or one of its scales) is stored in one of the image
- * fields of the given data.
+ * Find an image (or one of its scales) in the image fields of the given data.
  * @param {Object} schema Schema of the data.
  * @param {Object} data Data with the image fields.
  * @param {string} uuid Uuid of the image file.
- * @returns {boolean} True if the image is stored in the data.
+ * @returns {Object|undefined} The image field data if found.
  */
-function hasImage(schema: any, data: any, uuid: string): boolean {
-  return getFactoryFields(schema, 'Image').some(
+function findImage(schema: any, data: any, uuid: string): any {
+  const field = getFactoryFields(schema, 'Image').find(
     (field: string) =>
       data?.[field]?.uuid === uuid ||
       Object.values(data?.[field]?.scales || {}).some(
         (scale: any) => scale?.uuid === uuid,
       ),
   );
+  return field ? data[field] : undefined;
 }
 
 /**
- * Check if an image file belongs to the current document, one of its versions
- * or the control panels (e.g. the site logo).
+ * Find an image file of the current document, one of its versions or the
+ * control panels (e.g. the site logo).
  * @param {Request} req The request object.
  * @param {string} uuid Uuid of the image file.
  * @param {Knex.Transaction} trx Transaction object.
- * @returns {Promise<boolean>} True if the image may be served here.
+ * @returns {Promise<Object|undefined>} The image field data if found.
  */
-async function isImageOfDocument(
+async function findImageOfDocument(
   req: Request,
   uuid: string,
   trx: Knex.Transaction,
-): Promise<boolean> {
+): Promise<any> {
   const Controlpanel = models.get('Controlpanel');
   const schema = req.type._schema;
 
   // Image of the document
-  if (hasImage(schema, req.document.json, uuid)) {
-    return true;
+  const image = findImage(schema, req.document.json, uuid);
+  if (image) {
+    return image;
   }
 
   // Image of one of the versions of the document
   await req.document.fetchRelated('_versions', trx);
-  if (
-    (req.document._versions || []).some((version: any) =>
-      hasImage(schema, version.json, uuid),
-    )
-  ) {
-    return true;
+  for (const version of req.document._versions || []) {
+    const versionImage = findImage(schema, version.json, uuid);
+    if (versionImage) {
+      return versionImage;
+    }
   }
 
   // Image of a control panel
   const controlpanels = await Controlpanel.fetchAll({}, {}, trx);
-  return controlpanels.models.some((controlpanel: any) =>
-    hasImage(controlpanel.schema, controlpanel.data, uuid),
-  );
+  for (const controlpanel of controlpanels.models) {
+    const controlpanelImage = findImage(
+      controlpanel.schema,
+      controlpanel.data,
+      uuid,
+    );
+    if (controlpanelImage) {
+      return controlpanelImage;
+    }
+  }
+  return undefined;
 }
 
 export default [
@@ -339,7 +389,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
           'content-length': end - start + 1,
           'content-range': `bytes ${start}-${end}/${size}`,
           'Accept-Ranges': 'bytes',
@@ -371,7 +425,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
           'Accept-Ranges': 'bytes',
         },
         etag: uuid,
@@ -389,7 +447,8 @@ export default [
 
       // Only serve images of this document, so the View permission on the
       // document applies to the image
-      if (!(await isImageOfDocument(req, uuid, trx))) {
+      const image = await findImageOfDocument(req, uuid, trx);
+      if (!image) {
         throw new RequestException(404, { error: req.i18n('Not found.') });
       }
 
@@ -404,7 +463,10 @@ export default [
       const buffer = await readFile(uuid, trx);
       return {
         headers: {
-          'content-type': `image/${req.params.ext}`,
+          'content-type': image['content-type'],
+          'content-disposition': `${
+            isInlineContentType(image['content-type']) ? 'inline' : 'attachment'
+          }; filename="${image.filename}"`,
         },
         etag: uuid,
         xkeys: [req.document.uuid],
@@ -432,7 +494,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
         },
         etag: uuid,
         xkeys: [req.document.uuid],
@@ -460,7 +526,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
         },
         etag: uuid,
         xkeys: [req.document.uuid],
