@@ -440,8 +440,8 @@ msgid "Comment"
 msgstr ""
 
 #. Default: "Comment does not exist."
-#: src/routes/comments/comments.ts:211
-#: src/routes/comments/comments.ts:266
+#: src/routes/comments/comments.ts:230
+#: src/routes/comments/comments.ts:285
 msgctxt "Routes|Comments"
 msgid "Comment does not exist."
 msgstr ""
@@ -1517,7 +1517,7 @@ msgid "Page"
 msgstr "పేజీ"
 
 #. Default: "Parent comment does not exist."
-#: src/routes/comments/comments.ts:155
+#: src/routes/comments/comments.ts:174
 msgctxt "Routes|Comments"
 msgid "Parent comment does not exist."
 msgstr ""
@@ -2134,14 +2134,14 @@ msgid "Target path not found."
 msgstr ""
 
 #. Default: "Text is required to add a comment."
-#: src/routes/comments/comments.ts:104
-#: src/routes/comments/comments.ts:162
+#: src/routes/comments/comments.ts:121
+#: src/routes/comments/comments.ts:181
 msgctxt "Routes|Comments"
 msgid "Text is required to add a comment."
 msgstr ""
 
 #. Default: "Text is required to modify a comment."
-#: src/routes/comments/comments.ts:229
+#: src/routes/comments/comments.ts:248
 msgctxt "Routes|Comments"
 msgid "Text is required to modify a comment."
 msgstr ""
@@ -2749,6 +2749,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
+#: src/routes/comments/comments.ts:54
 #: src/helpers/handler/handler.ts:120
 msgctxt "Routes|Recyclebin"
 msgid "You are not authorized to access this resource."
@@ -2767,13 +2768,13 @@ msgid "You can’t delete system users."
 msgstr "సిస్టమ్ వినియోగదారులను తొలగించలేరు."
 
 #. Default: "You don’t have permission to delete this comment."
-#: src/routes/comments/comments.ts:277
+#: src/routes/comments/comments.ts:296
 msgctxt "Routes|Comments"
 msgid "You don’t have permission to delete this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to edit this comment."
-#: src/routes/comments/comments.ts:222
+#: src/routes/comments/comments.ts:241
 msgctxt "Routes|Comments"
 msgid "You don’t have permission to edit this comment."
 msgstr ""

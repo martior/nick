@@ -43,6 +43,19 @@ function findChildren(comments: Comment[], parent: string): string[] {
   return [...children, ...sub];
 }
 
+/**
+ * Check if the user can view the document the comments belong to.
+ * @method checkView
+ * @param {Request} req Request object
+ */
+function checkView(req: Request): void {
+  if (!req.permissions.includes('View')) {
+    throw new RequestException(req.user.id === 'anonymous' ? 401 : 403, {
+      message: req.i18n('You are not authorized to access this resource.'),
+    });
+  }
+}
+
 export default [
   {
     op: 'get',
@@ -51,6 +64,8 @@ export default [
     client: 'getComments',
     cache: 'content',
     handler: async (req: Request, _trx: Knex.Transaction) => {
+      checkView(req);
+
       const base_url = `${getUrl(req)}/@comments`;
       const comments = req.document.json.comments || [];
       const modify =
@@ -96,6 +111,8 @@ export default [
     client: 'addComment',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      checkView(req);
+
       const created = dayjs.utc().format();
 
       // Check if valid bod
@@ -142,6 +159,8 @@ export default [
     client: 'replyComment',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      checkView(req);
+
       const created = dayjs.utc().format();
 
       // Check if parent exists
