@@ -258,6 +258,7 @@
 - Only revoke a local role on the item itself in the @sharing endpoint, not on every item @martior
 - Require the View permission to stream videos with @@videos @martior
 - Skip sources the user can't view in @copy and @move, and require Modify on the source to move it @martior
+- Fix non ascii image filename @martior
 
 ### Internal
 
