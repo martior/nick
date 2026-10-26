@@ -740,8 +740,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:210
-#: src/routes/content/content.ts:973
+#: src/routes/content/content.ts:213
+#: src/routes/content/content.ts:978
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokumen dikunci"
@@ -1437,6 +1437,12 @@ msgctxt "Profiles|Core|Catalog"
 msgid "No"
 msgstr "Tidak"
 
+#. Default: "No JSON object could be decoded"
+#: src/helpers/multipart/multipart.ts:94
+msgctxt "Helpers|Multipart"
+msgid "No JSON object could be decoded"
+msgstr ""
+
 #. Default: "No data is submitted."
 #: src/routes/form/form.ts:106
 msgctxt "Routes|Form"
@@ -1505,7 +1511,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:487
+#: src/routes/content/content.ts:490
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Tidak ditemukan."
@@ -1553,6 +1559,12 @@ msgstr "Halaman"
 #: src/routes/comments/comments.ts:174
 msgctxt "Routes|Comments"
 msgid "Parent comment does not exist."
+msgstr ""
+
+#. Default: "Part {part} not found."
+#: src/helpers/multipart/multipart.ts:117
+msgctxt "Helpers|Multipart"
+msgid "Part {part} not found."
 msgstr ""
 
 #. Default: "Password"
@@ -1838,13 +1850,13 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:783
+#: src/routes/content/content.ts:787
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Bidang wajib tidak ada."
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:209
+#: src/routes/content/content.ts:212
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2539,9 +2551,15 @@ msgid "Type of the current document is not found."
 msgstr "Jenis dokumen saat ini tidak ditemukan."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:772
+#: src/routes/content/content.ts:776
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
+msgstr ""
+
+#. Default: "Upload too large."
+#: src/helpers/multipart/multipart.ts:56
+msgctxt "Helpers|Multipart"
+msgid "Upload too large."
 msgstr ""
 
 #. Default: "Use '../' to navigate to parent objects."
@@ -2789,7 +2807,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:195
+#: src/routes/content/content.ts:198
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -2823,7 +2841,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:970
+#: src/routes/content/content.ts:975
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Anda tidak memiliki izin untuk menyimpan dokumen ini karena dikunci oleh pengguna lain."

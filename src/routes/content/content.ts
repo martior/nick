@@ -8,7 +8,6 @@ import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
 // External imports
-import express from 'express';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { drop, intersection } from 'es-toolkit/array';
@@ -29,6 +28,10 @@ import {
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
+import {
+  contentBodyParser,
+  resolveMultipartBody,
+} from '../../helpers/multipart/multipart';
 import { lockExpired } from '../../helpers/lock/lock';
 import { getFactoryFields } from '../../helpers/schema/schema';
 import { getRootUrl } from '../../helpers/url/url';
@@ -750,12 +753,13 @@ export default [
     permission: 'Add',
     client: 'addContent',
     cache: 'manage',
-    middleware: express.json({
-      limit: config.settings.requestLimit?.files || '10mb',
-    }),
+    middleware: contentBodyParser,
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Type = models.get('Type');
       const Document = models.get('Document');
+
+      // Resolve multipart/form-data bodies (file/image parts) into plain JSON
+      req.body = resolveMultipartBody(req);
 
       // Get content type date
       const type = await Type.fetchById(
@@ -933,11 +937,12 @@ export default [
     permission: 'Modify',
     client: 'updateContent',
     cache: 'alter',
-    middleware: express.json({
-      limit: config.settings.requestLimit?.files || '10mb',
-    }),
+    middleware: contentBodyParser,
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
+
+      // Resolve multipart/form-data bodies (file/image parts) into plain JSON
+      req.body = resolveMultipartBody(req);
 
       // Check if ordering request
       if (typeof req.body?.ordering !== 'undefined') {
