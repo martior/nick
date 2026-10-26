@@ -4,11 +4,12 @@
  */
 
 // External imports
+import request from 'supertest';
 import { describe, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import { createUserWithToken, testRequest } from '../../helpers/tests/tests';
 
 describe('Vocabularies', () => {
   it('should return the vocabularies', () =>
@@ -70,6 +71,27 @@ describe('Vocabularies', () => {
 
   it('should return a available languages vocabulary', () =>
     testRequest(app, 'vocabularies/get_available_languages'));
+
+  it('should not return the users vocabulary to anonymous', () =>
+    testRequest(app, 'vocabularies/get_users_anonymous'));
+
+  it('should not return the users and groups vocabularies to members', async () => {
+    const token = await createUserWithToken('member');
+    await request(app)
+      .get('/@vocabularies/groups')
+      .set('Accept', 'application/json')
+      .expect(401);
+    await request(app)
+      .get('/@vocabularies/users')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+    await request(app)
+      .get('/@vocabularies/groups')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+  });
 
   it('should return a 404 if the vocabulary does not exist', () =>
     testRequest(app, 'vocabularies/get_notfound'));
