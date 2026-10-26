@@ -57,6 +57,8 @@ The server will respond with a list of terms. The title is purely for display pu
 
 ### Protected vocabularies
 
+The `subjects` vocabulary only lists the subjects of items the current user can view.
+
 Like in Plone, some vocabularies need more than the `View` permission. `users` and `groups` need the `Modify` permission on the context. Anonymous users get a `401 Unauthorized`, other users a `403 Forbidden`:
 
 ```http
