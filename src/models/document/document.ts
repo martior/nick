@@ -974,6 +974,8 @@ export class Document extends Model {
         id,
         uuid: uuid(),
         workflow_history: JSON.stringify(self.workflow_history),
+        // The lock belongs to the original
+        lock: { locked: false, stealable: true },
       },
       {},
       trx,

@@ -183,6 +183,20 @@ export default [
         // Get item to be moved
         const document = await Document.fetchOne({ path: source }, {}, trx);
 
+        // Check if locked
+        if (
+          document?.lock?.locked &&
+          !lockExpired(document) &&
+          req.headers['lock-token'] !== document.lock.token
+        ) {
+          throw new RequestException(423, {
+            error: {
+              message: req.i18n('Resource is locked.'),
+              type: req.i18n('Document locked'),
+            },
+          });
+        }
+
         // If moved to same folder or subfolder do nothing
         if (
           req.document.uuid === document.parent ||

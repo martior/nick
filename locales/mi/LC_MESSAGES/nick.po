@@ -711,7 +711,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:932
+#: src/routes/content/content.ts:195
+#: src/routes/content/content.ts:946
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Kua rakaina te tuhinga"
@@ -1474,7 +1475,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:452
+#: src/routes/content/content.ts:466
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Kāore i kitea."
@@ -1806,10 +1807,16 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:742
+#: src/routes/content/content.ts:756
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "He āpure herea ngā mea kua ngaro."
+
+#. Default: "Resource is locked."
+#: src/routes/content/content.ts:194
+msgctxt "Routes|Content"
+msgid "Resource is locked."
+msgstr ""
 
 #. Default: "Retract"
 #: src/profiles/core/workflows.json:57
@@ -2501,7 +2508,7 @@ msgid "Type of the current document is not found."
 msgstr "Kāore i kitea te momo o te tuhinga o nāianei."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:731
+#: src/routes/content/content.ts:745
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2783,7 +2790,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:929
+#: src/routes/content/content.ts:943
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Kāore ō whakaaetanga ki te tiaki i tēnei tuhinga nā te mea kua rakaina e tētahi atu kaiwhakamahi."
