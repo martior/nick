@@ -4,11 +4,16 @@
  */
 
 // External imports
-import { describe, it } from 'vitest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import {
+  adminToken,
+  createUserWithToken,
+  testRequest,
+} from '../../helpers/tests/tests';
 
 describe('Vocabularies', () => {
   it('should return the vocabularies', () =>
@@ -70,6 +75,58 @@ describe('Vocabularies', () => {
 
   it('should return a available languages vocabulary', () =>
     testRequest(app, 'vocabularies/get_available_languages'));
+
+  it('should not return the users vocabulary to anonymous', () =>
+    testRequest(app, 'vocabularies/get_users_anonymous'));
+
+  it('should not return the users and groups vocabularies to members', async () => {
+    const token = await createUserWithToken('member');
+    await request(app)
+      .get('/@vocabularies/groups')
+      .set('Accept', 'application/json')
+      .expect(401);
+    await request(app)
+      .get('/@vocabularies/users')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+    await request(app)
+      .get('/@vocabularies/groups')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+  });
+
+  it('should only return subjects of items the user can view', async () => {
+    await request(app)
+      .post('/')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        '@type': 'Page',
+        id: 'private-page',
+        title: 'Private Page',
+        subjects: ['secret-keyword'],
+      })
+      .expect(201);
+    const tokens = (res: request.Response) =>
+      res.body.items.map((item: any) => item.token);
+
+    // Anonymous
+    const anonymous = await request(app)
+      .get('/@vocabularies/subjects')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(tokens(anonymous)).not.toContain('secret-keyword');
+
+    // Admin
+    const admin = await request(app)
+      .get('/@vocabularies/subjects')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    expect(tokens(admin)).toContain('secret-keyword');
+  });
 
   it('should return a 404 if the vocabulary does not exist', () =>
     testRequest(app, 'vocabularies/get_notfound'));

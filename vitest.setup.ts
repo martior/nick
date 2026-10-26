@@ -65,10 +65,11 @@ vi.spyOn(jwt, 'sign').mockReturnValue(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzNjE3NDIsImV4cCI6MTY0OTQwNDk0Mn0.SBqYCkWsHNHqzTUPIGC1c1Zd9iDARmqDecb3k7Ok7vE' as any,
 );
 
-// Mock uuid v4 generation, but keep the real `validate` (used when writing blobs).
+// Mock uuid v4 generation, `validate` (used when writing blobs) is a spy on the
+// real implementation so tests can still override it.
 vi.mock('uuid', async (importOriginal) => {
   const actual = await importOriginal<typeof import('uuid')>();
-  return { ...actual, v4: vi.fn() };
+  return { ...actual, v4: vi.fn(), validate: vi.fn(actual.validate) };
 });
 vi.mocked(uuid).mockReturnValue('a95388f2-e4b3-4292-98aa-62656cbd5b9c' as any);
 

@@ -132,6 +132,8 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 
 For folderish types, their childrens are automatically included in the response as items.
 
+Relation list fields (like `relatedItems`) only include the related items the current user can view.
+
 ### Unsuccessful response (404 Not Found)
 
 If a resource could not be found, the server will respond with `404 Not Found`:
@@ -237,11 +239,19 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 {% include_relative endpoints/examples/content/export.res %}
 ```
 
+### Streaming videos
+
+Video fields are streamed with range requests from `<item url>/@@videos/<field>`. Like the other download endpoints this needs the `View` permission on the item. A browser `<video>` element can't send an `Authorization` header, so for private videos it needs the `auth_token` cookie.
+
+### Downloading images by uuid
+
+The `download` urls of image fields and their scales have the form `<item url>/@@images/<uuid>.<extension>`. Such a url only serves an image that is stored on the item itself, in one of its versions, or in a control panel (for example the site logo). Any other uuid answers `404 Not Found`, so the View permission on the item always applies to its images.
+
 ### Controlling the content-disposition
 
 File downloads (including `@export`, `ics_view`, `rss_view`, `markdown_view`, and the file, image, and video download endpoints) are served with a `Content-Disposition: attachment` header by default, prompting the browser to download the file.
 
-To have the browser render the content inline instead, add the `disposition=inline` query parameter to the request:
+To have the browser render the content inline instead, add the `disposition=inline` query parameter to the request. For uploaded files, images and videos this only works for content types that are safe to show inline (images other than svg, pdf, plain text, audio and video). Other files, for example html or svg, are always served as an attachment, so they can't run scripts on the origin of the api:
 
 ```http
 {% include_relative endpoints/examples/content/export_inline.req %}

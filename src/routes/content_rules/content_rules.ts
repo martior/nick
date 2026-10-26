@@ -15,7 +15,7 @@ export default [
   {
     op: 'get',
     view: '/@content-rules',
-    permission: 'Modify',
+    permission: 'Manage Site',
     client: 'getContentRules',
     middleware: apiLimiter,
     cache: 'manage',
@@ -106,7 +106,7 @@ export default [
   {
     op: 'post',
     view: '/@content-rules/:id',
-    permission: 'Modify',
+    permission: 'Manage Site',
     client: 'createContentRule',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
@@ -130,7 +130,7 @@ export default [
   {
     op: 'patch',
     view: '/@content-rules',
-    permission: 'Modify',
+    permission: 'Manage Site',
     client: 'updateContentRule',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
@@ -229,7 +229,7 @@ export default [
   {
     op: 'delete',
     view: '/@content-rules',
-    permission: 'Modify',
+    permission: 'Manage Site',
     client: 'deleteContentRule',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {

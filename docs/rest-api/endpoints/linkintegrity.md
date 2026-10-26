@@ -37,3 +37,5 @@ The result includes a list of objects corresponding to the UIDs that were reques
 
 - `breaches`: A list of breaches (sources of relations that would be broken)
 - `items_total`: Count of items contained inside the specified UIDs.
+
+Only items and breaches the current user can view are listed.
