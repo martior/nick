@@ -79,6 +79,8 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 
 For folderish types, their childrens are automatically included in the response as items.
 
+Relation list fields (like `relatedItems`) only include the related items the current user can view.
+
 ### Unsuccessful response (404 Not Found)
 
 If a resource could not be found, the server will respond with `404 Not Found`:

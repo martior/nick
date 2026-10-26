@@ -21,7 +21,7 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
       req.document._children,
       async (child: InstanceType<typeof Document>) => {
         await child.fetchRelated('_catalog', trx);
-        await child.fetchRelationLists(trx);
+        await child.fetchRelationLists(trx, req);
       },
     );
   }

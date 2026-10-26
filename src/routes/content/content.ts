@@ -336,7 +336,7 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       await req.document.fetchChildren({}, trx);
       await req.document.fetchVersion(parseInt(req.params.version, 10), trx);
-      await req.document.fetchRelationLists(trx);
+      await req.document.fetchRelationLists(trx, req);
       return {
         json: await handleBlockReferences(
           await req.document.toJson(
@@ -644,7 +644,7 @@ export default [
     cache: 'content',
     handler: async (req: Request, trx: Knex.Transaction) => {
       // Fetch data
-      await req.document.fetchRelationLists(trx);
+      await req.document.fetchRelationLists(trx, req);
       await req.document.fetchChildren(req, trx);
       await req.document.restrictChildren(req, trx);
 
@@ -863,7 +863,7 @@ export default [
       await document.index(trx);
 
       // Fetch related lists
-      await document.fetchRelationLists(trx);
+      await document.fetchRelationLists(trx, req);
 
       // Trigger onAfterAdd
       await events.trigger(

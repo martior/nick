@@ -272,9 +272,15 @@ export class Document extends Model {
    * Fetch relation lists
    * @method fetchRelationLists
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {Request} req Request object, if given only the related documents
+   * the current user can view are fetched.
    */
-  async fetchRelationLists(trx?: Knex.Transaction): Promise<void> {
+  async fetchRelationLists(
+    trx?: Knex.Transaction,
+    req?: Request,
+  ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
+    const Catalog = models.get('Catalog');
     // Check if version data
     const version = self._version ? { ...self._version.json } : {};
 
@@ -301,9 +307,22 @@ export class Document extends Model {
       relationListFields.map(async (field: string) => {
         // Check if related documents
         if (Array.isArray(json[field]) && json[field].length > 0) {
+          let uuids = json[field];
+
+          // Only keep the documents the user can view
+          if (req) {
+            const items = await Catalog.fetchAllRestricted(
+              { _UID: ['=', uuids] },
+              {},
+              trx,
+              req,
+            );
+            uuids = items.map((item: any) => item._UID);
+          }
+
           self._relationLists[field] = await Document.fetchAll(
             {
-              uuid: ['=', json[field]],
+              uuid: ['=', uuids],
             },
             {},
             trx,
