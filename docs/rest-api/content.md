@@ -184,6 +184,10 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 {% include_relative endpoints/examples/content/export.res %}
 ```
 
+### Downloading images by uuid
+
+The `download` urls of image fields and their scales have the form `<item url>/@@images/<uuid>.<extension>`. Such a url only serves an image that is stored on the item itself, in one of its versions, or in a control panel (for example the site logo). Any other uuid answers `404 Not Found`, so the View permission on the item always applies to its images.
+
 ### Controlling the content-disposition
 
 File downloads (including `@export`, `ics_view`, `rss_view`, `markdown_view`, and the file, image, and video download endpoints) are served with a `Content-Disposition: attachment` header by default, prompting the browser to download the file.

@@ -30,6 +30,7 @@ import {
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
+import { getFactoryFields } from '../../helpers/schema/schema';
 import { getRootUrl } from '../../helpers/url/url';
 import { mapAsync, uniqueId, bytesToNumber } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -47,6 +48,62 @@ const omitProperties = ['@type', 'id', 'changeNote', 'language'];
 function getDisposition(req: Request, filename: string): string {
   const type = req.query?.disposition === 'inline' ? 'inline' : 'attachment';
   return `${type}; filename="${filename}"`;
+}
+
+/**
+ * Check if an image (or one of its scales) is stored in one of the image
+ * fields of the given data.
+ * @param {Object} schema Schema of the data.
+ * @param {Object} data Data with the image fields.
+ * @param {string} uuid Uuid of the image file.
+ * @returns {boolean} True if the image is stored in the data.
+ */
+function hasImage(schema: any, data: any, uuid: string): boolean {
+  return getFactoryFields(schema, 'Image').some(
+    (field: string) =>
+      data?.[field]?.uuid === uuid ||
+      Object.values(data?.[field]?.scales || {}).some(
+        (scale: any) => scale?.uuid === uuid,
+      ),
+  );
+}
+
+/**
+ * Check if an image file belongs to the current document, one of its versions
+ * or the control panels (e.g. the site logo).
+ * @param {Request} req The request object.
+ * @param {string} uuid Uuid of the image file.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @returns {Promise<boolean>} True if the image may be served here.
+ */
+async function isImageOfDocument(
+  req: Request,
+  uuid: string,
+  trx: Knex.Transaction,
+): Promise<boolean> {
+  const Controlpanel = models.get('Controlpanel');
+  const schema = req.type._schema;
+
+  // Image of the document
+  if (hasImage(schema, req.document.json, uuid)) {
+    return true;
+  }
+
+  // Image of one of the versions of the document
+  await req.document.fetchRelated('_versions', trx);
+  if (
+    (req.document._versions || []).some((version: any) =>
+      hasImage(schema, version.json, uuid),
+    )
+  ) {
+    return true;
+  }
+
+  // Image of a control panel
+  const controlpanels = await Controlpanel.fetchAll({}, {}, trx);
+  return controlpanels.models.some((controlpanel: any) =>
+    hasImage(controlpanel.schema, controlpanel.data, uuid),
+  );
 }
 
 export default [
@@ -329,6 +386,12 @@ export default [
     permission: 'View',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const uuid = req.params.uuid;
+
+      // Only serve images of this document, so the View permission on the
+      // document applies to the image
+      if (!(await isImageOfDocument(req, uuid, trx))) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
 
       // Check if current etag
       if (checkETag(req, uuid)) {
