@@ -255,6 +255,7 @@
 - Refuse to move items locked by another user, and don't copy the lock of an item to its copy @martior
 - Use dedicated single-use tokens for password resets, login tokens can no longer reset a password @martior
 - Only revoke a local role on the item itself in the @sharing endpoint, not on every item @martior
+- Require the View permission to stream videos with @@videos @martior
 
 ### Internal
 

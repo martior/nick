@@ -186,6 +186,10 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 {% include_relative endpoints/examples/content/export.res %}
 ```
 
+### Streaming videos
+
+Video fields are streamed with range requests from `<item url>/@@videos/<field>`. Like the other download endpoints this needs the `View` permission on the item. A browser `<video>` element can't send an `Authorization` header, so for private videos it needs the `auth_token` cookie.
+
 ### Downloading images by uuid
 
 The `download` urls of image fields and their scales have the form `<item url>/@@images/<uuid>.<extension>`. Such a url only serves an image that is stored on the item itself, in one of its versions, or in a control panel (for example the site logo). Any other uuid answers `404 Not Found`, so the View permission on the item always applies to its images.
