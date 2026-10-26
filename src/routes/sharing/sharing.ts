@@ -183,11 +183,18 @@ export default [
                     .relate({ id: role, document: req.document.uuid });
                 }
               } else if (entry.roles[role] === false) {
-                // Unrelate
-                await principal
-                  .$relatedQuery('_documentRoles', trx)
-                  .unrelate()
-                  .where({ role, document: req.document.uuid });
+                // Remove the role on this document only
+                await trx(
+                  entry.type === 'user'
+                    ? 'user_role_document'
+                    : 'group_role_document',
+                )
+                  .where({
+                    [entry.type === 'user' ? 'user' : 'group']: principal.id,
+                    role,
+                    document: req.document.uuid,
+                  })
+                  .delete();
               }
             });
           }
