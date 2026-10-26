@@ -675,6 +675,55 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the permissions of a user on this document, the same way as they
+   * are calculated when traversing to the document in a request.
+   * @method fetchUserPermissions
+   * @param {Object} user User object with roles and groups.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<string[]>} Array of permissions.
+   */
+  async fetchUserPermissions(
+    user: any,
+    trx?: Knex.Transaction,
+  ): Promise<string[]> {
+    const self: InstanceType<typeof Document> = this;
+    const Role = models.get('Role');
+
+    // Deleted documents can't be accessed
+    if (self.deleted) {
+      return [];
+    }
+
+    // Get the local roles by traversing from the root
+    const root = await Document.fetchOne({ parent: null }, {}, trx);
+    const result = await root.traverse(
+      compact(self.path.split('/')),
+      user,
+      await user.fetchUserGroupRolesByDocument(root.uuid, trx),
+      root,
+      trx,
+    );
+    if (!result) {
+      return [];
+    }
+    const roles = uniq([...result.localRoles, ...user.getRoles()]);
+
+    // Fetch type and workflow
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+
+    // Return global and workflow permissions
+    return uniq([
+      ...(await Role.fetchPermissions(roles, trx)),
+      ...self._type._workflow.getPermissions(self.workflow_state, roles),
+    ]);
+  }
+
+  /**
    * Fetch workflow history
    * @method fetchWorkflowHistory
    * @param {Request} req Request object
