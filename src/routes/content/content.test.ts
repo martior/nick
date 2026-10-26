@@ -10,7 +10,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { adminToken, testRequest } from '../../helpers/tests/tests';
+import {
+  adminToken,
+  createUserWithToken,
+  testRequest,
+} from '../../helpers/tests/tests';
 
 // A 1x1 pixel png image
 const png =
@@ -277,5 +281,52 @@ describe('Content', () => {
       .get('/news/private-video/@@videos/video')
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(200);
+  });
+
+  it('should check the permissions on the sources of copy and move', async () => {
+    const admin = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`);
+    await admin(request(app).post('/'))
+      .send({
+        '@type': 'Page',
+        id: 'private-page',
+        uuid: '4f6a8c0e-2b4d-4f6a-8c0e-2b4d6f8a0c01',
+        title: 'Private Page',
+      })
+      .expect(201);
+
+    // A contributor of the events folder
+    const token = await createUserWithToken('contributor');
+    await admin(request(app).post('/events/@sharing'))
+      .send({
+        entries: [
+          { id: 'contributor', type: 'user', roles: { Contributor: true } },
+        ],
+        inherit: true,
+      })
+      .expect(204);
+    const contributor = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+
+    // A private item is not copied or moved
+    const copy = await contributor(request(app).post('/events/@copy'))
+      .send({ source: '/private-page' })
+      .expect(200);
+    expect(copy.body).toEqual([]);
+    const move = await contributor(request(app).post('/events/@move'))
+      .send({ source: '/private-page' })
+      .expect(200);
+    expect(move.body).toEqual([]);
+    await admin(request(app).get('/private-page')).expect(200);
+    await admin(request(app).get('/events/private-page')).expect(404);
+
+    // A viewable item the contributor can't modify is not moved
+    await contributor(request(app).post('/events/@move'))
+      .send({ source: '/news' })
+      .expect(403);
   });
 });

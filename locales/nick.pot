@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-17T16:53:11.708Z\n"
+"POT-Creation-Date: 2026-10-17T16:56:37.299Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -708,8 +708,8 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:195
-#: src/routes/content/content.ts:946
+#: src/routes/content/content.ts:210
+#: src/routes/content/content.ts:967
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr ""
@@ -1472,7 +1472,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:466
+#: src/routes/content/content.ts:487
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr ""
@@ -1804,13 +1804,13 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:756
+#: src/routes/content/content.ts:777
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:194
+#: src/routes/content/content.ts:209
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2505,7 +2505,7 @@ msgid "Type of the current document is not found."
 msgstr ""
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:745
+#: src/routes/content/content.ts:766
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2755,6 +2755,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
+#: src/routes/content/content.ts:195
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -2788,7 +2789,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:943
+#: src/routes/content/content.ts:964
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr ""

@@ -180,8 +180,23 @@ export default [
         ? req.body.source
         : [req.body.source];
       await mapAsync(sources, async (source: string) => {
-        // Get item to be moved
+        // Get item to be moved, skip if not found or not viewable
         const document = await Document.fetchOne({ path: source }, {}, trx);
+        const permissions = document
+          ? await document.fetchUserPermissions(req.user, trx)
+          : [];
+        if (!permissions.includes('View')) {
+          return;
+        }
+
+        // Moving removes the item from its folder, like deleting it
+        if (!permissions.includes('Modify')) {
+          throw new RequestException(req.user.id === 'anonymous' ? 401 : 403, {
+            message: req.i18n(
+              'You are not authorized to access this resource.',
+            ),
+          });
+        }
 
         // Check if locked
         if (
@@ -287,8 +302,14 @@ export default [
         ? req.body.source
         : [req.body.source];
       await mapAsync(sources, async (source: string) => {
-        // Get item to be copied
+        // Get item to be copied, skip if not found or not viewable
         const document = await Document.fetchOne({ path: source }, {}, trx);
+        if (
+          !document ||
+          !(await document.fetchUserPermissions(req.user, trx)).includes('View')
+        ) {
+          return;
+        }
 
         // Calculate new id and path
         const path = req.document.path;
