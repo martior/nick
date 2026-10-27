@@ -33,7 +33,9 @@ Nick uses a modular architecture where functionality is organized into profiles.
 
 ## Registration
 
-Profiles are listed in the `profiles` array in `config.ts`. The name before the colon resolves to the Node package name; the part after the colon is the folder name of the profile.
+Profiles are listed in the `profiles` array in `config.ts`. The name before the colon resolves to the Node package name; the part after the colon is the folder name of the profile. The `PROFILES` environment variable (comma separated) replaces the list, for example in a Docker container without a `config.ts`.
+
+Profiles can declare `dependencies` in their metadata. Nick loads, installs and upgrades the profiles in dependency order and adds dependencies that are not listed; a dependency cycle is an error. Profiles in npm packages (add-ons) are described in [Add-ons](/developer-guide/addons).
 
 ```ts
 export const config = {
@@ -53,16 +55,18 @@ Each profile has a `metadata.json` file that identifies it and tracks its versio
   "id": "@plone/nick:core",
   "title": "Nick Core",
   "description": "Core functionality of Nick",
-  "version": 1006
+  "version": 1006,
+  "dependencies": []
 }
 ```
 
-| Field         | Type     | Description                               |
-| ------------- | -------- | ----------------------------------------- |
-| `id`          | `string` | Unique identifier for the profile.        |
-| `title`       | `string` | Human-readable name of the profile.       |
-| `description` | `string` | Brief description of the profile's role.  |
-| `version`     | `number` | Current version number for upgrade tracking. |
+| Field          | Type       | Description                                                                         |
+| -------------- | ---------- | ----------------------------------------------------------------------------------- |
+| `id`           | `string`   | Unique identifier for the profile.                                                  |
+| `title`        | `string`   | Human-readable name of the profile.                                                 |
+| `description`  | `string`   | Brief description of the profile's role.                                            |
+| `version`      | `number`   | Current version number for upgrade tracking.                                        |
+| `dependencies` | `string[]` | Profiles to install first, as listed in `profiles` (like `@plone/nick:core`). Optional. |
 
 ## Runtime registration (`index.ts`)
 
@@ -198,7 +202,7 @@ Use the `pnpm seed:upgrade` command to apply pending upgrades. The upgrade logic
 
 5. **Custom upgrade code**: If the upgrade directory contains an `index.ts`, its `init` method is called after the seed handlers have run. It receives the transaction.
 
-If any step fails, the entire transaction is rolled back, ensuring consistency.
+Every step runs in its own transaction. If a step fails, its changes are rolled back, the profile stays at the previous step, and the next run starts again at the step that failed.
 
 ### Custom upgrade code
 

@@ -23,7 +23,7 @@ export default [
   ...compat.extends("prettier"),
   ...tseslint.configs.recommended,
   {
-    ignores: ["src/develop/", "node_modules/"],
+    ignores: ["node_modules/"],
   },
   {
     plugins: {

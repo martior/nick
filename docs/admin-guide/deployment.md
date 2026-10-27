@@ -11,7 +11,7 @@ Nick has one entrypoint, `nick`, which runs any combination of three modules:
 
 | Module    | What it does                                                                                                                                          |
 | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `migrate` | Runs the knex migrations, installs profiles that are not installed yet and runs the upgrade steps of installed profiles. Exits non-zero on any error. |
+| `migrate` | Runs the knex migrations of core and of every package of the profiles (in dependency order), installs profiles that are not installed yet and runs the upgrade steps of installed profiles. Exits non-zero on any error. |
 | `api`     | Serves the REST API on `port` (`PORT`).                                                                                                               |
 | `worker`  | Runs queued [jobs](/admin-guide/jobs) and schedules periodic jobs.                                                                                    |
 
@@ -22,6 +22,7 @@ nick --modules=api                # API only
 nick --modules=worker             # worker only
 nick --modules=api,worker         # API and worker in one process
 NICK_MODULES=worker nick          # the same with an environment variable
+nick --modules=migrate --check-schema   # also compare the schema with src/migrations/schema.snapshot.txt
 ```
 
 In a checkout, run it with `pnpm nick --modules=...`. `pnpm start` runs the API and the worker (with nodemon, for development); `pnpm migrate` and `pnpm seed` still work as before.
@@ -41,7 +42,7 @@ docker run -d -p 8080:8080 -e NICK_MODULES=api -e DB_HOST=db -e DB_PASSWORD=... 
 docker run -d -e NICK_MODULES=worker -e DB_HOST=db -e DB_PASSWORD=... -e SECRET=... nick
 ```
 
-- **Configuration:** environment variables (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `SECRET`, `PORT`, `ALLOWED_ORIGINS`, `API_RATE_LIMIT`, `JOBS_*`, `S3_*`, ...) or a `config.ts` mounted at `/app/config.ts`. The image runs with `NODE_ENV=production`, so `SECRET` and `DB_PASSWORD` are required. Profiles of your own can be mounted under `/app/src/profiles/<name>` and listed in `config.ts`, or added in an image built `FROM` this one.
+- **Configuration:** environment variables (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `SECRET`, `PORT`, `ALLOWED_ORIGINS`, `API_RATE_LIMIT`, `JOBS_*`, `S3_*`, ...) or a `config.ts` mounted at `/app/config.ts`. The image runs with `NODE_ENV=production`, so `SECRET` and `DB_PASSWORD` are required. `PROFILES` lists the profiles to install, comma separated (for example `PROFILES=@plone/nick:core,@plone/nick:examplecontent`); without it and without a `config.ts`, only the core profile is installed, which has no site root. Profiles of your own can be mounted under `/app/src/profiles/<name>` and listed in `config.ts`, or added in an image built `FROM` this one. Add-ons from the Nick repository can be built in with `--build-arg ADDONS="packages/nick-example-addon"`; projects with add-ons from npm build an image of their own project.
 - **Modules:** pass `--modules=...` as the command, or set `NICK_MODULES`. Set `NICK_MODULES` when you split the modules: the health check passes without HTTP for processes that do not run the API.
 - **Blobs:** the default `file` storage writes to `/app/var/blobstorage` inside the container. Mount a volume there, or use `db` or [S3-compatible storage](/admin-guide/blobs) when you run more than one API replica.
 - **TypeScript:** Nick runs from its TypeScript sources with the `tsx` loader (`node --import tsx`). The image compiles the sources once while it is built, so processes start from a warm cache (about 2.5 s to a listening API).

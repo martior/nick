@@ -318,11 +318,11 @@ The generator created a project structure like this:
 
 ```
 my_nick_project/
-├── config.js           # Main configuration file
-├── package.json        # Project dependencies and scripts
+├── config.ts           # Main configuration file
+├── package.json        # Project dependencies (@plone/nick) and scripts
 ├── src/
+│   ├── migrations/     # Knex migrations of the project's own tables
 │   └── profiles/       # Content type definitions, workflows, etc.
-├── blobstorage/        # Where uploaded files will be stored
 └── ...
 ```
 

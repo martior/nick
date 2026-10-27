@@ -10,6 +10,10 @@ export default defineConfig({
   test: {
     testTimeout: 30000,
     setupFiles: ['./vitest.setup.js'],
-    exclude: ['packages/**', 'frontend/**', 'node_modules/**'],
+    exclude: [
+      'packages/generator-nick/**',
+      '**/node_modules/**',
+      'frontend/**',
+    ],
   },
 });

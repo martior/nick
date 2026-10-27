@@ -5,6 +5,6 @@
  */
 
 // External imports
-import events from '@plone/nick/src/events';
+import { events } from '@plone/nick';
 
 export default events;

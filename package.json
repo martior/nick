@@ -9,11 +9,14 @@
       "url": "http://plone.org"
     }
   ],
+  "types": "./src/index.ts",
   "exports": {
     ".": {
+      "types": "./src/index.ts",
       "import": "./src/index.ts",
       "require": "./src/index.ts"
     },
+    "./package.json": "./package.json",
     "./*": {
       "import": "./*",
       "require": "./*"
@@ -22,6 +25,17 @@
   "nick": {
     "migrations": "src/migrations"
   },
+  "files": [
+    "src",
+    "scripts",
+    "locales",
+    "knexfile.ts",
+    "config.ts.sample",
+    "tsconfig.json",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE.md"
+  ],
   "bin": {
     "nick": "./scripts/nick.ts"
   },
@@ -48,11 +62,12 @@
     "i18n": "tsx scripts/i18n.ts",
     "i18n:ci": "pnpm i18n && git diff -G'^[^\"POT]' --exit-code",
     "knex": "tsx ./node_modules/knex/bin/cli.js",
-    "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}'",
+    "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}' 'packages/nick-example-addon/src/**/*.{js,ts,json}'",
     "migrate": "pnpm knex migrate:latest",
+    "migrate:check": "tsx scripts/migrate-check.ts",
     "nick": "tsx scripts/nick.ts",
     "migrate:list": "pnpm knex migrate:list",
-    "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}'",
+    "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,ts,json}' 'scripts/**/*.{js,ts,json}' 'packages/nick-example-addon/src/**/*.{js,ts,json}'",
     "seed": "tsx scripts/seed.ts run",
     "seed:status": "tsx scripts/seed.ts status",
     "seed:upgrade": "tsx scripts/seed.ts upgrade",
@@ -74,6 +89,7 @@
     "@babel/plugin-transform-typescript": "8.0.1",
     "@eslint/eslintrc": "3.3.6",
     "@eslint/js": "10.0.1",
+    "@plone/nick-example-addon": "workspace:*",
     "@types/du": "1.0.3",
     "@types/express": "5.0.6",
     "@types/jsonwebtoken": "9.0.10",

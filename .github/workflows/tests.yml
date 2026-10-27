@@ -109,3 +109,46 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm nick --modules=migrate
           pnpm nick --modules=migrate
+
+  drift:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [26.x]
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: nick
+          POSTGRES_PASSWORD: nick
+          POSTGRES_DB: nick
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node setup
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Enable corepack
+        shell: bash
+        run: npm i -g corepack@latest && corepack enable
+
+      - name: Install
+        run: pnpm install --frozen-lockfile && pnpm create-config
+
+      # Migrate a scratch database and compare the schema with the snapshot
+      - name: Check core migrations for drift
+        run: pnpm migrate:check
+
+      - name: Check the example add-on migrations for drift
+        env:
+          PROFILES: '@plone/nick:core,@plone/nick-example-addon:default'
+        run: pnpm migrate:check --schema example --snapshot packages/nick-example-addon/src/migrations/schema.snapshot.txt
