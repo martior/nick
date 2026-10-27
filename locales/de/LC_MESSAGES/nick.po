@@ -147,7 +147,7 @@ msgstr "Administrator"
 
 #. Default: "Administrators"
 #: src/profiles/multilingualcontent/groups.json:6
-#: src/profiles/examplecontent/groups.json:6
+#: src/profiles/default/groups.json:6
 msgctxt "Profiles|Multilingualcontent|Groups"
 msgid "Administrators"
 msgstr "Administratoren"
