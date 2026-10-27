@@ -30,6 +30,42 @@ import { getUrl } from '../../helpers/url/url';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
 
+/**
+ * Get the query to hide inactive (expired or not yet effective) items from
+ * users who can't edit the context, like Plone hides them from users without
+ * the "Access inactive portal content" permission.
+ * @method activeQuery
+ * @param {Request} req Request object.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @returns {Promise<Object>} Where clause.
+ */
+async function activeQuery(
+  req: Request,
+  trx: Knex.Transaction,
+): Promise<Record<string, any>> {
+  const Index = models.get('Index');
+
+  // Editors see inactive items
+  if (req.permissions.includes('Modify')) {
+    return {};
+  }
+
+  // Only if the effective and expires indexes are available
+  if (!req.indexes) {
+    req.indexes = await Index.fetchAll({}, {}, trx);
+  }
+  const names = req.indexes.models.map((index: any) => index.name);
+  if (!names.includes('effective') || !names.includes('expires')) {
+    return {};
+  }
+  return {
+    _active: [
+      'raw',
+      '(_effective is null or _effective <= now()) and (_expires is null or _expires > now())',
+    ],
+  };
+}
+
 interface ChatResult {
   message: {
     content: string;
@@ -105,7 +141,7 @@ const serializeItems = async (
       const document = await Document.fetchOne({ uuid: item.UID }, {}, trx);
       await document.fetchRelated('_type', trx);
       await document.applyBehaviors(trx);
-      await document.fetchRelationLists(trx);
+      await document.fetchRelationLists(trx, req);
       // The permissions on the item decide if the lock token is shown
       const permissions = document.lock?.locked
         ? await document.fetchUserPermissions(req.user, trx)
@@ -174,6 +210,7 @@ const querystringSearch = async (
   }
 
   const query = await querystringToQuery(data, req.document.path, req, trx);
+  query[0] = { ...query[0], ...(await activeQuery(req, trx)) };
 
   // Exclude the context itself from the results
   if (req.document.path !== '/') {
@@ -237,6 +274,7 @@ export default [
         req,
         trx,
       );
+      query[0] = { ...query[0], ...(await activeQuery(req, trx)) };
 
       // Get batch
       const { start, size } = getBatchParams(

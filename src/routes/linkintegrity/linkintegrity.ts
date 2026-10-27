@@ -39,19 +39,21 @@ export default [
         ? req.query.uids
         : req.query.uids || [];
 
-      // Get items
-      const items = (await Catalog.fetchAll({ _UID: ['=', uuids] }, {}, trx))
-        .models;
+      // Get items the user can view
+      const items = (
+        await Catalog.fetchAllRestricted({ _UID: ['=', uuids] }, {}, trx, req)
+      ).models;
 
       // Get children
       await mapAsync(items, async (item: InstanceType<typeof Catalog>) => {
         const subitems = (
-          await Catalog.fetchAll(
+          await Catalog.fetchAllRestricted(
             {
               _path: ['raw', '"_path" LIKE ?', [likePrefix(`${item._path}/`)]],
             },
             {},
             trx,
+            req,
           )
         ).models;
         items.push.apply(items, subitems);
@@ -63,16 +65,17 @@ export default [
         documents[item._UID] = item;
       });
 
-      // Find breaches
+      // Find breaches in items the user can view
       const output: Breach[] = [];
       await mapAsync(items, async (item: InstanceType<typeof Catalog>) => {
         const breaches = (
-          await Catalog.fetchAll(
+          await Catalog.fetchAllRestricted(
             {
               _isReferencing: ['&&', [item._UID]],
             },
             {},
             trx,
+            req,
           )
         ).models;
 

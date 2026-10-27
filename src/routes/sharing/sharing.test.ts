@@ -12,14 +12,16 @@ import app from '../../app';
 import config from '../../helpers/config/config';
 import jobs from '../../helpers/jobs/jobs';
 import {
+  adminToken,
   createDocument,
   createUser,
+  createUserWithToken,
   testRequest,
 } from '../../helpers/tests/tests';
 import models from '../../models';
+import { User } from '../../models/user/user';
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
+const token = adminToken;
 
 /**
  * Get the allowed users, groups and roles from the catalog
@@ -190,14 +192,10 @@ describe('Sharing', () => {
       id: 'AuthenticatedUsers',
       title: 'Logged-in users',
       roles: {
-        Anonymous: false,
-        Authenticated: false,
-        Owner: false,
         Reader: false,
         Contributor: false,
         Editor: false,
         Reviewer: false,
-        Administrator: false,
       },
       type: 'group',
       disabled: false,
@@ -274,5 +272,114 @@ describe('Sharing', () => {
       'AuthenticatedUsers',
       'jane',
     ]);
+  });
+
+  it('should only revoke a role on the item itself', async () => {
+    await createUserWithToken('editor');
+    const share = (path: string, value: boolean) =>
+      request(app)
+        .post(`${path}/@sharing`)
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          entries: [{ id: 'editor', type: 'user', roles: { Editor: value } }],
+          inherit: true,
+        })
+        .expect(204);
+    await share('/news', true);
+    await share('/events', true);
+
+    // Revoke on news only
+    await share('/news', false);
+    const editor = await User.fetchById('editor', {}, global.txn!);
+    const roles = async (uuid: string) =>
+      await editor.fetchRolesByDocument(uuid, global.txn!);
+    expect(await roles('32215c67-86de-462a-8cc0-eabcd2b39c26')).toEqual([]);
+    expect(await roles('1a2123ba-14e8-4910-8e6b-c04a40d72a41')).toEqual([
+      'Editor',
+    ]);
+  });
+
+  it('should only delegate roles the user may delegate', async () => {
+    const token = await createUserWithToken('editor');
+    await createUserWithToken('other');
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        entries: [{ id: 'editor', type: 'user', roles: { Editor: true } }],
+        inherit: true,
+      })
+      .expect(204);
+
+    // The editor only gets the roles it may delegate
+    const res = await request(app)
+      .get('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(res.body.available_roles.map((role: any) => role.id)).toEqual([
+      'Editor',
+      'Reader',
+    ]);
+
+    // Other roles are ignored
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        entries: [
+          {
+            id: 'other',
+            type: 'user',
+            roles: { Administrator: true, Reviewer: true, Editor: true },
+          },
+        ],
+        inherit: true,
+      })
+      .expect(204);
+    const other = await User.fetchById('other', {}, global.txn!);
+    expect(
+      await other.fetchRolesByDocument(
+        '32215c67-86de-462a-8cc0-eabcd2b39c26',
+        global.txn!,
+      ),
+    ).toEqual(['Editor']);
+  });
+  it('should keep the roles the user may not delegate', async () => {
+    const token = await createUserWithToken('editor');
+    await createUserWithToken('other');
+    const share = (auth: string, roles: any) =>
+      request(app)
+        .post('/news/@sharing')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${auth}`)
+        .send({ entries: [{ id: 'other', type: 'user', roles }] })
+        .expect(204);
+
+    // The admin gives other Reviewer, and the editor Editor
+    await share(adminToken, { Reviewer: true });
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        entries: [{ id: 'editor', type: 'user', roles: { Editor: true } }],
+      })
+      .expect(204);
+
+    // The editor sends the complete entry it can see, without Reviewer
+    await share(token, { Reader: true, Editor: false });
+    const other = await User.fetchById('other', {}, global.txn!);
+    expect(
+      (
+        await other.fetchRolesByDocument(
+          '32215c67-86de-462a-8cc0-eabcd2b39c26',
+          global.txn!,
+        )
+      ).sort(),
+    ).toEqual(['Reader', 'Reviewer']);
   });
 });

@@ -92,8 +92,8 @@ Profiles contain JSON files that define database records. When `pnpm seed` runs 
 | `vocabularies/`               | `seedVocabulary`                | Vocabulary definitions.                |
 | `redirects.json`              | `seedRedirect`                  | Redirect definitions.                  |
 | `documents/`                  | `seedDocument`                  | Document content with version blocks.  |
-| `contentrules.json`           | `seedContentRule`               | Content rule definitions.              |
-| `scheduledjobs.json`          | `seedScheduledJob`              | Scheduled job definitions.             |
+| `content_rules.json`          | `seedContentRule`               | Content rule definitions.              |
+| `scheduled_jobs.json`         | `seedScheduledJob`              | Scheduled job definitions.             |
 
 Each seed handler checks whether its corresponding file or directory exists at the given profile path. If it does, the data is imported; otherwise it is silently skipped. This means the same seed logic is reused for both initial profile installation and incremental upgrades.
 

@@ -2,8 +2,8 @@
   "purge": false,
   "permissions": [
     {
-      "id": "View History",
-      "title:i18n": "View History"
+      "id": "Delete",
+      "title:i18n": "Delete"
     }
   ]
 }

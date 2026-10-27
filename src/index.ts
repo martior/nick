@@ -98,7 +98,6 @@ export type {
   MiddlewareHandler,
   NickPackageConfig,
   Params,
-  PeriodicTask,
   ProfileMetadata,
   Request,
   Route,

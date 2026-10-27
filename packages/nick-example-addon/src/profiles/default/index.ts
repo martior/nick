@@ -29,15 +29,9 @@ export function init(): void {
   // REST services: @notes and @rating
   routes.register(notesRoutes);
 
-  // Periodic task: purge the notes of deleted documents every night
+  // Action of the scheduled job in scheduled_jobs.json, which purges the
+  // notes of deleted documents every night
   scheduledJobs.registerAction('example_purge_notes', purgeNotes);
-  scheduledJobs.registerTask({
-    id: 'example-purge-notes',
-    title: 'Purge notes',
-    description: 'Remove the notes of deleted documents',
-    schedule: '0 3 * * *',
-    action: 'example_purge_notes',
-  });
 
   // The word count data migration can also run on the job queue
   registerDataMigration(noteWords);
