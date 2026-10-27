@@ -91,7 +91,8 @@ export function parentSummary(req: Request, parent: any): Record<string, any> {
  * @param {Request} req Request object.
  * @param {Object} document Document.
  * @param {Knex.Transaction} trx Transaction object.
- * @returns {Promise<Object>} Object with the parent, empty for the root.
+ * @returns {Promise<Object>} Object with the parent, empty for the root and
+ * for a parent the user can't view.
  */
 export async function fetchParentSummary(
   req: Request,
@@ -104,7 +105,15 @@ export async function fetchParentSummary(
   const Document = models.get('Document');
   const parent =
     document._parent || (await Document.fetchById(document.parent, {}, trx));
-  return parent ? { parent: parentSummary(req, parent) } : {};
+
+  // Don't disclose a parent the user can't view
+  if (
+    !parent ||
+    !(await parent.fetchUserPermissions(req.user, trx)).includes('View')
+  ) {
+    return {};
+  }
+  return { parent: parentSummary(req, parent) };
 }
 
 /**

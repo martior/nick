@@ -345,6 +345,47 @@ describe('Content', () => {
     expect(res.body.parent['@id']).toBe('http://localhost:8080');
   });
 
+  it('should not return a parent the user can not view', async () => {
+    const admin = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+
+    // A published page in a private folder
+    await admin(request(app).post('/'))
+      .send({
+        '@type': 'Folder',
+        id: 'private-folder',
+        uuid: '5d7e9f1a-3b5c-4d6e-8f9a-1b2c3d4e5f01',
+        title: 'Secret',
+      })
+      .expect(201);
+    await admin(request(app).post('/private-folder'))
+      .send({
+        '@type': 'Page',
+        id: 'page',
+        uuid: '5d7e9f1a-3b5c-4d6e-8f9a-1b2c3d4e5f02',
+        title: 'Page',
+      })
+      .expect(201);
+    await admin(
+      request(app).post('/private-folder/page/@workflow/publish'),
+    ).expect(200);
+
+    // Anonymous can view the page, but not its parent
+    const anonymous = await request(app)
+      .get('/private-folder/page')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(anonymous.body.parent).toBeUndefined();
+
+    // The admin gets the parent
+    const res = await admin(request(app).get('/private-folder/page')).expect(
+      200,
+    );
+    expect(res.body.parent.title).toBe('Secret');
+  });
+
   it('should return the location of new content', async () => {
     const res = await request(app)
       .post('/news')
