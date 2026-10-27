@@ -205,6 +205,9 @@
 
 ### Bugfix
 
+- Apply the `files` request limit to content created or updated with uploaded files in a JSON body; the global JSON parser with the `api` limit parsed every body first, so uploads were capped at the `api` limit @mpalomaki
+- Run `pnpm start` with `NODE_ENV=development`, so the development secret is used and logins stay valid when nodemon restarts Nick; without it every restart used a new random secret and logged everyone out @robgietema
+- Fix a typo in the demo content: "is built with" @robgietema
 - Serve the last bytes for a suffix range (`bytes=-500`) on `@@videos` instead of the first bytes, and answer a range outside of the file with `416 Range Not Satisfiable` @robgietema
 - Make the ids of the documents in a folder unique in the database (documents in the recycle bin excepted), so imports and bulk loads can't create documents that can't be reached; a duplicate id gives 400. Run `pnpm migrate`; the migration lists the duplicate ids and stops if there are any, rename or remove those documents first @martior
 - Leave out the ancestors the user may not view from @breadcrumbs, so the titles of private folders don't leak @martior

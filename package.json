@@ -72,7 +72,7 @@
     "seed": "tsx scripts/seed.ts run",
     "seed:status": "tsx scripts/seed.ts status",
     "seed:upgrade": "tsx scripts/seed.ts upgrade",
-    "start": "pnpm migrate:list && pnpm seed:status && nodemon --exec 'tsx src/server.ts'",
+    "start": "pnpm migrate:list && pnpm seed:status && NODE_ENV=development nodemon --exec 'tsx src/server.ts'",
     "rollback": "pnpm knex migrate:rollback --all",
     "reset": "pnpm rollback && pnpm migrate && pnpm seed",
     "test": "AUTH_RATE_LIMIT=1000 vitest",
