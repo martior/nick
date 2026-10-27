@@ -745,9 +745,9 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:213
-#: src/routes/content/content.ts:985
+#: src/routes/history/history.ts:71
+#: src/routes/content/content.ts:216
+#: src/routes/content/content.ts:997
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokumentas užrakintas"
@@ -1122,15 +1122,15 @@ msgid "Information about rights held in and over this item."
 msgstr "Informacija apie teises, turimas šiame elemente ir virš jo."
 
 #. Default: "Internal server error"
-#: src/app.ts:231
-#: src/app.ts:242
+#: src/app.ts:258
+#: src/app.ts:269
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Vidinė serverio klaida"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:86
+#: src/routes/authentication/authentication.ts:100
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Neteisingi prisijungimo duomenys"
@@ -1156,7 +1156,7 @@ msgid "Invalid query."
 msgstr ""
 
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:135
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Neteisinga sesija"
@@ -1280,7 +1280,7 @@ msgid "Login"
 msgstr "Prisijungimas"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "Prisijungimo vardas ir slaptažodis turi būti pateikti tekste."
@@ -1367,7 +1367,7 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:64
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Trūksta prisijungimo duomenų"
@@ -1521,7 +1521,7 @@ msgid "Not authorized"
 msgstr ""
 
 #. Default: "Not found"
-#: src/routes/history/history.ts:89
+#: src/routes/history/history.ts:92
 msgctxt "Routes|History"
 msgid "Not found"
 msgstr ""
@@ -1553,7 +1553,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:490
+#: src/routes/content/content.ts:496
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Nerasta."
@@ -1860,14 +1860,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:247
+#: src/routes/sharing/sharing.ts:250
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:248
+#: src/routes/sharing/sharing.ts:251
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -1927,13 +1927,13 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:787
+#: src/routes/content/content.ts:796
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Trūksta privalomų laukų."
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:212
+#: src/routes/content/content.ts:215
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2603,8 +2603,8 @@ msgstr "Šiandien"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:161
-#: src/app.ts:175
+#: src/app.ts:167
+#: src/app.ts:184
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Sandorio klaida."
@@ -2628,7 +2628,7 @@ msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:84
+#: src/routes/workflow/workflow.ts:87
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -2652,7 +2652,7 @@ msgid "Type of the current document is not found."
 msgstr "Dabartinio dokumento tipas nerastas."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:776
+#: src/routes/content/content.ts:785
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
@@ -2696,7 +2696,7 @@ msgid "User doesn’t exist or invalid credentials."
 msgstr "Vartotojas neegzistuoja arba neteisingi prisijungimo duomenys."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "Vartotojas nėra prisijungęs."
@@ -2756,7 +2756,7 @@ msgid "Version item with comment {comment}"
 msgstr ""
 
 #. Default: "Version not found."
-#: src/routes/history/history.ts:88
+#: src/routes/history/history.ts:91
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -2886,8 +2886,8 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Neteisingas prisijungimas ir (arba) slaptažodis."
@@ -2900,7 +2900,7 @@ msgid "Yes"
 msgstr "Taip"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:93
+#: src/routes/workflow/workflow.ts:96
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Neturite teisės pasiekti šį išteklių."
@@ -2921,7 +2921,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:198
+#: src/routes/content/content.ts:201
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -2930,7 +2930,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:803
+#: src/routes/content/content.ts:812
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -2960,8 +2960,8 @@ msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:982
+#: src/routes/history/history.ts:68
+#: src/routes/content/content.ts:994
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Neturite leidimo išsaugoti šio dokumento, nes jį užrakino kitas vartotojas."

@@ -169,6 +169,9 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
 
+      // Lock the target to serialize changes of its children
+      await req.document.lockForUpdate(trx);
+
       // Get children
       await req.document.fetchRelated('_children', trx);
       const childIds = req.document._children.map(
@@ -290,6 +293,9 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
+
+      // Lock the target to serialize changes of its children
+      await req.document.lockForUpdate(trx);
 
       // Get children
       await req.document.fetchChildren({}, trx, false);
@@ -761,6 +767,9 @@ export default [
       // Resolve multipart/form-data bodies (file/image parts) into plain JSON
       req.body = resolveMultipartBody(req);
 
+      // Lock the parent to serialize the creation of its children
+      await req.document.lockForUpdate(trx);
+
       // Get content type date
       const type = await Type.fetchById(
         req.body['@type'],
@@ -951,6 +960,9 @@ export default [
       // Resolve multipart/form-data bodies (file/image parts) into plain JSON
       req.body = resolveMultipartBody(req);
 
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
+
       // Check if ordering request
       if (typeof req.body?.ordering !== 'undefined') {
         // Get children and reorder
@@ -1104,9 +1116,12 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
 
-      // Get parent
+      // Get parent and lock parent before the document, as all changes of
+      // the children of a parent lock the parent first
       await req.document.fetchRelated('_parent', trx);
       const parent = req.document._parent;
+      await parent?.lockForUpdate(trx);
+      await req.document.lockForUpdate(trx);
 
       // Trigger onBeforeDelete
       await events.trigger(

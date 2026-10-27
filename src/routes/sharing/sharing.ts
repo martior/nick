@@ -175,6 +175,9 @@ export default [
       const User = models.get('User');
       const Group = models.get('Group');
 
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
+
       // Update inherit
       if (req.document.inherit_roles !== req.body.inherit) {
         await req.document.update(

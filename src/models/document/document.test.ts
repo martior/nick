@@ -99,4 +99,17 @@ describe('Document', () => {
       expect(allowed.getLength()).toBe(1);
     });
   });
+
+  describe('lockForUpdate', () => {
+    it('reloads the document', async () => {
+      const Document = models.get('Document');
+      const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+      await global.txn!('document')
+        .where({ uuid: news.uuid })
+        .update({ version: 7 });
+      expect(news.version).not.toBe(7);
+      await news.lockForUpdate(global.txn!);
+      expect(news.version).toBe(7);
+    });
+  });
 });

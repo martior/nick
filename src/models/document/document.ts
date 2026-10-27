@@ -219,6 +219,21 @@ export class Document extends Model {
   };
 
   /**
+   * Lock the document row until the end of the transaction and reload it,
+   * so concurrent changes of the document or its children are serialized.
+   * @method lockForUpdate
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<void>}
+   */
+  async lockForUpdate(trx: Knex.Transaction): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const fresh = await Document.query(trx).findById(self.uuid).forUpdate();
+    if (fresh) {
+      Object.assign(self, fresh);
+    }
+  }
+
+  /**
    * Fetch version
    * @method fetchVersion
    * @param {string} document Uuid of the document
@@ -765,10 +780,10 @@ export class Document extends Model {
         return {
           ...item,
           actor: {
-            '@id': `${getRootUrl(req)}/@users/${user.id}`,
-            fullname: user.fullname,
-            id: user.id,
-            username: user.id,
+            '@id': `${getRootUrl(req)}/@users/${item.actor}`,
+            fullname: user ? user.fullname : item.actor,
+            id: item.actor,
+            username: item.actor,
           },
           comments: item.comments || '',
           type: item.type || 'workflow',
@@ -1818,7 +1833,7 @@ export class Document extends Model {
     <language>${self.language || 'en'}</language>
     <link>${self.getUrl(req)}</link>
     <lastBuildDate>${dayjs().utc().format('ddd, DD MMM YYYY HH:mm:ss [GMT]')}</lastBuildDate>
-    <managingEditor>${self._owner.email} (${self._owner.fullname})</managingEditor>
+    ${self._owner ? `<managingEditor>${self._owner.email} (${self._owner.fullname})</managingEditor>` : ''}
 ${self._restrictedChildren
   .map(
     (child: any) => `      <item>
