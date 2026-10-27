@@ -40,9 +40,15 @@ async function traverse(
     await document.fetchRelated('_type', trx);
   }
 
+  // Only use the context and the ancestors the user can view
+  const viewable =
+    document.uuid === req.document.uuid ||
+    (await document.fetchUserPermissions(req.user, trx)).includes('View');
+
   await Promise.all(
     behaviors.map(async (behavior) => {
       if (
+        viewable &&
         !returnItems[behavior] &&
         document._type._schema.behaviors.includes(behavior)
       ) {

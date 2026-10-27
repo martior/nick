@@ -19,7 +19,7 @@ Or use the client directly:
 {% include_relative examples/mail/post.ts %}
 ```
 
-The `to`, `from` and `message` fields are required. The `subject` and `name` fields are optional.
+The `to`, `from` and `message` fields are required. The `subject` and `name` fields are optional. Sending requires the `Manage Site` permission, and the endpoint is only available on the site root.
 
 The server will respond with status 204 No Content when the email has been sent successfully:
 
@@ -53,7 +53,7 @@ The server will respond with status `204 No Content` when the email has been sen
 
 ## Contact Users
 
-To send an email notification to another user of the portal, send a `POST` request to the `/@email-notification` endpoint on a particular user (e.g. the admin user):
+To send an email notification to another user of the portal, send a `POST` request to the `/@email-notification` endpoint on a particular user (e.g. the admin user). This requires the `Manage Site` permission and is only available on the site root:
 
 ```http
 {% include_relative examples/mail/post_user.req %}
