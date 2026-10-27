@@ -128,7 +128,7 @@ export default [
         case 'dexterity-types':
           const Type = models.get('Type');
           const Document = models.get('Document');
-          const types = await Type.fetchAll({}, {}, trx);
+          const types = await Type.fetchAll({}, { order: 'id' }, trx);
           const path = getUrl(req);
           const documents = await Document.buildQuery({}, {}, trx)
             .select('type')

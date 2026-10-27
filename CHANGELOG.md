@@ -335,6 +335,7 @@
 - Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
 - Support the categories:list parameter of @actions @martior
 - Refuse aliases which are relative or the path of existing content or of another alias @martior
+- Sort types and behaviors by id in @types and the types control panel, so their order doesn't change after an upgrade @robgietema
 
 ### Internal
 
