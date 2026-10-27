@@ -4,11 +4,13 @@
  */
 
 // External imports
-import { describe, it } from 'vitest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import { adminToken, testRequest } from '../../helpers/tests/tests';
+import { Controlpanel } from '../../models/controlpanel/controlpanel';
 
 describe('Controlpanels', () => {
   it('should return the controlpanels', () =>
@@ -73,4 +75,28 @@ describe('Controlpanels', () => {
 
   it('should move a condition of a content rule in the content rules controlpanel', () =>
     testRequest(app, 'controlpanels/move_content_rule_condition'));
+
+  it('should never return a stored password', async () => {
+    const admin = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`);
+    await admin(request(app).patch('/@controlpanels/mail'))
+      .send({ pass: 'secret' })
+      .expect(204);
+
+    // The password is not returned
+    const res = await admin(request(app).get('/@controlpanels/mail')).expect(
+      200,
+    );
+    expect(res.body.data.pass).toBeNull();
+
+    // Sending the form back without a password keeps it
+    await admin(request(app).patch('/@controlpanels/mail'))
+      .send({ ...res.body.data, host: 'mail.example.com' })
+      .expect(204);
+    const mail = await Controlpanel.fetchById('mail', {}, global.txn!);
+    expect(mail.data.pass).toBe('secret');
+    expect(mail.data.host).toBe('mail.example.com');
+  });
 });

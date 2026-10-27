@@ -25,6 +25,8 @@ If the copy operation succeeds, the server will respond with status 200 (OK) and
 {% include_relative examples/copymove/copy.res %}
 ```
 
+A folder can be copied into one of its own subfolders. The copy contains the original children of the folder, but not the copy itself. A copy is never locked, also when the original is locked.
+
 ## Moving an object
 
 To move a content object send a `POST` request to the `/@move` endpoint at the destinations url with the source object specified in the request body. The source object can be specified either by path.
@@ -44,6 +46,10 @@ If the move operation succeeds, the server will respond with status `200 OK` and
 ```http
 {% include_relative examples/copymove/move.res %}
 ```
+
+A locked object can only be moved with the `Lock-Token` header of the lock, otherwise the server answers `423 Locked`.
+
+Sources the current user can't view are skipped. Moving also needs the `Modify` permission on the source, otherwise the server answers `403 Forbidden`.
 
 ## Copying/moving multiple objects
 

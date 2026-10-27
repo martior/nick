@@ -3,5 +3,5 @@
   "title": "Nick Core",
   "description": "Core functionality of Nick",
   "version": 1010,
-  "upgrade": "Add the delete permission."
+  "upgrade": "Add the revert permission."
 }
