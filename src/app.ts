@@ -29,7 +29,6 @@ import { getRootUrl } from './helpers/url/url';
 import { regExpEscape } from './helpers/utils/utils';
 import models from './models';
 import routes from './routes';
-import scheduledJobs from './scheduled_jobs';
 import middleware from './middleware';
 import requests from './helpers/requests/requests';
 
@@ -38,9 +37,6 @@ await initProfiles();
 
 // Initialize i18n
 initI18n();
-
-// Run scheduled tasks
-await scheduledJobs.refreshTasks();
 
 // Create blob dir if it doesn’t exist
 if (config.settings.blobs === 'file' && !existsSync(config.settings.blobsDir)) {

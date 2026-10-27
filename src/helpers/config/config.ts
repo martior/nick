@@ -33,6 +33,12 @@ const {
   TRUST_PROXY,
   BLOBS_DIR,
   LOCALES_DIR,
+  JOBS_ISOLATION,
+  JOBS_LEASE,
+  JOBS_MAX_ATTEMPTS,
+  JOBS_POLL_INTERVAL,
+  JOBS_API_PATH,
+  PORT,
 } = process.env;
 
 let config: any = {};
@@ -101,7 +107,7 @@ class Config {
       },
       localesDir:
         LOCALES_DIR || config.localesDir || `${__dirname}/../../../locales`,
-      port: config.port || 8080,
+      port: parseInt(PORT || config.port || '8080'),
       secret: getSecret(SECRET || config.secret, process.env.NODE_ENV),
       systemUsers: config.systemUsers || ['admin', 'anonymous'],
       systemGroups: config.systemGroups || ['Owner'],
@@ -219,6 +225,24 @@ class Config {
             enabled: false,
           },
         },
+      },
+      jobs: {
+        isolation: (JOBS_ISOLATION || config.jobs?.isolation || 'inline') as
+          'inline' | 'process',
+        lease: parseInt(JOBS_LEASE || config.jobs?.lease || '60'),
+        maxAttempts: parseInt(
+          JOBS_MAX_ATTEMPTS || config.jobs?.maxAttempts || '3',
+        ),
+        backoff: parseInt(config.jobs?.backoff || '10'),
+        maxBackoff: parseInt(config.jobs?.maxBackoff || '3600'),
+        pollInterval: parseInt(
+          JOBS_POLL_INTERVAL || config.jobs?.pollInterval || '2',
+        ),
+        refreshInterval: parseInt(config.jobs?.refreshInterval || '10'),
+        apiPath:
+          JOBS_API_PATH ||
+          config.jobs?.apiPath ||
+          `http://localhost:${PORT || config.port || 8080}`,
       },
       userschema: config.userschema || userschema,
     };
