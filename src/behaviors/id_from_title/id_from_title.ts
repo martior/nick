@@ -21,10 +21,10 @@ interface Document {
 const maxLength = 255;
 
 /**
- * Generate an id from a title, like the url normalizer of Plone: quotes are
- * removed, letters transliterated and lower cased, and every other
- * character than a-z, 0-9, dot, underscore and dash is a dash. Long ids are
- * cut at a dash.
+ * Generate an id from a title, like the url normalizer of Plone but without
+ * dots: quotes are removed, letters transliterated and lower cased, and
+ * every other character than a-z, 0-9, underscore and dash is a dash. Long
+ * ids are cut at a dash.
  * @method idFromTitle
  * @param {string} title Title.
  * @returns {string} Id, empty if the title has no letters or digits.
@@ -34,12 +34,12 @@ export function idFromTitle(title: string): string {
     (title || '')
       .replace(/['"]/g, '')
       // Symbols are dashes, not words like `and` for `&`
-      .replace(/[^\p{L}\p{N}\s._-]/gu, '-'),
+      .replace(/[^\p{L}\p{N}\s_-]/gu, '-'),
     { lower: true },
   )
-    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/[^a-z0-9_-]+/g, '-')
     .replace(/-{2,}/g, '-')
-    .replace(/^[-._]+|[-._]+$/g, '');
+    .replace(/^[-_]+|[-_]+$/g, '');
   if (id.length <= maxLength) {
     return id;
   }

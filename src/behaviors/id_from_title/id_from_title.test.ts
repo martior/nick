@@ -45,7 +45,7 @@ describe('id_from_title', () => {
   });
 
   describe('idFromTitle', () => {
-    it('makes every character but letters, digits, dot, underscore and dash a dash like Plone', () => {
+    it('makes every character but letters, digits, underscore and dash a dash', () => {
       expect(
         idFromTitle('The Plone universe: the ecosystem, and how it evolved'),
       ).toBe('the-plone-universe-the-ecosystem-and-how-it-evolved');
@@ -53,7 +53,7 @@ describe('id_from_title', () => {
         'q-a-100-ready-1-best',
       );
       expect(idFromTitle('Version 2.0 of my_module')).toBe(
-        'version-2.0-of-my_module',
+        'version-2-0-of-my_module',
       );
     });
 
@@ -62,7 +62,7 @@ describe('id_from_title', () => {
       expect(idFromTitle('Straße Ærø')).toBe('strasse-aero');
     });
 
-    it('trims dashes, dots and underscores', () => {
+    it('trims dashes and underscores', () => {
       expect(idFromTitle('  -- Hello. --  ')).toBe('hello');
       expect(idFromTitle('_private_')).toBe('private');
     });

@@ -5,7 +5,7 @@
 ### Breaking
 
 - Unset dates in search results and other catalog results are sent like Plone: `EffectiveDate` and `ExpirationDate` are `"None"` and `CreationDate` and `ModificationDate` `"Unknown"` instead of `null`, so frontends written for Plone (Volto, Aurora) no longer show every item as expired @mpalomaki
-- Ids generated from titles follow the url normalizer of Plone: every character but letters, digits, dot, underscore and dash is a dash (a comma, `&`, `%`, `#`, `;` or `=` no longer ends up in the id), dots are kept, and a title without letters or digits gives the type as id. Existing ids don't change @mpalomaki
+- Ids generated from titles follow the url normalizer of Plone: every character but letters, digits, underscore and dash is a dash, dots too (a comma, `&`, `%`, `#`, `;`, `=` or `.` no longer ends up in the id), and a title without letters or digits gives the type as id. Existing ids don't change @mpalomaki
 - Require the Manage Site permission and the site root for the @email-send and @users/<id>/@email-notification endpoints @martior
 - Require the Manage Site permission for the @content-rules endpoints @martior
 - Require the Modify permission for the users and groups vocabularies, like Plone @martior
