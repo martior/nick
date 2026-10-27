@@ -66,5 +66,6 @@ Content-Type: application/json
   "lock": {
     "locked": false,
     "stealable": true
-  }
+  },
+  "version": 0
 }

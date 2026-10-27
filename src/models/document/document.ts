@@ -93,6 +93,7 @@ export class Document extends Model {
     state_title?: string;
     review_state?: string;
     transition_title?: string;
+    comments?: string;
   }[];
   declare translation_group: string;
   declare language: string;
@@ -833,12 +834,29 @@ export class Document extends Model {
     req: Request,
     trx?: Knex.Transaction,
   ): Promise<any[]> {
+    const self: InstanceType<typeof Document> = this;
     const User = models.get('User');
+
+    // The entry of the creation has no action, it is shown as "Create"
+    // like in plone.restapi
+    const history: any[] = self.workflow_history;
+
     return await Promise.all(
-      this.workflow_history.map(async (item: any) => {
-        const user = await User.fetchById(item.actor, {}, trx);
+      history.map(async (item: any) => {
+        const user = item.actor
+          ? await User.fetchById(item.actor, {}, trx)
+          : undefined;
         return {
           ...item,
+          ...(!item.action && (!item.type || item.type === 'workflow')
+            ? {
+                action: 'Create',
+                transition_title: 'Create',
+              }
+            : {}),
+          ...(item.state_title
+            ? { state_title: req.i18n(item.state_title) }
+            : {}),
           actor: {
             '@id': `${getRootUrl(req)}/@users/${item.actor}`,
             fullname: user ? user.fullname : item.actor,
@@ -915,6 +933,8 @@ export class Document extends Model {
    * @param {boolean} recursive
    * @param {Knex.Transaction} trx Transaction object.
    * @param {Request} req Request object.
+   * @param {Object} options Comment and publication dates (`effective` and
+   * `expires`) of the transition.
    */
   async changeWorkflow(
     transition: string,
@@ -923,6 +943,7 @@ export class Document extends Model {
     recursive: boolean,
     trx: Knex.Transaction,
     req: Request,
+    options: { comment?: string; effective?: string; expires?: string } = {},
   ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
 
@@ -939,6 +960,27 @@ export class Document extends Model {
     const new_state =
       self._type._workflow.json.transitions[transition]?.new_state;
 
+    // Set the publication dates; the effective date is set when the item
+    // is published (viewable by anonymous) the first time
+    const dates = pick(options, ['effective', 'expires']);
+    if (
+      new_state &&
+      new_state !== old_state &&
+      !self.json.effective &&
+      !dates.effective &&
+      self._type._workflow
+        .getPermissions(new_state, ['Anonymous'])
+        .includes('View')
+    ) {
+      dates.effective = modified;
+    }
+    if (Object.keys(dates).length > 0) {
+      await self.updateAndFetch({ json: { ...self.json, ...dates } }, trx);
+      if (!new_state || new_state === old_state) {
+        await self.reindex(trx);
+      }
+    }
+
     // Check if state is available and not the current state
     if (new_state && new_state !== old_state) {
       // Add to workflow history
@@ -951,6 +993,7 @@ export class Document extends Model {
         review_state: new_state,
         transition_title:
           self._type._workflow.json.transitions[transition].title,
+        ...(options.comment ? { comments: options.comment } : {}),
       });
 
       // Trigger on before change workflow
@@ -1009,6 +1052,7 @@ export class Document extends Model {
           recursive,
           trx,
           req,
+          options,
         ),
     );
   }

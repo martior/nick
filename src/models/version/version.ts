@@ -72,7 +72,7 @@ export class Version extends Model {
             username: self._actor.id,
           }
         : null,
-      comments: isObject(self.json) ? self.json.changeNote : null,
+      comments: isObject(self.json) ? (self.json.changeNote ?? null) : null,
       may_revert: req.permissions.includes('Revert'),
       time: self.created,
       transition_title: 'Edited',

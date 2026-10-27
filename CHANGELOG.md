@@ -344,6 +344,10 @@
 - Add the `parent` summary to content (also to `fullobjects` items), the `Location` header on create and `Prefer: return=representation` on update, like plone.restapi; folder items always have a `description` @martior
 - Support `subset_ids` and `sort` when ordering content, ignore an unknown `obj_id` instead of moving another item, keep a negative delta in range, and apply other fields sent with the ordering in the same PATCH @martior
 - Name copies and moved items whose id is taken `copy_of_<id>` like Plone instead of `<id>-1` @martior
+- Set the `effective` and `expires` dates sent with a workflow transition (also on children with `include_children`), refuse invalid dates with a 400, set the effective date when content is published the first time, and answer a POST to `@workflow` without a transition with a 400 instead of a 404 @martior
+- Store the comment of a workflow transition and return the workflow history in `@workflow` (it was always empty) @martior
+- Shape `@history` like plone.restapi: list the creation as a `Create` entry, give versions without a change note `null` comments, say 'revision' in the revert comment, add `version` to content (`current`) and to old versions, and answer an unknown version with a 404 @martior
+- Record the creation of content as the first workflow history entry (without action) like Plone, instead of deriving a `Create` entry, so migrated histories are shown unchanged @martior
 
 ### Internal
 

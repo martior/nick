@@ -471,7 +471,7 @@ msgid "Change Note"
 msgstr "Notă de schimbare"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:1093
+#: src/routes/content/content.ts:1121
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -803,9 +803,9 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:227
-#: src/routes/content/content.ts:1135
-#: src/routes/content/content.ts:1311
+#: src/routes/content/content.ts:230
+#: src/routes/content/content.ts:1163
+#: src/routes/content/content.ts:1339
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Document blocat"
@@ -1217,7 +1217,7 @@ msgid "Internal server error"
 msgstr "Eroare internă de server"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:839
+#: src/routes/content/content.ts:856
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1228,6 +1228,12 @@ msgstr ""
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Credențiale nevalide"
+
+#. Default: "Invalid date for {field}."
+#: src/routes/workflow/workflow.ts:79
+msgctxt "Routes|Workflow"
+msgid "Invalid date for {field}."
+msgstr ""
 
 #. Default: "Invalid depth."
 #: src/routes/navigation/navigation.ts:79
@@ -1653,6 +1659,12 @@ msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
 
+#. Default: "No transition specified."
+#: src/routes/workflow/workflow.ts:177
+msgctxt "Routes|Workflow"
+msgid "No transition specified."
+msgstr ""
+
 #. Default: "None"
 #: src/scheduled_jobs/actions/reindex.ts:24
 #: src/content_rules/conditions/workflow_state.ts:18
@@ -1725,7 +1737,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:507
+#: src/routes/content/content.ts:523
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Nu a fost găsit."
@@ -1755,7 +1767,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1308
+#: src/routes/content/content.ts:1336
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1980,7 +1992,7 @@ msgid "Prompts"
 msgstr "Prompturi"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:823
+#: src/routes/content/content.ts:840
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2147,15 +2159,15 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:853
+#: src/routes/content/content.ts:870
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:226
-#: src/routes/content/content.ts:1134
+#: src/routes/content/content.ts:229
+#: src/routes/content/content.ts:1162
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2668,14 +2680,14 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:881
+#: src/routes/content/content.ts:898
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:870
-#: src/routes/content/content.ts:1153
+#: src/routes/content/content.ts:887
+#: src/routes/content/content.ts:1181
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2807,13 +2819,13 @@ msgid "The user viewing the querystring results"
 msgstr "Utilizatorul care vizualizează rezultatele șirului de interogare"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:916
+#: src/routes/content/content.ts:933
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:911
+#: src/routes/content/content.ts:928
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -2940,13 +2952,13 @@ msgid "Transition workflow state"
 msgstr ""
 
 #. Default: "Transition {transition} is not available for {path}."
-#: src/routes/workflow/workflow.ts:43
+#: src/routes/workflow/workflow.ts:44
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:87
+#: src/routes/workflow/workflow.ts:101
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -3099,6 +3111,7 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:91
+#: src/routes/content/content.ts:400
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3260,7 +3273,7 @@ msgid "Yes"
 msgstr "Da"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:96
+#: src/routes/workflow/workflow.ts:110
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Nu sunteți autorizat să accesați această resursă."
@@ -3282,7 +3295,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:212
+#: src/routes/content/content.ts:215
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -3291,7 +3304,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:902
+#: src/routes/content/content.ts:919
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""

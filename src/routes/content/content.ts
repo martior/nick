@@ -393,14 +393,27 @@ export default [
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
       await req.document.fetchChildren({}, trx);
-      await req.document.fetchVersion(parseInt(req.params.version, 10), trx);
+      const version = parseInt(req.params.version, 10);
+      await req.document.fetchVersion(version, trx);
+      if (!req.document._version) {
+        throw new RequestException(404, {
+          message: req.i18n('Version not found.'),
+        });
+      }
       await req.document.fetchRelationLists(trx, req);
       return {
         json: await handleBlockReferences(
-          await req.document.toJson(
-            req,
-            await getComponents(req, trx, req.query?.expand?.split(',') || []),
-          ),
+          {
+            ...(await req.document.toJson(
+              req,
+              await getComponents(
+                req,
+                trx,
+                req.query?.expand?.split(',') || [],
+              ),
+            )),
+            version,
+          },
           trx,
         ),
         xkeys: [req.document.uuid],
@@ -797,6 +810,7 @@ export default [
             })),
             items_total: total,
             ...(links ? { batching: links } : {}),
+            version: 'current',
           },
           trx,
         ),
@@ -969,7 +983,18 @@ export default [
             : req.document._children.length,
         lock: { locked: false, stealable: true },
         workflow_state: type._workflow.json.initial_state,
-        workflow_history: JSON.stringify([]),
+        // The creation is the first entry of the history, like in Plone
+        workflow_history: JSON.stringify([
+          {
+            time: created,
+            actor: req.user.id,
+            action: null,
+            review_state: type._workflow.json.initial_state,
+            state_title:
+              type._workflow.json.states?.[type._workflow.json.initial_state]
+                ?.title,
+          },
+        ]),
         owner: req.user.id,
         json,
       }) as any;
@@ -1262,7 +1287,7 @@ export default [
 
       // Return the content if asked for
       if (req.headers.prefer === 'return=representation') {
-        await req.document.fetchRelationLists(trx);
+        await req.document.fetchRelationLists(trx, req);
         await req.document.fetchChildren(req, trx);
         await req.document.restrictChildren(req, trx);
         return {

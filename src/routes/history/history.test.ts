@@ -122,4 +122,57 @@ describe('History', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ version: 99 })
       .expect(404));
+
+  it('should list the versions and the creation like plone.restapi', async () => {
+    const get = (path: string) =>
+      request(app)
+        .get(path)
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+    const patch = (body: any) =>
+      request(app)
+        .patch('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body)
+        .expect(204);
+
+    await patch({ title: 'v1', changeNote: 'Fixed a typo' });
+    await patch({ title: 'v2' });
+    await request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ version: 2 })
+      .expect(200);
+
+    const history = (await get('/news/@history').expect(200)).body;
+    const versions = history.filter((item: any) => item.type === 'versioning');
+    expect(
+      versions.map((item: any) => [item.version, item.comments]),
+    ).toStrictEqual([
+      [4, 'Reverted to revision 2'],
+      [3, null],
+      [2, 'Fixed a typo'],
+      [1, 'Changed title'],
+      [0, 'Initial version'],
+    ]);
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'created', title: 'Created' })
+      .expect(201);
+    const create = (await get('/news/created/@history').expect(200)).body.at(
+      -1,
+    );
+    expect([create.type, create.action, create.transition_title]).toStrictEqual(
+      ['workflow', 'Create', 'Create'],
+    );
+    expect(create.review_state).toBe('private');
+
+    expect((await get('/news').expect(200)).body.version).toBe('current');
+    expect((await get('/news/@history/1').expect(200)).body.version).toBe(1);
+    await get('/news/@history/99').expect(404);
+  });
 });
