@@ -92,6 +92,26 @@ async function fetchPrincipals(
   );
 }
 
+/**
+ * Fetch the roles the current user may delegate: the roles with a
+ * `Delegate <role>` permission the user has on the document, like the
+ * "Sharing page: Delegate <role> role" permissions of Plone.
+ * @method fetchDelegatableRoles
+ * @param {Request} req Request object.
+ * @param {Object} trx transaction object.
+ * @returns {Promise<Object[]>} Roles sorted by id.
+ */
+async function fetchDelegatableRoles(
+  req: Request,
+  trx: Knex.Transaction,
+): Promise<any[]> {
+  const Role = models.get('Role');
+  const roles = await Role.fetchAll({}, { order: 'id' }, trx);
+  return roles
+    .map((role: any) => role)
+    .filter((role: any) => req.permissions.includes(`Delegate ${role.id}`));
+}
+
 export default [
   {
     op: 'get',
@@ -101,12 +121,11 @@ export default [
     cache: 'manage',
     middleware: apiLimiter,
     handler: async (req: Request, trx: Knex.Transaction) => {
-      const Role = models.get('Role');
       const User = models.get('User');
       const Group = models.get('Group');
 
-      // Get roles
-      const roles = await Role.fetchAll({}, { order: 'order' }, trx);
+      // Get the roles the user may delegate
+      const roles = await fetchDelegatableRoles(req, trx);
 
       // Get user roles
       const users = await fetchPrincipals(
@@ -169,13 +188,21 @@ export default [
         );
       }
 
+      // Get the roles the user may delegate, other roles are ignored
+      const roles = (await fetchDelegatableRoles(req, trx)).map(
+        (role: any) => role.id,
+      );
+
       // Update local roles
       await Promise.all(
         req.body.entries.map(async (entry: any) => {
           const Model = entry.type === 'user' ? User : Group;
           const principal = await Model.fetchById(entry.id, {}, trx);
           if (principal) {
-            await mapAsync(Object.keys(entry.roles), async (role: any) => {
+            const entryRoles = Object.keys(entry.roles).filter((role) =>
+              roles.includes(role),
+            );
+            await mapAsync(entryRoles, async (role: any) => {
               // If should relate
               if (entry.roles[role] === true) {
                 const existing = await principal
@@ -188,11 +215,18 @@ export default [
                     .relate({ id: role, document: req.document.uuid });
                 }
               } else if (entry.roles[role] === false) {
-                // Unrelate
-                await principal
-                  .$relatedQuery('_documentRoles', trx)
-                  .unrelate()
-                  .where({ role, document: req.document.uuid });
+                // Remove the role on this document only
+                await trx(
+                  entry.type === 'user'
+                    ? 'user_role_document'
+                    : 'group_role_document',
+                )
+                  .where({
+                    [entry.type === 'user' ? 'user' : 'group']: principal.id,
+                    role,
+                    document: req.document.uuid,
+                  })
+                  .delete();
               }
             });
           }
