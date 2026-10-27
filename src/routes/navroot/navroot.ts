@@ -15,7 +15,8 @@ import { getUrl } from '../../helpers/url/url';
 
 export const handler = async (req: Request, trx: Knex.Transaction) => {
   await req.navroot.fetchChildren({}, trx);
-  await req.navroot.fetchRelationLists(trx);
+  await req.navroot.restrictChildren(req, trx);
+  await req.navroot.fetchRelationLists(trx, req);
 
   return {
     json: {
