@@ -129,7 +129,17 @@ export interface ScheduledJobAction {
   getDescription(req: Request): string;
   getSummary(req: Request, params: Params): string;
   schema: Json;
-  handler(params: Params, actor: any, trx: Knex.Transaction): Promise<any>;
+  handler(
+    params: Params,
+    actor: any,
+    trx: Knex.Transaction,
+    context?: ScheduledJobContext,
+  ): Promise<any>;
+}
+
+export interface ScheduledJobContext {
+  job: string;
+  signal: AbortSignal;
 }
 
 export interface ContentRuleAction {
@@ -394,6 +404,16 @@ export type ConfigSettings = {
     batch: number;
   };
   reindexSecurityLimit?: number;
+  jobs: {
+    isolation: 'inline' | 'process';
+    lease: number;
+    maxAttempts: number;
+    backoff: number;
+    maxBackoff: number;
+    pollInterval: number;
+    refreshInterval: number;
+    apiPath: string;
+  };
   userschema: (req: Request) => Schema;
   [key: string]: unknown;
 };

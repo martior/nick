@@ -520,6 +520,9 @@ Volto will start on http://localhost:3000 and connect to Nick on port 8080.
 # Start Nick (development mode with auto-reload)
 pnpm start
 
+# Migrate, then run the API and the job worker (see Deployment)
+pnpm nick --modules=migrate,api,worker
+
 # Run tests
 pnpm test
 
