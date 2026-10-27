@@ -261,6 +261,14 @@
 - Require the View permission to stream videos with @@videos @martior
 - Skip sources the user can't view in @copy and @move, and require Modify on the source to move it @martior
 - Fix non ascii image filename @martior
+- Fix document urls in export and import of ids containing dots @martior
+- Paginate search, users and groups in export, plone.restapi 10 batches users @martior
+- Keep core users, roles, permissions and actions when importing an exported profile and map Plone roles to Nick roles @martior
+- Give every exported user its own random password instead of one shared password @martior
+- Stop the export on failed requests, read groups unbatched and skip comments in the document listing @martior
+- Export type behaviors, allowed content types and unlisted types, so exported documents can be traversed @martior
+- Fix import of exported groups without email @martior
+- Allow descriptions longer than 255 characters for workflows, types and groups @martior
 
 ### Internal
 
