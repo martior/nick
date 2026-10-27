@@ -26,6 +26,7 @@ import { callHandler } from './helpers/handler/handler';
 import { initI18n } from './helpers/i18n/i18n';
 import { log } from './helpers/log/log';
 import { initProfiles } from './helpers/profiles/profiles';
+import { parseQuerystring } from './helpers/querystring/querystring';
 import { getRootUrl } from './helpers/url/url';
 import { regExpEscape } from './helpers/utils/utils';
 import models from './models';
@@ -75,6 +76,9 @@ if (process.env.NODE_ENV === 'production') {
 
 // Create app
 const app = express();
+
+// Parse querystrings as a Plone backend does (Zope's :list marshalling)
+app.set('query parser', parseQuerystring);
 
 // Add middleware
 app.use(

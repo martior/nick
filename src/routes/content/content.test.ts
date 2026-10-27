@@ -921,3 +921,75 @@ describe('Ranges', () => {
     });
   });
 });
+
+describe('Expand', () => {
+  // plone.restapi accepts a Zope :list, a comma separated string and a single
+  // value, every form expands the same components
+  const get = (querystring: string) =>
+    request(app)
+      .get(`/${querystring}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+
+  const expectExpanded = (body: any) => {
+    expect(body['@components'].breadcrumbs.items).toBeInstanceOf(Array);
+    expect(body['@components'].navigation.items).toBeInstanceOf(Array);
+    expect(body['@components'].actions.object).toBeUndefined();
+  };
+
+  it('should not expand components that were not asked for', async () => {
+    const res = await get('');
+    expect(res.body['@components'].navigation.items).toBeUndefined();
+  });
+
+  it('should expand the :list form', async () => {
+    const res = await get('?expand:list=breadcrumbs&expand:list=navigation');
+    expectExpanded(res.body);
+  });
+
+  it('should expand the comma separated form', async () => {
+    const res = await get('?expand=breadcrumbs,navigation');
+    expectExpanded(res.body);
+  });
+
+  it('should expand a repeated parameter without :list', async () => {
+    const res = await get('?expand=breadcrumbs&expand=navigation');
+    expectExpanded(res.body);
+  });
+});
+
+describe('Language', () => {
+  const add = (path: string, body: object) =>
+    request(app)
+      .post(path)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(body)
+      .expect(201);
+
+  it('should give new content the language of its container', async () => {
+    await add('/', {
+      '@type': 'Folder',
+      uuid: '7d1e0c2a-5b3f-4c6d-8e9f-0a1b2c3d4e01',
+      id: 'nl',
+      title: 'NL',
+      language: 'nl',
+    });
+    const page = await add('/nl', {
+      '@type': 'Page',
+      uuid: '7d1e0c2a-5b3f-4c6d-8e9f-0a1b2c3d4e02',
+      title: 'Pagina',
+    });
+    expect(page.body.language).toEqual({ token: 'nl', title: 'Nederlands' });
+
+    // Unless the language is sent
+    const other = await add('/nl', {
+      '@type': 'Page',
+      uuid: '7d1e0c2a-5b3f-4c6d-8e9f-0a1b2c3d4e03',
+      title: 'Page',
+      language: 'en',
+    });
+    expect(other.body.language.token).toBe('en');
+  });
+});

@@ -31,6 +31,7 @@ import {
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
+import { expandable } from '../../helpers/querystring/querystring';
 import {
   contentBodyParser,
   resolveMultipartBody,
@@ -464,11 +465,7 @@ export default [
           {
             ...(await req.document.toJson(
               req,
-              await getComponents(
-                req,
-                trx,
-                req.query?.expand?.split(',') || [],
-              ),
+              await getComponents(req, trx, expandable(req.query?.expand)),
             )),
             version,
           },
@@ -824,7 +821,7 @@ export default [
 
       const json: any = await req.document.toJson(
         req,
-        await getComponents(req, trx, req.query?.expand?.split(',') || []),
+        await getComponents(req, trx, expandable(req.query?.expand)),
       );
       const links = getBatching(
         getUrl(req),
@@ -1012,7 +1009,11 @@ export default [
         type: req.body['@type'],
         created,
         translation_group,
-        language: req.body.language,
+        // The language of the container, like plone.app.multilingual
+        language:
+          req.body.language !== undefined
+            ? req.body.language
+            : req.document.language,
         modified: created,
         version: 0,
         position_in_parent:
@@ -1112,7 +1113,7 @@ export default [
       // Send data back to client
       const result: any = await document.toJson(
         req,
-        await getComponents(req, trx, req.query?.expand?.split(',') || []),
+        await getComponents(req, trx, expandable(req.query?.expand)),
       );
       return {
         status: 201,
