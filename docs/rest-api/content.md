@@ -138,7 +138,9 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 {% include_relative endpoints/examples/content/get.res %}
 ```
 
-For folderish types, their childrens are automatically included in the response as items.
+For folderish types, their childrens are automatically included in the response as items, with `items_total`, the number of children the user may view. Like in plone.restapi, the items are batched with `b_start` and `b_size` (default 25), and a `batching` object with the `@id`, `first`, `last`, `next` and `prev` links is added when there is more than one batch. With `fullobjects=1` the items also contain their `parent`.
+
+The response contains a summary of the `parent` (`@id`, `@type`, `title`, `description` and `review_state`), except for the root.
 
 Relation list fields (like `relatedItems`) only include the related items the current user can view.
 
@@ -183,6 +185,8 @@ A successful response to a PATCH request will be indicated by a `204 No Content`
 ```http
 {% include_relative endpoints/examples/content/patch.res %}
 ```
+
+With the header `Prefer: return=representation` the response is a `200 OK` with the updated resource, like a GET.
 
 ## Removing a Resource with DELETE
 
@@ -229,6 +233,18 @@ Or use the client directly:
 ```ts
 {% include_relative endpoints/examples/content/patch_reorder.ts %}
 ```
+
+Like in plone.restapi, the optional `subset_ids` subkey lists the ids of the resources the client shows, in the order it knows them. The resource is then moved within this subset; if the order of the subset doesn't match the order on the server, the response is `400 Bad Request`. An unknown `obj_id` is ignored.
+
+All resources can be sorted with the `sort` key, with `on` (`id`, `sortable_title`, `created`, `modified` or a field) and `order` (`ascending` or `descending`):
+
+```json
+{
+  "sort": { "on": "sortable_title", "order": "descending" }
+}
+```
+
+Ordering and sorting can be combined with changes of other fields in the same PATCH request.
 
 ## Exporting a Resource with GET
 

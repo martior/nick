@@ -470,6 +470,12 @@ msgctxt "Profiles|Core|Behaviors|Versioning"
 msgid "Change Note"
 msgstr "Ŝanĝonoto"
 
+#. Default: "Client/server ordering mismatch."
+#: src/routes/content/content.ts:1093
+msgctxt "Routes|Content"
+msgid "Client/server ordering mismatch."
+msgstr ""
+
 #. Default: "Comment"
 #: src/content_rules/actions/version_item.ts:33
 msgctxt "Content rules|Actions|Version item"
@@ -797,9 +803,9 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:222
-#: src/routes/content/content.ts:1060
-#: src/routes/content/content.ts:1219
+#: src/routes/content/content.ts:227
+#: src/routes/content/content.ts:1135
+#: src/routes/content/content.ts:1311
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokumento ŝlosita"
@@ -1211,7 +1217,7 @@ msgid "Internal server error"
 msgstr "Interna servileraro"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:798
+#: src/routes/content/content.ts:839
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1237,8 +1243,8 @@ msgid "Invalid move."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:196
-#: src/routes/search/search.ts:345
+#: src/routes/search/search.ts:186
+#: src/routes/search/search.ts:335
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1642,7 +1648,7 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:191
+#: src/routes/search/search.ts:181
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
@@ -1719,7 +1725,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:502
+#: src/routes/content/content.ts:507
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Ne trovita."
@@ -1749,7 +1755,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1216
+#: src/routes/content/content.ts:1308
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1974,7 +1980,7 @@ msgid "Prompts"
 msgstr "Instigaj tekstoj"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:782
+#: src/routes/content/content.ts:823
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2141,15 +2147,15 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:812
+#: src/routes/content/content.ts:853
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:221
-#: src/routes/content/content.ts:1059
+#: src/routes/content/content.ts:226
+#: src/routes/content/content.ts:1134
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2662,14 +2668,14 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:840
+#: src/routes/content/content.ts:881
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:829
-#: src/routes/content/content.ts:1078
+#: src/routes/content/content.ts:870
+#: src/routes/content/content.ts:1153
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2801,13 +2807,13 @@ msgid "The user viewing the querystring results"
 msgstr "La uzanto rigardanta la serĉrezultojn"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:875
+#: src/routes/content/content.ts:916
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:870
+#: src/routes/content/content.ts:911
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -3276,7 +3282,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:207
+#: src/routes/content/content.ts:212
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -3285,7 +3291,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:861
+#: src/routes/content/content.ts:902
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""

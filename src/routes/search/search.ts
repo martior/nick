@@ -14,7 +14,10 @@ import { pick } from 'es-toolkit/object';
 import { chat } from '../../helpers/ai/ai';
 import config from '../../helpers/config/config';
 import { apiLimiter } from '../../helpers/limiter/limiter';
-import { getComponents } from '../../helpers/content/content';
+import {
+  fetchParentSummary,
+  getComponents,
+} from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import {
   getBatching,
@@ -23,7 +26,7 @@ import {
   querystringToQuery,
   queryparamToQuery,
 } from '../../helpers/query/query';
-import { getUrl, getUrlByPath } from '../../helpers/url/url';
+import { getUrl } from '../../helpers/url/url';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
 
@@ -121,26 +124,13 @@ const serializeItems = async (
       await document.fetchRelated('_type', trx);
       await document.applyBehaviors(trx);
       await document.fetchRelationLists(trx);
-      const parent = document.parent
-        ? await Document.fetchById(document.parent, {}, trx)
-        : undefined;
       const documentReq = { ...req, document } as Request;
       return {
         ...(await document.toJson(
           documentReq,
           await getComponents(documentReq, trx, []),
         )),
-        ...(parent
-          ? {
-              parent: {
-                '@id': getUrlByPath(req, parent.path),
-                '@type': parent.type,
-                title: parent.json.title,
-                description: parent.json.description || '',
-                review_state: parent.workflow_state,
-              },
-            }
-          : {}),
+        ...(await fetchParentSummary(req, document, trx)),
       };
     });
   }

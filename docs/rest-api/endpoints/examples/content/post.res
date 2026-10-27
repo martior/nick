@@ -1,5 +1,6 @@
 HTTP/1.1 201 Created
 Content-Type: application/json
+Location: http://localhost:8080/news/my-news-item
 
 {
   "title": "My News Item",
@@ -52,5 +53,12 @@ Content-Type: application/json
   "lock": {
     "locked": false,
     "stealable": true
+  },
+  "parent": {
+    "@id": "http://localhost:8080/news",
+    "@type": "Folder",
+    "title": "News",
+    "description": "News Items",
+    "review_state": "published"
   }
 }

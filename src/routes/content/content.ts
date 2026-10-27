@@ -11,6 +11,7 @@ import type { Knex } from 'knex';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { difference, drop } from 'es-toolkit/array';
+import { isEqual, isObject } from 'es-toolkit/compat';
 import { omit, pick } from 'es-toolkit/object';
 import { v4 as uuid } from 'uuid';
 
@@ -19,12 +20,14 @@ import events from '../../events';
 import { checkETag } from '../../helpers/cache/cache';
 import config from '../../helpers/config/config';
 import {
+  fetchParentSummary,
   getComponents,
   handleBlockReferences,
   handleBlocks,
   handleFiles,
   handleImages,
   handleRelationLists,
+  parentSummary,
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
@@ -33,13 +36,18 @@ import {
   resolveMultipartBody,
 } from '../../helpers/multipart/multipart';
 import { lockExpired } from '../../helpers/lock/lock';
-import { getFactoryFields } from '../../helpers/schema/schema';
-import { getRootUrl } from '../../helpers/url/url';
-import { normalizeFields, validateFields } from '../../helpers/schema/schema';
+import { getBatching, getBatchParams } from '../../helpers/query/query';
+import { getRootUrl, getUrl } from '../../helpers/url/url';
+import {
+  getFactoryFields,
+  normalizeFields,
+  validateFields,
+} from '../../helpers/schema/schema';
 import {
   bytesToNumber,
   isValidId,
   mapAsync,
+  pasteId,
   uniqueId,
 } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -239,7 +247,7 @@ export default [
 
           // Calculate new id and path
           const path = req.document.path;
-          const newId = uniqueId(document.id, childIds);
+          const newId = pasteId(document.id, childIds);
           const newPath = `${path}${path === '/' ? '' : '/'}${newId}`;
 
           // Add new id to list of taken ids
@@ -328,7 +336,7 @@ export default [
 
         // Calculate new id and path
         const path = req.document.path;
-        const newId = uniqueId(document.id, childIds);
+        const newId = pasteId(document.id, childIds);
         const newPath = `${path}${path === '/' ? '' : '/'}${newId}`;
 
         // Add new id to list of taken ids
@@ -749,13 +757,49 @@ export default [
         };
       }
 
-      const json = await req.document.toJson(
+      // Batch the items
+      const { start, size } = getBatchParams(
+        req.query?.b_start,
+        req.query?.b_size,
+      );
+      const total = req.document._restrictedChildren.length;
+      req.document._restrictedChildren = req.document._restrictedChildren.slice(
+        start,
+        start + size,
+      );
+      const fullobjects = ['1', 'true', 'True'].includes(
+        req.query?.fullobjects,
+      );
+
+      const json: any = await req.document.toJson(
         req,
         await getComponents(req, trx, req.query?.expand?.split(',') || []),
       );
+      const links = getBatching(
+        getUrl(req),
+        req.query || {},
+        total,
+        start,
+        size,
+      );
       return {
         xkeys: [req.document.uuid],
-        json: await handleBlockReferences(json, trx),
+        json: await handleBlockReferences(
+          {
+            ...json,
+            ...(await fetchParentSummary(req, req.document, trx)),
+            items: json.items.map((item: any) => ({
+              ...item,
+              description: item.description || '',
+              ...(fullobjects
+                ? { parent: parentSummary(req, req.document) }
+                : {}),
+            })),
+            items_total: total,
+            ...(links ? { batching: links } : {}),
+          },
+          trx,
+        ),
       };
     },
   },
@@ -1003,12 +1047,19 @@ export default [
       );
 
       // Send data back to client
+      const result: any = await document.toJson(
+        req,
+        await getComponents(req, trx, req.query?.expand?.split(',') || []),
+      );
       return {
         status: 201,
-        json: await document.toJson(
-          req,
-          await getComponents(req, trx, req.query?.expand?.split(',') || []),
-        ),
+        headers: {
+          Location: result['@id'],
+        },
+        json: {
+          ...result,
+          parent: parentSummary(req, req.document),
+        },
       };
     },
   },
@@ -1028,23 +1079,50 @@ export default [
       // Lock the document to serialize concurrent changes
       await req.document.lockForUpdate(trx);
 
-      // Check if ordering request
-      if (typeof req.body?.ordering !== 'undefined') {
-        // Get children and reorder
+      // Check if ordering or sorting request
+      const { ordering, sort } = req.body || {};
+      if (typeof ordering !== 'undefined' || typeof sort !== 'undefined') {
         await req.document.fetchChildren({}, trx);
-        await req.document.reorder(
-          req.body.ordering.obj_id,
-          req.body.ordering.delta,
-          trx,
-        );
+
+        // Reorder an item, within the subset if specified
+        if (isObject(ordering)) {
+          const { obj_id, delta, subset_ids } = ordering as any;
+          if (Array.isArray(subset_ids)) {
+            const ids = req.document._children
+              .map((child: InstanceType<typeof Document>) => child.id)
+              .filter((childId: string) => subset_ids.includes(childId));
+            if (!isEqual(ids, subset_ids)) {
+              throw new RequestException(400, {
+                message: req.i18n('Client/server ordering mismatch.'),
+              });
+            }
+          }
+          await req.document.reorder(
+            obj_id,
+            delta,
+            trx,
+            Array.isArray(subset_ids) ? subset_ids : undefined,
+          );
+        }
+
+        // Sort all items
+        if (isObject(sort) && typeof (sort as any).on === 'string') {
+          await req.document.sortChildren(
+            (sort as any).on,
+            (sort as any).order,
+            trx,
+          );
+        }
 
         // Reindex children
         await req.document.reindexChildren(trx);
 
-        // Send ok
-        return {
-          status: 204,
-        };
+        // Send ok if nothing else to update
+        if (Object.keys(omit(req.body, ['ordering', 'sort'])).length === 0) {
+          return {
+            status: 204,
+          };
+        }
       }
 
       // Check if locked
@@ -1181,6 +1259,23 @@ export default [
 
       // Trigger onAfterModified
       await events.trigger('onAfterModified', req.document, req.user, trx, req);
+
+      // Return the content if asked for
+      if (req.headers.prefer === 'return=representation') {
+        await req.document.fetchRelationLists(trx);
+        await req.document.fetchChildren(req, trx);
+        await req.document.restrictChildren(req, trx);
+        return {
+          status: 200,
+          json: {
+            ...(await req.document.toJson(
+              req,
+              await getComponents(req, trx, []),
+            )),
+            ...(await fetchParentSummary(req, req.document, trx)),
+          },
+        };
+      }
 
       // Send ok
       return {
