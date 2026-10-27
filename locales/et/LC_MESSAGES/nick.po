@@ -214,9 +214,10 @@ msgid "Allowed Content Types"
 msgstr "Lubatud sisutüübid"
 
 #. Default: "Allows users to login with their email address instead of specifying a separate login name."
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:30
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:16
-#: src/profiles/core/controlpanels/security.json:16
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+#: src/profiles/core/controlpanels/security.json:30
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
 msgid "Allows users to login with their email address instead of specifying a separate login name."
 msgstr ""
 
@@ -233,7 +234,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Üksus, mis vastutab selle elemendi kättesaadavaks tegemise eest."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:320
+#: src/routes/users/users.ts:341
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -677,6 +678,7 @@ msgstr ""
 #: src/content_rules/actions/transition_workflow.ts:26
 #: src/content_rules/actions/send_email.ts:30
 #: src/constants/userschema.ts:13
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:14
 #: src/profiles/core/upgrades/1001/controlpanels/usergroup.json:10
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:10
 #: src/profiles/core/types/video.json:13
@@ -685,7 +687,7 @@ msgstr ""
 #: src/profiles/core/types/feed.json:13
 #: src/profiles/core/types/event.json:25
 #: src/profiles/core/controlpanels/usergroup.json:10
-#: src/profiles/core/controlpanels/security.json:10
+#: src/profiles/core/controlpanels/security.json:14
 #: src/profiles/core/behaviors/versioning.json:10
 #: src/profiles/core/behaviors/preview_image_link.json:10
 #: src/profiles/core/behaviors/basic.json:10
@@ -869,7 +871,7 @@ msgid "Effective date"
 msgstr "Jõustumiskuupäev"
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:257
+#: src/routes/users/users.ts:278
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -903,6 +905,13 @@ msgstr ""
 #: src/content_rules/actions/send_email.ts:59
 msgctxt "Content rules|Actions|Send email"
 msgid "Email source"
+msgstr ""
+
+#. Default: "Enable self-registration"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:19
+#: src/profiles/core/controlpanels/security.json:19
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "Enable self-registration"
 msgstr ""
 
 #. Default: "Enables Volto Blocks support"
@@ -1359,6 +1368,13 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Less than"
 msgstr "Väiksem kui"
 
+#. Default: "Let users select their own passwords"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:24
+#: src/profiles/core/controlpanels/security.json:24
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "Let users select their own passwords"
+msgstr ""
+
 #. Default: "Lets you upload a file to the site."
 #: src/profiles/core/types/file.json:4
 msgctxt "Profiles|Core|Types|File"
@@ -1366,7 +1382,7 @@ msgid "Lets you upload a file to the site."
 msgstr "Võimaldab faili saidile üles laadida."
 
 #. Default: "Limit must be a positive number."
-#: src/routes/users/users.ts:189
+#: src/routes/users/users.ts:191
 #: src/routes/groups/groups.ts:69
 msgctxt "Routes|Users"
 msgid "Limit must be a positive number."
@@ -1739,9 +1755,9 @@ msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:156
-#: src/routes/users/users.ts:391
-#: src/routes/users/users.ts:458
+#: src/routes/users/users.ts:158
+#: src/routes/users/users.ts:412
+#: src/routes/users/users.ts:479
 #: src/routes/types/types.ts:59
 #: src/routes/types/types.ts:171
 #: src/routes/types/types.ts:329
@@ -1874,16 +1890,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:116
-#: src/routes/users/users.ts:339
+#: src/routes/users/users.ts:118
+#: src/routes/users/users.ts:360
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Parooli lähtestamise taotlus"
 
 #. Default: "Password should be at least 8 characters long."
-#: src/routes/users/users.ts:52
-#: src/routes/users/users.ts:267
-#: src/routes/users/users.ts:401
+#: src/routes/users/users.ts:54
+#: src/routes/users/users.ts:288
+#: src/routes/users/users.ts:422
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1917,6 +1933,13 @@ msgstr ""
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Ootel ülevaatus"
+
+#. Default: "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:25
+#: src/profiles/core/controlpanels/security.json:25
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
+msgstr ""
 
 #. Default: "Perform a workflow transition on the triggering object"
 #: src/content_rules/actions/transition_workflow.ts:16
@@ -2314,9 +2337,10 @@ msgid "Secure"
 msgstr "Turvaline"
 
 #. Default: "Security"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:3
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:3
 #: src/profiles/core/controlpanels/security.json:3
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
 msgid "Security"
 msgstr ""
 
@@ -2551,7 +2575,7 @@ msgid "System group"
 msgstr "Süsteemigrupp"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:450
+#: src/routes/users/users.ts:471
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Süsteemikasutajad"
@@ -2702,8 +2726,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:117
-#: src/routes/users/users.ts:340
+#: src/routes/users/users.ts:119
+#: src/routes/users/users.ts:361
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -3053,9 +3077,10 @@ msgid "Use '../' to navigate to parent objects."
 msgstr "Kasutage '../' ülemobjektide juurde navigeerimiseks."
 
 #. Default: "Use email address as login name"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:29
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:15
-#: src/profiles/core/controlpanels/security.json:15
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+#: src/profiles/core/controlpanels/security.json:29
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
 msgid "Use email address as login name"
 msgstr ""
 
@@ -3073,7 +3098,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:72
+#: src/routes/users/users.ts:74
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "Kasutajat ei eksisteeri või mandaadid on vigased."
@@ -3203,6 +3228,13 @@ msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Nähtav kõigile, muudetav omaniku poolt."
 
+#. Default: "Visitors can create their own account. When this is off, only administrators can add users."
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:20
+#: src/profiles/core/controlpanels/security.json:20
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "Visitors can create their own account. When this is off, only administrators can add users."
+msgstr ""
+
 #. Default: "Waiting to be reviewed, not editable by the owner."
 #: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
@@ -3295,7 +3327,7 @@ msgid "Wrong login and/or password."
 msgstr "Vale sisselogimine ja/või parool."
 
 #. Default: "Wrong password."
-#: src/routes/users/users.ts:90
+#: src/routes/users/users.ts:92
 msgctxt "Routes|Users"
 msgid "Wrong password."
 msgstr ""
@@ -3306,6 +3338,12 @@ msgstr ""
 msgctxt "Profiles|Core|Catalog"
 msgid "Yes"
 msgstr "Jah"
+
+#. Default: "You are not allowed to set roles or groups."
+#: src/routes/users/users.ts:259
+msgctxt "Routes|Users"
+msgid "You are not allowed to set roles or groups."
+msgstr ""
 
 #. Default: "You are not authorization to access this resource."
 #: src/routes/workflow/workflow.ts:110
@@ -3320,7 +3358,7 @@ msgid "You are not authorized to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
-#: src/routes/users/users.ts:374
+#: src/routes/users/users.ts:395
 #: src/routes/types/types.ts:43
 #: src/routes/translations/translations.ts:39
 #: src/routes/recyclebin/recyclebin.ts:45
@@ -3352,7 +3390,7 @@ msgid "You can not filter by title and token at the same time."
 msgstr ""
 
 #. Default: "You can only change your own password."
-#: src/routes/users/users.ts:79
+#: src/routes/users/users.ts:81
 msgctxt "Routes|Users"
 msgid "You can only change your own password."
 msgstr ""
@@ -3364,7 +3402,7 @@ msgid "You can’t delete system groups."
 msgstr "Süsteemigruppe ei saa kustutada."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:449
+#: src/routes/users/users.ts:470
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Süsteemikasutajaid ei saa kustutada."
@@ -3394,19 +3432,19 @@ msgid "You don’t have permission to unlock this document."
 msgstr "Teil pole luba seda dokumenti lukust lahti teha."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:238
+#: src/routes/users/users.ts:248
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Teil ei ole õigust kasutajat lisada."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:144
+#: src/routes/users/users.ts:146
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""
 
 #. Default: "You must enter a valid email address."
-#: src/routes/users/users.ts:249
+#: src/routes/users/users.ts:270
 msgctxt "Routes|Users"
 msgid "You must enter a valid email address."
 msgstr ""

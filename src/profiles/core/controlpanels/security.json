@@ -5,12 +5,26 @@
   "schema": {
     "fieldsets": [
       {
-        "fields": ["use_email_as_login"],
+        "fields": [
+          "enable_self_reg",
+          "enable_user_pwd_choice",
+          "use_email_as_login"
+        ],
         "id": "default",
         "title:i18n": "Default"
       }
     ],
     "properties": {
+      "enable_self_reg": {
+        "title:i18n": "Enable self-registration",
+        "description:i18n": "Visitors can create their own account. When this is off, only administrators can add users.",
+        "type": "boolean"
+      },
+      "enable_user_pwd_choice": {
+        "title:i18n": "Let users select their own passwords",
+        "description:i18n": "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it.",
+        "type": "boolean"
+      },
       "use_email_as_login": {
         "title:i18n": "Use email address as login name",
         "description:i18n": "Allows users to login with their email address instead of specifying a separate login name.",
@@ -20,6 +34,8 @@
     "required": []
   },
   "data": {
+    "enable_self_reg": false,
+    "enable_user_pwd_choice": false,
     "use_email_as_login": false
   }
 }

@@ -44,6 +44,57 @@ describe('User', () => {
       .set('Authorization', `Bearer ${adminToken}`);
   });
 
+  it('should only let users register themselves when enabled', async () => {
+    const register = (username: string, extra: any = {}) =>
+      request(app)
+        .post('/@users')
+        .set('Accept', 'application/json')
+        .send({
+          username,
+          email: `${username}@example.com`,
+          password: 'Pw-selfreg-12345',
+          ...extra,
+        });
+    const security = async (data: any) => {
+      const row = await global.txn!('controlpanel')
+        .where({ id: 'security' })
+        .first();
+      await global.txn!('controlpanel')
+        .where({ id: 'security' })
+        .update({ data: { ...row.data, ...data } });
+    };
+
+    // Off by default
+    expect((await register('selfreg1')).status).toBe(401);
+
+    // Enabled without choosing a password: no password is set
+    await security({ enable_self_reg: true });
+    expect((await register('selfreg2')).status).toBe(201);
+    let user = await User.fetchById('selfreg2', {}, global.txn as any);
+    expect(user.password).toBe('');
+
+    // Roles and groups can't be chosen
+    expect((await register('selfreg4', { roles: ['Manager'] })).status).toBe(
+      401,
+    );
+    expect(
+      await User.fetchById('selfreg4', {}, global.txn as any),
+    ).toBeUndefined();
+
+    // With choosing a password, the user can log in
+    await security({ enable_user_pwd_choice: true });
+    const created = await register('selfreg3');
+    expect(created.status).toBe(201);
+    expect(created.body.roles).toEqual([]);
+    const login = await request(app)
+      .post('/@login')
+      .set('Accept', 'application/json')
+      .send({ login: 'selfreg3', password: 'Pw-selfreg-12345' });
+    expect(login.status).toBe(200);
+    user = await User.fetchById('selfreg3', {}, global.txn as any);
+    expect(user.password).not.toBe('');
+  });
+
   it('should get a list of users', () => testRequest(app, 'users/list'));
 
   it('should get a list of users by query', () =>
