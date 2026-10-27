@@ -43,16 +43,16 @@ class Blocks {
   /**
    * Get a block.
    * @param {string} name The name of the block.
-   * @returns {Block} The block.
+   * @returns {Block} The block, completed with the default block.
    */
-  get(name: string): Block {
+  get(name: string): Required<Block> {
     if (!this.blocks[name]) {
-      return this.blocks['_default'];
+      return this.blocks['_default'] as Required<Block>;
     }
     return {
       ...this.blocks['_default'],
       ...this.blocks[name],
-    };
+    } as Required<Block>;
   }
 }
 

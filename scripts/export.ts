@@ -404,12 +404,13 @@ const convertDocuments = async (
   const count = await forEachBatch(
     `${url}/++api++/@search?sort_on=path`,
     (batchUrl: string) => fetchFromApi(batchUrl, 'GET', token),
-    (items: any[]) =>
-      mapAsync(
+    async (items: any[]) => {
+      await mapAsync(
         // Comments are cataloged but they are not documents
         items.filter((item: any) => item['@type'] !== 'Discussion Item'),
         (document: any) => convertDocument(document, path, token, base_url),
-      ),
+      );
+    },
   );
 
   console.log(`${count} done!`);

@@ -49,9 +49,9 @@ async function editorToken(): Promise<string> {
       _roles: ['Editor'],
     },
     { related: ['_roles'] },
-    global.txn,
+    global.txn!,
   );
-  await addToken(user, token, global.txn as any);
+  await addToken(user, token, global.txn!);
   return token;
 }
 
