@@ -4,6 +4,13 @@
 
 ### Breaking
 
+- Require the Manage Site permission and the site root for the @email-send and @users/<id>/@email-notification endpoints @martior
+- Require the Manage Site permission for the @content-rules endpoints @martior
+- Require the Modify permission for the users and groups vocabularies, like Plone @martior
+- Require the Modify permission to list the aliases of an item, and Manage Site to list all aliases of the site @martior
+- Only use the default secret 'secret' when NODE_ENV is development or test, use a random secret otherwise when none is configured @martior
+- Only list and grant the roles the user may delegate in @sharing, with new Delegate <role> permissions (upgrade 1007) @martior
+
 ### Feature
 
 - Add support for multiple profiles @robgietema
@@ -142,6 +149,18 @@
 - Read auth token from either the header or from a cookie @robgietema
 - Make the search batch size limit configurable via requestLimit.batch @robgietema
 - Add custom upgrade code support via index.ts in upgrade steps @robgietema
+- Add support for multipart/form-data in content POST and PATCH requests @mamico
+- Export workflow definitions, type workflows and the state of documents without workflow @martior
+- Export the workflow history of documents @martior
+- Export the versions of documents @martior
+- Export local roles and the inherit flag of documents @martior
+- Export files and images of documents and import profile files with filename and content type @martior
+- Export relations with uuids and make links in exported documents relative to the site root @martior
+- Export translations of documents @martior
+- Export redirects @martior
+- Export comments of documents @martior
+- Export site title, robots.txt and language settings @martior
+- Convert querystring operations of collections and listing blocks in export @martior
 
 ### Bugfix
 
@@ -233,7 +252,37 @@
 - Fix job runner import @robgietema
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
+- Fix PostgreSQL 18 volume mount @sneridagh
 - Fix mail debug print link issue @robgietema
+- Only serve images by uuid that belong to the item, its versions or a control panel, so private images can't be read through another item @martior
+- Only show uploaded files inline when their content type is safe to show inline, so uploaded html can't run scripts on the api origin @martior
+- Skip ancestors the user can't view in the @inherit endpoint @martior
+- Only list items the user can view in the @navroot endpoint @martior
+- Only list items and breaches the user can view in the @linkintegrity endpoint @martior
+- Only serialize related items the user can view in relation list fields @martior
+- Don't return stored passwords like the ESMTP password in control panels @martior
+- Only list subjects of items the user can view in the subjects vocabulary @martior
+- Require the View permission on the item to read, add or reply to comments @martior
+- Only list translations the user can view, and require Modify on the other item to link or unlink translations @martior
+- Fix copying a folder into its own subfolder, which recursed without end @martior
+- Hide expired and not yet effective items in @search and @querystring-search from users who can't edit the context @martior
+- Refuse to move items locked by another user, and don't copy the lock of an item to its copy @martior
+- Use dedicated single-use tokens for password resets, login tokens can no longer reset a password @martior
+- Only revoke a local role on the item itself in the @sharing endpoint, not on every item @martior
+- Require the View permission to stream videos with @@videos @martior
+- Skip sources the user can't view in @copy and @move, and require Modify on the source to move it @martior
+- Fix non ascii image filename @martior
+- Fix document urls in export and import of ids containing dots @martior
+- Paginate search, users and groups in export, plone.restapi 10 batches users @martior
+- Keep core users, roles, permissions and actions when importing an exported profile and map Plone roles to Nick roles @martior
+- Give every exported user its own random password instead of one shared password @martior
+- Stop the export on failed requests, read groups unbatched and skip comments in the document listing @martior
+- Export type behaviors, allowed content types and unlisted types, so exported documents can be traversed @martior
+- Fix import of exported groups without email @martior
+- Allow descriptions longer than 255 characters for workflows, types and groups @martior
+- Return the comments of workflow transitions in @history @martior
+- Keep the folder order of exported documents and fix the import of position 0 @martior
+- Replace lists instead of merging them by index when seeding controlpanels @martior
 - Support plone.app.querystring operation names in querystring search @martior
 - Fix server error on searchable text with multiple words or operators @martior
 - Support keyword, path query and range parameters in search @martior
@@ -294,6 +343,7 @@
 - Rename default profile to examplecontent @robgietema
 - Fix initialization for client @robgietema
 - Save controlpanel and userschema files as blobs @robgietema
+- Add a test helper to create users with a login token @martior
 
 ### Documentation
 
@@ -312,6 +362,7 @@
 - Add documentation on how to setup limits @robgietema
 - Add documentation on how to setup caching @robgietema
 - Add documentation about profiles @robgietema
+- Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 
 ## 2.8.0 (2022-07-17)
 

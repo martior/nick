@@ -1,6 +1,6 @@
 /**
- * Upgrade 1007: add the selection.none querystring operation.
- * @module profiles/core/upgrades/1007
+ * Upgrade 1008: add the selection.none querystring operation.
+ * @module profiles/core/upgrades/1008
  */
 
 // Type imports

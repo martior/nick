@@ -7,6 +7,7 @@
 import type { ConfigSettings } from '../../types';
 
 // External imports
+import { randomBytes } from 'crypto';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -40,6 +41,31 @@ if (fs.existsSync(`${process.cwd()}/config.ts`)) {
 }
 const packageEntry = fileURLToPath(import.meta.resolve('@plone/nick'));
 const packageRoot = path.dirname(packageEntry);
+
+/**
+ * Get the secret used to sign tokens. The literal default `secret` (from
+ * config.ts.sample) is only used in development and tests. Without a real
+ * secret other environments get a random secret, so tokens can't be forged,
+ * but they are only valid until a restart and not shared between processes.
+ * Production requires a real secret (checked when the app starts).
+ * @method getSecret
+ * @param {string} secret Configured secret.
+ * @param {string} env Node environment.
+ * @returns {string} Secret.
+ */
+export function getSecret(secret: string | undefined, env?: string): string {
+  if (
+    secret &&
+    (secret !== 'secret' ||
+      ['development', 'test', 'production'].includes(env || ''))
+  ) {
+    return secret;
+  }
+  if (['development', 'test'].includes(env || '')) {
+    return 'secret';
+  }
+  return randomBytes(32).toString('hex');
+}
 
 /**
  * A model for the config.
@@ -76,7 +102,7 @@ class Config {
       localesDir:
         LOCALES_DIR || config.localesDir || `${__dirname}/../../../locales`,
       port: config.port || 8080,
-      secret: SECRET || config.secret || 'secret',
+      secret: getSecret(SECRET || config.secret, process.env.NODE_ENV),
       systemUsers: config.systemUsers || ['admin', 'anonymous'],
       systemGroups: config.systemGroups || ['Owner'],
       cors: {

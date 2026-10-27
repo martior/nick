@@ -1,6 +1,6 @@
 /**
- * Upgrade 1007 tests.
- * @module profiles/core/upgrades/1007/index.test
+ * Upgrade 1008 tests.
+ * @module profiles/core/upgrades/1008/index.test
  */
 
 // External imports
@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 // Internal imports
 import { init } from './index';
 
-describe('Upgrade 1007', () => {
+describe('Upgrade 1008', () => {
   it('should add the selection.none operation', async () => {
     const trx = global.txn!;
     const index = await trx('index').where({ id: '_review_state' }).first();
