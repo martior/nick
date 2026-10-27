@@ -8,6 +8,6 @@ const login = await cli.login({
 const { data } = await cli.getType({
   token: login.data.token,
   params: {
-    type: 'Document',
+    type: 'Page',
   },
 });

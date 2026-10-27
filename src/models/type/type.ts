@@ -116,7 +116,7 @@ export class Type extends Model {
   ): Promise<Json> {
     const self: InstanceType<typeof Type> = this;
     const Behavior = models.get('Behavior');
-    const behaviors = await Behavior.fetchAll({}, {}, trx);
+    const behaviors = await Behavior.fetchAll({}, { order: 'id' }, trx);
 
     // Get basic data
     const json: any = {

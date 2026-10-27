@@ -3,5 +3,5 @@
   "title": "Nick Core",
   "description": "Core functionality of Nick",
   "version": 1009,
-  "upgrade": "Add the revert permission."
+  "upgrade": "Prefix users and groups in the catalog permissions."
 }

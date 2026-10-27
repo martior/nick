@@ -11,6 +11,8 @@ You can enable the multilingual support by adding the `multilingual` profile to 
 
 Nick provides a `@translations` endpoint to handle the translation information of the content objects.
 
+Only translations the current user can view are listed. Linking and unlinking change the other content object too, so they need the `Modify` permission on both. A content object the user can't view answers `404 Not Found`.
+
 Once we enabled more than one language, we can link two content items of different languages to be the translation of each other issuing a `POST` query to the `@translations` endpoint, including the `id` of the content to which it should be linked. The `id` of the content must be a full URL of the content object:
 
 ```http
