@@ -17,7 +17,7 @@ Or use the client directly:
 {% include_relative examples/breadcrumbs/get.ts %}
 ```
 
-Example response:
+Example response, `root` is the url of the navigation root:
 
 ```http
 {% include_relative examples/breadcrumbs/get.res %}

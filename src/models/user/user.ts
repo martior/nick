@@ -31,6 +31,7 @@ export class User extends Model {
   declare id: string;
   declare fullname: string;
   declare email: string;
+  declare tokens: string[];
   declare json: any;
   declare _roles: any[];
   declare _groups: any[];
@@ -137,6 +138,22 @@ export class User extends Model {
 
     // Return roles
     return roles;
+  }
+
+  /**
+   * Lock the user and reload its tokens, so concurrent logins and logouts
+   * don't overwrite each other's tokens.
+   * @method lockTokens
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<void>}
+   */
+  async lockTokens(trx: Knex.Transaction): Promise<void> {
+    const self: InstanceType<typeof User> = this;
+    const row: any = await User.query(trx)
+      .select('tokens')
+      .findById(self.id)
+      .forUpdate();
+    self.tokens = row?.tokens || [];
   }
 
   /**

@@ -4,11 +4,16 @@
  */
 
 // External imports
-import { describe, it } from 'vitest';
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import { createUser, testRequest } from '../../helpers/tests/tests';
+import models from '../../models';
+
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
 
 describe('History', () => {
   it('should return the history', () => testRequest(app, 'history/get'));
@@ -21,4 +26,100 @@ describe('History', () => {
     await testRequest(app, 'content/patch');
     return testRequest(app, 'history/patch');
   });
+
+  it('should return the comments of workflow transitions', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await news.update(
+      {
+        workflow_history: JSON.stringify([
+          {
+            action: 'publish',
+            actor: 'admin',
+            comments: 'Approved',
+            review_state: 'published',
+            state_title: 'Published',
+            time: '2022-04-03T20:22:00.000Z',
+            transition_title: 'Publish',
+          },
+        ]),
+      },
+      global.txn!,
+    );
+
+    const response = await request(app)
+      .get('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`);
+    expect(
+      response.body.find((item: any) => item.type === 'workflow').comments,
+    ).toBe('Approved');
+  });
+
+  it('should require the view history permission', async () => {
+    const member = await createUser('member');
+    await request(app)
+      .get('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${member}`)
+      .expect(403);
+    await request(app)
+      .get('/news/@history/0')
+      .set('Accept', 'application/json')
+      .expect(401);
+  });
+
+  it('should require the revert permission', async () => {
+    const Document = models.get('Document');
+    const contributor = await createUser('contributor');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await news
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Contributor', user: 'contributor' });
+
+    // A contributor may see the history but not revert
+    const history = await request(app)
+      .get('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${contributor}`)
+      .expect(200);
+    expect(
+      history.body
+        .filter((item: any) => item.type === 'versioning')
+        .map((item: any) => item.may_revert),
+    ).toEqual([false, false]);
+
+    await request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${contributor}`)
+      .send({ version: 0 })
+      .expect(403);
+    await request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .send({ version: 0 })
+      .expect(401);
+  });
+
+  it('should reindex after a revert', async () => {
+    await request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ version: 0 })
+      .expect(200);
+    const catalog = await global.txn!('catalog').where({ _path: '/news' });
+    expect(catalog[0].Title).toBe('Old News');
+    const document = await global.txn!('document').where({ id: 'news' });
+    expect(document[0].path).toBe('/news');
+  });
+
+  it('should return 404 for an unknown version', () =>
+    request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ version: 99 })
+      .expect(404));
 });

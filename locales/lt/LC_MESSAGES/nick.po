@@ -80,7 +80,7 @@ msgid "Add"
 msgstr "Pridėti"
 
 #. Default: "Add Comment"
-#: src/profiles/core/permissions.json:54
+#: src/profiles/core/permissions.json:66
 #: src/profiles/core/upgrades/1002/permissions.json:10
 msgctxt "Profiles|Core|Permissions"
 msgid "Add Comment"
@@ -135,7 +135,11 @@ msgid "Adds title and description fields."
 msgstr "Prideda pavadinimo ir aprašymo laukus."
 
 #. Default: "Administrator"
-#: src/profiles/core/roles.json:47
+#: src/profiles/core/roles.json:64
+#: src/profiles/core/upgrades/1012/roles.json:26
+#: src/profiles/core/upgrades/1011/roles.json:16
+#: src/profiles/core/upgrades/1010/roles.json:21
+#: src/profiles/core/upgrades/1007/roles.json:20
 #: src/profiles/core/upgrades/1002/roles.json:26
 msgctxt "Profiles|Core|Roles"
 msgid "Administrator"
@@ -151,10 +155,10 @@ msgstr "Administratoriai"
 #. Default: "After N days in the future"
 #: src/profiles/core/catalog.json:95
 #: src/profiles/core/catalog.json:168
-#: src/profiles/core/catalog.json:510
-#: src/profiles/core/catalog.json:589
-#: src/profiles/core/catalog.json:662
-#: src/profiles/core/catalog.json:735
+#: src/profiles/core/catalog.json:528
+#: src/profiles/core/catalog.json:607
+#: src/profiles/core/catalog.json:680
+#: src/profiles/core/catalog.json:753
 msgctxt "Profiles|Core|Catalog"
 msgid "After N days in the future"
 msgstr "Po N dienų ateityje"
@@ -162,10 +166,10 @@ msgstr "Po N dienų ateityje"
 #. Default: "After date"
 #: src/profiles/core/catalog.json:124
 #: src/profiles/core/catalog.json:197
-#: src/profiles/core/catalog.json:539
-#: src/profiles/core/catalog.json:618
-#: src/profiles/core/catalog.json:691
-#: src/profiles/core/catalog.json:764
+#: src/profiles/core/catalog.json:557
+#: src/profiles/core/catalog.json:636
+#: src/profiles/core/catalog.json:709
+#: src/profiles/core/catalog.json:782
 msgctxt "Profiles|Core|Catalog"
 msgid "After date"
 msgstr "Po datos"
@@ -173,10 +177,10 @@ msgstr "Po datos"
 #. Default: "After relative date"
 #: src/profiles/core/catalog.json:94
 #: src/profiles/core/catalog.json:167
-#: src/profiles/core/catalog.json:509
-#: src/profiles/core/catalog.json:588
-#: src/profiles/core/catalog.json:661
-#: src/profiles/core/catalog.json:734
+#: src/profiles/core/catalog.json:527
+#: src/profiles/core/catalog.json:606
+#: src/profiles/core/catalog.json:679
+#: src/profiles/core/catalog.json:752
 msgctxt "Profiles|Core|Catalog"
 msgid "After relative date"
 msgstr "Po santykinės datos"
@@ -184,10 +188,10 @@ msgstr "Po santykinės datos"
 #. Default: "After the current day"
 #: src/profiles/core/catalog.json:101
 #: src/profiles/core/catalog.json:174
-#: src/profiles/core/catalog.json:516
-#: src/profiles/core/catalog.json:595
-#: src/profiles/core/catalog.json:668
-#: src/profiles/core/catalog.json:741
+#: src/profiles/core/catalog.json:534
+#: src/profiles/core/catalog.json:613
+#: src/profiles/core/catalog.json:686
+#: src/profiles/core/catalog.json:759
 msgctxt "Profiles|Core|Catalog"
 msgid "After the current day"
 msgstr "Po dabartinės dienos"
@@ -195,10 +199,10 @@ msgstr "Po dabartinės dienos"
 #. Default: "After today"
 #: src/profiles/core/catalog.json:100
 #: src/profiles/core/catalog.json:173
-#: src/profiles/core/catalog.json:515
-#: src/profiles/core/catalog.json:594
-#: src/profiles/core/catalog.json:667
-#: src/profiles/core/catalog.json:740
+#: src/profiles/core/catalog.json:533
+#: src/profiles/core/catalog.json:612
+#: src/profiles/core/catalog.json:685
+#: src/profiles/core/catalog.json:758
 msgctxt "Profiles|Core|Catalog"
 msgid "After today"
 msgstr "Po šiandienos"
@@ -229,7 +233,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Subjektas, atsakingas už šio elemento pateikimą."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:261
+#: src/routes/users/users.ts:249
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -241,13 +245,13 @@ msgid "An item’s description"
 msgstr "Elemento aprašymas"
 
 #. Default: "An item’s type (e.g. Event)"
-#: src/profiles/core/catalog.json:440
+#: src/profiles/core/catalog.json:446
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s type (e.g. Event)"
 msgstr "Elemento tipas (pvz., Renginys)"
 
 #. Default: "An item’s workflow state (e.g.published)"
-#: src/profiles/core/catalog.json:459
+#: src/profiles/core/catalog.json:471
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s workflow state (e.g.published)"
 msgstr "Elemento darbo eigos būsena (pvz., paskelbta)"
@@ -325,10 +329,10 @@ msgstr "Pagrindiniai metaduomenys"
 #. Default: "Before N days in the past"
 #: src/profiles/core/catalog.json:107
 #: src/profiles/core/catalog.json:180
-#: src/profiles/core/catalog.json:522
-#: src/profiles/core/catalog.json:601
-#: src/profiles/core/catalog.json:674
-#: src/profiles/core/catalog.json:747
+#: src/profiles/core/catalog.json:540
+#: src/profiles/core/catalog.json:619
+#: src/profiles/core/catalog.json:692
+#: src/profiles/core/catalog.json:765
 msgctxt "Profiles|Core|Catalog"
 msgid "Before N days in the past"
 msgstr "Prieš N dienų praeityje"
@@ -336,10 +340,10 @@ msgstr "Prieš N dienų praeityje"
 #. Default: "Before date"
 #: src/profiles/core/catalog.json:136
 #: src/profiles/core/catalog.json:209
-#: src/profiles/core/catalog.json:551
-#: src/profiles/core/catalog.json:630
-#: src/profiles/core/catalog.json:703
-#: src/profiles/core/catalog.json:776
+#: src/profiles/core/catalog.json:569
+#: src/profiles/core/catalog.json:648
+#: src/profiles/core/catalog.json:721
+#: src/profiles/core/catalog.json:794
 msgctxt "Profiles|Core|Catalog"
 msgid "Before date"
 msgstr "Prieš datą"
@@ -347,10 +351,10 @@ msgstr "Prieš datą"
 #. Default: "Before relative date"
 #: src/profiles/core/catalog.json:106
 #: src/profiles/core/catalog.json:179
-#: src/profiles/core/catalog.json:521
-#: src/profiles/core/catalog.json:600
-#: src/profiles/core/catalog.json:673
-#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:539
+#: src/profiles/core/catalog.json:618
+#: src/profiles/core/catalog.json:691
+#: src/profiles/core/catalog.json:764
 msgctxt "Profiles|Core|Catalog"
 msgid "Before relative date"
 msgstr "Prieš santykinę datą"
@@ -358,10 +362,10 @@ msgstr "Prieš santykinę datą"
 #. Default: "Before the current day"
 #: src/profiles/core/catalog.json:113
 #: src/profiles/core/catalog.json:186
-#: src/profiles/core/catalog.json:528
-#: src/profiles/core/catalog.json:607
-#: src/profiles/core/catalog.json:680
-#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:546
+#: src/profiles/core/catalog.json:625
+#: src/profiles/core/catalog.json:698
+#: src/profiles/core/catalog.json:771
 msgctxt "Profiles|Core|Catalog"
 msgid "Before the current day"
 msgstr "Prieš dabartinę dieną"
@@ -369,10 +373,10 @@ msgstr "Prieš dabartinę dieną"
 #. Default: "Before today"
 #: src/profiles/core/catalog.json:112
 #: src/profiles/core/catalog.json:185
-#: src/profiles/core/catalog.json:527
-#: src/profiles/core/catalog.json:606
-#: src/profiles/core/catalog.json:679
-#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:545
+#: src/profiles/core/catalog.json:624
+#: src/profiles/core/catalog.json:697
+#: src/profiles/core/catalog.json:770
 msgctxt "Profiles|Core|Catalog"
 msgid "Before today"
 msgstr "Prieš šiandieną"
@@ -386,10 +390,10 @@ msgstr "Elgsena"
 #. Default: "Between dates"
 #: src/profiles/core/catalog.json:118
 #: src/profiles/core/catalog.json:191
-#: src/profiles/core/catalog.json:533
-#: src/profiles/core/catalog.json:612
-#: src/profiles/core/catalog.json:685
-#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:551
+#: src/profiles/core/catalog.json:630
+#: src/profiles/core/catalog.json:703
+#: src/profiles/core/catalog.json:776
 msgctxt "Profiles|Core|Catalog"
 msgid "Between dates"
 msgstr "Tarp datų"
@@ -439,8 +443,8 @@ msgid "Comment"
 msgstr ""
 
 #. Default: "Comment does not exist."
-#: src/routes/comments/comments.ts:211
-#: src/routes/comments/comments.ts:266
+#: src/routes/comments/comments.ts:230
+#: src/routes/comments/comments.ts:285
 msgctxt "Routes|Comments"
 msgid "Comment does not exist."
 msgstr ""
@@ -479,7 +483,7 @@ msgstr ""
 #: src/profiles/core/catalog.json:240
 #: src/profiles/core/catalog.json:259
 #: src/profiles/core/catalog.json:278
-#: src/profiles/core/catalog.json:484
+#: src/profiles/core/catalog.json:502
 msgctxt "Profiles|Core|Catalog"
 msgid "Contains"
 msgstr "Turi"
@@ -518,7 +522,8 @@ msgid "Contents"
 msgstr "Turinys"
 
 #. Default: "Contributor"
-#: src/profiles/core/roles.json:32
+#: src/profiles/core/roles.json:42
+#: src/profiles/core/upgrades/1012/roles.json:11
 msgctxt "Profiles|Core|Roles"
 msgid "Contributor"
 msgstr "Bendraautorius"
@@ -554,19 +559,19 @@ msgid "Coverage"
 msgstr "Aprėptis"
 
 #. Default: "Creation date"
-#: src/profiles/core/catalog.json:654
+#: src/profiles/core/catalog.json:672
 msgctxt "Profiles|Core|Catalog"
 msgid "Creation date"
 msgstr "Sukūrimo data"
 
 #. Default: "Creator"
-#: src/profiles/core/catalog.json:408
+#: src/profiles/core/catalog.json:414
 msgctxt "Profiles|Core|Catalog"
 msgid "Creator"
 msgstr "Kūrėjas"
 
 #. Default: "Current logged in user"
-#: src/profiles/core/catalog.json:421
+#: src/profiles/core/catalog.json:427
 msgctxt "Profiles|Core|Catalog"
 msgid "Current logged in user"
 msgstr "Dabartinis prisijungęs vartotojas"
@@ -642,11 +647,41 @@ msgctxt "Profiles|Core|Types|Event"
 msgid "Define the event recurrence rule."
 msgstr ""
 
+#. Default: "Delegate Contributor"
+#: src/profiles/core/permissions.json:78
+#: src/profiles/core/upgrades/1007/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Contributor"
+msgstr ""
+
+#. Default: "Delegate Editor"
+#: src/profiles/core/permissions.json:82
+#: src/profiles/core/upgrades/1007/permissions.json:10
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Editor"
+msgstr ""
+
+#. Default: "Delegate Reader"
+#: src/profiles/core/permissions.json:86
+#: src/profiles/core/upgrades/1007/permissions.json:14
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reader"
+msgstr ""
+
+#. Default: "Delegate Reviewer"
+#: src/profiles/core/permissions.json:90
+#: src/profiles/core/upgrades/1007/permissions.json:18
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reviewer"
+msgstr ""
+
 #. Default: "Delete"
+#: src/profiles/core/permissions.json:38
 #: src/profiles/core/actions.json:54
-msgctxt "Profiles|Core|Actions"
+#: src/profiles/core/upgrades/1011/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
 msgid "Delete"
-msgstr "Ištrinti"
+msgstr ""
 
 #. Default: "Delete item"
 #: src/content_rules/actions/delete_item.ts:20
@@ -709,9 +744,10 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:797
-#: src/routes/content/content.ts:931
+#: src/routes/history/history.ts:71
+#: src/routes/content/content.ts:216
+#: src/routes/content/content.ts:995
+#: src/routes/content/content.ts:1132
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokumentas užrakintas"
@@ -759,13 +795,17 @@ msgid "Edit"
 msgstr "Redaguoti"
 
 #. Default: "Editor"
-#: src/profiles/core/roles.json:37
+#: src/profiles/core/roles.json:47
+#: src/profiles/core/upgrades/1012/roles.json:16
+#: src/profiles/core/upgrades/1011/roles.json:11
+#: src/profiles/core/upgrades/1010/roles.json:11
+#: src/profiles/core/upgrades/1007/roles.json:15
 msgctxt "Profiles|Core|Roles"
 msgid "Editor"
 msgstr "Redaktorius"
 
 #. Default: "Effective date"
-#: src/profiles/core/catalog.json:727
+#: src/profiles/core/catalog.json:745
 msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
 msgstr "Įsigaliojimo data"
@@ -834,7 +874,7 @@ msgstr ""
 
 #. Default: "Equals"
 #: src/profiles/core/catalog.json:63
-#: src/profiles/core/catalog.json:340
+#: src/profiles/core/catalog.json:346
 msgctxt "Profiles|Core|Catalog"
 msgid "Equals"
 msgstr "Lygu"
@@ -907,7 +947,7 @@ msgid "Expiration Date"
 msgstr "Galiojimo pabaigos data"
 
 #. Default: "Expiration date"
-#: src/profiles/core/catalog.json:581
+#: src/profiles/core/catalog.json:599
 msgctxt "Profiles|Core|Catalog"
 msgid "Expiration date"
 msgstr "Galiojimo pabaigos data"
@@ -950,13 +990,13 @@ msgid "Filter Contained Types"
 msgstr "Filtruoti esamus tipus"
 
 #. Default: "Find items related to the selected items"
-#: src/profiles/core/catalog.json:334
+#: src/profiles/core/catalog.json:340
 msgctxt "Profiles|Core|Catalog"
 msgid "Find items related to the selected items"
 msgstr "Rasti elementus, susijusius su pasirinktais elementais"
 
 #. Default: "Find items that can contain other objects"
-#: src/profiles/core/catalog.json:353
+#: src/profiles/core/catalog.json:359
 msgctxt "Profiles|Core|Catalog"
 msgid "Find items that can contain other objects"
 msgstr "Rasti elementus, kuriuose gali būti kitų objektų"
@@ -968,7 +1008,7 @@ msgid "Folder"
 msgstr "Aplankas"
 
 #. Default: "Folder-like"
-#: src/profiles/core/catalog.json:352
+#: src/profiles/core/catalog.json:358
 msgctxt "Profiles|Core|Catalog"
 msgid "Folder-like"
 msgstr "Panašus į aplanką"
@@ -981,8 +1021,8 @@ msgid "Form"
 msgstr ""
 
 #. Default: "From and message are required fields."
-#: src/routes/email/email.ts:67
-#: src/routes/email/email.ts:114
+#: src/routes/email/email.ts:82
+#: src/routes/email/email.ts:129
 msgctxt "Routes|Email"
 msgid "From and message are required fields."
 msgstr "Siuntėjas ir žinutė yra privalomi laukai."
@@ -1082,35 +1122,48 @@ msgid "Information about rights held in and over this item."
 msgstr "Informacija apie teises, turimas šiame elemente ir virš jo."
 
 #. Default: "Internal server error"
-#: src/app.ts:231
-#: src/app.ts:242
+#: src/app.ts:258
+#: src/app.ts:269
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Vidinė serverio klaida"
 
 #. Default: "Invalid credentials"
-#: src/routes/authentication/authentication.ts:85
-#: src/routes/authentication/authentication.ts:99
+#: src/routes/authentication/authentication.ts:86
+#: src/routes/authentication/authentication.ts:100
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Neteisingi prisijungimo duomenys"
 
+#. Default: "Invalid depth."
+#: src/routes/navigation/navigation.ts:79
+msgctxt "Routes|Navigation"
+msgid "Invalid depth."
+msgstr ""
+
 #. Default: "Invalid move."
-#: src/routes/controlpanels/controlpanels.ts:529
-#: src/routes/controlpanels/controlpanels.ts:582
+#: src/routes/controlpanels/controlpanels.ts:537
+#: src/routes/controlpanels/controlpanels.ts:590
 msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
 msgstr ""
 
+#. Default: "Invalid query."
+#: src/routes/search/search.ts:196
+#: src/routes/search/search.ts:345
+msgctxt "Routes|Search"
+msgid "Invalid query."
+msgstr ""
+
 #. Default: "Invalid session"
-#: src/routes/authentication/authentication.ts:134
+#: src/routes/authentication/authentication.ts:135
 msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Neteisinga sesija"
 
 #. Default: "Is"
-#: src/profiles/core/catalog.json:396
-#: src/profiles/core/catalog.json:490
+#: src/profiles/core/catalog.json:402
+#: src/profiles/core/catalog.json:508
 msgctxt "Profiles|Core|Catalog"
 msgid "Is"
 msgstr "Yra"
@@ -1227,7 +1280,7 @@ msgid "Login"
 msgstr "Prisijungimas"
 
 #. Default: "Login and password must be provided in body."
-#: src/routes/authentication/authentication.ts:64
+#: src/routes/authentication/authentication.ts:65
 msgctxt "Routes|Authentication"
 msgid "Login and password must be provided in body."
 msgstr "Prisijungimo vardas ir slaptažodis turi būti pateikti tekste."
@@ -1291,12 +1344,20 @@ msgstr "Atitinka visus"
 
 #. Default: "Matches any condition"
 #: src/profiles/core/catalog.json:305
-#: src/profiles/core/catalog.json:415
-#: src/profiles/core/catalog.json:446
-#: src/profiles/core/catalog.json:465
+#: src/profiles/core/catalog.json:421
+#: src/profiles/core/catalog.json:452
+#: src/profiles/core/catalog.json:477
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches any condition"
 msgstr "Atitinka bet kurį"
+
+#. Default: "Matches none of"
+#: src/profiles/core/catalog.json:309
+#: src/profiles/core/catalog.json:458
+#: src/profiles/core/catalog.json:483
+msgctxt "Profiles|Core|Catalog"
+msgid "Matches none of"
+msgstr ""
 
 #. Default: "Message"
 #: src/content_rules/actions/send_email.ts:44
@@ -1306,13 +1367,13 @@ msgid "Message"
 msgstr ""
 
 #. Default: "Missing credentials"
-#: src/routes/authentication/authentication.ts:63
+#: src/routes/authentication/authentication.ts:64
 msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Trūksta prisijungimo duomenų"
 
 #. Default: "Modification date"
-#: src/profiles/core/catalog.json:502
+#: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
 msgid "Modification date"
 msgstr "Modifikavimo data"
@@ -1324,14 +1385,14 @@ msgid "Modify"
 msgstr "Modifikuoti"
 
 #. Default: "Modify Comments"
-#: src/profiles/core/permissions.json:58
+#: src/profiles/core/permissions.json:70
 #: src/profiles/core/upgrades/1002/permissions.json:14
 msgctxt "Profiles|Core|Permissions"
 msgid "Modify Comments"
 msgstr ""
 
 #. Default: "Modify Own Comments"
-#: src/profiles/core/permissions.json:62
+#: src/profiles/core/permissions.json:74
 #: src/profiles/core/upgrades/1002/permissions.json:18
 msgctxt "Profiles|Core|Permissions"
 msgid "Modify Own Comments"
@@ -1400,16 +1461,28 @@ msgid "Nick generates email using this name as the email sender."
 msgstr ""
 
 #. Default: "No"
-#: src/profiles/core/catalog.json:359
+#: src/profiles/core/catalog.json:365
 #: src/profiles/core/vocabularies/boolean.json:6
 msgctxt "Profiles|Core|Catalog"
 msgid "No"
 msgstr "Ne"
 
+#. Default: "No JSON object could be decoded"
+#: src/helpers/multipart/multipart.ts:94
+msgctxt "Helpers|Multipart"
+msgid "No JSON object could be decoded"
+msgstr ""
+
 #. Default: "No data is submitted."
 #: src/routes/form/form.ts:106
 msgctxt "Routes|Form"
 msgid "No data is submitted."
+msgstr ""
+
+#. Default: "No query supplied."
+#: src/routes/search/search.ts:191
+msgctxt "Routes|Search"
+msgid "No query supplied."
 msgstr ""
 
 #. Default: "None"
@@ -1435,10 +1508,29 @@ msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Neleidžiama"
 
+#. Default: "Not authenticated"
+#: src/routes/vocabularies/vocabularies.ts:86
+msgctxt "Routes|Vocabularies"
+msgid "Not authenticated"
+msgstr ""
+
+#. Default: "Not authorized"
+#: src/routes/vocabularies/vocabularies.ts:87
+msgctxt "Routes|Vocabularies"
+msgid "Not authorized"
+msgstr ""
+
+#. Default: "Not found"
+#: src/routes/history/history.ts:92
+msgctxt "Routes|History"
+msgid "Not found"
+msgstr ""
+
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:154
+#: src/routes/users/users.ts:142
 #: src/routes/types/types.ts:45
+#: src/routes/translations/translations.ts:33
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
 #: src/routes/recyclebin/recyclebin.ts:35
@@ -1448,18 +1540,20 @@ msgstr "Neleidžiama"
 #: src/routes/jobs/jobs.ts:77
 #: src/routes/jobs/jobs.ts:188
 #: src/routes/groups/groups.ts:34
-#: src/routes/email/email.ts:75
+#: src/routes/email/email.ts:24
+#: src/routes/email/email.ts:90
 #: src/routes/controlpanels/controlpanels.ts:167
-#: src/routes/controlpanels/controlpanels.ts:367
-#: src/routes/controlpanels/controlpanels.ts:404
-#: src/routes/controlpanels/controlpanels.ts:436
-#: src/routes/controlpanels/controlpanels.ts:455
-#: src/routes/controlpanels/controlpanels.ts:486
-#: src/routes/controlpanels/controlpanels.ts:522
-#: src/routes/controlpanels/controlpanels.ts:574
-#: src/routes/controlpanels/controlpanels.ts:622
-#: src/routes/controlpanels/controlpanels.ts:669
-#: src/routes/controlpanels/controlpanels.ts:707
+#: src/routes/controlpanels/controlpanels.ts:375
+#: src/routes/controlpanels/controlpanels.ts:412
+#: src/routes/controlpanels/controlpanels.ts:444
+#: src/routes/controlpanels/controlpanels.ts:463
+#: src/routes/controlpanels/controlpanels.ts:494
+#: src/routes/controlpanels/controlpanels.ts:530
+#: src/routes/controlpanels/controlpanels.ts:582
+#: src/routes/controlpanels/controlpanels.ts:630
+#: src/routes/controlpanels/controlpanels.ts:677
+#: src/routes/controlpanels/controlpanels.ts:715
+#: src/routes/content/content.ts:496
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Nerasta."
@@ -1471,7 +1565,7 @@ msgid "Not found: {url}"
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:928
+#: src/routes/content/content.ts:1129
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1490,6 +1584,10 @@ msgstr "Tvarka aplanke"
 
 #. Default: "Owner"
 #: src/profiles/core/roles.json:22
+#: src/profiles/core/upgrades/1012/roles.json:6
+#: src/profiles/core/upgrades/1011/roles.json:6
+#: src/profiles/core/upgrades/1010/roles.json:6
+#: src/profiles/core/upgrades/1007/roles.json:6
 #: src/profiles/core/upgrades/1002/roles.json:16
 msgctxt "Profiles|Core|Roles"
 msgid "Owner"
@@ -1509,9 +1607,15 @@ msgid "Page"
 msgstr "Puslapis"
 
 #. Default: "Parent comment does not exist."
-#: src/routes/comments/comments.ts:155
+#: src/routes/comments/comments.ts:174
 msgctxt "Routes|Comments"
 msgid "Parent comment does not exist."
+msgstr ""
+
+#. Default: "Part {part} not found."
+#: src/helpers/multipart/multipart.ts:117
+msgctxt "Helpers|Multipart"
+msgid "Part {part} not found."
 msgstr ""
 
 #. Default: "Password"
@@ -1521,15 +1625,15 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:114
-#: src/routes/users/users.ts:287
+#: src/routes/users/users.ts:102
+#: src/routes/users/users.ts:268
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Slaptažodžio nustatymo iš naujo užklausa"
 
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:50
-#: src/routes/users/users.ts:208
+#: src/routes/users/users.ts:196
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1539,6 +1643,18 @@ msgstr ""
 msgctxt "Profiles|Core|Actions"
 msgid "Paste"
 msgstr "Įklijuoti"
+
+#. Default: "Path"
+#: src/scheduled_jobs/actions/reindex_security.ts:35
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Path"
+msgstr ""
+
+#. Default: "Path of the item, for example /news."
+#: src/scheduled_jobs/actions/reindex_security.ts:33
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Path of the item, for example /news."
+msgstr ""
 
 #. Default: "Pattern must be at least 1 character long."
 #: src/routes/replace/replace.ts:36
@@ -1569,14 +1685,14 @@ msgstr ""
 #: src/profiles/core/catalog.json:143
 #: src/profiles/core/catalog.json:204
 #: src/profiles/core/catalog.json:216
-#: src/profiles/core/catalog.json:546
-#: src/profiles/core/catalog.json:558
-#: src/profiles/core/catalog.json:625
-#: src/profiles/core/catalog.json:637
-#: src/profiles/core/catalog.json:698
-#: src/profiles/core/catalog.json:710
-#: src/profiles/core/catalog.json:771
-#: src/profiles/core/catalog.json:783
+#: src/profiles/core/catalog.json:564
+#: src/profiles/core/catalog.json:576
+#: src/profiles/core/catalog.json:643
+#: src/profiles/core/catalog.json:655
+#: src/profiles/core/catalog.json:716
+#: src/profiles/core/catalog.json:728
+#: src/profiles/core/catalog.json:789
+#: src/profiles/core/catalog.json:801
 msgctxt "Profiles|Core|Catalog"
 msgid "Please enter the number in days."
 msgstr "Įveskite dienų skaičių."
@@ -1588,18 +1704,18 @@ msgstr "Įveskite dienų skaičių."
 #: src/profiles/core/catalog.json:192
 #: src/profiles/core/catalog.json:198
 #: src/profiles/core/catalog.json:210
-#: src/profiles/core/catalog.json:534
-#: src/profiles/core/catalog.json:540
 #: src/profiles/core/catalog.json:552
-#: src/profiles/core/catalog.json:613
-#: src/profiles/core/catalog.json:619
+#: src/profiles/core/catalog.json:558
+#: src/profiles/core/catalog.json:570
 #: src/profiles/core/catalog.json:631
-#: src/profiles/core/catalog.json:686
-#: src/profiles/core/catalog.json:692
+#: src/profiles/core/catalog.json:637
+#: src/profiles/core/catalog.json:649
 #: src/profiles/core/catalog.json:704
-#: src/profiles/core/catalog.json:759
-#: src/profiles/core/catalog.json:765
+#: src/profiles/core/catalog.json:710
+#: src/profiles/core/catalog.json:722
 #: src/profiles/core/catalog.json:777
+#: src/profiles/core/catalog.json:783
+#: src/profiles/core/catalog.json:795
 msgctxt "Profiles|Core|Catalog"
 msgid "Please use YYYY/MM/DD."
 msgstr "Naudokite formatą MMMM/mm/dd."
@@ -1698,7 +1814,7 @@ msgid "Query"
 msgstr ""
 
 #. Default: "Query must be at least 2 characters long."
-#: src/routes/users/users.ts:175
+#: src/routes/users/users.ts:163
 #: src/routes/principals/principals.ts:30
 #: src/routes/groups/groups.ts:55
 msgctxt "Routes|Users"
@@ -1712,7 +1828,7 @@ msgid "Re-enter the password. Make sure the passwords are identical."
 msgstr ""
 
 #. Default: "Reader"
-#: src/profiles/core/roles.json:27
+#: src/profiles/core/roles.json:37
 msgctxt "Profiles|Core|Roles"
 msgid "Reader"
 msgstr "Skaitytojas"
@@ -1724,7 +1840,7 @@ msgid "Recurrence"
 msgstr ""
 
 #. Default: "Register"
-#: src/profiles/core/permissions.json:38
+#: src/profiles/core/permissions.json:50
 #: src/profiles/core/actions.json:103
 msgctxt "Profiles|Core|Permissions"
 msgid "Register"
@@ -1748,6 +1864,26 @@ msgctxt "Scheduled jobs|Actions|Reindex"
 msgid "Reindex items of type {type}"
 msgstr ""
 
+#. Default: "Reindex security"
+#: src/scheduled_jobs/actions/reindex_security.ts:16
+#: src/routes/sharing/sharing.ts:296
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex security"
+msgstr ""
+
+#. Default: "Reindex security of {path}"
+#: src/scheduled_jobs/actions/reindex_security.ts:20
+#: src/routes/sharing/sharing.ts:297
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex security of {path}"
+msgstr ""
+
+#. Default: "Reindex the permissions of an item and the items below it"
+#: src/scheduled_jobs/actions/reindex_security.ts:18
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex the permissions of an item and the items below it"
+msgstr ""
+
 #. Default: "Related"
 #: src/profiles/core/behaviors/categorization.json:34
 msgctxt "Profiles|Core|Behaviors|Categorization"
@@ -1761,7 +1897,7 @@ msgid "Related Items"
 msgstr "Susiję elementai"
 
 #. Default: "Related To"
-#: src/profiles/core/catalog.json:333
+#: src/profiles/core/catalog.json:339
 msgctxt "Profiles|Core|Catalog"
 msgid "Related To"
 msgstr "Susiję su"
@@ -1797,13 +1933,14 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:609
+#: src/routes/content/content.ts:796
 msgctxt "Routes|Content"
 msgid "Required field(s) missing."
 msgstr "Trūksta privalomų laukų."
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:796
+#: src/routes/content/content.ts:215
+#: src/routes/content/content.ts:994
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -1814,20 +1951,29 @@ msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Atšaukti"
 
+#. Default: "Revert"
+#: src/profiles/core/permissions.json:46
+#: src/profiles/core/upgrades/1010/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Revert"
+msgstr ""
+
 #. Default: "Review"
-#: src/profiles/core/permissions.json:42
+#: src/profiles/core/permissions.json:54
 msgctxt "Profiles|Core|Permissions"
 msgid "Review"
 msgstr "Peržiūra"
 
 #. Default: "Review state"
-#: src/profiles/core/catalog.json:458
+#: src/profiles/core/catalog.json:470
 msgctxt "Profiles|Core|Catalog"
 msgid "Review state"
 msgstr "Peržiūros būsena"
 
 #. Default: "Reviewer"
-#: src/profiles/core/roles.json:42
+#: src/profiles/core/roles.json:59
+#: src/profiles/core/upgrades/1012/roles.json:21
+#: src/profiles/core/upgrades/1010/roles.json:16
 #: src/profiles/core/upgrades/1002/roles.json:21
 msgctxt "Profiles|Core|Roles"
 msgid "Reviewer"
@@ -1943,6 +2089,12 @@ msgctxt "Profiles|Core|Actions"
 msgid "Sharing"
 msgstr "Dalijimasis"
 
+#. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
+#: src/routes/sharing/sharing.ts:220
+msgctxt "Routes|Sharing"
+msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
+msgstr ""
+
 #. Default: "Short name"
 #: src/profiles/core/behaviors/short_name.json:3
 msgctxt "Profiles|Core|Behaviors|Short name"
@@ -1950,7 +2102,7 @@ msgid "Short name"
 msgstr "Trumpas pavadinimas"
 
 #. Default: "Short name (id)"
-#: src/profiles/core/catalog.json:389
+#: src/profiles/core/catalog.json:395
 msgctxt "Profiles|Core|Catalog"
 msgid "Short name (id)"
 msgstr "Trumpas pavadinimas (id)"
@@ -2017,7 +2169,7 @@ msgid "Sitemap"
 msgstr "Svetainės medis"
 
 #. Default: "Sortable Title"
-#: src/profiles/core/catalog.json:477
+#: src/profiles/core/catalog.json:495
 msgctxt "Profiles|Core|Catalog"
 msgid "Sortable Title"
 msgstr "Rūšiuojamas pavadinimas"
@@ -2047,7 +2199,7 @@ msgid "Subject of the message"
 msgstr ""
 
 #. Default: "Submit"
-#: src/profiles/core/permissions.json:46
+#: src/profiles/core/permissions.json:58
 msgctxt "Profiles|Core|Permissions"
 msgid "Submit"
 msgstr "Pateikti"
@@ -2095,7 +2247,7 @@ msgid "System group"
 msgstr "Sistemos grupė"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:370
+#: src/routes/users/users.ts:351
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Sistemos vartotojai"
@@ -2132,14 +2284,14 @@ msgid "Target path not found."
 msgstr ""
 
 #. Default: "Text is required to add a comment."
-#: src/routes/comments/comments.ts:104
-#: src/routes/comments/comments.ts:162
+#: src/routes/comments/comments.ts:121
+#: src/routes/comments/comments.ts:181
 msgctxt "Routes|Comments"
 msgid "Text is required to add a comment."
 msgstr ""
 
 #. Default: "Text is required to modify a comment."
-#: src/routes/comments/comments.ts:229
+#: src/routes/comments/comments.ts:248
 msgctxt "Routes|Comments"
 msgid "Text is required to modify a comment."
 msgstr ""
@@ -2207,16 +2359,16 @@ msgstr "Turinio tipai, kurie turėtų būti rodomi navigacijoje ir svetainės me
 #. Default: "The current day"
 #: src/profiles/core/catalog.json:149
 #: src/profiles/core/catalog.json:222
-#: src/profiles/core/catalog.json:564
-#: src/profiles/core/catalog.json:643
-#: src/profiles/core/catalog.json:716
-#: src/profiles/core/catalog.json:789
+#: src/profiles/core/catalog.json:582
+#: src/profiles/core/catalog.json:661
+#: src/profiles/core/catalog.json:734
+#: src/profiles/core/catalog.json:807
 msgctxt "Profiles|Core|Catalog"
 msgid "The current day"
 msgstr "Dabartinė diena"
 
 #. Default: "The date an item was created"
-#: src/profiles/core/catalog.json:655
+#: src/profiles/core/catalog.json:673
 msgctxt "Profiles|Core|Catalog"
 msgid "The date an item was created"
 msgstr "Data, kada elementas buvo sukurtas"
@@ -2246,14 +2398,14 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:115
-#: src/routes/users/users.ts:288
+#: src/routes/users/users.ts:103
+#: src/routes/users/users.ts:269
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"
-#: src/profiles/core/catalog.json:478
+#: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
 msgid "The item’s title, transformed for sorting"
 msgstr "Elemento pavadinimas, transformuotas rūšiavimui"
@@ -2307,7 +2459,7 @@ msgid "The password for the ESMTP user account."
 msgstr "ESMTP vartotojo paskyros slaptažodis."
 
 #. Default: "The person that created an item"
-#: src/profiles/core/catalog.json:409
+#: src/profiles/core/catalog.json:415
 msgctxt "Profiles|Core|Catalog"
 msgid "The person that created an item"
 msgstr "Asmuo, kuris sukūrė elementą"
@@ -2325,7 +2477,7 @@ msgid "The roles to check for."
 msgstr ""
 
 #. Default: "The short name of an item (used in the url)"
-#: src/profiles/core/catalog.json:390
+#: src/profiles/core/catalog.json:396
 msgctxt "Profiles|Core|Catalog"
 msgid "The short name of an item (used in the url)"
 msgstr "Trumpas elemento pavadinimas (naudojamas URL)"
@@ -2343,19 +2495,19 @@ msgid "The start date and time of an event"
 msgstr "Renginio pradžios data ir laikas"
 
 #. Default: "The time and date an item was expired"
-#: src/profiles/core/catalog.json:582
+#: src/profiles/core/catalog.json:600
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was expired"
 msgstr "Laikas ir data, kada elemento galiojimas baigėsi"
 
 #. Default: "The time and date an item was first published"
-#: src/profiles/core/catalog.json:728
+#: src/profiles/core/catalog.json:746
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was first published"
 msgstr "Laikas ir data, kada elementas buvo pirmą kartą paskelbtas"
 
 #. Default: "The time and date an item was last modified"
-#: src/profiles/core/catalog.json:503
+#: src/profiles/core/catalog.json:521
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was last modified"
 msgstr "Laikas ir data, kada elementas buvo paskutinį kartą modifikuotas"
@@ -2367,7 +2519,7 @@ msgid "The topic of this item."
 msgstr "Šio elemento tema."
 
 #. Default: "The user viewing the querystring results"
-#: src/profiles/core/catalog.json:422
+#: src/profiles/core/catalog.json:428
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr "Vartotojas, peržiūrintis užklausos eilutės rezultatus"
@@ -2424,11 +2576,14 @@ msgstr "Tai rodoma naršyklių pavadinimo juostoje ir sindikacijos kanaluose."
 #. Default: "Tip: you can use * to autocomplete."
 #: src/profiles/core/catalog.json:297
 #: src/profiles/core/catalog.json:303
-#: src/profiles/core/catalog.json:397
-#: src/profiles/core/catalog.json:416
-#: src/profiles/core/catalog.json:447
-#: src/profiles/core/catalog.json:466
-#: src/profiles/core/catalog.json:491
+#: src/profiles/core/catalog.json:310
+#: src/profiles/core/catalog.json:403
+#: src/profiles/core/catalog.json:422
+#: src/profiles/core/catalog.json:453
+#: src/profiles/core/catalog.json:459
+#: src/profiles/core/catalog.json:478
+#: src/profiles/core/catalog.json:484
+#: src/profiles/core/catalog.json:509
 msgctxt "Profiles|Core|Catalog"
 msgid "Tip: you can use * to autocomplete."
 msgstr "Patarimas: galite naudoti *, kad užbaigtumėte automatiškai."
@@ -2442,7 +2597,7 @@ msgid "Title"
 msgstr "Pavadinimas"
 
 #. Default: "To, from and message are required fields."
-#: src/routes/email/email.ts:28
+#: src/routes/email/email.ts:41
 msgctxt "Routes|Email"
 msgid "To, from and message are required fields."
 msgstr "Kam, nuo ir žinutė yra privalomi laukai."
@@ -2450,18 +2605,18 @@ msgstr "Kam, nuo ir žinutė yra privalomi laukai."
 #. Default: "Today"
 #: src/profiles/core/catalog.json:148
 #: src/profiles/core/catalog.json:221
-#: src/profiles/core/catalog.json:563
-#: src/profiles/core/catalog.json:642
-#: src/profiles/core/catalog.json:715
-#: src/profiles/core/catalog.json:788
+#: src/profiles/core/catalog.json:581
+#: src/profiles/core/catalog.json:660
+#: src/profiles/core/catalog.json:733
+#: src/profiles/core/catalog.json:806
 msgctxt "Profiles|Core|Catalog"
 msgid "Today"
 msgstr "Šiandien"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:161
-#: src/app.ts:175
+#: src/app.ts:167
+#: src/app.ts:184
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Sandorio klaida."
@@ -2478,8 +2633,20 @@ msgctxt "Content rules|Actions|Transition workflow"
 msgid "Transition workflow state"
 msgstr ""
 
+#. Default: "Transition {transition} is not available for {path}."
+#: src/routes/workflow/workflow.ts:43
+msgctxt "Routes|Workflow"
+msgid "Transition {transition} is not available for {path}."
+msgstr ""
+
+#. Default: "Transition {transition} is not available in the current state."
+#: src/routes/workflow/workflow.ts:87
+msgctxt "Routes|Workflow"
+msgid "Transition {transition} is not available in the current state."
+msgstr ""
+
 #. Default: "Type"
-#: src/profiles/core/catalog.json:439
+#: src/profiles/core/catalog.json:445
 msgctxt "Profiles|Core|Catalog"
 msgid "Type"
 msgstr "Tipas"
@@ -2497,9 +2664,15 @@ msgid "Type of the current document is not found."
 msgstr "Dabartinio dokumento tipas nerastas."
 
 #. Default: "Type {type} not found."
-#: src/routes/content/content.ts:598
+#: src/routes/content/content.ts:785
 msgctxt "Routes|Content"
 msgid "Type {type} not found."
+msgstr ""
+
+#. Default: "Upload too large."
+#: src/helpers/multipart/multipart.ts:56
+msgctxt "Helpers|Multipart"
+msgid "Upload too large."
 msgstr ""
 
 #. Default: "Use '../' to navigate to parent objects."
@@ -2529,13 +2702,13 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:75
+#: src/routes/users/users.ts:70
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "Vartotojas neegzistuoja arba neteisingi prisijungimo duomenys."
 
 #. Default: "User is not logged in."
-#: src/routes/authentication/authentication.ts:135
+#: src/routes/authentication/authentication.ts:136
 msgctxt "Routes|Authentication"
 msgid "User is not logged in."
 msgstr "Vartotojas nėra prisijungęs."
@@ -2594,6 +2767,12 @@ msgctxt "Content rules|Actions|Version item"
 msgid "Version item with comment {comment}"
 msgstr ""
 
+#. Default: "Version not found."
+#: src/routes/history/history.ts:91
+msgctxt "Routes|History"
+msgid "Version not found."
+msgstr ""
+
 #. Default: "Versioning"
 #: src/profiles/core/behaviors/versioning.json:3
 msgctxt "Profiles|Core|Behaviors|Versioning"
@@ -2627,10 +2806,17 @@ msgid "View"
 msgstr "Rodinys"
 
 #. Default: "View Comments"
-#: src/profiles/core/permissions.json:50
+#: src/profiles/core/permissions.json:62
 #: src/profiles/core/upgrades/1002/permissions.json:6
 msgctxt "Profiles|Core|Permissions"
 msgid "View Comments"
+msgstr ""
+
+#. Default: "View History"
+#: src/profiles/core/permissions.json:42
+#: src/profiles/core/upgrades/1012/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
@@ -2673,10 +2859,10 @@ msgstr ""
 #. Default: "Within last"
 #: src/profiles/core/catalog.json:130
 #: src/profiles/core/catalog.json:203
-#: src/profiles/core/catalog.json:545
-#: src/profiles/core/catalog.json:624
-#: src/profiles/core/catalog.json:697
-#: src/profiles/core/catalog.json:770
+#: src/profiles/core/catalog.json:563
+#: src/profiles/core/catalog.json:642
+#: src/profiles/core/catalog.json:715
+#: src/profiles/core/catalog.json:788
 msgctxt "Profiles|Core|Catalog"
 msgid "Within last"
 msgstr "Per paskutinius"
@@ -2684,10 +2870,10 @@ msgstr "Per paskutinius"
 #. Default: "Within next"
 #: src/profiles/core/catalog.json:142
 #: src/profiles/core/catalog.json:215
-#: src/profiles/core/catalog.json:557
-#: src/profiles/core/catalog.json:636
-#: src/profiles/core/catalog.json:709
-#: src/profiles/core/catalog.json:782
+#: src/profiles/core/catalog.json:575
+#: src/profiles/core/catalog.json:654
+#: src/profiles/core/catalog.json:727
+#: src/profiles/core/catalog.json:800
 msgctxt "Profiles|Core|Catalog"
 msgid "Within next"
 msgstr "Per kitus"
@@ -2712,26 +2898,33 @@ msgid "Workflow states are: {states}"
 msgstr ""
 
 #. Default: "Wrong login and/or password."
-#: src/routes/authentication/authentication.ts:86
-#: src/routes/authentication/authentication.ts:100
+#: src/routes/authentication/authentication.ts:87
+#: src/routes/authentication/authentication.ts:101
 msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr "Neteisingas prisijungimas ir (arba) slaptažodis."
 
 #. Default: "Yes"
-#: src/profiles/core/catalog.json:365
+#: src/profiles/core/catalog.json:371
 #: src/profiles/core/vocabularies/boolean.json:5
 msgctxt "Profiles|Core|Catalog"
 msgid "Yes"
 msgstr "Taip"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:45
+#: src/routes/workflow/workflow.ts:96
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Neturite teisės pasiekti šį išteklių."
 
+#. Default: "You are not authorized to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:93
+msgctxt "Routes|Vocabularies"
+msgid "You are not authorized to access the vocabulary “{id}”."
+msgstr ""
+
 #. Default: "You are not authorized to access this resource."
+#: src/routes/translations/translations.ts:39
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -2740,10 +2933,19 @@ msgstr "Neturite teisės pasiekti šį išteklių."
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
+#: src/routes/content/content.ts:201
+#: src/routes/comments/comments.ts:54
+#: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
-msgctxt "Routes|Recyclebin"
+msgctxt "Routes|Translations"
 msgid "You are not authorized to access this resource."
-msgstr "Neturite leidimo pasiekti šį išteklių."
+msgstr ""
+
+#. Default: "You are not authorized to set the uuid."
+#: src/routes/content/content.ts:812
+msgctxt "Routes|Content"
+msgid "You are not authorized to set the uuid."
+msgstr ""
 
 #. Default: "You can’t delete system groups."
 #: src/routes/groups/groups.ts:141
@@ -2752,25 +2954,25 @@ msgid "You can’t delete system groups."
 msgstr "Negalite ištrinti sistemos grupių."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:369
+#: src/routes/users/users.ts:350
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Negalite ištrinti sistemos vartotojų."
 
 #. Default: "You don’t have permission to delete this comment."
-#: src/routes/comments/comments.ts:277
+#: src/routes/comments/comments.ts:296
 msgctxt "Routes|Comments"
 msgid "You don’t have permission to delete this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to edit this comment."
-#: src/routes/comments/comments.ts:222
+#: src/routes/comments/comments.ts:241
 msgctxt "Routes|Comments"
 msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:65
+#: src/routes/history/history.ts:68
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Neturite leidimo išsaugoti šio dokumento, nes jį užrakino kitas vartotojas."
@@ -2782,15 +2984,21 @@ msgid "You don’t have permission to unlock this document."
 msgstr "Neturite leidimo atrakinti šio dokumento."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:201
+#: src/routes/users/users.ts:189
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Neturite teisės pridėti vartotojo."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:142
+#: src/routes/users/users.ts:130
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
+msgstr ""
+
+#. Default: "You need to be authenticated to access the vocabulary “{id}”."
+#: src/routes/vocabularies/vocabularies.ts:89
+msgctxt "Routes|Vocabularies"
+msgid "You need to be authenticated to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "Your location - either city and country - or in a company setting, where your office is located."

@@ -12,4 +12,7 @@ import { testRequest } from '../../helpers/tests/tests';
 
 describe('Navigation', () => {
   it('should return the navigation', () => testRequest(app, 'navigation/get'));
+
+  it('should return a bad request on an invalid depth', () =>
+    testRequest(app, 'navigation/get_invalid_depth'));
 });

@@ -8,7 +8,6 @@ import type { Request } from '../../types';
 import type { Knex } from 'knex';
 
 // External imports
-import express from 'express';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { drop, intersection } from 'es-toolkit/array';
@@ -29,7 +28,12 @@ import {
 } from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import { readFile } from '../../helpers/fs/fs';
+import {
+  contentBodyParser,
+  resolveMultipartBody,
+} from '../../helpers/multipart/multipart';
 import { lockExpired } from '../../helpers/lock/lock';
+import { getFactoryFields } from '../../helpers/schema/schema';
 import { getRootUrl } from '../../helpers/url/url';
 import { mapAsync, uniqueId, bytesToNumber } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -38,15 +42,121 @@ dayjs.extend(utc);
 
 const omitProperties = ['@type', 'id', 'changeNote', 'language'];
 
+// Content types which are safe to show inline in the browser, other types
+// (like html or svg) could run scripts on the origin of the api
+const inlineContentTypes = [
+  'application/pdf',
+  'audio/mpeg',
+  'audio/ogg',
+  'audio/wav',
+  'audio/webm',
+  'image/avif',
+  'image/bmp',
+  'image/gif',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'text/plain',
+  'video/mp4',
+  'video/ogg',
+  'video/quicktime',
+  'video/webm',
+];
+
 /**
- * Get the content-disposition header value.
+ * Check if a content type is safe to show inline.
+ * @param {string} contentType The content type.
+ * @returns {boolean} True if safe to show inline.
+ */
+function isInlineContentType(contentType: string): boolean {
+  return inlineContentTypes.includes(
+    (contentType || '').split(';')[0].trim().toLowerCase(),
+  );
+}
+
+/**
+ * Get the content-disposition header value. Uploaded files are only shown
+ * inline when their content type is safe to show inline.
  * @param {Request} req The request object.
  * @param {string} filename The filename to disposition.
+ * @param {string} contentType Content type of an uploaded file.
  * @returns {string} The content-disposition header value.
  */
-function getDisposition(req: Request, filename: string): string {
-  const type = req.query?.disposition === 'inline' ? 'inline' : 'attachment';
+function getDisposition(
+  req: Request,
+  filename: string,
+  contentType?: string,
+): string {
+  const type =
+    req.query?.disposition === 'inline' &&
+    (contentType === undefined || isInlineContentType(contentType))
+      ? 'inline'
+      : 'attachment';
   return `${type}; filename="${filename}"`;
+}
+
+/**
+ * Find an image (or one of its scales) in the image fields of the given data.
+ * @param {Object} schema Schema of the data.
+ * @param {Object} data Data with the image fields.
+ * @param {string} uuid Uuid of the image file.
+ * @returns {Object|undefined} The image field data if found.
+ */
+function findImage(schema: any, data: any, uuid: string): any {
+  const field = getFactoryFields(schema, 'Image').find(
+    (field: string) =>
+      data?.[field]?.uuid === uuid ||
+      Object.values(data?.[field]?.scales || {}).some(
+        (scale: any) => scale?.uuid === uuid,
+      ),
+  );
+  return field ? data[field] : undefined;
+}
+
+/**
+ * Find an image file of the current document, one of its versions or the
+ * control panels (e.g. the site logo).
+ * @param {Request} req The request object.
+ * @param {string} uuid Uuid of the image file.
+ * @param {Knex.Transaction} trx Transaction object.
+ * @returns {Promise<Object|undefined>} The image field data if found.
+ */
+async function findImageOfDocument(
+  req: Request,
+  uuid: string,
+  trx: Knex.Transaction,
+): Promise<any> {
+  const Controlpanel = models.get('Controlpanel');
+  const schema = req.type._schema;
+
+  // Image of the document
+  const image = findImage(schema, req.document.json, uuid);
+  if (image) {
+    return image;
+  }
+
+  // Image of one of the versions of the document
+  await req.document.fetchRelated('_versions', trx);
+  for (const version of req.document._versions || []) {
+    const versionImage = findImage(schema, version.json, uuid);
+    if (versionImage) {
+      return versionImage;
+    }
+  }
+
+  // Image of a control panel
+  const controlpanels = await Controlpanel.fetchAll({}, {}, trx);
+  for (const controlpanel of controlpanels.models) {
+    const controlpanelImage = findImage(
+      controlpanel.schema,
+      controlpanel.data,
+      uuid,
+    );
+    if (controlpanelImage) {
+      return controlpanelImage;
+    }
+  }
+  return undefined;
 }
 
 export default [
@@ -58,6 +168,9 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
+
+      // Lock the target to serialize changes of its children
+      await req.document.lockForUpdate(trx);
 
       // Get children
       await req.document.fetchRelated('_children', trx);
@@ -73,8 +186,37 @@ export default [
         ? req.body.source
         : [req.body.source];
       await mapAsync(sources, async (source: string) => {
-        // Get item to be moved
+        // Get item to be moved, skip if not found or not viewable
         const document = await Document.fetchOne({ path: source }, {}, trx);
+        const permissions = document
+          ? await document.fetchUserPermissions(req.user, trx)
+          : [];
+        if (!permissions.includes('View')) {
+          return;
+        }
+
+        // Moving removes the item from its folder, like deleting it
+        if (!permissions.includes('Modify')) {
+          throw new RequestException(req.user.id === 'anonymous' ? 401 : 403, {
+            message: req.i18n(
+              'You are not authorized to access this resource.',
+            ),
+          });
+        }
+
+        // Check if locked
+        if (
+          document?.lock?.locked &&
+          !lockExpired(document) &&
+          req.headers['lock-token'] !== document.lock.token
+        ) {
+          throw new RequestException(423, {
+            error: {
+              message: req.i18n('Resource is locked.'),
+              type: req.i18n('Document locked'),
+            },
+          });
+        }
 
         // If moved to same folder or subfolder do nothing
         if (
@@ -152,6 +294,9 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
 
+      // Lock the target to serialize changes of its children
+      await req.document.lockForUpdate(trx);
+
       // Get children
       await req.document.fetchChildren({}, trx, false);
       const childIds = req.document._children.map(
@@ -166,8 +311,14 @@ export default [
         ? req.body.source
         : [req.body.source];
       await mapAsync(sources, async (source: string) => {
-        // Get item to be copied
+        // Get item to be copied, skip if not found or not viewable
         const document = await Document.fetchOne({ path: source }, {}, trx);
+        if (
+          !document ||
+          !(await document.fetchUserPermissions(req.user, trx)).includes('View')
+        ) {
+          return;
+        }
 
         // Calculate new id and path
         const path = req.document.path;
@@ -223,13 +374,13 @@ export default [
   {
     op: 'get',
     view: '/@history/:version',
-    permission: 'View',
+    permission: 'View History',
     client: 'getHistoryVersion',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
       await req.document.fetchChildren({}, trx);
       await req.document.fetchVersion(parseInt(req.params.version, 10), trx);
-      await req.document.fetchRelationLists(trx);
+      await req.document.fetchRelationLists(trx, req);
       return {
         json: await handleBlockReferences(
           await req.document.toJson(
@@ -245,7 +396,7 @@ export default [
   {
     op: 'get',
     view: '/@@videos/:field',
-    // permission: 'View',
+    permission: 'View',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const field = req.document.json[req.params.field];
       const uuid = field.uuid;
@@ -282,7 +433,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
           'content-length': end - start + 1,
           'content-range': `bytes ${start}-${end}/${size}`,
           'Accept-Ranges': 'bytes',
@@ -314,7 +469,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
           'Accept-Ranges': 'bytes',
         },
         etag: uuid,
@@ -330,6 +489,13 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const uuid = req.params.uuid;
 
+      // Only serve images of this document, so the View permission on the
+      // document applies to the image
+      const image = await findImageOfDocument(req, uuid, trx);
+      if (!image) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
+
       // Check if current etag
       if (checkETag(req, uuid)) {
         return {
@@ -341,7 +507,16 @@ export default [
       const buffer = await readFile(uuid, trx);
       return {
         headers: {
-          'content-type': `image/${req.params.ext}`,
+          'content-type': image['content-type'],
+          // Other types are downloaded, the filename is encoded because a
+          // header can't contain non-ascii characters
+          ...(isInlineContentType(image['content-type'])
+            ? {}
+            : {
+                'content-disposition': `attachment; filename*=UTF-8''${encodeURIComponent(
+                  image.filename || '',
+                )}`,
+              }),
         },
         etag: uuid,
         xkeys: [req.document.uuid],
@@ -369,7 +544,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
         },
         etag: uuid,
         xkeys: [req.document.uuid],
@@ -397,7 +576,11 @@ export default [
       return {
         headers: {
           'content-type': field['content-type'],
-          'content-disposition': getDisposition(req, field.filename),
+          'content-disposition': getDisposition(
+            req,
+            field.filename,
+            field['content-type'],
+          ),
         },
         etag: uuid,
         xkeys: [req.document.uuid],
@@ -511,7 +694,7 @@ export default [
     cache: 'content',
     handler: async (req: Request, trx: Knex.Transaction) => {
       // Fetch data
-      await req.document.fetchRelationLists(trx);
+      await req.document.fetchRelationLists(trx, req);
       await req.document.fetchChildren(req, trx);
       await req.document.restrictChildren(req, trx);
 
@@ -576,12 +759,16 @@ export default [
     permission: 'Add',
     client: 'addContent',
     cache: 'manage',
-    middleware: express.json({
-      limit: config.settings.requestLimit?.files || '10mb',
-    }),
+    middleware: contentBodyParser,
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Type = models.get('Type');
       const Document = models.get('Document');
+
+      // Resolve multipart/form-data bodies (file/image parts) into plain JSON
+      req.body = resolveMultipartBody(req);
+
+      // Lock the parent to serialize the creation of its children
+      await req.document.lockForUpdate(trx);
 
       // Get content type date
       const type = await Type.fetchById(
@@ -618,6 +805,13 @@ export default [
 
       // Get json data
       const properties = type._schema.properties;
+
+      // Only site managers may choose the uuid
+      if (req.body.uuid && !req.permissions.includes('Manage Site')) {
+        throw new RequestException(403, {
+          message: req.i18n('You are not authorized to set the uuid.'),
+        });
+      }
 
       // Set uuid
       const newUuid = req.body.uuid || uuid();
@@ -666,7 +860,7 @@ export default [
             : req.document._children.length,
         lock: { locked: false, stealable: true },
         workflow_state: type._workflow.json.initial_state,
-        workflow_history: JSON.stringify(req.body.workflow_history || []),
+        workflow_history: JSON.stringify([]),
         owner: req.user.id,
         json,
       }) as any;
@@ -730,7 +924,7 @@ export default [
       await document.index(trx);
 
       // Fetch related lists
-      await document.fetchRelationLists(trx);
+      await document.fetchRelationLists(trx, req);
 
       // Trigger onAfterAdd
       await events.trigger(
@@ -759,11 +953,15 @@ export default [
     permission: 'Modify',
     client: 'updateContent',
     cache: 'alter',
-    middleware: express.json({
-      limit: config.settings.requestLimit?.files || '10mb',
-    }),
+    middleware: contentBodyParser,
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
+
+      // Resolve multipart/form-data bodies (file/image parts) into plain JSON
+      req.body = resolveMultipartBody(req);
+
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
 
       // Check if ordering request
       if (typeof req.body?.ordering !== 'undefined') {
@@ -906,15 +1104,18 @@ export default [
   {
     op: 'delete',
     view: '',
-    permission: 'Modify',
+    permission: 'Delete',
     client: 'deleteContent',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
 
-      // Get parent
+      // Get parent and lock parent before the document, as all changes of
+      // the children of a parent lock the parent first
       await req.document.fetchRelated('_parent', trx);
       const parent = req.document._parent;
+      await parent?.lockForUpdate(trx);
+      await req.document.lockForUpdate(trx);
 
       // Check if locked
       const lock = req.document.lock;
