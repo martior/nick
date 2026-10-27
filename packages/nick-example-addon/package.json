@@ -1,6 +1,6 @@
 {
   "name": "@plone/nick-example-addon",
-  "description": "Example add-on for Nick: a content type, a behavior, a REST service, a periodic task and its own tables and migrations",
+  "description": "Example add-on for Nick: a content type, a behavior, a REST service, a scheduled job and its own tables and migrations",
   "type": "module",
   "private": true,
   "license": "MIT",

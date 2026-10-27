@@ -24,6 +24,9 @@
         "Add",
         "Submit",
         "Modify Comments",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor",
         "Revert",
         "Delete",
         "View History"
@@ -42,7 +45,14 @@
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Submit", "Revert", "Delete", "View History"]
+      "permissions": [
+        "Submit",
+        "Delegate Reader",
+        "Delegate Editor",
+        "Revert",
+        "Delete",
+        "View History"
+      ]
     },
     {
       "id": "Reviewer",
@@ -59,6 +69,10 @@
         "Manage Users",
         "Manage Site",
         "Modify Comments",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor",
+        "Delegate Reviewer",
         "Revert",
         "Delete",
         "View History"
