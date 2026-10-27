@@ -221,8 +221,7 @@ msgid "Allows users to login with their email address instead of specifying a se
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:125
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "လော့ခ်ချပြီးသား"
@@ -747,7 +746,8 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
 #: src/routes/content/content.ts:216
-#: src/routes/content/content.ts:997
+#: src/routes/content/content.ts:995
+#: src/routes/content/content.ts:1132
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "စာရွက်စာတမ်း လော့ခ်ချထားသည်"
@@ -1503,7 +1503,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:178
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "ခွင့်မပြုပါ"
@@ -1562,6 +1562,12 @@ msgstr "ရှာမတွေ့ပါ။"
 #: src/helpers/handler/handler.ts:79
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
+msgstr ""
+
+#. Default: "Object “{id}” is locked."
+#: src/routes/content/content.ts:1129
+msgctxt "Routes|Content"
+msgid "Object “{id}” is locked."
 msgstr ""
 
 #. Default: "Open End"
@@ -1934,6 +1940,7 @@ msgstr "လိုအပ်သောအကွက်(များ) ပျောက
 
 #. Default: "Resource is locked."
 #: src/routes/content/content.ts:215
+#: src/routes/content/content.ts:994
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2524,8 +2531,7 @@ msgid "The workflow states to check for."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:122
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "ဤစာရွက်စာတမ်းကို အခြားအသုံးပြုသူက လော့ခ်ချထားပြီးဖြစ်သည်။"
@@ -2967,13 +2973,12 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:994
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "ဤစာရွက်စာတမ်းကို အခြားအသုံးပြုသူက လော့ခ်ချထားသောကြောင့် သိမ်းဆည်းခွင့် မရှိပါ။"
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:175
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "ဤစာရွက်စာတမ်းကို လော့ခ်ဖွင့်ရန် ခွင့်ပြုချက် မရှိပါ။"

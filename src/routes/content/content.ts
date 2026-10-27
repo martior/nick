@@ -989,11 +989,9 @@ export default [
         !lockExpired(req.document) &&
         req.headers['lock-token'] !== lock.token
       ) {
-        throw new RequestException(401, {
+        throw new RequestException(403, {
           error: {
-            message: req.i18n(
-              'You don’t have permission to save this document because it is locked by another user.',
-            ),
+            message: req.i18n('Resource is locked.'),
             type: req.i18n('Document locked'),
           },
         });
@@ -1087,10 +1085,6 @@ export default [
           version,
           modified,
           json,
-          lock: {
-            locked: false,
-            stealable: true,
-          },
         },
         trx,
       );
@@ -1122,6 +1116,23 @@ export default [
       const parent = req.document._parent;
       await parent?.lockForUpdate(trx);
       await req.document.lockForUpdate(trx);
+
+      // Check if locked
+      const lock = req.document.lock;
+      if (
+        lock.locked &&
+        !lockExpired(req.document) &&
+        req.headers['lock-token'] !== lock.token
+      ) {
+        throw new RequestException(423, {
+          error: {
+            message: req.i18n('Object “{id}” is locked.', {
+              id: req.document.id,
+            }),
+            type: req.i18n('Document locked'),
+          },
+        });
+      }
 
       // Trigger onBeforeDelete
       await events.trigger(

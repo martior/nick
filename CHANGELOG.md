@@ -308,6 +308,13 @@
 - Run a request again, up to three times, when its transaction hits a database deadlock or serialization failure instead of returning 500 @martior
 - Accept @sharing posts without entries or inherit, ignore unknown roles and return 400 instead of 500 for invalid sharing data @martior
 - List users and groups with local or acquired roles in the @sharing entries and search principals by id too @martior
+- Unlock content on DELETE @lock and let a forced unlock steal a stealable lock of another user @martior
+- Keep the token, timeout and stealable setting when refreshing a lock and don't lock unlocked content on refresh @martior
+- Keep the lock when locked content is saved with the lock token @martior
+- Return 403 "Resource is locked." when locked content is saved without the lock token @martior
+- Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
+- Return the existing lock when locking content locked by another user @martior
+- Return the existing lock when unlocking content locked by another user without force @martior
 
 ### Internal
 

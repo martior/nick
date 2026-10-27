@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-27T02:59:38.933Z\n"
+"POT-Creation-Date: 2026-10-27T03:34:46.421Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -218,8 +218,7 @@ msgid "Allows users to login with their email address instead of specifying a se
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:70
-#: src/routes/lock/lock.ts:123
+#: src/routes/lock/lock.ts:125
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr ""
@@ -744,7 +743,8 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
 #: src/routes/content/content.ts:216
-#: src/routes/content/content.ts:997
+#: src/routes/content/content.ts:995
+#: src/routes/content/content.ts:1132
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr ""
@@ -1500,7 +1500,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:174
+#: src/routes/lock/lock.ts:178
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr ""
@@ -1559,6 +1559,12 @@ msgstr ""
 #: src/helpers/handler/handler.ts:79
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
+msgstr ""
+
+#. Default: "Object “{id}” is locked."
+#: src/routes/content/content.ts:1129
+msgctxt "Routes|Content"
+msgid "Object “{id}” is locked."
 msgstr ""
 
 #. Default: "Open End"
@@ -1931,6 +1937,7 @@ msgstr ""
 
 #. Default: "Resource is locked."
 #: src/routes/content/content.ts:215
+#: src/routes/content/content.ts:994
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2521,8 +2528,7 @@ msgid "The workflow states to check for."
 msgstr ""
 
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:67
-#: src/routes/lock/lock.ts:120
+#: src/routes/lock/lock.ts:122
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr ""
@@ -2964,13 +2970,12 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:68
-#: src/routes/content/content.ts:994
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr ""
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:171
+#: src/routes/lock/lock.ts:175
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr ""
