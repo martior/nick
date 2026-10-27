@@ -19,6 +19,9 @@
       "require": "./*"
     }
   },
+  "nick": {
+    "migrations": "src/migrations"
+  },
   "bin": {
     "nick": "./scripts/nick.ts"
   },

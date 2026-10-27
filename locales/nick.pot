@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-27T13:58:01.373Z\n"
+"POT-Creation-Date: 2026-10-27T16:08:26.349Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -144,7 +144,7 @@ msgstr ""
 
 #. Default: "Administrators"
 #: src/profiles/multilingualcontent/groups.json:6
-#: src/profiles/examplecontent/groups.json:6
+#: src/profiles/default/groups.json:6
 msgctxt "Profiles|Multilingualcontent|Groups"
 msgid "Administrators"
 msgstr ""

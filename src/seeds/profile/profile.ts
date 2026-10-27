@@ -24,7 +24,7 @@ export const seedProfile = async (
       (await import(`${profilePath}/metadata`)).default,
     );
     await Profile.deleteById(profile.id, trx);
-    await Profile.create(omit(profile, ['upgrade']), {}, trx);
+    await Profile.create(omit(profile, ['upgrade', 'dependencies']), {}, trx);
     console.log('Profile imported');
   }
 };
