@@ -348,4 +348,38 @@ describe('Sharing', () => {
       ),
     ).toEqual(['Editor']);
   });
+  it('should keep the roles the user may not delegate', async () => {
+    const token = await createUserWithToken('editor');
+    await createUserWithToken('other');
+    const share = (auth: string, roles: any) =>
+      request(app)
+        .post('/news/@sharing')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${auth}`)
+        .send({ entries: [{ id: 'other', type: 'user', roles }] })
+        .expect(204);
+
+    // The admin gives other Reviewer, and the editor Editor
+    await share(adminToken, { Reviewer: true });
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        entries: [{ id: 'editor', type: 'user', roles: { Editor: true } }],
+      })
+      .expect(204);
+
+    // The editor sends the complete entry it can see, without Reviewer
+    await share(token, { Reader: true, Editor: false });
+    const other = await User.fetchById('other', {}, global.txn!);
+    expect(
+      (
+        await other.fetchRolesByDocument(
+          '32215c67-86de-462a-8cc0-eabcd2b39c26',
+          global.txn!,
+        )
+      ).sort(),
+    ).toEqual(['Reader', 'Reviewer']);
+  });
 });
