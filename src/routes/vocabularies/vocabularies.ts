@@ -4,7 +4,7 @@
  */
 
 // Type imports
-import type { Request } from '../../types';
+import type { Request, VocabularyTerm } from '../../types';
 import type { Knex } from 'knex';
 
 // External imports
@@ -53,39 +53,97 @@ export default [
     client: 'getVocabulary',
     cache: 'dynamic',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      let id = req.params.id;
+      let items: VocabularyTerm[];
+
       // Check if vocabulary is available
-      if (!vocabularies.exists(req.params.id)) {
+      if (!vocabularies.exists(id)) {
         const Vocabulary = models.get('Vocabulary');
-        const id =
-          req.params.id === 'plone.contentrules.events'
-            ? 'events'
-            : req.params.id;
+        id = id === 'plone.contentrules.events' ? 'events' : id;
         const vocabulary = await Vocabulary.fetchById(id, {}, trx);
         if (!vocabulary) {
           throw new RequestException(404, { error: req.i18n('Not found.') });
         }
+        items = vocabulary.items;
+      } else {
+        // Check the permission of protected vocabularies
+        const permission = vocabularies.permission(id);
+        if (permission && !req.permissions.includes(permission)) {
+          const anonymous = req.user.id === 'anonymous';
+          throw new RequestException(anonymous ? 401 : 403, {
+            error: {
+              type: anonymous
+                ? req.i18n('Not authenticated')
+                : req.i18n('Not authorized'),
+              message: anonymous
+                ? req.i18n(
+                    'You need to be authenticated to access the vocabulary “{id}”.',
+                    { id },
+                  )
+                : req.i18n(
+                    'You are not authorized to access the vocabulary “{id}”.',
+                    { id },
+                  ),
+            },
+          });
+        }
+        items = await vocabularies.get(id)(req, trx);
+      }
 
-        // Return data
-        return {
-          json: {
-            '@id': `${getUrl(req)}/@vocabularies/${id}`,
-            items: vocabulary.items,
-            items_total: vocabulary.items.length,
+      // Filter by title or token
+      const title = typeof req.query.title === 'string' ? req.query.title : '';
+      const token = typeof req.query.token === 'string' ? req.query.token : '';
+      if (title && token) {
+        throw new RequestException(400, {
+          error: req.i18n(
+            'You can not filter by title and token at the same time.',
+          ),
+        });
+      }
+      if (title) {
+        items = items.filter((item: VocabularyTerm) =>
+          `${item.title}`.toLowerCase().includes(title.toLowerCase()),
+        );
+      } else if (token) {
+        items = items.filter(
+          (item: VocabularyTerm) =>
+            `${item.token}`.toLowerCase() === token.toLowerCase(),
+        );
+      }
+
+      // Batch if requested
+      const url = `${getUrl(req)}/@vocabularies/${id}`;
+      const total = items.length;
+      const start = Math.max(0, parseInt(`${req.query.b_start}`, 10) || 0);
+      const size = parseInt(`${req.query.b_size}`, 10);
+      let batching = {};
+      if (size > 0 && (start > 0 || total > size)) {
+        items = items.slice(start, start + size);
+        const link = (bStart: number) => {
+          const params = new URLSearchParams(
+            req.query as Record<string, string>,
+          );
+          params.set('b_start', `${bStart}`);
+          return `${url}?${params.toString()}`;
+        };
+        batching = {
+          batching: {
+            '@id': link(start),
+            first: link(0),
+            last: link(Math.floor((total - 1) / size) * size),
+            ...(start + size < total ? { next: link(start + size) } : {}),
+            ...(start > 0 ? { prev: link(Math.max(0, start - size)) } : {}),
           },
         };
       }
 
-      // Get items
-      const items = vocabularies.exists(req.params.id)
-        ? await vocabularies.get(req.params.id)(req, trx)
-        : [];
-
       // Return data
       return {
         json: {
-          '@id': `${getUrl(req)}/@vocabularies/${req.params.id}`,
+          '@id': url,
           items,
-          items_total: items.length,
+          items_total: total,
+          ...batching,
         },
       };
     },

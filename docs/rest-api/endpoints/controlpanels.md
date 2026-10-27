@@ -61,6 +61,8 @@ The following fields are returned:
 - `schema`: JSON Schema of the control panel
 - `data`: current values of the control panel
 
+Fields with the `password` widget (like `pass` in the mail control panel) are never returned, their value is always `null`.
+
 ## Updating a Control Panel
 
 To update the settings on a control panel, send a `PATCH` request to control panel resource:
@@ -74,6 +76,8 @@ Or use the client directly:
 ```ts
 {% include_relative examples/controlpanels/patch.ts %}
 ```
+
+A password field that is sent as `null` (or not sent) keeps its stored value. Send an empty string to clear it.
 
 A successful response to a `PATCH` request will be indicated by a 204 No Content response:
 

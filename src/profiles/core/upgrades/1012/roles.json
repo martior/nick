@@ -1,0 +1,30 @@
+{
+  "purge": false,
+  "roles": [
+    {
+      "id": "Owner",
+      "title:i18n": "Owner",
+      "permissions": ["View History"]
+    },
+    {
+      "id": "Contributor",
+      "title:i18n": "Contributor",
+      "permissions": ["View History"]
+    },
+    {
+      "id": "Editor",
+      "title:i18n": "Editor",
+      "permissions": ["View History"]
+    },
+    {
+      "id": "Reviewer",
+      "title:i18n": "Reviewer",
+      "permissions": ["View History"]
+    },
+    {
+      "id": "Administrator",
+      "title:i18n": "Administrator",
+      "permissions": ["View History"]
+    }
+  ]
+}

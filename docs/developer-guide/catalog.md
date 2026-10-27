@@ -95,3 +95,15 @@ Place a file like `src/profiles/default/catalog.json`:
 ```
 
 The file is picked up automatically during seeding — no manual registration is required. New columns are added to the `catalog` database table alongside the existing ones.
+
+## Permissions
+
+Every catalog entry stores who may view the item in the `allowedUsersGroupsRoles` index. Search, navigation and folder listings only return entries that share at least one token with the current user. The tokens are:
+
+| Token          | Meaning                                                                 |
+| -------------- | ----------------------------------------------------------------------- |
+| `<role>`       | A role with the `View` permission, globally or in the workflow state.   |
+| `user:<id>`    | A user with a local role that has `View`, or the owner if `Owner` has it. |
+| `group:<id>`   | A group with a local role that has `View`.                              |
+
+Users and groups are prefixed so a user or group named like a role (for example a group called `Editor`) can't match the role token. Sites created before upgrade `1009` of the core profile stored users and groups without a prefix; `pnpm seed:upgrade` rebuilds the index.

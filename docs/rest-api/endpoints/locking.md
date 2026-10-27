@@ -38,6 +38,8 @@ If the lock operation succeeds, the server will respond with status `200 OK` and
 {% include_relative examples/locking/post.res %}
 ```
 
+If the object is already locked by another user, the server responds with status `200 OK` and returns the information about the existing lock, without the lock token. The lock itself is left unchanged.
+
 By default, locks are stealable. That means that another user can unlock the object. If you want to create a non-stealable lock, pass `"stealable": false` in the request body.
 
 To create a lock with a non-default timeout, you can pass the the timeout value in seconds in the request body.
@@ -80,7 +82,9 @@ The server responds with status 200 OK and returns the lock information.
 {% include_relative examples/locking/delete.res %}
 ```
 
-To unlock an object locked by another user send a force `DELETE` request to the `/@lock` endpoint.
+Only the user who created the lock can unlock the object this way. If the object is locked by another user and `force` is not set, the lock is left unchanged. The server responds with status `200 OK` and returns the information about the existing lock, without the lock token.
+
+To unlock an object locked by another user send a force `DELETE` request to the `/@lock` endpoint. This only works for stealable locks; a non-stealable lock can only be removed by its creator or expires after its timeout.
 
 ```http
 {% include_relative examples/locking/delete_force.req %}
@@ -112,7 +116,7 @@ Or use the client directly:
 {% include_relative examples/locking/patch.ts %}
 ```
 
-The server responds with status `200 OK` and returns the lock information containing the updated creation time.
+The server responds with status `200 OK` and returns the lock information containing the updated creation time. The token, timeout and stealable setting of the lock stay the same, so the client can keep using its token. Refreshing an object which is not locked does not lock it; the server responds with `"locked": false`. Only the creator of the lock can refresh it.
 
 ```http
 {% include_relative examples/locking/patch.res %}
@@ -140,7 +144,7 @@ The server responds with status `200 OK` and returns the information about the l
 
 ## Updating a locked object
 
-To update a locked object with a PATCH request, you have to provide the lock token with the `Lock-Token` header.
+To update a locked object with a PATCH request, you have to provide the lock token with the `Lock-Token` header. Without the token, or with a wrong token, the server responds with `403 Forbidden` and the message `Resource is locked.`. This applies to the lock creator too.
 
 ```http
 {% include_relative examples/locking/update.req %}
@@ -150,4 +154,18 @@ Or use the client directly:
 
 ```ts
 {% include_relative examples/locking/update.ts %}
+```
+
+The object stays locked after the update, so the client can keep editing with the same token. Send a `DELETE` request to the `@lock` endpoint to unlock it when done.
+
+## Deleting a locked object
+
+A locked object can't be deleted. The server responds with `423 Locked` unless the request provides the lock token with the `Lock-Token` header.
+
+```http
+{% include_relative examples/locking/delete_content_locked.req %}
+```
+
+```http
+{% include_relative examples/locking/delete_content_locked.res %}
 ```

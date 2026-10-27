@@ -64,14 +64,16 @@ export class Version extends Model {
     return {
       '@id': `${getUrl(req)}/@history/${self.version}`,
       action: 'Edited',
-      actor: {
-        '@id': `${getRootUrl(req)}/@users/${self._actor?.id}`,
-        fullname: self._actor?.fullname,
-        id: self._actor?.id,
-        username: self._actor?.id,
-      },
+      actor: self._actor
+        ? {
+            '@id': `${getRootUrl(req)}/@users/${self._actor.id}`,
+            fullname: self._actor.fullname,
+            id: self._actor.id,
+            username: self._actor.id,
+          }
+        : null,
       comments: isObject(self.json) ? self.json.changeNote : null,
-      may_revert: true,
+      may_revert: req.permissions.includes('Revert'),
       time: self.created,
       transition_title: 'Edited',
       type: 'versioning',

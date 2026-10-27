@@ -11,6 +11,7 @@ import type { Knex } from 'knex';
 import { compact } from 'es-toolkit/array';
 
 // Internal imports
+import { RequestException } from '../../helpers/error/error';
 import { getUrl } from '../../helpers/url/url';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -45,7 +46,10 @@ async function getItems(
   );
 
   // Get output
-  const output = await items.toJson(req);
+  const output = (await items.toJson(req)).map((item: any) => ({
+    ...item,
+    description: item.Description || '',
+  }));
 
   await mapAsync(output, async (item: InstanceType<typeof Catalog>) => {
     item.items =
@@ -69,7 +73,13 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
   const Index = models.get('Index');
 
   // Fetch query params
-  const maxDepth = parseInt(req.query['expand.navigation.depth']) || 1;
+  const depth = req.query['expand.navigation.depth'];
+  if (depth !== undefined && !/^\d+$/.test(depth)) {
+    throw new RequestException(400, {
+      message: req.i18n('Invalid depth.'),
+    });
+  }
+  const maxDepth = parseInt(depth) || 1;
 
   // Fetch settings
   const controlpanel = await Controlpanel.fetchById('navigation', {}, trx);
