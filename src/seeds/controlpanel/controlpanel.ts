@@ -8,7 +8,7 @@ import type { Knex } from 'knex';
 
 // External imports
 import { dropRight } from 'es-toolkit/array';
-import { merge } from 'es-toolkit/object';
+import { mergeWith } from 'es-toolkit/object';
 import { promises as fs } from 'fs';
 
 // Internal imports
@@ -67,9 +67,15 @@ export const seedControlpanel = async (
       data.data = await handleRelationLists(data.data, current.schema);
 
       // Update record
+      // Lists in the profile replace lists, like the available languages
       await Controlpanel.update(
         data.id,
-        merge((current as any).$toDatabaseJson(), data),
+        mergeWith(
+          (current as any).$toDatabaseJson(),
+          data,
+          (_target: any, source: any) =>
+            Array.isArray(source) ? source : undefined,
+        ),
         trx,
       );
     });

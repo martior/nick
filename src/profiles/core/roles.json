@@ -20,7 +20,14 @@
     {
       "id": "Owner",
       "title:i18n": "Owner",
-      "permissions": ["Add", "Submit", "Modify Comments"]
+      "permissions": [
+        "Add",
+        "Submit",
+        "Modify Comments",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor"
+      ]
     },
     {
       "id": "Reader",
@@ -35,7 +42,7 @@
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Submit"]
+      "permissions": ["Submit", "Delegate Reader", "Delegate Editor"]
     },
     {
       "id": "Reviewer",
@@ -51,7 +58,11 @@
         "Submit",
         "Manage Users",
         "Manage Site",
-        "Modify Comments"
+        "Modify Comments",
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor",
+        "Delegate Reviewer"
       ]
     }
   ]

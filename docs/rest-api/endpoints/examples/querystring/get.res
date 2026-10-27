@@ -13,73 +13,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -95,15 +95,18 @@ Content-Type: application/json
       "sortable": true,
       "values": {},
       "vocabulary": "users",
-      "operations": ["selection.any", "string.currentUser"],
+      "operations": [
+        "plone.app.querystring.operation.selection.any",
+        "plone.app.querystring.operation.string.currentUser"
+      ],
       "operators": {
-        "selection.any": {
+        "plone.app.querystring.operation.selection.any": {
           "title": "Matches any condition",
           "widget": "MultipleSelectionWidget",
           "operation": "contains",
           "description": "Tip: you can use * to autocomplete."
         },
-        "string.currentUser": {
+        "plone.app.querystring.operation.string.currentUser": {
           "title": "Current logged in user",
           "widget": null,
           "operation": "currentUser",
@@ -119,9 +122,11 @@ Content-Type: application/json
       "sortable": false,
       "values": {},
       "vocabulary": null,
-      "operations": ["string.contains"],
+      "operations": [
+        "plone.app.querystring.operation.string.contains"
+      ],
       "operators": {
-        "string.contains": {
+        "plone.app.querystring.operation.string.contains": {
           "title": "Contains",
           "widget": "StringWidget",
           "operation": "contains",
@@ -138,73 +143,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -221,73 +226,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -304,73 +309,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -387,73 +392,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -470,24 +475,24 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "string.path",
-        "string.absolutePath",
-        "string.relativePath"
+        "plone.app.querystring.operation.string.path",
+        "plone.app.querystring.operation.string.absolutePath",
+        "plone.app.querystring.operation.string.relativePath"
       ],
       "operators": {
-        "string.path": {
+        "plone.app.querystring.operation.string.path": {
           "title": "Navigation path",
           "widget": "ReferenceWidget",
           "operation": "navigationPath",
           "description": "Location in the navigation structure"
         },
-        "string.absolutePath": {
+        "plone.app.querystring.operation.string.absolutePath": {
           "title": "Absolute path",
           "widget": "ReferenceWidget",
           "operation": "absolutePath",
           "description": "Location in the site structure"
         },
-        "string.relativePath": {
+        "plone.app.querystring.operation.string.relativePath": {
           "title": "Relative path",
           "widget": "RelativePathWidget",
           "operation": "relativePath",
@@ -504,73 +509,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -578,21 +583,37 @@ Content-Type: application/json
         }
       }
     },
-    "review_state": {
-      "title": "Review state",
-      "description": "An item’s workflow state (e.g.published)",
+    "getObjPositionInParent": {
+      "title": "Order in folder",
+      "description": "The order of an item in its parent folder",
       "group": "Metadata",
-      "enabled": true,
+      "enabled": false,
       "sortable": true,
       "values": {},
-      "vocabulary": "workflowStates",
-      "operations": ["selection.any"],
+      "vocabulary": null,
+      "operations": [
+        "plone.app.querystring.operation.int.is",
+        "plone.app.querystring.operation.int.lessThan",
+        "plone.app.querystring.operation.int.largerThan"
+      ],
       "operators": {
-        "selection.any": {
-          "title": "Matches any condition",
-          "widget": "MultipleSelectionWidget",
-          "operation": "contains",
-          "description": "Tip: you can use * to autocomplete."
+        "plone.app.querystring.operation.int.is": {
+          "title": "Equals",
+          "widget": "StringWidget",
+          "operation": "intEqual",
+          "description": ""
+        },
+        "plone.app.querystring.operation.int.lessThan": {
+          "title": "Less than",
+          "widget": "StringWidget",
+          "operation": "intLessThan",
+          "description": ""
+        },
+        "plone.app.querystring.operation.int.largerThan": {
+          "title": "Larger than",
+          "widget": "StringWidget",
+          "operation": "intLargerThan",
+          "description": ""
         }
       }
     },
@@ -604,9 +625,11 @@ Content-Type: application/json
       "sortable": false,
       "values": {},
       "vocabulary": null,
-      "operations": ["string.contains"],
+      "operations": [
+        "plone.app.querystring.operation.string.contains"
+      ],
       "operators": {
-        "string.contains": {
+        "plone.app.querystring.operation.string.contains": {
           "title": "Contains",
           "widget": "StringWidget",
           "operation": "contains",
@@ -622,13 +645,42 @@ Content-Type: application/json
       "sortable": true,
       "values": {},
       "vocabulary": null,
-      "operations": ["string.is"],
+      "operations": [
+        "plone.app.querystring.operation.string.is"
+      ],
       "operators": {
-        "string.is": {
+        "plone.app.querystring.operation.string.is": {
           "title": "Is",
           "widget": "StringWidget",
           "operation": "equal",
           "description": "Tip: you can use * to autocomplete."
+        }
+      }
+    },
+    "sortable_title": {
+      "title": "Sortable Title",
+      "description": "The item’s title, transformed for sorting",
+      "group": "Text",
+      "enabled": false,
+      "sortable": true,
+      "values": {},
+      "vocabulary": null,
+      "operations": [
+        "plone.app.querystring.operation.string.is",
+        "plone.app.querystring.operation.string.contains"
+      ],
+      "operators": {
+        "plone.app.querystring.operation.string.is": {
+          "title": "Is",
+          "widget": "StringWidget",
+          "operation": "equal",
+          "description": "Tip: you can use * to autocomplete."
+        },
+        "plone.app.querystring.operation.string.contains": {
+          "title": "Contains",
+          "widget": "StringWidget",
+          "operation": "contains",
+          "description": ""
         }
       }
     },
@@ -640,18 +692,28 @@ Content-Type: application/json
       "sortable": false,
       "values": {},
       "vocabulary": "subjects",
-      "operations": ["selection.all", "selection.any"],
+      "operations": [
+        "plone.app.querystring.operation.selection.all",
+        "plone.app.querystring.operation.selection.any",
+        "plone.app.querystring.operation.selection.none"
+      ],
       "operators": {
-        "selection.all": {
+        "plone.app.querystring.operation.selection.all": {
           "title": "Matches all conditions",
           "widget": "MultipleSelectionWidget",
           "operation": "all",
           "description": "Tip: you can use * to autocomplete."
         },
-        "selection.any": {
+        "plone.app.querystring.operation.selection.any": {
           "title": "Matches any condition",
           "widget": "MultipleSelectionWidget",
           "operation": "contains",
+          "description": "Tip: you can use * to autocomplete."
+        },
+        "plone.app.querystring.operation.selection.none": {
+          "title": "Matches none of",
+          "widget": "MultipleSelectionWidget",
+          "operation": "excludes",
           "description": "Tip: you can use * to autocomplete."
         }
       }
@@ -664,13 +726,52 @@ Content-Type: application/json
       "sortable": false,
       "values": {},
       "vocabulary": null,
-      "operations": ["string.contains"],
+      "operations": [
+        "plone.app.querystring.operation.string.contains"
+      ],
       "operators": {
-        "string.contains": {
+        "plone.app.querystring.operation.string.contains": {
           "title": "Contains",
           "widget": "StringWidget",
           "operation": "contains",
           "description": ""
+        }
+      }
+    },
+    "review_state": {
+      "title": "Review state",
+      "description": "An item’s workflow state (e.g.published)",
+      "group": "Metadata",
+      "enabled": true,
+      "sortable": true,
+      "values": {
+        "pending": {
+          "title": "Pending review"
+        },
+        "private": {
+          "title": "Private"
+        },
+        "published": {
+          "title": "Published"
+        }
+      },
+      "vocabulary": "workflowStates",
+      "operations": [
+        "plone.app.querystring.operation.selection.any",
+        "plone.app.querystring.operation.selection.none"
+      ],
+      "operators": {
+        "plone.app.querystring.operation.selection.any": {
+          "title": "Matches any condition",
+          "widget": "MultipleSelectionWidget",
+          "operation": "contains",
+          "description": "Tip: you can use * to autocomplete."
+        },
+        "plone.app.querystring.operation.selection.none": {
+          "title": "Matches none of",
+          "widget": "MultipleSelectionWidget",
+          "operation": "excludes",
+          "description": "Tip: you can use * to autocomplete."
         }
       }
     },
@@ -680,14 +781,48 @@ Content-Type: application/json
       "group": "Metadata",
       "enabled": true,
       "sortable": false,
-      "values": {},
+      "values": {
+        "Event": {
+          "title": "Event"
+        },
+        "Feed": {
+          "title": "Feed"
+        },
+        "File": {
+          "title": "File"
+        },
+        "Folder": {
+          "title": "Folder"
+        },
+        "Image": {
+          "title": "Image"
+        },
+        "Page": {
+          "title": "Page"
+        },
+        "Site": {
+          "title": "Site"
+        },
+        "Video": {
+          "title": "Video"
+        }
+      },
       "vocabulary": "types",
-      "operations": ["selection.any"],
+      "operations": [
+        "plone.app.querystring.operation.selection.any",
+        "plone.app.querystring.operation.selection.none"
+      ],
       "operators": {
-        "selection.any": {
+        "plone.app.querystring.operation.selection.any": {
           "title": "Matches any condition",
           "widget": "MultipleSelectionWidget",
           "operation": "contains",
+          "description": "Tip: you can use * to autocomplete."
+        },
+        "plone.app.querystring.operation.selection.none": {
+          "title": "Matches none of",
+          "widget": "MultipleSelectionWidget",
+          "operation": "excludes",
           "description": "Tip: you can use * to autocomplete."
         }
       }
@@ -703,73 +838,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -785,15 +920,18 @@ Content-Type: application/json
       "sortable": true,
       "values": {},
       "vocabulary": "users",
-      "operations": ["selection.any", "string.currentUser"],
+      "operations": [
+        "plone.app.querystring.operation.selection.any",
+        "plone.app.querystring.operation.string.currentUser"
+      ],
       "operators": {
-        "selection.any": {
+        "plone.app.querystring.operation.selection.any": {
           "title": "Matches any condition",
           "widget": "MultipleSelectionWidget",
           "operation": "contains",
           "description": "Tip: you can use * to autocomplete."
         },
-        "string.currentUser": {
+        "plone.app.querystring.operation.string.currentUser": {
           "title": "Current logged in user",
           "widget": null,
           "operation": "currentUser",
@@ -810,73 +948,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -893,73 +1031,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -976,73 +1114,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -1059,73 +1197,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -1142,73 +1280,73 @@ Content-Type: application/json
       "values": {},
       "vocabulary": null,
       "operations": [
-        "date.today",
-        "date.between",
-        "date.lessThan",
-        "date.afterToday",
-        "date.largerThan",
-        "date.beforeToday",
-        "date.afterRelativeDate",
-        "date.beforeRelativeDate",
-        "date.lessThanRelativeDate",
-        "date.largerThanRelativeDate"
+        "plone.app.querystring.operation.date.today",
+        "plone.app.querystring.operation.date.between",
+        "plone.app.querystring.operation.date.lessThan",
+        "plone.app.querystring.operation.date.afterToday",
+        "plone.app.querystring.operation.date.largerThan",
+        "plone.app.querystring.operation.date.beforeToday",
+        "plone.app.querystring.operation.date.afterRelativeDate",
+        "plone.app.querystring.operation.date.beforeRelativeDate",
+        "plone.app.querystring.operation.date.lessThanRelativeDate",
+        "plone.app.querystring.operation.date.largerThanRelativeDate"
       ],
       "operators": {
-        "date.today": {
+        "plone.app.querystring.operation.date.today": {
           "title": "Today",
           "widget": null,
           "operation": "today",
           "description": "The current day"
         },
-        "date.between": {
+        "plone.app.querystring.operation.date.between": {
           "title": "Between dates",
           "widget": "DateRangeWidget",
           "operation": "between",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.lessThan": {
+        "plone.app.querystring.operation.date.lessThan": {
           "title": "Before date",
           "widget": "DateWidget",
           "operation": "lessThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.afterToday": {
+        "plone.app.querystring.operation.date.afterToday": {
           "title": "After today",
           "widget": null,
           "operation": "afterToday",
           "description": "After the current day"
         },
-        "date.largerThan": {
+        "plone.app.querystring.operation.date.largerThan": {
           "title": "After date",
           "widget": "DateWidget",
           "operation": "largerThan",
           "description": "Please use YYYY/MM/DD."
         },
-        "date.beforeToday": {
+        "plone.app.querystring.operation.date.beforeToday": {
           "title": "Before today",
           "widget": null,
           "operation": "beforeToday",
           "description": "Before the current day"
         },
-        "date.afterRelativeDate": {
+        "plone.app.querystring.operation.date.afterRelativeDate": {
           "title": "After relative date",
           "widget": "RelativeDateWidget",
           "operation": "afterRelativeDate",
           "description": "After N days in the future"
         },
-        "date.beforeRelativeDate": {
+        "plone.app.querystring.operation.date.beforeRelativeDate": {
           "title": "Before relative date",
           "widget": "RelativeDateWidget",
           "operation": "beforeRelativeDate",
           "description": "Before N days in the past"
         },
-        "date.lessThanRelativeDate": {
+        "plone.app.querystring.operation.date.lessThanRelativeDate": {
           "title": "Within next",
           "widget": "RelativeDateWidget",
           "operation": "lessThanRelativeDate",
           "description": "Please enter the number in days."
         },
-        "date.largerThanRelativeDate": {
+        "plone.app.querystring.operation.date.largerThanRelativeDate": {
           "title": "Within last",
           "widget": "RelativeDateWidget",
           "operation": "moreThanRelativeDate",
@@ -1216,21 +1354,37 @@ Content-Type: application/json
         }
       }
     },
-    "review_state": {
-      "title": "Review state",
-      "description": "An item’s workflow state (e.g.published)",
+    "getObjPositionInParent": {
+      "title": "Order in folder",
+      "description": "The order of an item in its parent folder",
       "group": "Metadata",
-      "enabled": true,
+      "enabled": false,
       "sortable": true,
       "values": {},
-      "vocabulary": "workflowStates",
-      "operations": ["selection.any"],
+      "vocabulary": null,
+      "operations": [
+        "plone.app.querystring.operation.int.is",
+        "plone.app.querystring.operation.int.lessThan",
+        "plone.app.querystring.operation.int.largerThan"
+      ],
       "operators": {
-        "selection.any": {
-          "title": "Matches any condition",
-          "widget": "MultipleSelectionWidget",
-          "operation": "contains",
-          "description": "Tip: you can use * to autocomplete."
+        "plone.app.querystring.operation.int.is": {
+          "title": "Equals",
+          "widget": "StringWidget",
+          "operation": "intEqual",
+          "description": ""
+        },
+        "plone.app.querystring.operation.int.lessThan": {
+          "title": "Less than",
+          "widget": "StringWidget",
+          "operation": "intLessThan",
+          "description": ""
+        },
+        "plone.app.querystring.operation.int.largerThan": {
+          "title": "Larger than",
+          "widget": "StringWidget",
+          "operation": "intLargerThan",
+          "description": ""
         }
       }
     },
@@ -1242,12 +1396,78 @@ Content-Type: application/json
       "sortable": true,
       "values": {},
       "vocabulary": null,
-      "operations": ["string.is"],
+      "operations": [
+        "plone.app.querystring.operation.string.is"
+      ],
       "operators": {
-        "string.is": {
+        "plone.app.querystring.operation.string.is": {
           "title": "Is",
           "widget": "StringWidget",
           "operation": "equal",
+          "description": "Tip: you can use * to autocomplete."
+        }
+      }
+    },
+    "sortable_title": {
+      "title": "Sortable Title",
+      "description": "The item’s title, transformed for sorting",
+      "group": "Text",
+      "enabled": false,
+      "sortable": true,
+      "values": {},
+      "vocabulary": null,
+      "operations": [
+        "plone.app.querystring.operation.string.is",
+        "plone.app.querystring.operation.string.contains"
+      ],
+      "operators": {
+        "plone.app.querystring.operation.string.is": {
+          "title": "Is",
+          "widget": "StringWidget",
+          "operation": "equal",
+          "description": "Tip: you can use * to autocomplete."
+        },
+        "plone.app.querystring.operation.string.contains": {
+          "title": "Contains",
+          "widget": "StringWidget",
+          "operation": "contains",
+          "description": ""
+        }
+      }
+    },
+    "review_state": {
+      "title": "Review state",
+      "description": "An item’s workflow state (e.g.published)",
+      "group": "Metadata",
+      "enabled": true,
+      "sortable": true,
+      "values": {
+        "pending": {
+          "title": "Pending review"
+        },
+        "private": {
+          "title": "Private"
+        },
+        "published": {
+          "title": "Published"
+        }
+      },
+      "vocabulary": "workflowStates",
+      "operations": [
+        "plone.app.querystring.operation.selection.any",
+        "plone.app.querystring.operation.selection.none"
+      ],
+      "operators": {
+        "plone.app.querystring.operation.selection.any": {
+          "title": "Matches any condition",
+          "widget": "MultipleSelectionWidget",
+          "operation": "contains",
+          "description": "Tip: you can use * to autocomplete."
+        },
+        "plone.app.querystring.operation.selection.none": {
+          "title": "Matches none of",
+          "widget": "MultipleSelectionWidget",
+          "operation": "excludes",
           "description": "Tip: you can use * to autocomplete."
         }
       }

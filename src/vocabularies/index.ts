@@ -12,6 +12,7 @@ import type { VocabularyHandler } from '../types';
  */
 class Vocabularies {
   public vocabularies: { [key: string]: VocabularyHandler };
+  public permissions: { [key: string]: string };
   static instance: Vocabularies;
 
   /**
@@ -20,6 +21,7 @@ class Vocabularies {
    */
   constructor() {
     this.vocabularies = {};
+    this.permissions = {};
 
     if (!Vocabularies.instance) {
       Vocabularies.instance = this;
@@ -32,9 +34,22 @@ class Vocabularies {
    * Register a vocabulary.
    * @param {string} name The name of the vocabulary.
    * @param {VocabularyHandler} vocabulary The vocabulary to register.
+   * @param {string} permission Permission needed besides View (optional).
    */
-  register(name: string, vocabulary: VocabularyHandler) {
+  register(name: string, vocabulary: VocabularyHandler, permission?: string) {
     this.vocabularies[name] = vocabulary;
+    if (permission) {
+      this.permissions[name] = permission;
+    }
+  }
+
+  /**
+   * Get the permission needed besides View to get a vocabulary.
+   * @param {string} name The name of the vocabulary.
+   * @returns {string | undefined} The permission.
+   */
+  permission(name: string): string | undefined {
+    return this.permissions[name];
   }
 
   /**

@@ -8,6 +8,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events",
       "@type": "Folder",
       "title": "Events",
+      "description": "",
       "UID": "1a2123ba-14e8-4910-8e6b-c04a40d72a41",
       "path": "/events",
       "Description": null,
@@ -49,6 +50,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events/event-1",
       "@type": "Event",
       "title": "Event 1",
+      "description": "",
       "UID": "405ca717-0c68-43a0-88ac-629a82658675",
       "path": "/events/event-1",
       "Description": null,
@@ -129,7 +131,8 @@ Content-Type: application/json
       "review_state": "published",
       "start": "2025-04-01T12:49:09.565Z",
       "recurrence": "DTSTART:20250401T124909Z\nRRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20250408T124900Z",
-      "title": "Event 2"
+      "title": "Event 2",
+      "description": ""
     }
   ],
   "items_total": 3

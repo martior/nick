@@ -10,6 +10,7 @@ import type { Knex } from 'knex';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { dropRight, last } from 'es-toolkit/array';
+import { isEqual } from 'es-toolkit/predicate';
 import { omit } from 'es-toolkit/object';
 import { promises as fs } from 'fs';
 import { v4 as uuid } from 'uuid';
@@ -22,6 +23,7 @@ import {
   handleRelationLists,
 } from '../../helpers/content/content';
 import { dirExists } from '../../helpers/fs/fs';
+import { getFactoryFields } from '../../helpers/schema/schema';
 import { stripI18n } from '../../helpers/i18n/i18n';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -66,21 +68,27 @@ export const seedDocument = async (
     const files = (await fs.readdir(`${profilePath}/documents`))
       .filter((file: string) => file.endsWith('.json'))
       .map((file: string) => dropRight(file.split('.'), 1).join('.'))
-      .sort();
+      .sort((a: string, b: string) =>
+        a === '_root' ? -1 : b === '_root' ? 1 : a < b ? -1 : a > b ? 1 : 0,
+      );
     await mapAsync(files, async (file: string) => {
       let document: any = stripI18n(
         (await import(`${profilePath}/documents/${file}`)).default,
       );
+
+      // Get the path from the document or else from the filename
       const slugs = file.split('.');
-      const id = last(slugs) === '_root' ? 'root' : last(slugs);
-      const path = last(slugs) === '_root' ? '/' : `/${slugs.join('/')}`;
+      const path =
+        document.path ||
+        (last(slugs) === '_root' ? '/' : `/${slugs.join('/')}`);
+      const id = path === '/' ? 'root' : last(path.split('/'));
       const parent =
-        last(slugs) === '_root'
+        path === '/'
           ? undefined
           : (
               await Document.fetchOne(
                 {
-                  path: `/${dropRight(slugs, 1).join('/')}`,
+                  path: path.substring(0, path.lastIndexOf('/')) || '/',
                 },
                 {},
                 trx,
@@ -97,6 +105,7 @@ export const seedDocument = async (
       // Handle files and images
       const type = await Type.fetchById(document.type || 'Page', {}, trx);
       const schema = type._schema;
+      const original = document;
       document = await handleBlocks(document);
       document = await handleFiles(
         document,
@@ -122,7 +131,7 @@ export const seedDocument = async (
           id,
           path,
           parent,
-          position_in_parent: document.position_in_parent || position_in_parent,
+          position_in_parent: document.position_in_parent ?? position_in_parent,
           lock: document.lock || {
             locked: false,
             stealable: true,
@@ -145,6 +154,39 @@ export const seedDocument = async (
 
       // Save uuid
       uuids.push(insert.uuid);
+
+      // Handle files and images of versions, unchanged files are shared
+      // with the document
+      const blobFields = [
+        ...getFactoryFields(schema, 'File'),
+        ...getFactoryFields(schema, 'Image'),
+      ];
+      if ('versions' in document) {
+        document.versions = await mapAsync(
+          document.versions,
+          async (version: any) => {
+            const unchanged = blobFields.filter(
+              (field) =>
+                field in version && isEqual(version[field], original[field]),
+            );
+            let json: any = omit(version, unchanged);
+            json = await handleFiles(
+              json,
+              schema,
+              trx,
+              `${profilePath}/documents`,
+            );
+            json = await handleImages(
+              json,
+              schema,
+              trx,
+              `${profilePath}/documents`,
+            );
+            unchanged.map((field) => (json[field] = document[field]));
+            return json;
+          },
+        );
+      }
 
       // Create versions
       const versions =
