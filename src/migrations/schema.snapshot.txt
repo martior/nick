@@ -290,7 +290,7 @@ extension unaccent
 index public.action.action_pkey CREATE UNIQUE INDEX action_pkey ON public.action USING btree (id)
 index public.behavior.behavior_pkey CREATE UNIQUE INDEX behavior_pkey ON public.behavior USING btree (id)
 index public.catalog.catalog__allowedusersgroupsroles_index CREATE INDEX catalog__allowedusersgroupsroles_index ON public.catalog USING btree ("_allowedUsersGroupsRoles")  # profile
-index public.catalog.catalog__block_types_index CREATE INDEX catalog__block_types_index ON public.catalog USING btree (_block_types)  # profile
+index public.catalog.catalog__block_types_index CREATE INDEX catalog__block_types_index ON public.catalog USING gin (_block_types)  # profile
 index public.catalog.catalog__created_index CREATE INDEX catalog__created_index ON public.catalog USING btree (_created)  # profile
 index public.catalog.catalog__creator_index CREATE INDEX catalog__creator_index ON public.catalog USING btree ("_Creator")  # profile
 index public.catalog.catalog__date_index CREATE INDEX catalog__date_index ON public.catalog USING btree ("_Date")  # profile
@@ -302,23 +302,25 @@ index public.catalog.catalog__exclude_from_nav_index CREATE INDEX catalog__exclu
 index public.catalog.catalog__expires_index CREATE INDEX catalog__expires_index ON public.catalog USING btree (_expires)  # profile
 index public.catalog.catalog__getid_index CREATE INDEX catalog__getid_index ON public.catalog USING btree ("_getId")  # profile
 index public.catalog.catalog__getobjpositioninparent_index CREATE INDEX catalog__getobjpositioninparent_index ON public.catalog USING btree ("_getObjPositionInParent")  # profile
-index public.catalog.catalog__getrawrelateditems_index CREATE INDEX catalog__getrawrelateditems_index ON public.catalog USING btree ("_getRawRelatedItems")  # profile
+index public.catalog.catalog__getrawrelateditems_index CREATE INDEX catalog__getrawrelateditems_index ON public.catalog USING gin ("_getRawRelatedItems")  # profile
 index public.catalog.catalog__id_index CREATE INDEX catalog__id_index ON public.catalog USING btree (_id)  # profile
 index public.catalog.catalog__is_folderish_index CREATE INDEX catalog__is_folderish_index ON public.catalog USING btree (_is_folderish)  # profile
-index public.catalog.catalog__isreferencing_index CREATE INDEX catalog__isreferencing_index ON public.catalog USING btree ("_isReferencing")  # profile
+index public.catalog.catalog__isreferencing_index CREATE INDEX catalog__isreferencing_index ON public.catalog USING gin ("_isReferencing")  # profile
 index public.catalog.catalog__modified_index CREATE INDEX catalog__modified_index ON public.catalog USING btree (_modified)  # profile
 index public.catalog.catalog__parent_index CREATE INDEX catalog__parent_index ON public.catalog USING btree (_parent)  # profile
 index public.catalog.catalog__path_index CREATE INDEX catalog__path_index ON public.catalog USING btree (_path)  # profile
+index public.catalog.catalog__path_pattern_index CREATE INDEX catalog__path_pattern_index ON public.catalog USING btree (_path varchar_pattern_ops)  # profile
 index public.catalog.catalog__portal_type_index CREATE INDEX catalog__portal_type_index ON public.catalog USING btree (_portal_type)  # profile
 index public.catalog.catalog__review_state_index CREATE INDEX catalog__review_state_index ON public.catalog USING btree (_review_state)  # profile
 index public.catalog.catalog__searchabletext_index CREATE INDEX catalog__searchabletext_index ON public.catalog USING gin ("_SearchableText")  # profile
 index public.catalog.catalog__sortable_title_index CREATE INDEX catalog__sortable_title_index ON public.catalog USING btree (_sortable_title)  # profile
 index public.catalog.catalog__start_index CREATE INDEX catalog__start_index ON public.catalog USING btree (_start)  # profile
-index public.catalog.catalog__subject_index CREATE INDEX catalog__subject_index ON public.catalog USING btree ("_Subject")  # profile
+index public.catalog.catalog__subject_index CREATE INDEX catalog__subject_index ON public.catalog USING gin ("_Subject")  # profile
 index public.catalog.catalog__title_index CREATE INDEX catalog__title_index ON public.catalog USING gin ("_Title")  # profile
 index public.catalog.catalog__type_index CREATE INDEX catalog__type_index ON public.catalog USING btree ("_Type")  # profile
 index public.catalog.catalog__uid_index CREATE INDEX catalog__uid_index ON public.catalog USING btree ("_UID")  # profile
 index public.catalog.catalog_pkey CREATE UNIQUE INDEX catalog_pkey ON public.catalog USING btree (document)
+index public.catalog.catalog_type_state_covering_index CREATE INDEX catalog_type_state_covering_index ON public.catalog USING btree (_portal_type, _review_state) INCLUDE (_deleted, "_allowedUsersGroupsRoles", "_Subject")  # profile
 index public.content_rule.content_rule_enabled_index CREATE INDEX content_rule_enabled_index ON public.content_rule USING btree (enabled)
 index public.content_rule.content_rule_event_index CREATE INDEX content_rule_event_index ON public.content_rule USING btree (event)
 index public.content_rule.content_rule_pkey CREATE UNIQUE INDEX content_rule_pkey ON public.content_rule USING btree (id)
@@ -329,6 +331,7 @@ index public.document.document_language_index CREATE INDEX document_language_ind
 index public.document.document_parent_id_index CREATE INDEX document_parent_id_index ON public.document USING btree (parent, id)
 index public.document.document_parent_index CREATE INDEX document_parent_index ON public.document USING btree (parent)
 index public.document.document_path_index CREATE INDEX document_path_index ON public.document USING btree (path)
+index public.document.document_path_pattern_index CREATE INDEX document_path_pattern_index ON public.document USING btree (path varchar_pattern_ops)
 index public.document.document_pkey CREATE UNIQUE INDEX document_pkey ON public.document USING btree (uuid)
 index public.document.document_translation_group_index CREATE INDEX document_translation_group_index ON public.document USING btree (translation_group)
 index public.file.file_pkey CREATE UNIQUE INDEX file_pkey ON public.file USING btree (uuid)

@@ -472,7 +472,7 @@ msgid "Change Note"
 msgstr "Fakamatala Liliu"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:1121
+#: src/routes/content/content.ts:1122
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -805,9 +805,9 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:230
-#: src/routes/content/content.ts:1163
-#: src/routes/content/content.ts:1339
+#: src/routes/content/content.ts:231
+#: src/routes/content/content.ts:1164
+#: src/routes/content/content.ts:1340
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Kuo loka 'a e tohi"
@@ -1238,7 +1238,7 @@ msgid "Internal server error"
 msgstr "Hala 'i loto 'i he seva"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:856
+#: src/routes/content/content.ts:857
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1276,8 +1276,8 @@ msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:186
-#: src/routes/search/search.ts:335
+#: src/routes/search/search.ts:204
+#: src/routes/search/search.ts:353
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1701,7 +1701,7 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:181
+#: src/routes/search/search.ts:199
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
@@ -1788,13 +1788,13 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:523
+#: src/routes/content/content.ts:524
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "'Oku 'ikai ma'u."
 
 #. Default: "Not found: {url}"
-#: src/helpers/handler/handler.ts:79
+#: src/helpers/handler/handler.ts:75
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
 msgstr ""
@@ -1818,7 +1818,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1336
+#: src/routes/content/content.ts:1337
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2050,7 +2050,7 @@ msgid "Prompts"
 msgstr "Ngaahi talanoa fakahinohino"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:840
+#: src/routes/content/content.ts:841
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2217,15 +2217,15 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:870
+#: src/routes/content/content.ts:871
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:229
-#: src/routes/content/content.ts:1162
+#: src/routes/content/content.ts:230
+#: src/routes/content/content.ts:1163
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2739,14 +2739,14 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:898
+#: src/routes/content/content.ts:899
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:887
-#: src/routes/content/content.ts:1181
+#: src/routes/content/content.ts:888
+#: src/routes/content/content.ts:1182
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2878,13 +2878,13 @@ msgid "The user viewing the querystring results"
 msgstr "Ko e tokotaha 'oku ne vakai'i 'a e ngaahi ola 'o e kumi"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:933
+#: src/routes/content/content.ts:934
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:928
+#: src/routes/content/content.ts:929
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -3047,7 +3047,7 @@ msgid "Type Name"
 msgstr "Hingoa Fa'ahinga"
 
 #. Default: "Type of the current document is not found."
-#: src/helpers/handler/handler.ts:98
+#: src/helpers/handler/handler.ts:94
 msgctxt "Helpers|Handler"
 msgid "Type of the current document is not found."
 msgstr "'Oku 'ikai ma'u 'a e fa'ahinga 'o e tohi lolotonga."
@@ -3171,7 +3171,7 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:91
-#: src/routes/content/content.ts:400
+#: src/routes/content/content.ts:401
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3369,16 +3369,16 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:131
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
-#: src/routes/content/content.ts:215
+#: src/routes/content/content.ts:216
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
-#: src/helpers/handler/handler.ts:121
+#: src/helpers/handler/handler.ts:119
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:919
+#: src/routes/content/content.ts:920
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""

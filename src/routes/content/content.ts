@@ -46,6 +46,7 @@ import {
 import {
   bytesToNumber,
   isValidId,
+  likePrefix,
   mapAsync,
   pasteId,
   uniqueId,
@@ -1356,7 +1357,13 @@ export default [
       if (config.settings.recyclebin) {
         // Get document and children to be deleted
         const documents = await Document.fetchAll(
-          { path: ['~', `^${req.document.path}`] },
+          {
+            path: [
+              'raw',
+              '(path = ? OR path LIKE ?)',
+              [req.document.path, likePrefix(`${req.document.path}/`)],
+            ],
+          },
           {},
           trx,
         );

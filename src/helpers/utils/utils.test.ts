@@ -18,6 +18,7 @@ import {
   objectToVocabulary,
   isPromise,
   regExpEscape,
+  likePrefix,
   getNodeVersion,
   stripNewlines,
   bytesToNumber,
@@ -101,6 +102,12 @@ describe('utils', () => {
   describe('regExpEscape', () => {
     it('escapes special regex characters', () => {
       expect(regExpEscape('a.b[c]')).toBe('a\\.b\\[c\\]');
+    });
+  });
+
+  describe('likePrefix', () => {
+    it('escapes like wildcards and adds a trailing wildcard', () => {
+      expect(likePrefix('/a_b%c\\d/')).toBe('/a\\_b\\%c\\\\d/%');
     });
   });
 
