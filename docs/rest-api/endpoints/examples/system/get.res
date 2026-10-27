@@ -18,7 +18,7 @@ Content-Type: application/json
     },
     {
       "label": "Objection.js",
-      "value": "3.1.5"
+      "value": "4.4.1"
     },
     {
       "label": "Knex",
