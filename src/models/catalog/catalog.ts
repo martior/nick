@@ -11,7 +11,7 @@ import type { Knex } from 'knex';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { uniq } from 'es-toolkit/array';
-import { pick } from 'es-toolkit/object';
+import { mapValues, pick } from 'es-toolkit/object';
 
 // Internal imports
 import { Model } from '../_model/_model';
@@ -20,6 +20,19 @@ import config from '../../helpers/config/config';
 import { getRootUrl } from '../../helpers/url/url';
 
 dayjs.extend(utc);
+
+/**
+ * Values of unset date metadata, like the catalog metadata of Plone:
+ * `EffectiveDate()` and `ExpirationDate()` give `None`, `CreationDate()` and
+ * `ModificationDate()` give `Unknown`.
+ * @constant unsetDates
+ */
+const unsetDates: Record<string, string> = {
+  EffectiveDate: 'None',
+  ExpirationDate: 'None',
+  CreationDate: 'Unknown',
+  ModificationDate: 'Unknown',
+};
 
 /**
  * A model for Catalog.
@@ -73,9 +86,15 @@ export class Catalog extends Model {
       '@id': `${getRootUrl(req)}${self.path}`,
       '@type': self.Type,
       title: self.Title,
-      ...pick(
-        self,
-        metadata.map((field: any) => field.name),
+      ...mapValues(
+        pick(
+          self,
+          metadata.map((field: any) => field.name),
+        ),
+        (value: any, name: string) =>
+          value === null && Object.hasOwn(unsetDates, name)
+            ? unsetDates[name]
+            : value,
       ),
     } as Json;
   }

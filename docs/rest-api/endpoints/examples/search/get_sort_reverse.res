@@ -43,7 +43,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:00:00.000Z",
       "EffectiveDate": "2022-04-02T20:00:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:00:00.000Z"
     },
     {
@@ -85,7 +85,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:24:00.000Z",
       "EffectiveDate": "2022-04-02T20:24:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:24:00.000Z"
     },
     {
@@ -127,7 +127,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:22:00.000Z",
       "EffectiveDate": "2022-04-02T20:22:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:22:00.000Z"
     },
     {
@@ -169,7 +169,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:30:00.000Z",
       "EffectiveDate": "2022-04-02T20:30:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:30:00.000Z"
     },
     {
@@ -180,7 +180,7 @@ Content-Type: application/json
       "Date": "2023-04-02T20:10:00.000Z",
       "Description": null,
       "EffectiveDate": "2023-04-02T20:10:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2023-04-02T20:10:00.000Z",
       "Subject": [
         "event"
@@ -257,7 +257,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:10:00.000Z",
       "EffectiveDate": "2022-04-02T20:10:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:10:00.000Z"
     }
   ],

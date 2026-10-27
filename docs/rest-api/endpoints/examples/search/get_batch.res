@@ -43,7 +43,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:30:00.000Z",
       "EffectiveDate": "2022-04-02T20:30:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:30:00.000Z"
     },
     {
@@ -85,7 +85,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:22:00.000Z",
       "EffectiveDate": "2022-04-02T20:22:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:22:00.000Z"
     }
   ],

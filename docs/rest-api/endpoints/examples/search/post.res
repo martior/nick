@@ -43,7 +43,7 @@ Content-Type: application/json
       "mime_type": null,
       "CreationDate": "2022-04-02T20:30:00.000Z",
       "EffectiveDate": "2022-04-02T20:30:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:30:00.000Z"
     },
     {
@@ -87,7 +87,7 @@ Content-Type: application/json
       "CreationDate": "2022-04-02T20:10:00.000Z",
       "EffectiveDate": "2022-04-02T20:10:00.000Z",
       "recurrence": "DTSTART:20260401T124909Z\nRRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20260408T124900Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2022-04-02T20:10:00.000Z"
     },
     {
@@ -98,7 +98,7 @@ Content-Type: application/json
       "Date": "2023-04-02T20:10:00.000Z",
       "Description": null,
       "EffectiveDate": "2023-04-02T20:10:00.000Z",
-      "ExpirationDate": null,
+      "ExpirationDate": "None",
       "ModificationDate": "2023-04-02T20:10:00.000Z",
       "Subject": [
         "event"
