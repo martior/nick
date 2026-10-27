@@ -123,7 +123,7 @@ const serializeItems = async (
       const document = await Document.fetchOne({ uuid: item.UID }, {}, trx);
       await document.fetchRelated('_type', trx);
       await document.applyBehaviors(trx);
-      await document.fetchRelationLists(trx);
+      await document.fetchRelationLists(trx, req);
       const documentReq = { ...req, document } as Request;
       return {
         ...(await document.toJson(

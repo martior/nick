@@ -1287,7 +1287,7 @@ export default [
 
       // Return the content if asked for
       if (req.headers.prefer === 'return=representation') {
-        await req.document.fetchRelationLists(trx);
+        await req.document.fetchRelationLists(trx, req);
         await req.document.fetchChildren(req, trx);
         await req.document.restrictChildren(req, trx);
         return {

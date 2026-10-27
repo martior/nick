@@ -129,4 +129,44 @@ describe('Search', () => {
     ).expect(200);
     expect(ids(res)).toEqual(expect.arrayContaining(inactive));
   });
+
+  it('should only return related items the user can view in full objects', async () => {
+    const events = '1a2123ba-14e8-4910-8e6b-c04a40d72a41';
+    const privatePage = '6e8a0c2e-4b6d-4f8a-9c0e-2b4d6f8a0c01';
+    const admin = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+    // A published page relating to a private page and to events
+    await admin(request(app).post('/news'))
+      .send({
+        '@type': 'Page',
+        id: 'private-page',
+        uuid: privatePage,
+        title: 'Private Page',
+      })
+      .expect(201);
+    await admin(request(app).post('/news'))
+      .send({
+        '@type': 'Page',
+        id: 'related',
+        uuid: '6e8a0c2e-4b6d-4f8a-9c0e-2b4d6f8a0c02',
+        title: 'Related',
+        relatedItems: [privatePage, events],
+      })
+      .expect(201);
+    await admin(request(app).post('/news/related/@workflow/publish')).expect(
+      200,
+    );
+
+    // Anonymous only gets the published events folder
+    const res = await request(app)
+      .get('/@search?id=related&fullobjects=1')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(res.body.items[0].relatedItems.map((item: any) => item.UID)).toEqual(
+      [events],
+    );
+  });
 });
