@@ -128,7 +128,7 @@ export default [
         case 'dexterity-types':
           const Type = models.get('Type');
           const Document = models.get('Document');
-          const types = await Type.fetchAll({}, {}, trx);
+          const types = await Type.fetchAll({}, { order: 'id' }, trx);
           const path = getUrl(req);
           const documents = await Document.buildQuery({}, {}, trx)
             .select('type')
@@ -323,6 +323,14 @@ export default [
       let json = { ...req.body };
 
       const controlpanel = await Controlpanel.fetchById(req.params.id, {}, trx);
+
+      // Keep stored passwords when no new value is sent, they are never
+      // returned so clients send them back empty
+      controlpanel.getPasswordFields().forEach((field: string) => {
+        if (json[field] === null || json[field] === undefined) {
+          delete json[field];
+        }
+      });
 
       // Handle images
       json = await handleBlocks(json);

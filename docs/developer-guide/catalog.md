@@ -106,4 +106,4 @@ Every catalog entry stores who may view the item in the `allowedUsersGroupsRoles
 | `user:<id>`    | A user with a local role that has `View`, or the owner if `Owner` has it. |
 | `group:<id>`   | A group with a local role that has `View`.                              |
 
-Users and groups are prefixed so a user or group named like a role (for example a group called `Editor`) can't match the role token. Sites created before upgrade `1008` of the core profile stored users and groups without a prefix; `pnpm seed:upgrade` rebuilds the index.
+Users and groups are prefixed so a user or group named like a role (for example a group called `Editor`) can't match the role token. Sites created before upgrade `1009` of the core profile stored users and groups without a prefix; `pnpm seed:upgrade` rebuilds the index.
