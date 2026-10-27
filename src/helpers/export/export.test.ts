@@ -9,15 +9,33 @@ import { describe, it, expect } from 'vitest';
 // Internal imports
 import {
   convertBehaviors,
+  convertComments,
+  convertQueryOperations,
+  convertRedirects,
+  convertRelations,
+  convertSharing,
+  convertSiteSettings,
+  convertUid,
   convertUserList,
+  convertVersions,
+  convertWorkflow,
+  convertWorkflowHistory,
+  exportBlobs,
   fetchAllBatches,
   forEachBatch,
   generatePassword,
+  getAcquiredState,
   getCustomRoles,
   getDocumentFilename,
   getDocumentPath,
   getItems,
+  getPositions,
+  getTranslationGroup,
   mapPrincipalRoles,
+  parseTar,
+  parseWorkflowBindings,
+  parseXml,
+  relativizeUrls,
 } from './export';
 
 /**
@@ -264,6 +282,564 @@ describe('export', () => {
           { folderish: true, navroot: true },
         ),
       ).toEqual(['navigation_root', 'folderish']);
+    });
+  });
+
+  describe('parseTar', () => {
+    it('reads the files of a tar archive', () => {
+      const header = (name: string, size: number) => {
+        const block = Buffer.alloc(512);
+        block.write(name, 0);
+        block.write(`${size.toString(8).padStart(11, '0')}\0`, 124);
+        block.write('0', 156);
+        return block;
+      };
+      const content = Buffer.from('<object/>');
+      const archive = Buffer.concat([
+        header('workflows.xml', content.length),
+        content,
+        Buffer.alloc(512 - content.length),
+        Buffer.alloc(1024),
+      ]);
+      expect(parseTar(archive)).toEqual({ 'workflows.xml': '<object/>' });
+    });
+  });
+
+  describe('parseXml', () => {
+    it('parses elements, attributes and text', () => {
+      const root = parseXml(
+        '<?xml version="1.0"?><a x="1 &amp; 2"><!-- c --><b>T &lt;b&gt;</b><c/></a>',
+      );
+      expect(root.name).toBe('a');
+      expect(root.attributes.x).toBe('1 & 2');
+      expect(root.children.map((child) => child.name)).toEqual(['b', 'c']);
+      expect(root.children[0].text).toBe('T <b>');
+    });
+  });
+
+  describe('convertWorkflow', () => {
+    const xml = `<?xml version="1.0"?>
+<dc-workflow workflow_id="intranet" title="Intranet" description=" - Only for - members." initial_state="internal">
+ <permission>View</permission>
+ <state state_id="internal" title="Internal draft">
+  <description>Draft</description>
+  <exit-transition transition_id="publish"/>
+  <permission-map name="View" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Member</permission-role>
+   <permission-role>Owner</permission-role>
+  </permission-map>
+  <permission-map name="Access contents information" acquired="False">
+   <permission-role>Member</permission-role>
+  </permission-map>
+  <permission-map name="Modify portal content" acquired="False">
+   <permission-role>Site Administrator</permission-role>
+   <permission-role>Owner</permission-role>
+  </permission-map>
+ </state>
+ <state state_id="external" title="Externally visible">
+  <exit-transition transition_id="retract"/>
+  <permission-map name="View" acquired="False">
+   <permission-role>Anonymous</permission-role>
+  </permission-map>
+ </state>
+ <transition transition_id="publish" title="Reviewer publishes" new_state="external">
+  <action url="" category="workflow" icon="">Publish externally</action>
+  <guard><guard-permission>Review portal content</guard-permission></guard>
+ </transition>
+ <transition transition_id="retract" title="Retract" new_state="internal">
+  <guard><guard-role>Manager</guard-role></guard>
+ </transition>
+</dc-workflow>`;
+
+    it('converts states, permissions and transitions', () => {
+      const workflow = convertWorkflow(xml);
+      expect(workflow.id).toBe('intranet');
+      expect(workflow.description).toBe('Only for members.');
+      expect(workflow.json.initial_state).toBe('internal');
+      expect(workflow.json.states.internal).toEqual({
+        title: 'Internal draft',
+        description: 'Draft',
+        transitions: ['publish'],
+        permissions: {
+          Administrator: ['View', 'Modify'],
+          Authenticated: ['View'],
+          Owner: ['View', 'Modify'],
+        },
+      });
+      expect(workflow.json.states.external.permissions).toEqual({
+        Anonymous: ['View'],
+        Authenticated: ['View'],
+      });
+      expect(workflow.json.transitions).toEqual({
+        publish: {
+          title: 'Publish externally',
+          description: '',
+          new_state: 'external',
+          permission: 'Review',
+        },
+        retract: {
+          title: 'Retract',
+          description: '',
+          new_state: 'internal',
+          permission: 'Manage Site',
+        },
+      });
+    });
+
+    it('gets the state of documents without workflow', () => {
+      const workflow = convertWorkflow(xml);
+      expect(getAcquiredState(workflow)).toBe('external');
+      expect(getAcquiredState(workflow, 'external')).toBe('external');
+      expect(getAcquiredState(workflow, 'unknown')).toBe('internal');
+    });
+  });
+
+  describe('parseWorkflowBindings', () => {
+    it('reads the default chain and the chains by type', () => {
+      expect(
+        parseWorkflowBindings(`<object name="portal_workflow">
+ <bindings>
+  <default><bound-workflow workflow_id="simple_publication_workflow"/></default>
+  <type type_id="Event"><bound-workflow workflow_id="intranet_workflow"/></type>
+  <type type_id="File"/>
+ </bindings>
+</object>`),
+      ).toEqual({
+        default: ['simple_publication_workflow'],
+        types: { Event: ['intranet_workflow'], File: [] },
+      });
+    });
+  });
+
+  describe('convertWorkflowHistory', () => {
+    it('converts the workflow history with titles and comments', () => {
+      const workflow = {
+        json: {
+          states: { private: { title: 'Private' } },
+          transitions: { publish: { title: 'Publish' } },
+        },
+      };
+      expect(
+        convertWorkflowHistory(
+          [
+            {
+              action: null,
+              actor: 'jane',
+              comments: '',
+              review_state: 'private',
+              time: '2026-01-01T10:00:00+00:00',
+              title: 'Private',
+            },
+            {
+              action: 'publish',
+              actor: 'john',
+              comments: 'Approved',
+              review_state: 'published',
+              time: '2026-01-02T10:00:00+00:00',
+              title: 'Published',
+            },
+          ],
+          workflow,
+        ),
+      ).toEqual([
+        {
+          action: null,
+          actor: 'jane',
+          comments: '',
+          review_state: 'private',
+          state_title: 'Private',
+          time: '2026-01-01T10:00:00+00:00',
+          transition_title: 'Create',
+        },
+        {
+          action: 'publish',
+          actor: 'john',
+          comments: 'Approved',
+          review_state: 'published',
+          state_title: 'Published',
+          time: '2026-01-02T10:00:00+00:00',
+          transition_title: 'Publish',
+        },
+      ]);
+    });
+  });
+
+  describe('convertVersions', () => {
+    it('converts the versions of the history', async () => {
+      const versions = await convertVersions(
+        [
+          {
+            type: 'workflow',
+            action: 'publish',
+            time: '2026-01-03T10:00:00+00:00',
+          },
+          {
+            type: 'versioning',
+            version: 1,
+            actor: { id: 'john' },
+            comments: 'Changed title',
+            time: '2026-01-02T10:00:00+00:00',
+          },
+          {
+            type: 'versioning',
+            version: 0,
+            actor: { id: 'jane' },
+            comments: 'Initial version',
+            time: '2026-01-01T10:00:00+00:00',
+          },
+        ],
+        async (version: number) => ({
+          '@id': 'http://host/plone/page',
+          '@type': 'Document',
+          UID: 'abc',
+          id: 'page',
+          title: `Title ${version}`,
+          review_state: 'published',
+        }),
+      );
+      expect(versions).toEqual([
+        {
+          version: 0,
+          created: '2026-01-01T10:00:00+00:00',
+          actor: 'jane',
+          id: 'page',
+          title: 'Title 0',
+          changeNote: 'Initial version',
+        },
+        {
+          version: 1,
+          created: '2026-01-02T10:00:00+00:00',
+          actor: 'john',
+          id: 'page',
+          title: 'Title 1',
+          changeNote: 'Changed title',
+        },
+      ]);
+    });
+  });
+
+  describe('convertSharing', () => {
+    it('converts local roles and the inherit flag', () => {
+      expect(
+        convertSharing({
+          inherit: false,
+          entries: [
+            {
+              id: 'AuthenticatedUsers',
+              type: 'group',
+              roles: { Reader: true },
+            },
+            {
+              id: 'staff',
+              type: 'group',
+              roles: { Reader: true, Editor: 'acquired', Reviewer: false },
+            },
+            {
+              id: 'jane',
+              type: 'user',
+              roles: {
+                Editor: true,
+                Reviewer: 'global',
+                'Site Administrator': true,
+              },
+            },
+            { id: 'john', type: 'user', roles: { Reader: 'acquired' } },
+          ],
+        }),
+      ).toEqual({
+        inherit_roles: false,
+        sharing: {
+          users: [{ id: 'jane', roles: ['Editor', 'Administrator'] }],
+          groups: [{ id: 'staff', roles: ['Reader'] }],
+        },
+      });
+    });
+
+    it('inherits roles by default', () => {
+      expect(convertSharing({ entries: [] }).inherit_roles).toBe(true);
+    });
+  });
+
+  describe('exportBlobs', () => {
+    it('downloads blobs and references them from the document and versions', async () => {
+      const written: Record<string, string> = {};
+      const file = {
+        'content-type': 'text/csv',
+        download: 'http://host/plone/data.csv/@@download/file',
+        filename: 'data.csv',
+        size: 5,
+      };
+      const { json, versions } = await exportBlobs(
+        { title: 'Data', file },
+        [
+          { version: 0, title: 'Old', file: { ...file, size: 3 } },
+          { version: 1, title: 'Data', file },
+        ],
+        'uuid-1',
+        async (field: string) => Buffer.from(`${field}!`),
+        (path: string, data: Buffer) => {
+          written[path] = data.toString();
+        },
+      );
+      const reference = {
+        path: '/blobs/uuid-1/file/data.csv',
+        filename: 'data.csv',
+        'content-type': 'text/csv',
+      };
+      expect(written).toEqual({ '/blobs/uuid-1/file/data.csv': 'file!' });
+      expect(json).toEqual({ title: 'Data', file: reference });
+      expect(versions).toEqual([
+        { version: 0, title: 'Old' },
+        { version: 1, title: 'Data', file: reference },
+      ]);
+    });
+  });
+
+  describe('convertUid', () => {
+    it('converts a Plone uid to a uuid', () => {
+      expect(convertUid('c85657a660db4199a181c594d95e65de')).toBe(
+        'c85657a6-60db-4199-a181-c594d95e65de',
+      );
+    });
+  });
+
+  describe('convertRelations', () => {
+    it('converts relation lists and relation choices', () => {
+      expect(
+        convertRelations({
+          title: 'Team',
+          relatedItems: [
+            {
+              '@id': 'http://host/plone/history',
+              UID: '8d00cf7b5bd84e479a8f1dc64e68aa61',
+              title: 'History',
+            },
+          ],
+          preview_image_link: {
+            '@id': 'http://host/plone/logo.png',
+            UID: 'c85657a660db4199a181c594d95e65de',
+            title: 'Logo',
+          },
+          subjects: ['a'],
+          empty: [],
+        }),
+      ).toEqual({
+        title: 'Team',
+        relatedItems: ['8d00cf7b-5bd8-4e47-9a8f-1dc64e68aa61'],
+        preview_image_link: [
+          {
+            '@id': 'http://host/plone/logo.png',
+            UID: 'c85657a6-60db-4199-a181-c594d95e65de',
+            title: 'Logo',
+          },
+        ],
+        subjects: ['a'],
+        empty: [],
+      });
+    });
+  });
+
+  describe('relativizeUrls', () => {
+    it('makes urls of the site relative to the site root', () => {
+      expect(
+        relativizeUrls(
+          {
+            url: 'http://host/plone/files/report.pdf',
+            root: 'http://host/plone',
+            other: 'http://host/plone2/page',
+            text: 'See http://host/plone/news and http://example.org.',
+            href: [{ '@id': 'http://host/plone/news' }],
+            count: 3,
+          },
+          'http://host/plone',
+        ),
+      ).toEqual({
+        url: '/files/report.pdf',
+        root: '/',
+        other: 'http://host/plone2/page',
+        text: 'See /news and http://example.org.',
+        href: [{ '@id': '/news' }],
+        count: 3,
+      });
+    });
+  });
+
+  describe('getTranslationGroup', () => {
+    it('returns the same uuid for all translations', () => {
+      const en = getTranslationGroup(
+        '/en/about',
+        {
+          items: [{ '@id': 'http://host/plone/de/ueber-uns', language: 'de' }],
+        },
+        'http://host/plone',
+      );
+      const de = getTranslationGroup(
+        '/de/ueber-uns',
+        { items: [{ '@id': 'http://host/plone/en/about', language: 'en' }] },
+        'http://host/plone',
+      );
+      expect(en).toBe(de);
+      expect(en).toMatch(
+        /^[\da-f]{8}-[\da-f]{4}-5[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/,
+      );
+    });
+
+    it('returns undefined without translations', () => {
+      expect(
+        getTranslationGroup('/en/about', { items: [] }, 'http://host/plone'),
+      ).toBeUndefined();
+      expect(
+        getTranslationGroup('/en/about', undefined, 'http://host/plone'),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('convertRedirects', () => {
+    it('converts aliases to redirects of exported documents', () => {
+      expect(
+        convertRedirects(
+          [
+            {
+              path: '/en/about-us',
+              'redirect-to': '/en/about',
+              manual: true,
+              datetime: '2026-01-01T10:00:00+00:00',
+            },
+            {
+              path: '/old',
+              'redirect-to': '/removed',
+              manual: false,
+              datetime: '2026-01-01T10:00:00+00:00',
+            },
+          ],
+          new Map([['/en/about', 'uuid-1']]),
+        ),
+      ).toEqual([
+        {
+          document: 'uuid-1',
+          path: '/en/about-us',
+          manual: true,
+          datetime: '2026-01-01T10:00:00+00:00',
+        },
+      ]);
+    });
+  });
+
+  describe('convertComments', () => {
+    it('converts comments and replies', () => {
+      expect(
+        convertComments([
+          {
+            comment_id: '1',
+            in_reply_to: null,
+            author_username: 'jane',
+            creation_date: '2026-01-01T10:00:00+00:00',
+            modification_date: '2026-01-01T10:00:00+00:00',
+            text: { data: 'Hello', 'mime-type': 'text/plain' },
+          },
+          {
+            comment_id: '2',
+            in_reply_to: '1',
+            author_username: 'john',
+            creation_date: '2026-01-02T10:00:00+00:00',
+            modification_date: '2026-01-03T10:00:00+00:00',
+            text: { data: 'Hi', 'mime-type': 'text/plain' },
+          },
+        ]),
+      ).toEqual([
+        {
+          id: '1',
+          parent: null,
+          author: 'jane',
+          created: '2026-01-01T10:00:00+00:00',
+          modified: '2026-01-01T10:00:00+00:00',
+          text: { data: 'Hello', 'mime-type': 'text/plain' },
+        },
+        {
+          id: '2',
+          parent: '1',
+          author: 'john',
+          created: '2026-01-02T10:00:00+00:00',
+          modified: '2026-01-03T10:00:00+00:00',
+          text: { data: 'Hi', 'mime-type': 'text/plain' },
+        },
+      ]);
+    });
+  });
+
+  describe('getPositions', () => {
+    it('counts the position within each parent', () => {
+      const positions = getPositions(['/', '/b', '/b/z', '/a', '/b/y', '/c']);
+      expect(Object.fromEntries(positions)).toEqual({
+        '/': 0,
+        '/b': 0,
+        '/b/z': 0,
+        '/a': 1,
+        '/b/y': 1,
+        '/c': 2,
+      });
+    });
+  });
+
+  describe('convertSiteSettings', () => {
+    it('converts the site and language settings', () => {
+      expect(
+        convertSiteSettings({
+          features: { multilingual: true },
+          'plone.site_title': 'Intranet',
+          'plone.robots_txt': 'User-agent: *',
+          'plone.available_languages': ['en', 'de'],
+          'plone.default_language': 'en',
+        }),
+      ).toEqual([
+        {
+          id: 'site',
+          data: { site_title: 'Intranet', robots_txt: 'User-agent: *' },
+        },
+        {
+          id: 'language',
+          data: {
+            default_language: 'en',
+            available_languages: ['en', 'de'],
+            multilingual: true,
+          },
+        },
+      ]);
+    });
+  });
+
+  describe('convertQueryOperations', () => {
+    it('strips the plone.app.querystring prefix of operations', () => {
+      expect(
+        convertQueryOperations({
+          blocks: {
+            a: {
+              '@type': 'listing',
+              querystring: {
+                query: [
+                  {
+                    i: 'portal_type',
+                    o: 'plone.app.querystring.operation.selection.any',
+                    v: ['News Item'],
+                  },
+                ],
+              },
+            },
+          },
+        }),
+      ).toEqual({
+        blocks: {
+          a: {
+            '@type': 'listing',
+            querystring: {
+              query: [
+                { i: 'portal_type', o: 'selection.any', v: ['News Item'] },
+              ],
+            },
+          },
+        },
+      });
     });
   });
 });

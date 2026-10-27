@@ -765,7 +765,7 @@ export class Document extends Model {
             id: user.id,
             username: user.id,
           },
-          comments: '',
+          comments: item.comments || '',
           type: item.type || 'workflow',
         };
       }),

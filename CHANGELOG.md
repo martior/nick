@@ -150,6 +150,17 @@
 - Make the search batch size limit configurable via requestLimit.batch @robgietema
 - Add custom upgrade code support via index.ts in upgrade steps @robgietema
 - Add support for multipart/form-data in content POST and PATCH requests @mamico
+- Export workflow definitions, type workflows and the state of documents without workflow @martior
+- Export the workflow history of documents @martior
+- Export the versions of documents @martior
+- Export local roles and the inherit flag of documents @martior
+- Export files and images of documents and import profile files with filename and content type @martior
+- Export relations with uuids and make links in exported documents relative to the site root @martior
+- Export translations of documents @martior
+- Export redirects @martior
+- Export comments of documents @martior
+- Export site title, robots.txt and language settings @martior
+- Convert querystring operations of collections and listing blocks in export @martior
 
 ### Bugfix
 
@@ -269,6 +280,9 @@
 - Export type behaviors, allowed content types and unlisted types, so exported documents can be traversed @martior
 - Fix import of exported groups without email @martior
 - Allow descriptions longer than 255 characters for workflows, types and groups @martior
+- Return the comments of workflow transitions in @history @martior
+- Keep the folder order of exported documents and fix the import of position 0 @martior
+- Replace lists instead of merging them by index when seeding controlpanels @martior
 
 ### Internal
 
@@ -339,6 +353,7 @@
 - Add documentation on how to setup limits @robgietema
 - Add documentation on how to setup caching @robgietema
 - Add documentation about profiles @robgietema
+- Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 
 ## 2.8.0 (2022-07-17)
 
