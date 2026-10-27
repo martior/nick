@@ -114,9 +114,10 @@ export async function callHandler(
     ...type._workflow.getPermissions(document.workflow_state, mergedRoles),
   ]);
 
-  // Check permission
+  // Check permission, like plone.restapi a missing permission is
+  // 401 Unauthorized for anonymous and authenticated users
   if (!hasPermission(req.permissions, route.permission)) {
-    throw new RequestException(req.user.id === 'anonymous' ? 401 : 403, {
+    throw new RequestException(401, {
       message: req.i18n('You are not authorized to access this resource.'),
     });
   }

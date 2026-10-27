@@ -113,3 +113,5 @@ Place a file like `src/profiles/default/workflows.json`:
 ```
 
 The file is picked up automatically during seeding — no manual registration is required. When `purge` is `false` or omitted, new workflows are added and existing ones are merged.
+
+Upgrade `1014` gives `Owner` `View` and `Modify` in the `private` state, `View` in the `pending` state and `Modify` in the `published` state of `simple_publication_workflow`, like Plone's: the creator of an item can view and edit it while it is private, also without another local role.

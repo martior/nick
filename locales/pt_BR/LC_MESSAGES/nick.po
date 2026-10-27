@@ -1410,6 +1410,12 @@ msgctxt "Profiles|Core|Actions"
 msgid "Log out"
 msgstr "Sair"
 
+#. Default: "Logged-in users"
+#: src/routes/sharing/sharing.ts:181
+msgctxt "Routes|Sharing"
+msgid "Logged-in users"
+msgstr ""
+
 #. Default: "Logger"
 #: src/content_rules/actions/logger.ts:13
 msgctxt "Content rules|Actions|Logger"
@@ -1878,7 +1884,7 @@ msgid "Pattern must be at least 1 character long."
 msgstr ""
 
 #. Default: "Pending review"
-#: src/profiles/core/workflows.json:22
+#: src/profiles/core/workflows.json:23
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Revisão pendente"
@@ -2011,13 +2017,13 @@ msgid "Provided block id is not valid."
 msgstr ""
 
 #. Default: "Publish"
-#: src/profiles/core/workflows.json:47
+#: src/profiles/core/workflows.json:50
 msgctxt "Profiles|Core|Workflows"
 msgid "Publish"
 msgstr "Publicar"
 
 #. Default: "Published"
-#: src/profiles/core/workflows.json:33
+#: src/profiles/core/workflows.json:35
 msgctxt "Profiles|Core|Workflows"
 msgid "Published"
 msgstr "Publicado"
@@ -2092,14 +2098,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:296
+#: src/routes/sharing/sharing.ts:321
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:297
+#: src/routes/sharing/sharing.ts:322
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -2173,7 +2179,7 @@ msgid "Resource is locked."
 msgstr ""
 
 #. Default: "Retract"
-#: src/profiles/core/workflows.json:57
+#: src/profiles/core/workflows.json:60
 msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Retirar"
@@ -2310,7 +2316,7 @@ msgid "Send an email on the triggering object"
 msgstr ""
 
 #. Default: "Send back"
-#: src/profiles/core/workflows.json:52
+#: src/profiles/core/workflows.json:55
 msgctxt "Profiles|Core|Workflows"
 msgid "Send back"
 msgstr "Enviar de volta"
@@ -2347,7 +2353,7 @@ msgid "Sharing"
 msgstr "Compartilhamento"
 
 #. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
-#: src/routes/sharing/sharing.ts:220
+#: src/routes/sharing/sharing.ts:235
 msgctxt "Routes|Sharing"
 msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
 msgstr ""
@@ -2462,7 +2468,7 @@ msgid "Submit"
 msgstr "Enviar"
 
 #. Default: "Submit for publication"
-#: src/profiles/core/workflows.json:62
+#: src/profiles/core/workflows.json:65
 msgctxt "Profiles|Core|Workflows"
 msgid "Submit for publication"
 msgstr "Enviar para publicação"
@@ -3163,13 +3169,13 @@ msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
-#: src/profiles/core/workflows.json:34
+#: src/profiles/core/workflows.json:36
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Visível para todos, editável pelo autor."
 
 #. Default: "Waiting to be reviewed, not editable by the owner."
-#: src/profiles/core/workflows.json:23
+#: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
 msgid "Waiting to be reviewed, not editable by the owner."
 msgstr "Esperando para ser revisado, não editável pelo autor."
@@ -3298,7 +3304,7 @@ msgstr ""
 #: src/routes/content/content.ts:215
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
-#: src/helpers/handler/handler.ts:120
+#: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""

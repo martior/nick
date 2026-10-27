@@ -152,6 +152,8 @@ If a resource could not be found, the server will respond with `404 Not Found`:
 {% include_relative endpoints/examples/content/get_notfound.res %}
 ```
 
+A user without the permission a request needs gets `401 Unauthorized`, also when logged in, like in plone.restapi.
+
 Like in plone.restapi, error responses are JSON objects with a `type` (`BadRequest`, `Unauthorized`, `Forbidden`, `NotFound` or `InternalServerError`) and a `message`. This includes a request body that is not valid JSON (`400 Bad Request`). Redirects of moved or renamed content have an absolute `Location` header.
 
 ### GET Responses
@@ -213,7 +215,7 @@ Deleting requires the `Delete` permission on the resource. The core profile give
 ### DELETE Repsonses
 
 - 204 No Content
-- 401 Unauthorized or 403 Forbidden (without the `Delete` permission)
+- 401 Unauthorized (without the `Delete` permission)
 - 404 Not Found (if the resource does not exist)
 - 405 Method Not Allowed (if deleting the resource is not allowed)
 - 500 Internal Server Error

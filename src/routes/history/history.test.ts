@@ -62,7 +62,7 @@ describe('History', () => {
       .get('/news/@history')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${member}`)
-      .expect(403);
+      .expect(401);
     await request(app)
       .get('/news/@history/0')
       .set('Accept', 'application/json')
@@ -94,7 +94,7 @@ describe('History', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${contributor}`)
       .send({ version: 0 })
-      .expect(403);
+      .expect(401);
     await request(app)
       .patch('/news/@history')
       .set('Accept', 'application/json')

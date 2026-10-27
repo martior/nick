@@ -53,12 +53,12 @@ describe('Document', () => {
 
       // Local Editor has View in the private state
       expect(allowed).toContain('user:john');
-      // The owner is not in the core workflow private state
-      expect(allowed).not.toContain('user:jane');
+      // The owner has View in the core workflow private state
+      expect(allowed).toContain('user:jane');
 
-      // Owner with View in the private state
-      document._type._workflow.json.states.private.permissions.Owner = ['View'];
-      expect(await document.allowedUsersGroupsRoles(global.txn!)).toContain(
+      // Owner without View in the private state
+      delete document._type._workflow.json.states.private.permissions.Owner;
+      expect(await document.allowedUsersGroupsRoles(global.txn!)).not.toContain(
         'user:jane',
       );
     });

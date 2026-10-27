@@ -12,6 +12,7 @@ import { uniq } from 'es-toolkit/array';
 import { isObject } from 'es-toolkit/compat';
 
 // Internal imports
+import { authenticatedUsers } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { RequestException } from '../../helpers/error/error';
 import jobs from '../../helpers/jobs/jobs';
@@ -173,6 +174,16 @@ export default [
         trx,
       );
 
+      // The group of all authenticated users is always listed, like in Plone
+      if (!groups.some((group: any) => group.id === authenticatedUsers)) {
+        groups.push({
+          id: authenticatedUsers,
+          title: req.i18n('Logged-in users'),
+          roles: Object.fromEntries(roles.map((role: any) => [role.id, false])),
+          type: 'group',
+        });
+      }
+
       // Return sharing data
       return {
         json: {
@@ -180,9 +191,13 @@ export default [
             id: role.id,
             title: role.title,
           })),
-          entries: [...users, ...groups].sort((a, b) =>
-            a.title > b.title ? 1 : -1,
-          ),
+          entries: [...users, ...groups]
+            .sort((a, b) => (a.title > b.title ? 1 : -1))
+            .map((entry: any) => ({
+              ...entry,
+              // The entry of the current user is shown but not editable
+              disabled: entry.type === 'user' && entry.id === req.user.id,
+            })),
           inherit: req.document.inherit_roles,
         },
         xkeys: [req.document.uuid],
@@ -241,41 +256,51 @@ export default [
         (role: any) => role.id,
       );
 
-      // Update local roles
+      // Create the group of all authenticated users when it gets roles
+      if (
+        entries.some(
+          (entry: any) =>
+            entry.type === 'group' && entry.id === authenticatedUsers,
+        ) &&
+        !(await Group.fetchById(authenticatedUsers, {}, trx))
+      ) {
+        await Group.create(
+          { id: authenticatedUsers, title: 'Logged-in users' },
+          {},
+          trx,
+        );
+      }
+
+      // Update local roles: an entry is the complete set of the local roles
+      // of the principal, roles not set to true are removed
       await mapAsync(entries, async (entry: any) => {
         const Model = entry.type === 'user' ? User : Group;
         const principal = await Model.fetchById(entry.id, {}, trx);
         if (principal) {
-          await mapAsync(
-            Object.keys(entry.roles).filter((role) => roles.includes(role)),
-            async (role: any) => {
-              // If should relate
-              if (entry.roles[role] === true) {
-                const existing = await principal
-                  .$relatedQuery('_documentRoles', trx)
-                  .where({ id: role, document: req.document.uuid })
-                  .first();
-                if (!existing) {
-                  await principal
-                    .$relatedQuery('_documentRoles', trx)
-                    .relate({ id: role, document: req.document.uuid });
-                }
-              } else if (entry.roles[role] === false) {
-                // Remove the role on this document only
-                await trx(
-                  entry.type === 'user'
-                    ? 'user_role_document'
-                    : 'group_role_document',
-                )
-                  .where({
-                    [entry.type === 'user' ? 'user' : 'group']: principal.id,
-                    role,
-                    document: req.document.uuid,
-                  })
-                  .delete();
-              }
-            },
-          );
+          await mapAsync(roles, async (role: string) => {
+            const existing = await principal
+              .$relatedQuery('_documentRoles', trx)
+              .where({ id: role, document: req.document.uuid })
+              .first();
+            if (entry.roles[role] === true && !existing) {
+              await principal
+                .$relatedQuery('_documentRoles', trx)
+                .relate({ id: role, document: req.document.uuid });
+            } else if (entry.roles[role] !== true && existing) {
+              // Remove the role on this document only
+              await trx(
+                entry.type === 'user'
+                  ? 'user_role_document'
+                  : 'group_role_document',
+              )
+                .where({
+                  [entry.type === 'user' ? 'user' : 'group']: principal.id,
+                  role,
+                  document: req.document.uuid,
+                })
+                .delete();
+            }
+          });
         }
       });
 
