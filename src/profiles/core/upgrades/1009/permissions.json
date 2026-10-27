@@ -1,9 +1,0 @@
-{
-  "purge": false,
-  "permissions": [
-    {
-      "id": "Revert",
-      "title:i18n": "Revert"
-    }
-  ]
-}

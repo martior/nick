@@ -1,0 +1,29 @@
+{
+  "purge": false,
+  "roles": [
+    {
+      "id": "Owner",
+      "title:i18n": "Owner",
+      "permissions": [
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor"
+      ]
+    },
+    {
+      "id": "Editor",
+      "title:i18n": "Editor",
+      "permissions": ["Delegate Reader", "Delegate Editor"]
+    },
+    {
+      "id": "Administrator",
+      "title:i18n": "Administrator",
+      "permissions": [
+        "Delegate Reader",
+        "Delegate Contributor",
+        "Delegate Editor",
+        "Delegate Reviewer"
+      ]
+    }
+  ]
+}

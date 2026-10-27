@@ -3,5 +3,5 @@
   "title": "Nick Core",
   "description": "Core functionality of Nick",
   "version": 1007,
-  "upgrade": "Add the selection.none querystring operation."
+  "upgrade": "Add the delegate permissions for sharing."
 }

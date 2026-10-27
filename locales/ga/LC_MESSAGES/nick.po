@@ -135,10 +135,11 @@ msgid "Adds title and description fields."
 msgstr "Cuireann sé réimsí teidil agus cur síos leis."
 
 #. Default: "Administrator"
-#: src/profiles/core/roles.json:54
-#: src/profiles/core/upgrades/1011/roles.json:26
-#: src/profiles/core/upgrades/1010/roles.json:16
-#: src/profiles/core/upgrades/1009/roles.json:21
+#: src/profiles/core/roles.json:64
+#: src/profiles/core/upgrades/1012/roles.json:26
+#: src/profiles/core/upgrades/1011/roles.json:16
+#: src/profiles/core/upgrades/1010/roles.json:21
+#: src/profiles/core/upgrades/1007/roles.json:20
 #: src/profiles/core/upgrades/1002/roles.json:26
 msgctxt "Profiles|Core|Roles"
 msgid "Administrator"
@@ -232,7 +233,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Eintiteas atá freagrach as an mír seo a chur ar fáil."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:332
+#: src/routes/users/users.ts:320
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -470,7 +471,7 @@ msgid "Change Note"
 msgstr "Nóta Athraithe"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:939
+#: src/routes/content/content.ts:1121
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -482,8 +483,8 @@ msgid "Comment"
 msgstr ""
 
 #. Default: "Comment does not exist."
-#: src/routes/comments/comments.ts:211
-#: src/routes/comments/comments.ts:266
+#: src/routes/comments/comments.ts:230
+#: src/routes/comments/comments.ts:285
 msgctxt "Routes|Comments"
 msgid "Comment does not exist."
 msgstr ""
@@ -567,8 +568,8 @@ msgid "Contents"
 msgstr "Clár Ábhair"
 
 #. Default: "Contributor"
-#: src/profiles/core/roles.json:39
-#: src/profiles/core/upgrades/1011/roles.json:11
+#: src/profiles/core/roles.json:42
+#: src/profiles/core/upgrades/1012/roles.json:11
 msgctxt "Profiles|Core|Roles"
 msgid "Contributor"
 msgstr "Ranníocóir"
@@ -704,10 +705,38 @@ msgctxt "Profiles|Core|Types|Event"
 msgid "Define the event recurrence rule."
 msgstr ""
 
+#. Default: "Delegate Contributor"
+#: src/profiles/core/permissions.json:78
+#: src/profiles/core/upgrades/1007/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Contributor"
+msgstr ""
+
+#. Default: "Delegate Editor"
+#: src/profiles/core/permissions.json:82
+#: src/profiles/core/upgrades/1007/permissions.json:10
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Editor"
+msgstr ""
+
+#. Default: "Delegate Reader"
+#: src/profiles/core/permissions.json:86
+#: src/profiles/core/upgrades/1007/permissions.json:14
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reader"
+msgstr ""
+
+#. Default: "Delegate Reviewer"
+#: src/profiles/core/permissions.json:90
+#: src/profiles/core/upgrades/1007/permissions.json:18
+msgctxt "Profiles|Core|Permissions"
+msgid "Delegate Reviewer"
+msgstr ""
+
 #. Default: "Delete"
 #: src/profiles/core/permissions.json:38
 #: src/profiles/core/actions.json:54
-#: src/profiles/core/upgrades/1010/permissions.json:6
+#: src/profiles/core/upgrades/1011/permissions.json:6
 msgctxt "Profiles|Core|Permissions"
 msgid "Delete"
 msgstr ""
@@ -774,8 +803,9 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:981
-#: src/routes/content/content.ts:1157
+#: src/routes/content/content.ts:230
+#: src/routes/content/content.ts:1163
+#: src/routes/content/content.ts:1339
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Doiciméad faoi ghlas"
@@ -823,10 +853,11 @@ msgid "Edit"
 msgstr "Cuir in eagar"
 
 #. Default: "Editor"
-#: src/profiles/core/roles.json:44
-#: src/profiles/core/upgrades/1011/roles.json:16
+#: src/profiles/core/roles.json:47
+#: src/profiles/core/upgrades/1012/roles.json:16
+#: src/profiles/core/upgrades/1011/roles.json:11
 #: src/profiles/core/upgrades/1010/roles.json:11
-#: src/profiles/core/upgrades/1009/roles.json:11
+#: src/profiles/core/upgrades/1007/roles.json:15
 msgctxt "Profiles|Core|Roles"
 msgid "Editor"
 msgstr "Eagarthóir"
@@ -838,7 +869,7 @@ msgid "Effective date"
 msgstr "Dáta feidhme"
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:269
+#: src/routes/users/users.ts:257
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -1090,8 +1121,8 @@ msgid "Friday"
 msgstr ""
 
 #. Default: "From and message are required fields."
-#: src/routes/email/email.ts:67
-#: src/routes/email/email.ts:114
+#: src/routes/email/email.ts:82
+#: src/routes/email/email.ts:129
 msgctxt "Routes|Email"
 msgid "From and message are required fields."
 msgstr "Is réimsí riachtanacha iad 'Ó' agus 'teachtaireacht'."
@@ -1198,7 +1229,7 @@ msgid "Internal server error"
 msgstr "Earráid inmheánach freastalaí"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:675
+#: src/routes/content/content.ts:856
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1223,8 +1254,8 @@ msgid "Invalid depth."
 msgstr ""
 
 #. Default: "Invalid move."
-#: src/routes/controlpanels/controlpanels.ts:529
-#: src/routes/controlpanels/controlpanels.ts:582
+#: src/routes/controlpanels/controlpanels.ts:537
+#: src/routes/controlpanels/controlpanels.ts:590
 msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
 msgstr ""
@@ -1236,8 +1267,8 @@ msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:150
-#: src/routes/search/search.ts:297
+#: src/routes/search/search.ts:186
+#: src/routes/search/search.ts:335
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1335,7 +1366,7 @@ msgid "Lets you upload a file to the site."
 msgstr "Ligeann sé duit comhad a uaslódáil chuig an suíomh."
 
 #. Default: "Limit must be a positive number."
-#: src/routes/users/users.ts:201
+#: src/routes/users/users.ts:189
 #: src/routes/groups/groups.ts:69
 msgctxt "Routes|Users"
 msgid "Limit must be a positive number."
@@ -1398,7 +1429,7 @@ msgid "Log out"
 msgstr "Logáil amach"
 
 #. Default: "Logged-in users"
-#: src/routes/sharing/sharing.ts:162
+#: src/routes/sharing/sharing.ts:181
 msgctxt "Routes|Sharing"
 msgid "Logged-in users"
 msgstr ""
@@ -1641,6 +1672,12 @@ msgctxt "Profiles|Core|Catalog"
 msgid "No"
 msgstr "Níl"
 
+#. Default: "No JSON object could be decoded"
+#: src/helpers/multipart/multipart.ts:94
+msgctxt "Helpers|Multipart"
+msgid "No JSON object could be decoded"
+msgstr ""
+
 #. Default: "No data is submitted."
 #: src/routes/form/form.ts:106
 msgctxt "Routes|Form"
@@ -1648,7 +1685,7 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:145
+#: src/routes/search/search.ts:181
 msgctxt "Routes|Search"
 msgid "No query supplied."
 msgstr ""
@@ -1702,13 +1739,14 @@ msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:168
-#: src/routes/users/users.ts:410
-#: src/routes/users/users.ts:477
+#: src/routes/users/users.ts:156
+#: src/routes/users/users.ts:391
+#: src/routes/users/users.ts:458
 #: src/routes/types/types.ts:59
 #: src/routes/types/types.ts:171
 #: src/routes/types/types.ts:329
 #: src/routes/types/types.ts:376
+#: src/routes/translations/translations.ts:33
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
 #: src/routes/recyclebin/recyclebin.ts:35
@@ -1720,18 +1758,20 @@ msgstr ""
 #: src/routes/groups/groups.ts:37
 #: src/routes/groups/groups.ts:194
 #: src/routes/groups/groups.ts:238
-#: src/routes/email/email.ts:75
+#: src/routes/email/email.ts:24
+#: src/routes/email/email.ts:90
 #: src/routes/controlpanels/controlpanels.ts:167
-#: src/routes/controlpanels/controlpanels.ts:367
-#: src/routes/controlpanels/controlpanels.ts:404
-#: src/routes/controlpanels/controlpanels.ts:436
-#: src/routes/controlpanels/controlpanels.ts:455
-#: src/routes/controlpanels/controlpanels.ts:486
-#: src/routes/controlpanels/controlpanels.ts:522
-#: src/routes/controlpanels/controlpanels.ts:574
-#: src/routes/controlpanels/controlpanels.ts:622
-#: src/routes/controlpanels/controlpanels.ts:669
-#: src/routes/controlpanels/controlpanels.ts:707
+#: src/routes/controlpanels/controlpanels.ts:375
+#: src/routes/controlpanels/controlpanels.ts:412
+#: src/routes/controlpanels/controlpanels.ts:444
+#: src/routes/controlpanels/controlpanels.ts:463
+#: src/routes/controlpanels/controlpanels.ts:494
+#: src/routes/controlpanels/controlpanels.ts:530
+#: src/routes/controlpanels/controlpanels.ts:582
+#: src/routes/controlpanels/controlpanels.ts:630
+#: src/routes/controlpanels/controlpanels.ts:677
+#: src/routes/controlpanels/controlpanels.ts:715
+#: src/routes/content/content.ts:523
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Níor aimsíodh."
@@ -1761,7 +1801,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1154
+#: src/routes/content/content.ts:1336
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1792,9 +1832,10 @@ msgstr "Ord san fhillteán"
 
 #. Default: "Owner"
 #: src/profiles/core/roles.json:22
+#: src/profiles/core/upgrades/1012/roles.json:6
 #: src/profiles/core/upgrades/1011/roles.json:6
 #: src/profiles/core/upgrades/1010/roles.json:6
-#: src/profiles/core/upgrades/1009/roles.json:6
+#: src/profiles/core/upgrades/1007/roles.json:6
 #: src/profiles/core/upgrades/1002/roles.json:16
 msgctxt "Profiles|Core|Roles"
 msgid "Owner"
@@ -1814,9 +1855,15 @@ msgid "Page"
 msgstr "Leathanach"
 
 #. Default: "Parent comment does not exist."
-#: src/routes/comments/comments.ts:155
+#: src/routes/comments/comments.ts:174
 msgctxt "Routes|Comments"
 msgid "Parent comment does not exist."
+msgstr ""
+
+#. Default: "Part {part} not found."
+#: src/helpers/multipart/multipart.ts:117
+msgctxt "Helpers|Multipart"
+msgid "Part {part} not found."
 msgstr ""
 
 #. Default: "Password"
@@ -1826,16 +1873,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:128
-#: src/routes/users/users.ts:358
+#: src/routes/users/users.ts:116
+#: src/routes/users/users.ts:339
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Iarratas ar athshocrú pasfhocail"
 
 #. Default: "Password should be at least 8 characters long."
 #: src/routes/users/users.ts:52
-#: src/routes/users/users.ts:279
-#: src/routes/users/users.ts:420
+#: src/routes/users/users.ts:267
+#: src/routes/users/users.ts:401
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1979,7 +2026,7 @@ msgid "Prompts"
 msgstr "Leideanna"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:659
+#: src/routes/content/content.ts:840
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2041,7 +2088,7 @@ msgid "Re-enter the password. Make sure the passwords are identical."
 msgstr ""
 
 #. Default: "Reader"
-#: src/profiles/core/roles.json:34
+#: src/profiles/core/roles.json:37
 msgctxt "Profiles|Core|Roles"
 msgid "Reader"
 msgstr "Léitheoir"
@@ -2079,14 +2126,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:295
+#: src/routes/sharing/sharing.ts:321
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:296
+#: src/routes/sharing/sharing.ts:322
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -2146,14 +2193,15 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:689
+#: src/routes/content/content.ts:870
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
 msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:980
+#: src/routes/content/content.ts:229
+#: src/routes/content/content.ts:1162
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2166,7 +2214,7 @@ msgstr "Tarraing siar"
 
 #. Default: "Revert"
 #: src/profiles/core/permissions.json:46
-#: src/profiles/core/upgrades/1009/permissions.json:6
+#: src/profiles/core/upgrades/1010/permissions.json:6
 msgctxt "Profiles|Core|Permissions"
 msgid "Revert"
 msgstr ""
@@ -2184,9 +2232,9 @@ msgid "Review state"
 msgstr "Stádas athbhreithnithe"
 
 #. Default: "Reviewer"
-#: src/profiles/core/roles.json:49
-#: src/profiles/core/upgrades/1011/roles.json:21
-#: src/profiles/core/upgrades/1009/roles.json:16
+#: src/profiles/core/roles.json:59
+#: src/profiles/core/upgrades/1012/roles.json:21
+#: src/profiles/core/upgrades/1010/roles.json:16
 #: src/profiles/core/upgrades/1002/roles.json:21
 msgctxt "Profiles|Core|Roles"
 msgid "Reviewer"
@@ -2333,7 +2381,7 @@ msgid "Sharing"
 msgstr "Comhroinnt"
 
 #. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
-#: src/routes/sharing/sharing.ts:217
+#: src/routes/sharing/sharing.ts:235
 msgctxt "Routes|Sharing"
 msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
 msgstr ""
@@ -2502,7 +2550,7 @@ msgid "System group"
 msgstr "Grúpa córais"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:469
+#: src/routes/users/users.ts:450
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Úsáideoirí córais"
@@ -2539,14 +2587,14 @@ msgid "Target path not found."
 msgstr ""
 
 #. Default: "Text is required to add a comment."
-#: src/routes/comments/comments.ts:104
-#: src/routes/comments/comments.ts:162
+#: src/routes/comments/comments.ts:121
+#: src/routes/comments/comments.ts:181
 msgctxt "Routes|Comments"
 msgid "Text is required to add a comment."
 msgstr ""
 
 #. Default: "Text is required to modify a comment."
-#: src/routes/comments/comments.ts:229
+#: src/routes/comments/comments.ts:248
 msgctxt "Routes|Comments"
 msgid "Text is required to modify a comment."
 msgstr ""
@@ -2653,8 +2701,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:129
-#: src/routes/users/users.ts:359
+#: src/routes/users/users.ts:117
+#: src/routes/users/users.ts:340
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2666,14 +2714,14 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:717
+#: src/routes/content/content.ts:898
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:706
-#: src/routes/content/content.ts:999
+#: src/routes/content/content.ts:887
+#: src/routes/content/content.ts:1181
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
@@ -2805,13 +2853,13 @@ msgid "The user viewing the querystring results"
 msgstr "An t-úsáideoir ag féachaint ar thorthaí na teaghrán fiosrúcháin"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:752
+#: src/routes/content/content.ts:933
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:747
+#: src/routes/content/content.ts:928
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -2901,7 +2949,7 @@ msgid "Title"
 msgstr "Teideal"
 
 #. Default: "To, from and message are required fields."
-#: src/routes/email/email.ts:28
+#: src/routes/email/email.ts:41
 msgctxt "Routes|Email"
 msgid "To, from and message are required fields."
 msgstr "Is réimsí riachtanacha iad 'Chuig', 'Ó' agus 'teachtaireacht'."
@@ -2991,6 +3039,12 @@ msgctxt "Routes|Groups"
 msgid "Unknown users: {users}"
 msgstr ""
 
+#. Default: "Upload too large."
+#: src/helpers/multipart/multipart.ts:56
+msgctxt "Helpers|Multipart"
+msgid "Upload too large."
+msgstr ""
+
 #. Default: "Use '../' to navigate to parent objects."
 #: src/profiles/core/catalog.json:27
 msgctxt "Profiles|Core|Catalog"
@@ -3018,7 +3072,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:77
+#: src/routes/users/users.ts:72
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "Níl an t-úsáideoir ann nó dintiúir neamhbhailí."
@@ -3091,7 +3145,7 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:91
-#: src/routes/content/content.ts:252
+#: src/routes/content/content.ts:400
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3137,7 +3191,7 @@ msgstr ""
 
 #. Default: "View History"
 #: src/profiles/core/permissions.json:42
-#: src/profiles/core/upgrades/1011/permissions.json:6
+#: src/profiles/core/upgrades/1012/permissions.json:6
 msgctxt "Profiles|Core|Permissions"
 msgid "View History"
 msgstr ""
@@ -3240,7 +3294,7 @@ msgid "Wrong login and/or password."
 msgstr "Logáil isteach agus/nó pasfhocal mícheart."
 
 #. Default: "Wrong password."
-#: src/routes/users/users.ts:95
+#: src/routes/users/users.ts:90
 msgctxt "Routes|Users"
 msgid "Wrong password."
 msgstr ""
@@ -3265,8 +3319,9 @@ msgid "You are not authorized to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
-#: src/routes/users/users.ts:393
+#: src/routes/users/users.ts:374
 #: src/routes/types/types.ts:43
+#: src/routes/translations/translations.ts:39
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
@@ -3275,13 +3330,16 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
+#: src/routes/content/content.ts:215
+#: src/routes/comments/comments.ts:54
+#: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:121
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:738
+#: src/routes/content/content.ts:919
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -3293,7 +3351,7 @@ msgid "You can not filter by title and token at the same time."
 msgstr ""
 
 #. Default: "You can only change your own password."
-#: src/routes/users/users.ts:84
+#: src/routes/users/users.ts:79
 msgctxt "Routes|Users"
 msgid "You can only change your own password."
 msgstr ""
@@ -3305,19 +3363,19 @@ msgid "You can’t delete system groups."
 msgstr "Ní féidir leat grúpaí córais a scriosadh."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:468
+#: src/routes/users/users.ts:449
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Ní féidir leat úsáideoirí córais a scriosadh."
 
 #. Default: "You don’t have permission to delete this comment."
-#: src/routes/comments/comments.ts:277
+#: src/routes/comments/comments.ts:296
 msgctxt "Routes|Comments"
 msgid "You don’t have permission to delete this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to edit this comment."
-#: src/routes/comments/comments.ts:222
+#: src/routes/comments/comments.ts:241
 msgctxt "Routes|Comments"
 msgid "You don’t have permission to edit this comment."
 msgstr ""
@@ -3335,19 +3393,19 @@ msgid "You don’t have permission to unlock this document."
 msgstr "Níl cead agat an doiciméad seo a dhíghlasáil."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:250
+#: src/routes/users/users.ts:238
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Níl cead agat úsáideoir a chur leis."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:156
+#: src/routes/users/users.ts:144
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""
 
 #. Default: "You must enter a valid email address."
-#: src/routes/users/users.ts:261
+#: src/routes/users/users.ts:249
 msgctxt "Routes|Users"
 msgid "You must enter a valid email address."
 msgstr ""

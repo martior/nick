@@ -3,5 +3,5 @@
   "title": "Nick Core",
   "description": "Core functionality of Nick",
   "version": 1012,
-  "upgrade": "Make the title a text line of at most 1024 characters."
+  "upgrade": "Add the view history permission."
 }
