@@ -19,6 +19,8 @@
       },
       "title": {
         "description:i18n": "A name given to this item.",
+        "factory": "Text line (String)",
+        "maxLength": 1024,
         "title:i18n": "Title",
         "type": "string"
       }

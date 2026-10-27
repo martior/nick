@@ -489,6 +489,12 @@ msgctxt "Routes|Userschema"
 msgid "Confirm password"
 msgstr ""
 
+#. Default: "Constraint not satisfied"
+#: src/helpers/schema/schema.ts:205
+msgctxt "Helpers|Schema"
+msgid "Constraint not satisfied"
+msgstr ""
+
 #. Default: "Contact"
 #: src/profiles/core/actions.json:76
 msgctxt "Profiles|Core|Actions"
@@ -791,9 +797,9 @@ msgstr ""
 
 #. Default: "Document locked"
 #: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:216
-#: src/routes/content/content.ts:995
-#: src/routes/content/content.ts:1132
+#: src/routes/content/content.ts:222
+#: src/routes/content/content.ts:1060
+#: src/routes/content/content.ts:1219
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokument låst"
@@ -1198,11 +1204,17 @@ msgid "Information about rights held in and over this item."
 msgstr "Informasjon om rettigheter knyttet til dette elementet."
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:268
+#: src/app.ts:280
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Intern serverfeil"
+
+#. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
+#: src/routes/content/content.ts:798
+msgctxt "Routes|Content"
+msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
+msgstr ""
 
 #. Default: "Invalid credentials"
 #: src/routes/authentication/authentication.ts:88
@@ -1707,7 +1719,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:496
+#: src/routes/content/content.ts:502
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Ikke funnet."
@@ -1730,8 +1742,14 @@ msgctxt "Vocabularies|Months"
 msgid "November"
 msgstr ""
 
+#. Default: "Object is of wrong type."
+#: src/helpers/schema/schema.ts:198
+msgctxt "Helpers|Schema"
+msgid "Object is of wrong type."
+msgstr ""
+
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1129
+#: src/routes/content/content.ts:1216
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1955,6 +1973,12 @@ msgctxt "Profiles|Ai|Controlpanels"
 msgid "Prompts"
 msgstr "Ledetekster"
 
+#. Default: "Property '@type' is required."
+#: src/routes/content/content.ts:782
+msgctxt "Routes|Content"
+msgid "Property '@type' is required."
+msgstr ""
+
 #. Default: "Property “groupname” is required."
 #: src/routes/groups/groups.ts:100
 msgctxt "Routes|Groups"
@@ -2116,15 +2140,16 @@ msgctxt "Routes|Replace"
 msgid "Replacement must be provided."
 msgstr ""
 
-#. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:796
+#. Default: "Required input is missing."
+#: src/routes/content/content.ts:812
+#: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
-msgid "Required field(s) missing."
-msgstr "Obligatorisk(e) felt mangler."
+msgid "Required input is missing."
+msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:215
-#: src/routes/content/content.ts:994
+#: src/routes/content/content.ts:221
+#: src/routes/content/content.ts:1059
 msgctxt "Routes|Content"
 msgid "Resource is locked."
 msgstr ""
@@ -2636,6 +2661,19 @@ msgctxt "Routes|Groups"
 msgid "The group name you entered already exists."
 msgstr ""
 
+#. Default: "The id “{id}” is invalid - it is already in use."
+#: src/routes/content/content.ts:840
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid - it is already in use."
+msgstr ""
+
+#. Default: "The id “{id}” is invalid."
+#: src/routes/content/content.ts:829
+#: src/routes/content/content.ts:1078
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid."
+msgstr ""
+
 #. Default: "The item’s title, transformed for sorting"
 #: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
@@ -2702,6 +2740,12 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "Porten til din lokale SMTP-server (utgående e-post). Vanligvis '25'."
 
+#. Default: "The request body is not valid JSON."
+#: src/app.ts:298
+msgctxt "App"
+msgid "The request body is not valid JSON."
+msgstr ""
+
 #. Default: "The roles to check for."
 #: src/content_rules/conditions/user_role.ts:34
 msgctxt "Content rules|Conditions|User role"
@@ -2755,6 +2799,18 @@ msgstr "Emnet for dette elementet."
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr "Den bruker som ser søkingens resultat"
+
+#. Default: "The uuid is already in use."
+#: src/routes/content/content.ts:875
+msgctxt "Routes|Content"
+msgid "The uuid is already in use."
+msgstr ""
+
+#. Default: "The uuid is invalid."
+#: src/routes/content/content.ts:870
+msgctxt "Routes|Content"
+msgid "The uuid is invalid."
+msgstr ""
 
 #. Default: "The workflow states to check for."
 #: src/content_rules/conditions/workflow_state.ts:31
@@ -2834,7 +2890,7 @@ msgstr "Tip: du kan bruke  * i din søning."
 
 #. Default: "Title"
 #: src/profiles/core/catalog.json:271
-#: src/profiles/core/behaviors/basic.json:22
+#: src/profiles/core/behaviors/basic.json:24
 #: src/profiles/ai/controlpanels/ai.json:29
 msgctxt "Profiles|Core|Catalog"
 msgid "Title"
@@ -2859,8 +2915,8 @@ msgstr "I dag"
 
 #. Default: "Transaction error."
 #: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/app.ts:172
+#: src/app.ts:189
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Transaksjonsfeil."
@@ -2918,12 +2974,6 @@ msgstr "innholdstypenavn"
 msgctxt "Helpers|Handler"
 msgid "Type of the current document is not found."
 msgstr "Typen til det gjeldende dokumentet ble ikke funnet."
-
-#. Default: "Type {type} not found."
-#: src/routes/content/content.ts:785
-msgctxt "Routes|Content"
-msgid "Type {type} not found."
-msgstr ""
 
 #. Default: "Unknown roles: {roles}"
 #: src/routes/groups/groups.ts:134
@@ -3021,6 +3071,12 @@ msgstr ""
 #: src/content_rules/conditions/user_role.ts:13
 msgctxt "Content rules|Conditions|User role"
 msgid "User’s role"
+msgstr ""
+
+#. Default: "Value is too long"
+#: src/helpers/schema/schema.ts:210
+msgctxt "Helpers|Schema"
+msgid "Value is too long"
 msgstr ""
 
 #. Default: "Version item"
@@ -3220,7 +3276,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:138
 #: src/routes/jobs/jobs.ts:166
 #: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:201
+#: src/routes/content/content.ts:207
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -3229,7 +3285,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:812
+#: src/routes/content/content.ts:861
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""

@@ -175,6 +175,122 @@ describe('Content', () => {
     expect(res.body.UID).toBe(body.uuid);
   });
 
+  it('should validate the type and the fields on create', async () => {
+    const post = (body: any) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+
+    expect((await post({ title: 'No type' }).expect(400)).body.message).toBe(
+      "Property '@type' is required.",
+    );
+    expect(
+      (await post({ '@type': 'NoSuchType', title: 'x' }).expect(403)).body
+        .message,
+    ).toBe(
+      "Invalid '@type' parameter. No content type with the name “NoSuchType” found.",
+    );
+    const errors = async (body: any) =>
+      JSON.parse((await post(body).expect(400)).body.message);
+    expect(await errors({ '@type': 'Page', title: 12345 })).toStrictEqual([
+      {
+        field: 'title',
+        message: 'Object is of wrong type.',
+        error: 'ValidationError',
+      },
+    ]);
+    expect(
+      (await errors({ '@type': 'Page', title: 'x', description: ['a'] }))[0]
+        .field,
+    ).toBe('description');
+    expect(
+      (await errors({ '@type': 'Page', title: 'line1\nline2' }))[0].message,
+    ).toBe('Constraint not satisfied');
+    expect(
+      (await errors({ '@type': 'Page', title: 'x'.repeat(1025) }))[0].message,
+    ).toBe('Value is too long');
+    expect(
+      (await errors({ '@type': 'Page', title: 'x', blocks: 'not-a-dict' }))[0]
+        .field,
+    ).toBe('blocks');
+  });
+
+  it('should validate explicit ids on create', async () => {
+    const post = (id: string) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ '@type': 'Page', id, title: 'x' });
+
+    for (const id of ['slash/inside', '_underscore', '..', 'aq_parent']) {
+      await post(id).expect(400);
+    }
+    await post('has space').expect(201);
+    expect((await post('has space').expect(400)).body.message).toBe(
+      'The id “has space” is invalid - it is already in use.',
+    );
+  });
+
+  it('should validate the fields on update', async () => {
+    const patch = (body: any) =>
+      request(app)
+        .patch('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+
+    expect(
+      JSON.parse((await patch({ title: null }).expect(400)).body.message),
+    ).toStrictEqual([
+      {
+        field: 'title',
+        message: 'Required input is missing.',
+        error: 'ValidationError',
+      },
+    ]);
+    await patch({ title: { not: 'a string' } }).expect(400);
+    await patch({ id: '_news' }).expect(400);
+    await patch({ description: null }).expect(204);
+  });
+
+  it('should allow ids and titles longer than 255 characters', async () => {
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'a'.repeat(300), title: 'y'.repeat(1024) })
+      .expect(201);
+    expect(res.body.id).toBe('a'.repeat(300));
+    expect(res.body.title).toBe('y'.repeat(1024));
+  });
+
+  it('should normalize text to the NFC form', async () => {
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'combining', title: 'e\u0301 acute' })
+      .expect(201);
+    expect(res.body.title).toBe('\u00e9 acute');
+  });
+
+  it('should accept the uuid as UID', async () => {
+    const post = (UID: any) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ '@type': 'Page', title: 'With UID', UID });
+
+    const res = await post('0123456789abcdef0123456789abcdef').expect(201);
+    expect(res.body.UID).toBe('01234567-89ab-cdef-0123-456789abcdef');
+    await post('0123456789abcdef0123456789abcdef').expect(400);
+    await post('not-a-uuid').expect(400);
+  });
+
   it('should require the delete permission', async () => {
     const Document = models.get('Document');
     const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);

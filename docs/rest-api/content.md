@@ -53,11 +53,15 @@ If the resource could not be created, for instance because the title was missing
 {% include_relative endpoints/examples/content/post_badrequest.res %}
 ```
 
-The response body can contain information about why the request failed.
+The response body can contain information about why the request failed. As in plone.restapi, the field errors are a JSON encoded list in the `message`, each with the `field`, the `message` and the `error` (`ValidationError`). The values of the fields are checked against the schema of the type: the JSON type, required fields (also on `PATCH`, where `null` is not allowed for them), no line breaks in text lines like the title and the `maxLength` of a field (1024 for the title). Text is normalized to the NFC unicode form. Fields which are not in the schema are ignored.
+
+A missing `@type` gives `400 Bad Request`, an unknown `@type` gives `403 Forbidden`.
+
+An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()# @`, not `.` or `..`, not starting with `_` or `aq_` and not ending with `__`. An id which is already used in the folder gives `400 Bad Request`; only ids generated from the title are made unique.
 
 ### Server managed fields
 
-The server sets the owner, the creation and modification dates, the workflow state and the workflow history of a new resource; values sent for them are ignored. A `uuid` can only be chosen by users with the `Manage Site` permission, other users get `403 Forbidden`.
+The server sets the owner, the creation and modification dates, the workflow state and the workflow history of a new resource; values sent for them are ignored. The uuid can be chosen as `UID` (like in plone.restapi) or `uuid`, with or without dashes, only by users with the `Manage Site` permission; other users get `403 Forbidden`. An invalid uuid or one which is already in use gives `400 Bad Request`.
 
 ## Uploading Files
 
@@ -145,6 +149,8 @@ If a resource could not be found, the server will respond with `404 Not Found`:
 ```http
 {% include_relative endpoints/examples/content/get_notfound.res %}
 ```
+
+Like in plone.restapi, error responses are JSON objects with a `type` (`BadRequest`, `Unauthorized`, `Forbidden`, `NotFound` or `InternalServerError`) and a `message`. This includes a request body that is not valid JSON (`400 Bad Request`). Redirects of moved or renamed content have an absolute `Location` header.
 
 ### GET Responses
 

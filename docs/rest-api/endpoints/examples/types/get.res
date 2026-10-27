@@ -53,7 +53,9 @@ Content-Type: application/json
       "behavior": "basic",
       "type": "string",
       "title": "Title",
-      "description": "A name given to this item."
+      "description": "A name given to this item.",
+      "factory": "Text line (String)",
+      "maxLength": 1024
     },
     "blocks": {
       "behavior": "blocks",

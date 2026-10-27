@@ -15,6 +15,7 @@
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 - Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
 - Require the Manage Users permission for @roles, like Plone @martior
+- Error responses have the plone.restapi shape `{ "type": ..., "message": ... }`: 404 responses no longer use `{ "error": ... }`, and an invalid JSON body gives a JSON 400 instead of an HTML page. Redirects have an absolute `Location` header @martior
 
 ### Feature
 
@@ -336,6 +337,9 @@
 - Support the categories:list parameter of @actions @martior
 - Refuse aliases which are relative or the path of existing content or of another alias @martior
 - Sort types and behaviors by id in @types and the types control panel, so their order doesn't change after an upgrade @robgietema
+- Validate content on create and update like plone.restapi: field types, required fields, text lines and maximum lengths (the title is a text line of at most 1024 characters, upgrade 1013), and explicit ids; a missing `@type` is a 400 and an unknown `@type` a 403. Text is normalized to NFC. Run `pnpm seed:upgrade` @martior
+- Allow ids, paths and titles longer than 255 characters instead of failing with a 500 (new migration, run `pnpm migrate`); ids generated from a title are at most 255 characters @martior
+- Accept the uuid of new content as `UID` like plone.restapi, and answer an invalid or used uuid with a 400 instead of a 500 @martior
 
 ### Internal
 

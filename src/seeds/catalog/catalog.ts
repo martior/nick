@@ -45,7 +45,7 @@ export const seedCatalog = async (
         const field = `_${index.name}`;
         switch (index.type) {
           case 'string':
-            table.string(field).index();
+            table.text(field).index();
             break;
           case 'integer':
             table.integer(field).index();
@@ -54,7 +54,7 @@ export const seedCatalog = async (
             table.float(field).index();
             break;
           case 'path':
-            table.string(field).index();
+            table.text(field).index();
             break;
           case 'uuid':
             table.uuid(field).index();
@@ -66,7 +66,7 @@ export const seedCatalog = async (
             table.dateTime(field).index();
             break;
           case 'string[]':
-            table.specificType(field, 'character varying(255)[]').index();
+            table.specificType(field, 'text[]').index();
             break;
           case 'uuid[]':
             table.specificType(field, 'uuid[]').index();
@@ -106,7 +106,7 @@ export const seedCatalog = async (
             table.uuid(metadata.name);
             break;
           case 'string':
-            table.string(metadata.name);
+            table.text(metadata.name);
             break;
           case 'float':
             table.float(metadata.name);
@@ -124,7 +124,7 @@ export const seedCatalog = async (
             table.json(metadata.name);
             break;
           case 'string[]':
-            table.specificType(metadata.name, 'character varying(255)[]');
+            table.specificType(metadata.name, 'text[]');
             break;
           case 'text':
             table.text(metadata.name);

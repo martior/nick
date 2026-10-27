@@ -10,6 +10,10 @@ export type Message =
       message: string;
     }
   | {
+      type: string;
+      message: string;
+    }
+  | {
       error: string;
     }
   | {
@@ -49,4 +53,46 @@ export class RequestException {
 export function isRetryableError(err: any): boolean {
   const code = err?.code || err?.nativeError?.code;
   return code === '40P01' || code === '40001';
+}
+
+/**
+ * Error types of the plone.restapi error bodies by status code.
+ * @constant errorTypes
+ */
+export const errorTypes: { [status: string]: string } = {
+  '400': 'BadRequest',
+  '401': 'Unauthorized',
+  '403': 'Forbidden',
+  '404': 'NotFound',
+  '500': 'InternalServerError',
+};
+
+/**
+ * Get the body of an error response. Error messages are returned like in
+ * plone.restapi, as `{ type, message }`; a missing type is derived from the
+ * status code and `{ error: <string> }` becomes the message.
+ * @method errorBody
+ * @param {number} status The HTTP status code.
+ * @param {Message} message The error message.
+ * @returns {Message} The error body.
+ */
+export function errorBody(status: number, message: Message): Message {
+  if (
+    message &&
+    typeof message === 'object' &&
+    'error' in message &&
+    typeof message.error === 'string'
+  ) {
+    return errorBody(status, { message: message.error });
+  }
+  if (
+    message &&
+    typeof message === 'object' &&
+    'message' in message &&
+    !('type' in message) &&
+    errorTypes[status]
+  ) {
+    return { type: errorTypes[status], ...message };
+  }
+  return message;
 }
