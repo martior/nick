@@ -205,6 +205,8 @@
 
 ### Bugfix
 
+- Accept Zope's `:list` form for query parameters and all three forms of `expand` that plone.restapi accepts (`expand:list=a&expand:list=b`, `expand=a,b` and `expand=a&expand=b`), so Aurora pages get their navigation, breadcrumbs and actions and a repeated `expand` is no longer a 500 @mpalomaki
+- New content gets the language of its container when the request doesn't send one, like plone.app.multilingual, instead of no language @robgietema
 - Apply the `files` request limit to content created or updated with uploaded files in a JSON body; the global JSON parser with the `api` limit parsed every body first, so uploads were capped at the `api` limit @mpalomaki
 - Run `pnpm start` with `NODE_ENV=development`, so the development secret is used and logins stay valid when nodemon restarts Nick; without it every restart used a new random secret and logged everyone out @robgietema
 - Fix a typo in the demo content: "is built with" @robgietema

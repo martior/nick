@@ -472,7 +472,7 @@ msgid "Change Note"
 msgstr "Փոփոխության գրառում"
 
 #. Default: "Client/server ordering mismatch."
-#: src/routes/content/content.ts:1159
+#: src/routes/content/content.ts:1160
 msgctxt "Routes|Content"
 msgid "Client/server ordering mismatch."
 msgstr ""
@@ -806,9 +806,9 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/workflow/workflow.ts:121
 #: src/routes/history/history.ts:84
-#: src/routes/content/content.ts:282
-#: src/routes/content/content.ts:1225
-#: src/routes/content/content.ts:1396
+#: src/routes/content/content.ts:283
+#: src/routes/content/content.ts:1226
+#: src/routes/content/content.ts:1397
 msgctxt "Routes|Workflow"
 msgid "Document locked"
 msgstr ""
@@ -1236,14 +1236,14 @@ msgid "Information about rights held in and over this item."
 msgstr "Այս տարրի նկատմամբ իրավունքների մասին տեղեկություն։"
 
 #. Default: "Internal server error"
-#: src/app.ts:274
-#: src/app.ts:294
+#: src/app.ts:278
+#: src/app.ts:298
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Ներքին սերվերի սխալ"
 
 #. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
-#: src/routes/content/content.ts:894
+#: src/routes/content/content.ts:891
 msgctxt "Routes|Content"
 msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
 msgstr ""
@@ -1801,7 +1801,7 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:561
+#: src/routes/content/content.ts:558
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Չի գտնվեց։"
@@ -1831,7 +1831,7 @@ msgid "Object is of wrong type."
 msgstr ""
 
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1393
+#: src/routes/content/content.ts:1394
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -2063,7 +2063,7 @@ msgid "Prompts"
 msgstr "Հարցումներ"
 
 #. Default: "Property '@type' is required."
-#: src/routes/content/content.ts:878
+#: src/routes/content/content.ts:875
 msgctxt "Routes|Content"
 msgid "Property '@type' is required."
 msgstr ""
@@ -2230,7 +2230,7 @@ msgid "Replacement must be provided."
 msgstr ""
 
 #. Default: "Required input is missing."
-#: src/routes/content/content.ts:908
+#: src/routes/content/content.ts:905
 #: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
 msgid "Required input is missing."
@@ -2238,8 +2238,8 @@ msgstr ""
 
 #. Default: "Resource is locked."
 #: src/routes/workflow/workflow.ts:120
-#: src/routes/content/content.ts:281
-#: src/routes/content/content.ts:1224
+#: src/routes/content/content.ts:282
+#: src/routes/content/content.ts:1225
 msgctxt "Routes|Workflow"
 msgid "Resource is locked."
 msgstr ""
@@ -2716,7 +2716,7 @@ msgid "The date an item was created"
 msgstr "Տարրի ստեղծման ամսաթիվը"
 
 #. Default: "The delta has to be top, bottom or an integer."
-#: src/routes/content/content.ts:1187
+#: src/routes/content/content.ts:1188
 msgctxt "Routes|Content"
 msgid "The delta has to be top, bottom or an integer."
 msgstr ""
@@ -2759,26 +2759,26 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id is already in use in this folder."
-#: src/app.ts:282
+#: src/app.ts:286
 msgctxt "App"
 msgid "The id is already in use in this folder."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid - it is already in use."
-#: src/routes/content/content.ts:936
+#: src/routes/content/content.ts:933
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid - it is already in use."
 msgstr ""
 
 #. Default: "The id “{id}” is invalid."
-#: src/routes/content/content.ts:925
-#: src/routes/content/content.ts:1243
+#: src/routes/content/content.ts:922
+#: src/routes/content/content.ts:1244
 msgctxt "Routes|Content"
 msgid "The id “{id}” is invalid."
 msgstr ""
 
 #. Default: "The item “{id}” is not found."
-#: src/routes/content/content.ts:1175
+#: src/routes/content/content.ts:1176
 msgctxt "Routes|Content"
 msgid "The item “{id}” is not found."
 msgstr ""
@@ -2850,7 +2850,7 @@ msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "Ձեր տեղական SMTP (ելքային նամակ) սերվերի պորտը։ Սովորաբար '25'։"
 
 #. Default: "The request body is not valid JSON."
-#: src/app.ts:312
+#: src/app.ts:316
 msgctxt "App"
 msgid "The request body is not valid JSON."
 msgstr ""
@@ -2910,13 +2910,13 @@ msgid "The user viewing the querystring results"
 msgstr "Հարցման արդյունքները դիտող օգտվողը"
 
 #. Default: "The uuid is already in use."
-#: src/routes/content/content.ts:971
+#: src/routes/content/content.ts:968
 msgctxt "Routes|Content"
 msgid "The uuid is already in use."
 msgstr ""
 
 #. Default: "The uuid is invalid."
-#: src/routes/content/content.ts:966
+#: src/routes/content/content.ts:963
 msgctxt "Routes|Content"
 msgid "The uuid is invalid."
 msgstr ""
@@ -3036,8 +3036,8 @@ msgstr "Այսօր"
 
 #. Default: "Transaction error."
 #: src/client.ts:93
-#: src/app.ts:178
-#: src/app.ts:195
+#: src/app.ts:182
+#: src/app.ts:199
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Գործառքի սխալ։"
@@ -3215,8 +3215,8 @@ msgstr ""
 
 #. Default: "Version not found."
 #: src/routes/history/history.ts:104
-#: src/routes/content/content.ts:450
-#: src/routes/content/content.ts:458
+#: src/routes/content/content.ts:451
+#: src/routes/content/content.ts:459
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3417,7 +3417,7 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:162
 #: src/routes/jobs/jobs.ts:193
 #: src/routes/history/history.ts:59
-#: src/routes/content/content.ts:271
+#: src/routes/content/content.ts:272
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -3426,7 +3426,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:957
+#: src/routes/content/content.ts:954
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""

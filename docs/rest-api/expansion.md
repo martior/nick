@@ -58,3 +58,13 @@ Example response:
 ```http
 {% include_relative endpoints/examples/expansion/get_expanded.res %}
 ```
+
+## Expanding several components
+
+Several components can be expanded at once. Like plone.restapi, the `expand` parameter accepts three forms:
+
+- a comma separated list: `?expand=breadcrumbs,navigation`
+- the parameter repeated: `?expand=breadcrumbs&expand=navigation`
+- Zope's `:list` form, as sent by `@plone/client`: `?expand:list=breadcrumbs&expand:list=navigation`
+
+The `:list` form works for every query parameter: `name:list` is read as a list under `name`, for example `metadata_fields:list` in a search.

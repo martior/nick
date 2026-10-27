@@ -11,6 +11,7 @@ import type { Knex } from 'knex';
 import { pick } from 'es-toolkit/object';
 
 // Internal imports
+import { expandable } from '../../helpers/querystring/querystring';
 import { getUrl, getUrlByPath } from '../../helpers/url/url';
 import models from '../../models';
 
@@ -85,7 +86,7 @@ async function traverse(
 }
 
 export const handler = async (req: Request, trx: Knex.Transaction) => {
-  const behaviors = req.query['expand.inherit.behaviors']?.split(',') || [];
+  const behaviors = expandable(req.query['expand.inherit.behaviors']);
   const items = await traverse(req.document, behaviors, {}, req, trx);
 
   return {

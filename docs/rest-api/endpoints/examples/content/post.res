@@ -47,6 +47,10 @@ Location: http://localhost:8080/news/my-news-item
   "modified": "2022-04-08T16:00:00.000Z",
   "UID": "a95388f2-e4b3-4292-98aa-62656cbd5b9c",
   "is_folderish": true,
+  "language": {
+    "title": "English",
+    "token": "en"
+  },
   "layout": "view",
   "owner": "admin",
   "review_state": "private",
