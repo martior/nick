@@ -229,6 +229,8 @@ The password must be at least 8 characters long. A shorter password is refused w
 
 ## Delete User
 
+Deleting a user never deletes content. The content the user owned, its children and the versions the user made are kept; their owner or actor is cleared, and history entries still show the id of the deleted user. Local roles, group memberships and tokens of the user are removed.
+
 To delete a user send a `DELETE` request to the `/@users` endpoint and append the user id of the user you want to delete, e.g. to delete the user with the id johndoe:
 
 ```http
@@ -293,7 +295,7 @@ The server will respond with a `200 OK` response and send an email to the user t
 {% include_relative examples/users/reset_password_mail.res %}
 ```
 
-The token that is part of the reset url in the email can be used to authorize setting a new password:
+The token that is part of the reset url in the email can be used to authorize setting a new password. The token is valid for 2 hours and only once, login tokens are not accepted. Setting a new password this way logs the user out of all sessions:
 
 ```http
 {% include_relative examples/users/reset_password_set.req %}

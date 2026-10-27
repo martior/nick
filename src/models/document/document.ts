@@ -32,6 +32,11 @@ import { DocumentCollection } from '../../collections/document/document';
 import languages from '../../constants/languages';
 import events from '../../events';
 import { generate, embed } from '../../helpers/ai/ai';
+import {
+  groupToken,
+  principalTokens,
+  userToken,
+} from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { copyFile, removeFile } from '../../helpers/fs/fs';
 import { lockExpired } from '../../helpers/lock/lock';
@@ -214,6 +219,21 @@ export class Document extends Model {
   };
 
   /**
+   * Lock the document row until the end of the transaction and reload it,
+   * so concurrent changes of the document or its children are serialized.
+   * @method lockForUpdate
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<void>}
+   */
+  async lockForUpdate(trx: Knex.Transaction): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const fresh = await Document.query(trx).findById(self.uuid).forUpdate();
+    if (fresh) {
+      Object.assign(self, fresh);
+    }
+  }
+
+  /**
    * Fetch version
    * @method fetchVersion
    * @param {string} document Uuid of the document
@@ -272,9 +292,15 @@ export class Document extends Model {
    * Fetch relation lists
    * @method fetchRelationLists
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {Request} req Request object, if given only the related documents
+   * the current user can view are fetched.
    */
-  async fetchRelationLists(trx?: Knex.Transaction): Promise<void> {
+  async fetchRelationLists(
+    trx?: Knex.Transaction,
+    req?: Request,
+  ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
+    const Catalog = models.get('Catalog');
     // Check if version data
     const version = self._version ? { ...self._version.json } : {};
 
@@ -301,9 +327,22 @@ export class Document extends Model {
       relationListFields.map(async (field: string) => {
         // Check if related documents
         if (Array.isArray(json[field]) && json[field].length > 0) {
+          let uuids = json[field];
+
+          // Only keep the documents the user can view
+          if (req) {
+            const items = await Catalog.fetchAllRestricted(
+              { _UID: ['=', uuids] },
+              {},
+              trx,
+              req,
+            );
+            uuids = items.map((item: any) => item._UID);
+          }
+
           self._relationLists[field] = await Document.fetchAll(
             {
-              uuid: ['=', json[field]],
+              uuid: ['=', uuids],
             },
             {},
             trx,
@@ -384,7 +423,7 @@ export class Document extends Model {
       .transacting(trx);
     await knex
       .raw(
-        `update catalog set _path = regexp_replace(_path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where _path ~ '^${oldPath}/.*$'`,
+        `update catalog set _path = regexp_replace(_path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g'), path = regexp_replace(path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where _path ~ '^${oldPath}/.*$'`,
       )
       .transacting(trx);
   }
@@ -675,6 +714,55 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the permissions of a user on this document, the same way as they
+   * are calculated when traversing to the document in a request.
+   * @method fetchUserPermissions
+   * @param {Object} user User object with roles and groups.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<string[]>} Array of permissions.
+   */
+  async fetchUserPermissions(
+    user: any,
+    trx?: Knex.Transaction,
+  ): Promise<string[]> {
+    const self: InstanceType<typeof Document> = this;
+    const Role = models.get('Role');
+
+    // Deleted documents can't be accessed
+    if (self.deleted) {
+      return [];
+    }
+
+    // Get the local roles by traversing from the root
+    const root = await Document.fetchOne({ parent: null }, {}, trx);
+    const result = await root.traverse(
+      compact(self.path.split('/')),
+      user,
+      await user.fetchUserGroupRolesByDocument(root.uuid, trx),
+      root,
+      trx,
+    );
+    if (!result) {
+      return [];
+    }
+    const roles = uniq([...result.localRoles, ...user.getRoles()]);
+
+    // Fetch type and workflow
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+
+    // Return global and workflow permissions
+    return uniq([
+      ...(await Role.fetchPermissions(roles, trx)),
+      ...self._type._workflow.getPermissions(self.workflow_state, roles),
+    ]);
+  }
+
+  /**
    * Fetch workflow history
    * @method fetchWorkflowHistory
    * @param {Request} req Request object
@@ -692,16 +780,70 @@ export class Document extends Model {
         return {
           ...item,
           actor: {
-            '@id': `${getRootUrl(req)}/@users/${user.id}`,
-            fullname: user.fullname,
-            id: user.id,
-            username: user.id,
+            '@id': `${getRootUrl(req)}/@users/${item.actor}`,
+            fullname: user ? user.fullname : item.actor,
+            id: item.actor,
+            username: item.actor,
           },
-          comments: '',
+          comments: item.comments || '',
           type: item.type || 'workflow',
         };
       }),
     );
+  }
+
+  /**
+   * Check if a transition can be applied to this document
+   * @method checkTransition
+   * @param {string} transition Transition to check.
+   * @param {Object} actor Actor object.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} permissions Permissions of the actor, fetched if omitted.
+   * @returns {Promise<string>} `apply`, `same` when the document already is in
+   * the new state, `unknown`, `unavailable` in the current state or
+   * `unauthorized`.
+   */
+  async checkTransition(
+    transition: string,
+    actor: any,
+    trx: Knex.Transaction,
+    permissions?: string[],
+  ): Promise<'apply' | 'same' | 'unknown' | 'unavailable' | 'unauthorized'> {
+    const self: InstanceType<typeof Document> = this;
+
+    // Fetch type and workflow
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+    const workflow = self._type._workflow.json;
+    const definition = Object.hasOwn(workflow.transitions || {}, transition)
+      ? workflow.transitions[transition]
+      : undefined;
+
+    if (!definition) {
+      return 'unknown';
+    }
+    if (definition.new_state === self.workflow_state) {
+      return 'same';
+    }
+    if (
+      !(workflow.states?.[self.workflow_state]?.transitions || []).includes(
+        transition,
+      )
+    ) {
+      return 'unavailable';
+    }
+    if (
+      !(permissions || (await self.fetchUserPermissions(actor, trx))).includes(
+        definition.permission,
+      )
+    ) {
+      return 'unauthorized';
+    }
+    return 'apply';
   }
 
   /**
@@ -737,8 +879,8 @@ export class Document extends Model {
     const new_state =
       self._type._workflow.json.transitions[transition]?.new_state;
 
-    // Check if state is available
-    if (new_state) {
+    // Check if state is available and not the current state
+    if (new_state && new_state !== old_state) {
       // Add to workflow history
       const workflow_history = self.workflow_history;
       workflow_history.push({
@@ -818,16 +960,25 @@ export class Document extends Model {
    * @param {string} path New path.
    * @param {string} id New id.
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} created Uuids of the copies created by this copy, they
+   * are never copied again (when copying into a descendant of itself).
    */
   async copy(
     parent: string,
     path: string,
     id: string,
     trx?: Knex.Transaction,
+    created: string[] = [],
   ): Promise<any> {
     const self: InstanceType<typeof Document> = this;
     // Get json
     let json: any = self.json;
+
+    // Get the children before the copy is created, it can be one of them
+    await self.fetchChildren({}, trx, false);
+    const children = self._children.filter(
+      (child: any) => !created.includes(child.uuid),
+    );
 
     // Get type information
     await self.fetchRelated('_type', trx);
@@ -897,10 +1048,13 @@ export class Document extends Model {
         id,
         uuid: uuid(),
         workflow_history: JSON.stringify(self.workflow_history),
+        // The lock belongs to the original
+        lock: { locked: false, stealable: true },
       },
       {},
       trx,
     );
+    created.push(document.uuid);
 
     // Copy versions
     await self.fetchRelated('_versions', trx);
@@ -938,13 +1092,18 @@ export class Document extends Model {
       }),
     );
 
-    // Copy children
-    await self.fetchChildren({}, trx, false);
-    await Promise.all(
-      self._children.map(async (child: any) => {
-        await child.copy(document.uuid, `${path}/${child.id}`, child.id, trx);
-      }),
-    );
+    // Copy children, one by one so copies created inside the tree are known
+    for (const child of children) {
+      if (!created.includes(child.uuid)) {
+        await child.copy(
+          document.uuid,
+          `${path}/${child.id}`,
+          child.id,
+          trx,
+          created,
+        );
+      }
+    }
 
     // Index document
     await document.index(trx);
@@ -1090,6 +1249,137 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the roles which have the global 'View' permission
+   * @method fetchGlobalViewRoles
+   * @static
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<string[]>} List of roles.
+   */
+  static async fetchGlobalViewRoles(trx?: Knex.Transaction): Promise<string[]> {
+    const Permission = models.get('Permission');
+    const view: any = await Permission.fetchById('View', {}, trx);
+    if (!view) {
+      return [];
+    }
+    await view.fetchRelated('_roles', trx);
+    return view._roles.map((role: any) => role.id);
+  }
+
+  /**
+   * Get the roles which have the 'View' permission in a workflow state
+   * @method getViewRoles
+   * @static
+   * @param {Object} workflow Workflow json.
+   * @param {string} state Workflow state.
+   * @param {string[]} globalRoles Roles with the global 'View' permission.
+   * @return {string[]} List of roles.
+   */
+  static getViewRoles(
+    workflow: any,
+    state: string,
+    globalRoles: string[],
+  ): string[] {
+    return uniq([
+      ...globalRoles,
+      ...Object.keys(
+        pickBy(workflow?.states?.[state]?.permissions || {}, (value: any) =>
+          value.includes('View'),
+        ),
+      ),
+    ]);
+  }
+
+  /**
+   * Get the allowed users, groups and roles
+   * @method getAllowed
+   * @static
+   * @param {string[]} viewRoles Roles with the 'View' permission.
+   * @param {Object[]} localRoles Local roles of the document.
+   * @param {string} owner Owner of the document.
+   * @return {string[]} List of allowed users, groups and roles.
+   */
+  static getAllowed(
+    viewRoles: string[],
+    localRoles: { principal: string; role: string }[],
+    owner?: string,
+  ): string[] {
+    return uniq([
+      ...viewRoles,
+      ...localRoles
+        .filter((localRole) => viewRoles.includes(localRole.role))
+        .map((localRole) => localRole.principal),
+      ...(owner && viewRoles.includes('Owner') ? [userToken(owner)] : []),
+    ]);
+  }
+
+  /**
+   * Fetch the local roles of documents, without inheritance
+   * @method fetchLocalRolesByDocuments
+   * @static
+   * @param {string[]} uuids Uuids of the documents.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<Object>} Local roles by document uuid.
+   */
+  static async fetchLocalRolesByDocuments(
+    uuids: string[],
+    trx?: Knex.Transaction,
+  ): Promise<Record<string, { principal: string; role: string }[]>> {
+    const knex = trx || Document.knex();
+    const localRoles: Record<string, { principal: string; role: string }[]> =
+      {};
+    for (let i = 0; i < uuids.length; i += 1000) {
+      const chunk = uuids.slice(i, i + 1000);
+      const users = await knex('user_role_document').whereIn('document', chunk);
+      const groups = await knex('group_role_document').whereIn(
+        'document',
+        chunk,
+      );
+      users.map((row: any) => {
+        localRoles[row.document] = [
+          ...(localRoles[row.document] || []),
+          { principal: userToken(row.user), role: row.role },
+        ];
+      });
+      groups.map((row: any) => {
+        localRoles[row.document] = [
+          ...(localRoles[row.document] || []),
+          { principal: groupToken(row.group), role: row.role },
+        ];
+      });
+    }
+    return localRoles;
+  }
+
+  /**
+   * Fetch the local roles of this document including the inherited ones
+   * @method fetchLocalRoles
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<Object[]>} List of principals and roles.
+   */
+  async fetchLocalRoles(
+    trx?: Knex.Transaction,
+  ): Promise<{ principal: string; role: string }[]> {
+    const self: InstanceType<typeof Document> = this;
+    const knex = trx || Document.knex();
+
+    // Get this document and the parents it inherits local roles from
+    const chain = await knex.raw(
+      `WITH RECURSIVE chain AS (
+        SELECT uuid, parent, inherit_roles FROM document WHERE uuid = ?
+        UNION ALL
+        SELECT d.uuid, d.parent, d.inherit_roles FROM document d
+          JOIN chain c ON d.uuid = c.parent WHERE c.inherit_roles
+      ) SELECT uuid FROM chain`,
+      [self.uuid],
+    );
+    const localRoles = await Document.fetchLocalRolesByDocuments(
+      chain.rows.map((row: any) => row.uuid),
+      trx,
+    );
+    return flatten(Object.values(localRoles));
+  }
+
+  /**
    * List of allowed users, groups and roles
    * @method allowedUsersGroupsRoles
    * @param {Knex.Transaction} trx Transaction object.
@@ -1097,25 +1387,109 @@ export class Document extends Model {
    */
   async allowedUsersGroupsRoles(trx?: Knex.Transaction): Promise<string[]> {
     const self: InstanceType<typeof Document> = this;
-    const Permission = models.get('Permission');
-    // Get global roles
-    const view: any = await Permission.fetchById('View', {}, trx);
-    await view.fetchRelated('_roles', trx);
-    const globalRoles = view._roles.map((role: any) => role.id);
 
-    // Get workflow roles
-    const workflowRoles = Object.keys(
-      pickBy(
-        self._type._workflow.json.states[self.workflow_state].permissions,
-        (value: any) => value.includes('View'),
+    // Get the roles with 'View' permission, given globally or by the
+    // workflow state, and the local roles of the document
+    return Document.getAllowed(
+      Document.getViewRoles(
+        self._type._workflow.json,
+        self.workflow_state,
+        await Document.fetchGlobalViewRoles(trx),
       ),
+      await self.fetchLocalRoles(trx),
+      self.owner,
+    );
+  }
+
+  /**
+   * Reindex the allowed users, groups and roles of this document and all
+   * documents below it
+   * @method reindexSecurity
+   * @param {Knex.Transaction} trx Transaction object.
+   * @return {Promise<number>} Number of reindexed documents.
+   */
+  async reindexSecurity(trx: Knex.Transaction): Promise<number> {
+    const self: InstanceType<typeof Document> = this;
+    const Type = models.get('Type');
+    const knex = Document.knex();
+
+    // Get the documents of the subtree, parents before children
+    const documents: any[] = await knex('document')
+      .select(
+        'uuid',
+        'parent',
+        'inherit_roles',
+        'owner',
+        'type',
+        'workflow_state',
+      )
+      .where('uuid', self.uuid)
+      .orWhereRaw('starts_with(path, ?)', [
+        self.path === '/' ? '/' : `${self.path}/`,
+      ])
+      .orderByRaw('length(path)')
+      .transacting(trx);
+    if (documents.length === 0) {
+      return 0;
+    }
+
+    // Get the workflows by type and the global view roles
+    const types = await Type.fetchAll({}, { related: '_workflow' }, trx);
+    const workflows: Record<string, any> = Object.fromEntries(
+      types.map((type: any) => [type.id, type._workflow?.json]),
+    );
+    const globalRoles = await Document.fetchGlobalViewRoles(trx);
+
+    // Get the local roles inherited from above the subtree
+    const top = documents[0];
+    let inherited: { principal: string; role: string }[] = [];
+    if (top.parent && top.inherit_roles) {
+      const parent = await Document.fetchById(top.parent, {}, trx);
+      inherited = parent ? await parent.fetchLocalRoles(trx) : [];
+    }
+
+    // Get the local roles of the subtree
+    const own = await Document.fetchLocalRolesByDocuments(
+      documents.map((document) => document.uuid),
+      trx,
     );
 
-    // Get users and groups from local roles with 'View' permission
-    const localUsersGroups = await this.fetchLocalUsersGroups(globalRoles, trx);
+    // Calculate the local roles and allowed principals top down
+    const localRoles: Record<string, { principal: string; role: string }[]> =
+      {};
+    const allowed = documents.map((document) => {
+      const above =
+        document.uuid === top.uuid ? inherited : localRoles[document.parent];
+      localRoles[document.uuid] = [
+        ...(own[document.uuid] || []),
+        ...(document.inherit_roles ? above || [] : []),
+      ];
+      return {
+        document: document.uuid,
+        allowed: Document.getAllowed(
+          Document.getViewRoles(
+            workflows[document.type],
+            document.workflow_state,
+            globalRoles,
+          ),
+          localRoles[document.uuid],
+          document.owner,
+        ),
+      };
+    });
 
-    // Return allowed
-    return uniq([...globalRoles, ...workflowRoles, ...localUsersGroups]);
+    // Update the catalog in batches
+    for (let i = 0; i < allowed.length; i += 500) {
+      await knex
+        .raw(
+          `UPDATE catalog SET "_allowedUsersGroupsRoles" = item.allowed
+            FROM jsonb_to_recordset(?::jsonb) AS item(document uuid, allowed varchar(255)[])
+            WHERE catalog.document = item.document`,
+          [JSON.stringify(allowed.slice(i, i + 500))],
+        )
+        .transacting(trx);
+    }
+    return allowed.length;
   }
 
   /**
@@ -1260,38 +1634,11 @@ export class Document extends Model {
     viewRoles: string[],
     trx?: Knex.Transaction,
   ): Promise<string[]> {
-    const self: InstanceType<typeof Document> = this;
-    let localUsersGroups: string[] = [];
-
-    // Fetch local user and group roles
-    await self.fetchRelated('[_userRoles, _groupRoles]', trx);
-
-    // Append user roles
-    self._userRoles.map((role: any) => {
-      if (viewRoles.includes(role.id)) {
-        localUsersGroups.push(role.user);
-      }
-    });
-
-    // Append group roles
-    self._groupRoles.map((role: any) => {
-      if (viewRoles.includes(role.id)) {
-        localUsersGroups.push(role.group);
-      }
-    });
-
-    // Check if we should traverse up
-    if (self.parent && self.inherit_roles) {
-      // Fetch parent
-      await self.fetchRelated('_parent', trx);
-
-      // Append parent users and groups
-      localUsersGroups = [
-        ...localUsersGroups,
-        ...(await self._parent.fetchLocalUsersGroups(viewRoles, trx)),
-      ];
-    }
-    return uniq(localUsersGroups);
+    return uniq(
+      (await this.fetchLocalRoles(trx))
+        .filter((localRole) => viewRoles.includes(localRole.role))
+        .map((localRole) => localRole.principal),
+    );
   }
 
   /**
@@ -1404,7 +1751,7 @@ export class Document extends Model {
           )
             .map((field) =>
               fields[field].type === 'text' && !fields[field].metadata
-                ? 'to_tsvector(?)'
+                ? "to_tsvector('nick', ?)"
                 : '?',
             )
             .join(', ')});`,
@@ -1418,7 +1765,7 @@ export class Document extends Model {
           `UPDATE catalog SET ${Object.keys(fields)
             .map(
               (key) =>
-                `"${key}" = ${fields[key].type === 'text' && !fields[key].metadata ? 'to_tsvector(?)' : '?'} `,
+                `"${key}" = ${fields[key].type === 'text' && !fields[key].metadata ? "to_tsvector('nick', ?)" : '?'} `,
             )
             .join(', ')} WHERE document = '${self.uuid}';`,
           Object.values(fields).map((field: any) => field.value),
@@ -1486,7 +1833,7 @@ export class Document extends Model {
     <language>${self.language || 'en'}</language>
     <link>${self.getUrl(req)}</link>
     <lastBuildDate>${dayjs().utc().format('ddd, DD MMM YYYY HH:mm:ss [GMT]')}</lastBuildDate>
-    <managingEditor>${self._owner.email} (${self._owner.fullname})</managingEditor>
+    ${self._owner ? `<managingEditor>${self._owner.email} (${self._owner.fullname})</managingEditor>` : ''}
 ${self._restrictedChildren
   .map(
     (child: any) => `      <item>

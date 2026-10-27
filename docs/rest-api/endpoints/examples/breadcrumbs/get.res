@@ -13,5 +13,5 @@ Content-Type: application/json
       "title": "Event 1"
     }
   ],
-  "root": "/"
+  "root": "http://localhost:8080"
 }

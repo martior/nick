@@ -8,6 +8,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/events",
       "@type": "Folder",
       "title": "Events",
+      "description": "",
       "UID": "1a2123ba-14e8-4910-8e6b-c04a40d72a41",
       "path": "/events",
       "Description": null,
@@ -49,6 +50,7 @@ Content-Type: application/json
       "@id": "http://localhost:8080/news",
       "@type": "Folder",
       "title": "News",
+      "description": "News Items",
       "UID": "32215c67-86de-462a-8cc0-eabcd2b39c26",
       "path": "/news",
       "Description": "News Items",
@@ -87,5 +89,11 @@ Content-Type: application/json
       "ModificationDate": "2022-04-02T20:22:00.000Z"
     }
   ],
-  "items_total": 2
+  "items_total": 6,
+  "batching": {
+    "@id": "http://localhost:8080/@search?b_size=2&b_start=0",
+    "first": "http://localhost:8080/@search?b_size=2&b_start=0",
+    "last": "http://localhost:8080/@search?b_size=2&b_start=4",
+    "next": "http://localhost:8080/@search?b_size=2&b_start=2"
+  }
 }

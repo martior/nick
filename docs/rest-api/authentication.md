@@ -132,7 +132,7 @@ The server responds with an error message:
 
 ### Invalidating a token
 
-The `@logout` endpoint can be used to invalidate tokens. Tokens are persisted on the server and thus can be invalidated.
+The `@logout` endpoint can be used to invalidate tokens. Tokens are persisted on the server and thus can be invalidated. Every login and renewal creates a separate token, so a user can have several sessions at the same time; a logout only invalidates the token sent with the request.
 
 The logout request must contain the existing token in the `Authorization` header.
 

@@ -11,6 +11,7 @@ import type { Request } from '../../types';
 // @ts-expect-error bcrypt-promise does not have types
 import bcrypt from 'bcrypt-promise';
 import jwt from 'jsonwebtoken';
+import { v4 as uuid } from 'uuid';
 
 // Internal imports
 import events from '../../events';
@@ -35,10 +36,12 @@ async function storeToken(user: any, trx: Knex.Transaction): Promise<string> {
       fullname: user.fullname,
     },
     config.settings.secret,
-    { expiresIn: '2h', algorithm: 'HS256' },
+    // A unique id per token, so tokens issued within the same second differ
+    { expiresIn: '2h', algorithm: 'HS256', jwtid: uuid() },
   );
 
   // Add token to user
+  await user.lockTokens(trx);
   await addToken(user, token, trx);
 
   // Return token
@@ -158,6 +161,7 @@ export default [
 
       // Remove token from user
       if (req.token) {
+        await req.user.lockTokens(trx);
         await removeToken(req.user, req.token, trx);
       }
 
