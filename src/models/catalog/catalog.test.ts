@@ -11,6 +11,41 @@ import '../../app';
 import models from '../../models';
 
 describe('Catalog', () => {
+  describe('toJson', () => {
+    it('sends unset dates like Plone', () => {
+      const Catalog = models.get('Catalog');
+      const metadata = [
+        'EffectiveDate',
+        'ExpirationDate',
+        'CreationDate',
+        'ModificationDate',
+        'expires',
+      ].map((name) => ({ name, metadata: true }));
+      const req: any = {
+        indexes: { models: metadata },
+        protocol: 'http',
+        headers: { host: 'localhost:8080' },
+      };
+      const item = Catalog.fromJson({
+        path: '/page',
+        Type: 'Page',
+        Title: 'Page',
+        EffectiveDate: null,
+        ExpirationDate: null,
+        CreationDate: null,
+        ModificationDate: '2022-04-02T20:30:00.000Z',
+        expires: null,
+      });
+      expect(item.toJson(req)).toMatchObject({
+        EffectiveDate: 'None',
+        ExpirationDate: 'None',
+        CreationDate: 'Unknown',
+        ModificationDate: '2022-04-02T20:30:00.000Z',
+        expires: null,
+      });
+    });
+  });
+
   describe('fetchFewRestricted', () => {
     const req: any = {
       user: { id: 'admin', getRoles: () => ['Authenticated', 'Administrator'] },

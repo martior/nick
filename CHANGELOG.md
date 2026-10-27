@@ -4,6 +4,8 @@
 
 ### Breaking
 
+- Unset dates in search results and other catalog results are sent like Plone: `EffectiveDate` and `ExpirationDate` are `"None"` and `CreationDate` and `ModificationDate` `"Unknown"` instead of `null`, so frontends written for Plone (Volto, Aurora) no longer show every item as expired @mpalomaki
+- Ids generated from titles follow the url normalizer of Plone: every character but letters, digits, underscore and dash is a dash, dots too (a comma, `&`, `%`, `#`, `;`, `=` or `.` no longer ends up in the id), and a title without letters or digits gives the type as id. Existing ids don't change @mpalomaki
 - Require the Manage Site permission and the site root for the @email-send and @users/<id>/@email-notification endpoints @martior
 - Require the Manage Site permission for the @content-rules endpoints @martior
 - Require the Modify permission for the users and groups vocabularies, like Plone @martior
@@ -31,6 +33,7 @@
 
 ### Feature
 
+- Add the `host` setting (`BIND_HOST`) to listen on one address, for example `127.0.0.1` behind a reverse proxy, instead of on every interface @mpalomaki
 - Support range requests on `@@download`, so audio and video players can seek without downloading the file from the start @mpalomaki
 - Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1017 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
 - Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1016) @martior

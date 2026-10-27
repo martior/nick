@@ -41,6 +41,7 @@ export const config = {
     secretAccessKey: 'my-secret-access-key',
   },
   localesDir: `${__dirname}/locales`,
+  // host: '127.0.0.1', // Listen on localhost only, behind a reverse proxy
   port: 8080,
   secret: SECRET || 'secret',
   systemUsers: ['admin', 'anonymous'],

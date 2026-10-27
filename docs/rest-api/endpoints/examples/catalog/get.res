@@ -36,7 +36,7 @@ Content-Type: application/json
   "mime_type": null,
   "CreationDate": "2022-04-02T20:00:00.000Z",
   "EffectiveDate": "2022-04-02T20:00:00.000Z",
-  "ExpirationDate": null,
+  "ExpirationDate": "None",
   "ModificationDate": "2022-04-02T20:00:00.000Z",
   "image_field": "",
   "image_scales": {},

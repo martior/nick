@@ -366,6 +366,8 @@ export type ConfigSettings = {
     secretAccessKey?: string;
   };
   localesDir: string;
+  // Address the api listens on, all interfaces if undefined
+  host?: string;
   port: number;
   secret: string;
   systemUsers: string[];
