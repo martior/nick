@@ -403,7 +403,7 @@ export class Document extends Model {
       .transacting(trx);
     await knex
       .raw(
-        `update catalog set _path = regexp_replace(_path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where _path ~ '^${oldPath}/.*$'`,
+        `update catalog set _path = regexp_replace(_path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g'), path = regexp_replace(path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where _path ~ '^${oldPath}/.*$'`,
       )
       .transacting(trx);
   }
@@ -1489,7 +1489,7 @@ export class Document extends Model {
           )
             .map((field) =>
               fields[field].type === 'text' && !fields[field].metadata
-                ? 'to_tsvector(?)'
+                ? "to_tsvector('nick', ?)"
                 : '?',
             )
             .join(', ')});`,
@@ -1503,7 +1503,7 @@ export class Document extends Model {
           `UPDATE catalog SET ${Object.keys(fields)
             .map(
               (key) =>
-                `"${key}" = ${fields[key].type === 'text' && !fields[key].metadata ? 'to_tsvector(?)' : '?'} `,
+                `"${key}" = ${fields[key].type === 'text' && !fields[key].metadata ? "to_tsvector('nick', ?)" : '?'} `,
             )
             .join(', ')} WHERE document = '${self.uuid}';`,
           Object.values(fields).map((field: any) => field.value),

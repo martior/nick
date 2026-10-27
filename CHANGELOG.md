@@ -283,6 +283,15 @@
 - Return the comments of workflow transitions in @history @martior
 - Keep the folder order of exported documents and fix the import of position 0 @martior
 - Replace lists instead of merging them by index when seeding controlpanels @martior
+- Support plone.app.querystring operation names in querystring search @martior
+- Fix server error on searchable text with multiple words or operators @martior
+- Support keyword, path query and range parameters in search @martior
+- Fix search items total and add batching links with a default batch size of 25 @martior
+- Update the catalog paths of the children of a moved or renamed folder @martior
+- Support fullobjects and metadata_fields in search and add description to the search results @martior
+- Add the GET variant of the querystring search endpoint @martior
+- Ignore accents in text search @martior
+- Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
 
 ### Internal
 

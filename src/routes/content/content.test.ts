@@ -4,8 +4,8 @@
  */
 
 // External imports
-import request from 'supertest';
 import { v4 as uuid, validate } from 'uuid';
+import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
@@ -58,6 +58,27 @@ describe('Content', () => {
   it('should copy a content object', () => testRequest(app, 'copymove/copy'));
 
   it('should move a content object', () => testRequest(app, 'copymove/move'));
+
+  it('should update the catalog of the children of a moved folder', async () => {
+    const headers = {
+      Accept: 'application/json',
+      Authorization:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk',
+    };
+    await request(app)
+      .post('/news/@move')
+      .set(headers)
+      .send({ source: '/events' })
+      .expect(200);
+    const res = await request(app)
+      .get('/@search?path.query=/news/events&path.depth=1&sort_on=getId')
+      .set(headers)
+      .expect(200);
+    expect(res.body.items.map((item: any) => item['@id'])).toStrictEqual([
+      'http://localhost:8080/news/events/event-1',
+      'http://localhost:8080/news/events/event-2',
+    ]);
+  });
 
   /*
   it('should copy multiple content objects', () => {

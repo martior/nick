@@ -16,6 +16,9 @@ describe('Search', () => {
 
   it('should find the news folder', () => testRequest(app, 'search/get_news'));
 
+  it('should support operators in the searchable text', () =>
+    testRequest(app, 'search/get_operators'));
+
   it('should be able to sort results on title', () =>
     testRequest(app, 'search/get_sort_title'));
 
@@ -31,6 +34,21 @@ describe('Search', () => {
   it('should be able to filter on depth', () =>
     testRequest(app, 'search/get_depth'));
 
+  it('should be able to filter on a keyword index', () =>
+    testRequest(app, 'search/get_subject'));
+
+  it('should be able to filter on a path query', () =>
+    testRequest(app, 'search/get_path'));
+
+  it('should be able to filter on a date range', () =>
+    testRequest(app, 'search/get_range'));
+
+  it('should be able to select metadata fields', () =>
+    testRequest(app, 'search/get_metadata_fields'));
+
+  it('should be able to return full objects', () =>
+    testRequest(app, 'search/get_fullobjects'));
+
   it('should be able to set batch size', () =>
     testRequest(app, 'search/get_batch'));
 
@@ -43,6 +61,17 @@ describe('Search', () => {
   it('should be able to do a querystring search', () =>
     testRequest(app, 'search/post'));
 
+  it('should support plone.app.querystring operation names', () =>
+    testRequest(app, 'search/post_operations'));
+
+  it('should be able to batch and limit a querystring search', () =>
+    testRequest(app, 'search/post_batch'));
+
+  it('should be able to do a querystring search using a get call', () =>
+    testRequest(app, 'search/get_querystring'));
+
+  it('should return a bad request on an invalid querystring operation', () =>
+    testRequest(app, 'search/post_invalid'));
   it('should hide inactive items from users who can not edit', async () => {
     const admin = (req: request.Test) =>
       req
