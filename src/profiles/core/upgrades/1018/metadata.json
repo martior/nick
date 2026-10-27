@@ -1,0 +1,7 @@
+{
+  "id": "@plone/nick:core",
+  "title": "Nick Core",
+  "description": "Core functionality of Nick",
+  "version": 1018,
+  "upgrade": "Use the acquire permission model: list Reader in the private and pending states of the core workflow."
+}

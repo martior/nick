@@ -3,5 +3,5 @@
   "title": "Nick Core",
   "description": "Core functionality of Nick",
   "version": 1016,
-  "upgrade": "Sort titles like Plone's sortable_title, with numbers in natural order."
+  "upgrade": "Add the isFolderish catalog index of Plone."
 }

@@ -3,5 +3,5 @@
   "title": "Nick Core",
   "description": "Core functionality of Nick",
   "version": 1015,
-  "upgrade": "Add the isFolderish catalog index of Plone."
+  "upgrade": "Add the self-registration settings to the security control panel."
 }

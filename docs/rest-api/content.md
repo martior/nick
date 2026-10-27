@@ -63,6 +63,59 @@ An explicit `id` must be valid like in Zope: only letters, digits and `-_~,.$()#
 
 The server sets the owner, the creation and modification dates, the workflow state and the workflow history of a new resource; values sent for them are ignored. The uuid can be chosen as `UID` (like in plone.restapi) or `uuid`, with or without dashes, only by users with the `Manage Site` permission; other users get `403 Forbidden`. An invalid uuid or one which is already in use gives `400 Bad Request`.
 
+## Uploading Files
+
+A file or image field can be set either as base64-encoded data in the JSON body, or, for one or
+more files in a single `POST` or `PATCH` request, as `multipart/form-data`.
+
+### Uploading as base64-encoded data
+
+```json
+{
+  "@type": "File",
+  "title": "My File",
+  "file": {
+    "data": "U3BhbSBhbmQgRWdncw==",
+    "encoding": "base64",
+    "filename": "test.txt",
+    "content-type": "text/plain"
+  }
+}
+```
+
+### Uploading with multipart/form-data
+
+In a `multipart/form-data` request, the `data` part carries the JSON body, and each file or
+image field in that JSON references another part by name, as `{ "part": "<part name>" }`. The
+`filename` and `content-type` are taken from the JSON if given, otherwise from the referenced
+part itself.
+
+```http
+POST /folder1 HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="data"; filename="data.json"
+Content-Type: application/json
+
+{
+  "@type": "File",
+  "title": "My File",
+  "file": {
+    "part": "attachment_0"
+  }
+}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="attachment_0"; filename="test.txt"
+Content-Type: text/plain
+
+Spam and Eggs
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+```
+
+Only top-level fields are resolved this way. The maximum upload size is controlled by the
+`files` key of `requestLimit` (see the Limits admin guide).
+
 ## Reading a Resource with GET
 
 After a successful POST, we can access the resource by sending a GET request to the resource URL:
@@ -88,6 +141,8 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 For folderish types, their childrens are automatically included in the response as items, with `items_total`, the number of children the user may view. Like in plone.restapi, the items are batched with `b_start` and `b_size` (default 25), and a `batching` object with the `@id`, `first`, `last`, `next` and `prev` links is added when there is more than one batch. With `fullobjects=1` the items also contain their `parent`.
 
 The response contains a summary of the `parent` (`@id`, `@type`, `title`, `description` and `review_state`), except for the root.
+
+Relation list fields (like `relatedItems`) only include the related items the current user can view.
 
 ### Unsuccessful response (404 Not Found)
 
@@ -215,11 +270,19 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 {% include_relative endpoints/examples/content/export.res %}
 ```
 
+### Streaming videos
+
+Video fields are streamed with range requests from `<item url>/@@videos/<field>`. Like the other download endpoints this needs the `View` permission on the item. A browser `<video>` element can't send an `Authorization` header, so for private videos it needs the `auth_token` cookie.
+
+### Downloading images by uuid
+
+The `download` urls of image fields and their scales have the form `<item url>/@@images/<uuid>.<extension>`. Such a url only serves an image that is stored on the item itself, in one of its versions, or in a control panel (for example the site logo). Any other uuid answers `404 Not Found`, so the View permission on the item always applies to its images.
+
 ### Controlling the content-disposition
 
 File downloads (including `@export`, `ics_view`, `rss_view`, `markdown_view`, and the file, image, and video download endpoints) are served with a `Content-Disposition: attachment` header by default, prompting the browser to download the file.
 
-To have the browser render the content inline instead, add the `disposition=inline` query parameter to the request:
+To have the browser render the content inline instead, add the `disposition=inline` query parameter to the request. For uploaded files, images and videos this only works for content types that are safe to show inline (images other than svg, pdf, plain text, audio and video). Other files, for example html or svg, are always served as an attachment, so they can't run scripts on the origin of the api:
 
 ```http
 {% include_relative endpoints/examples/content/export_inline.req %}

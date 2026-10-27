@@ -1,0 +1,12 @@
+{
+  "scheduled_jobs": [
+    {
+      "id": "example-purge-notes",
+      "title": "Purge notes",
+      "description": "Remove the notes of deleted documents",
+      "enabled": true,
+      "action": "example_purge_notes",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}

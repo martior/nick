@@ -6,7 +6,6 @@
 // Type imports
 import type { Knex } from 'knex';
 import type {
-  PeriodicTask,
   Request,
   ScheduledJobAction,
   ScheduledJobActions,
@@ -30,7 +29,6 @@ import models from '../models';
  */
 class ScheduledJobs {
   public actions: ScheduledJobActions;
-  public periodicTasks: { [id: string]: PeriodicTask };
   public tasks: any[];
   public active: boolean;
   public signature: string;
@@ -43,7 +41,6 @@ class ScheduledJobs {
    */
   constructor() {
     this.actions = {};
-    this.periodicTasks = {};
     this.tasks = [];
     this.active = false;
     this.signature = '';
@@ -63,22 +60,6 @@ class ScheduledJobs {
    */
   registerAction(name: string, rule: ScheduledJobAction) {
     this.actions[name] = rule;
-  }
-
-  /**
-   * Register a periodic task: a scheduled job declared in code, which runs
-   * a registered action on a cron schedule in the workers, once per slot
-   * across all workers. A scheduled job in the database with the same id
-   * overrides it (for example to disable it or change the schedule).
-   * @param {PeriodicTask} task The task to register.
-   */
-  registerTask(task: PeriodicTask) {
-    if (!cron.validate(task.schedule)) {
-      throw new Error(
-        `Invalid schedule '${task.schedule}' of periodic task ${task.id}.`,
-      );
-    }
-    this.periodicTasks[task.id] = task;
   }
 
   /**
@@ -139,17 +120,9 @@ class ScheduledJobs {
 
     // Read the scheduled jobs
     const ScheduledJob = models.get('ScheduledJob');
-    const stored = (await ScheduledJob.fetchAll({}, {}, trx)).models.map(
-      (scheduledJob: any) => scheduledJob.toJSON(),
-    );
-
-    // Add the periodic tasks declared in code, unless stored with the same id
-    const scheduledJobs = [
-      ...stored,
-      ...Object.values(self.periodicTasks)
-        .filter((task) => !stored.find((job: any) => job.id === task.id))
-        .map((task) => ({ enabled: true, params: {}, ...task })),
-    ].filter((scheduledJob: any) => scheduledJob.enabled);
+    const scheduledJobs = (await ScheduledJob.fetchAll({}, {}, trx)).models
+      .filter((scheduledJob: any) => scheduledJob.enabled)
+      .map((scheduledJob: any) => scheduledJob.toJSON());
 
     // Keep the tasks if nothing changed
     const signature = JSON.stringify(scheduledJobs);
