@@ -11,6 +11,7 @@ import { uniqueId } from '../../helpers/utils/utils';
 
 interface Document {
   id: string;
+  type?: string;
   json: {
     title: string;
   };
@@ -20,13 +21,25 @@ interface Document {
 const maxLength = 255;
 
 /**
- * Generate an id from a title. Long ids are cut at a dash.
+ * Generate an id from a title, like the url normalizer of Plone: quotes are
+ * removed, letters transliterated and lower cased, and every other
+ * character than a-z, 0-9, dot, underscore and dash is a dash. Long ids are
+ * cut at a dash.
  * @method idFromTitle
  * @param {string} title Title.
- * @returns {string} Id.
+ * @returns {string} Id, empty if the title has no letters or digits.
  */
-function idFromTitle(title: string): string {
-  const id = slugify(title, { lower: true, remove: /[*+~.()'"!:@?/]/g });
+export function idFromTitle(title: string): string {
+  const id = slugify(
+    (title || '')
+      .replace(/['"]/g, '')
+      // Symbols are dashes, not words like `and` for `&`
+      .replace(/[^\p{L}\p{N}\s._-]/gu, '-'),
+    { lower: true },
+  )
+    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^[-._]+|[-._]+$/g, '');
   if (id.length <= maxLength) {
     return id;
   }
@@ -46,6 +59,13 @@ export const id_from_title = {
    * @param {Array} blacklist Blacklist ids
    */
   setId: function (this: Document, id?: string, blacklist?: string[]): void {
-    this.id = uniqueId(id || idFromTitle(this.json.title), blacklist || []);
+    // A title without letters or digits gives the type, like Plone
+    this.id = uniqueId(
+      id ||
+        idFromTitle(this.json.title) ||
+        idFromTitle(this.type || '') ||
+        'item',
+      blacklist || [],
+    );
   },
 };
