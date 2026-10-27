@@ -4,7 +4,7 @@
  */
 
 // Type imports
-import type { SendMailOptions } from 'nodemailer';
+import type { SendMailOptions, Transporter } from 'nodemailer';
 
 // External imports
 import nodemailer from 'nodemailer';
@@ -34,7 +34,7 @@ export async function sendMail(
   trx: Knex.Transaction,
 ): Promise<void> {
   const Controlpanel = models.get('Controlpanel');
-  let transporter: nodemailer.Transporter;
+  let transporter: Transporter;
 
   // Fetch settings
   const controlpanel = (await Controlpanel.fetchById('mail', {}, trx)) as {

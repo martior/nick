@@ -411,6 +411,7 @@
 
 ### Internal
 
+- Upgrade dependencies to their latest versions, including objection 4, nodemailer 10 and vitest 5; typescript stays at 6.0.3 until typescript-eslint supports TypeScript 7 @robgietema
 - Upgrade @formatjs/intl to 6.1.4 @robgietema
 - Upgrade express to 5.3.0 @robgietema
 - Reword the descriptions of the self-registration settings of the security control panel in Nick's own words @martior
