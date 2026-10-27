@@ -14,14 +14,27 @@ import { stripNewlines } from '../../helpers/utils/utils';
 import { apiLimiter } from '../../helpers/limiter/limiter';
 import models from '../../models';
 
+/**
+ * Only allow sending mail on the site root.
+ * @method checkSiteRoot
+ * @param {Request} req Request object.
+ */
+function checkSiteRoot(req: Request): void {
+  if (req.document.parent !== null) {
+    throw new RequestException(404, { error: req.i18n('Not found.') });
+  }
+}
+
 export default [
   {
     op: 'post',
     view: '/@email-send',
-    permission: 'Modify',
+    permission: 'Manage Site',
     client: 'sendEmail',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      checkSiteRoot(req);
+
       // Check if required fields provided
       if (!req.body.to || !req.body.from || !req.body.message) {
         throw new RequestException(400, {
@@ -57,10 +70,12 @@ export default [
   {
     op: 'post',
     view: '/@users/:id/@email-notification',
-    permission: 'Modify',
+    permission: 'Manage Site',
     client: 'userEmailNotification',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      checkSiteRoot(req);
+
       // Check if required fields provided
       if (!req.body.from || !req.body.message) {
         throw new RequestException(400, {

@@ -9,6 +9,8 @@ Commenting is a feature that allows your site visitors to comment on web pages f
 
 You can retrieve a list of all existing comments, add new comments, reply to existing comments, or delete a comment.
 
+Reading comments needs the `View Comments` permission and adding or replying needs the `Add Comment` permission. Both also need the `View` permission on the content object.
+
 # Listing Comments
 
 You can list the existing comment on a content object by sending a `GET` request to the URL of the content object and appending `/@comments`:
