@@ -155,10 +155,10 @@ msgstr "管理員群組"
 #. Default: "After N days in the future"
 #: src/profiles/core/catalog.json:95
 #: src/profiles/core/catalog.json:168
-#: src/profiles/core/catalog.json:528
-#: src/profiles/core/catalog.json:607
-#: src/profiles/core/catalog.json:680
-#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:553
+#: src/profiles/core/catalog.json:632
+#: src/profiles/core/catalog.json:705
+#: src/profiles/core/catalog.json:778
 msgctxt "Profiles|Core|Catalog"
 msgid "After N days in the future"
 msgstr "設定幾天之後"
@@ -166,10 +166,10 @@ msgstr "設定幾天之後"
 #. Default: "After date"
 #: src/profiles/core/catalog.json:124
 #: src/profiles/core/catalog.json:197
-#: src/profiles/core/catalog.json:557
-#: src/profiles/core/catalog.json:636
-#: src/profiles/core/catalog.json:709
-#: src/profiles/core/catalog.json:782
+#: src/profiles/core/catalog.json:582
+#: src/profiles/core/catalog.json:661
+#: src/profiles/core/catalog.json:734
+#: src/profiles/core/catalog.json:807
 msgctxt "Profiles|Core|Catalog"
 msgid "After date"
 msgstr "之後"
@@ -177,10 +177,10 @@ msgstr "之後"
 #. Default: "After relative date"
 #: src/profiles/core/catalog.json:94
 #: src/profiles/core/catalog.json:167
-#: src/profiles/core/catalog.json:527
-#: src/profiles/core/catalog.json:606
-#: src/profiles/core/catalog.json:679
-#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:552
+#: src/profiles/core/catalog.json:631
+#: src/profiles/core/catalog.json:704
+#: src/profiles/core/catalog.json:777
 msgctxt "Profiles|Core|Catalog"
 msgid "After relative date"
 msgstr "未來的相對日期"
@@ -188,10 +188,10 @@ msgstr "未來的相對日期"
 #. Default: "After the current day"
 #: src/profiles/core/catalog.json:101
 #: src/profiles/core/catalog.json:174
-#: src/profiles/core/catalog.json:534
-#: src/profiles/core/catalog.json:613
-#: src/profiles/core/catalog.json:686
-#: src/profiles/core/catalog.json:759
+#: src/profiles/core/catalog.json:559
+#: src/profiles/core/catalog.json:638
+#: src/profiles/core/catalog.json:711
+#: src/profiles/core/catalog.json:784
 msgctxt "Profiles|Core|Catalog"
 msgid "After the current day"
 msgstr "今天之後"
@@ -199,10 +199,10 @@ msgstr "今天之後"
 #. Default: "After today"
 #: src/profiles/core/catalog.json:100
 #: src/profiles/core/catalog.json:173
-#: src/profiles/core/catalog.json:533
-#: src/profiles/core/catalog.json:612
-#: src/profiles/core/catalog.json:685
-#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:558
+#: src/profiles/core/catalog.json:637
+#: src/profiles/core/catalog.json:710
+#: src/profiles/core/catalog.json:783
 msgctxt "Profiles|Core|Catalog"
 msgid "After today"
 msgstr "今天之後"
@@ -246,13 +246,13 @@ msgid "An item’s description"
 msgstr "項目的說明文字"
 
 #. Default: "An item’s type (e.g. Event)"
-#: src/profiles/core/catalog.json:446
+#: src/profiles/core/catalog.json:471
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s type (e.g. Event)"
 msgstr "想要搜尋的型別項目 (例如: 活動)"
 
 #. Default: "An item’s workflow state (e.g.published)"
-#: src/profiles/core/catalog.json:471
+#: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s workflow state (e.g.published)"
 msgstr "想要搜尋的流程狀態 (例如: 已公開)"
@@ -364,10 +364,10 @@ msgstr "基本資料"
 #. Default: "Before N days in the past"
 #: src/profiles/core/catalog.json:107
 #: src/profiles/core/catalog.json:180
-#: src/profiles/core/catalog.json:540
-#: src/profiles/core/catalog.json:619
-#: src/profiles/core/catalog.json:692
-#: src/profiles/core/catalog.json:765
+#: src/profiles/core/catalog.json:565
+#: src/profiles/core/catalog.json:644
+#: src/profiles/core/catalog.json:717
+#: src/profiles/core/catalog.json:790
 msgctxt "Profiles|Core|Catalog"
 msgid "Before N days in the past"
 msgstr "過去幾天之前"
@@ -375,10 +375,10 @@ msgstr "過去幾天之前"
 #. Default: "Before date"
 #: src/profiles/core/catalog.json:136
 #: src/profiles/core/catalog.json:209
-#: src/profiles/core/catalog.json:569
-#: src/profiles/core/catalog.json:648
-#: src/profiles/core/catalog.json:721
-#: src/profiles/core/catalog.json:794
+#: src/profiles/core/catalog.json:594
+#: src/profiles/core/catalog.json:673
+#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:819
 msgctxt "Profiles|Core|Catalog"
 msgid "Before date"
 msgstr "之前"
@@ -386,10 +386,10 @@ msgstr "之前"
 #. Default: "Before relative date"
 #: src/profiles/core/catalog.json:106
 #: src/profiles/core/catalog.json:179
-#: src/profiles/core/catalog.json:539
-#: src/profiles/core/catalog.json:618
-#: src/profiles/core/catalog.json:691
-#: src/profiles/core/catalog.json:764
+#: src/profiles/core/catalog.json:564
+#: src/profiles/core/catalog.json:643
+#: src/profiles/core/catalog.json:716
+#: src/profiles/core/catalog.json:789
 msgctxt "Profiles|Core|Catalog"
 msgid "Before relative date"
 msgstr "過去的相對日期"
@@ -397,10 +397,10 @@ msgstr "過去的相對日期"
 #. Default: "Before the current day"
 #: src/profiles/core/catalog.json:113
 #: src/profiles/core/catalog.json:186
-#: src/profiles/core/catalog.json:546
-#: src/profiles/core/catalog.json:625
-#: src/profiles/core/catalog.json:698
-#: src/profiles/core/catalog.json:771
+#: src/profiles/core/catalog.json:571
+#: src/profiles/core/catalog.json:650
+#: src/profiles/core/catalog.json:723
+#: src/profiles/core/catalog.json:796
 msgctxt "Profiles|Core|Catalog"
 msgid "Before the current day"
 msgstr "今天之前"
@@ -408,10 +408,10 @@ msgstr "今天之前"
 #. Default: "Before today"
 #: src/profiles/core/catalog.json:112
 #: src/profiles/core/catalog.json:185
-#: src/profiles/core/catalog.json:545
-#: src/profiles/core/catalog.json:624
-#: src/profiles/core/catalog.json:697
-#: src/profiles/core/catalog.json:770
+#: src/profiles/core/catalog.json:570
+#: src/profiles/core/catalog.json:649
+#: src/profiles/core/catalog.json:722
+#: src/profiles/core/catalog.json:795
 msgctxt "Profiles|Core|Catalog"
 msgid "Before today"
 msgstr "今天之前"
@@ -425,10 +425,10 @@ msgstr "行為"
 #. Default: "Between dates"
 #: src/profiles/core/catalog.json:118
 #: src/profiles/core/catalog.json:191
-#: src/profiles/core/catalog.json:551
-#: src/profiles/core/catalog.json:630
-#: src/profiles/core/catalog.json:703
-#: src/profiles/core/catalog.json:776
+#: src/profiles/core/catalog.json:576
+#: src/profiles/core/catalog.json:655
+#: src/profiles/core/catalog.json:728
+#: src/profiles/core/catalog.json:801
 msgctxt "Profiles|Core|Catalog"
 msgid "Between dates"
 msgstr "兩天之間"
@@ -530,7 +530,7 @@ msgstr ""
 #: src/profiles/core/catalog.json:240
 #: src/profiles/core/catalog.json:259
 #: src/profiles/core/catalog.json:278
-#: src/profiles/core/catalog.json:502
+#: src/profiles/core/catalog.json:527
 msgctxt "Profiles|Core|Catalog"
 msgid "Contains"
 msgstr "包含"
@@ -606,19 +606,19 @@ msgid "Coverage"
 msgstr "涵蓋範圍"
 
 #. Default: "Creation date"
-#: src/profiles/core/catalog.json:672
+#: src/profiles/core/catalog.json:697
 msgctxt "Profiles|Core|Catalog"
 msgid "Creation date"
 msgstr "建立日期"
 
 #. Default: "Creator"
-#: src/profiles/core/catalog.json:414
+#: src/profiles/core/catalog.json:439
 msgctxt "Profiles|Core|Catalog"
 msgid "Creator"
 msgstr "創作者"
 
 #. Default: "Current logged in user"
-#: src/profiles/core/catalog.json:427
+#: src/profiles/core/catalog.json:452
 msgctxt "Profiles|Core|Catalog"
 msgid "Current logged in user"
 msgstr "目前登入的使用者"
@@ -866,7 +866,7 @@ msgid "Editor"
 msgstr "編輯"
 
 #. Default: "Effective date"
-#: src/profiles/core/catalog.json:745
+#: src/profiles/core/catalog.json:770
 msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
 msgstr "有效日期"
@@ -1021,7 +1021,7 @@ msgid "Expiration Date"
 msgstr "到期日期"
 
 #. Default: "Expiration date"
-#: src/profiles/core/catalog.json:599
+#: src/profiles/core/catalog.json:624
 msgctxt "Profiles|Core|Catalog"
 msgid "Expiration date"
 msgstr "失效日期"
@@ -1095,6 +1095,8 @@ msgstr "找到相關於選擇的項目"
 
 #. Default: "Find items that can contain other objects"
 #: src/profiles/core/catalog.json:359
+#: src/profiles/core/catalog.json:384
+#: src/profiles/core/upgrades/1016/catalog.json:8
 msgctxt "Profiles|Core|Catalog"
 msgid "Find items that can contain other objects"
 msgstr "找出能夠包含其他物件的項目"
@@ -1107,6 +1109,8 @@ msgstr "目錄"
 
 #. Default: "Folder-like"
 #: src/profiles/core/catalog.json:358
+#: src/profiles/core/catalog.json:383
+#: src/profiles/core/upgrades/1016/catalog.json:7
 msgctxt "Profiles|Core|Catalog"
 msgid "Folder-like"
 msgstr "目錄型式"
@@ -1232,8 +1236,8 @@ msgid "Information about rights held in and over this item."
 msgstr "此項目所持有的權利資訊。"
 
 #. Default: "Internal server error"
-#: src/app.ts:264
-#: src/app.ts:276
+#: src/app.ts:265
+#: src/app.ts:285
 msgctxt "App"
 msgid "Internal server error"
 msgstr "內部伺服器錯誤"
@@ -1296,8 +1300,8 @@ msgid "Invalid value for {name}."
 msgstr ""
 
 #. Default: "Is"
-#: src/profiles/core/catalog.json:402
-#: src/profiles/core/catalog.json:508
+#: src/profiles/core/catalog.json:427
+#: src/profiles/core/catalog.json:533
 msgctxt "Profiles|Core|Catalog"
 msgid "Is"
 msgstr "是"
@@ -1546,17 +1550,17 @@ msgstr "全部符合"
 
 #. Default: "Matches any condition"
 #: src/profiles/core/catalog.json:305
-#: src/profiles/core/catalog.json:421
-#: src/profiles/core/catalog.json:452
+#: src/profiles/core/catalog.json:446
 #: src/profiles/core/catalog.json:477
+#: src/profiles/core/catalog.json:502
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches any condition"
 msgstr "任一符合"
 
 #. Default: "Matches none of"
 #: src/profiles/core/catalog.json:309
-#: src/profiles/core/catalog.json:458
 #: src/profiles/core/catalog.json:483
+#: src/profiles/core/catalog.json:508
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches none of"
 msgstr ""
@@ -1588,7 +1592,7 @@ msgid "Missing parameter title."
 msgstr ""
 
 #. Default: "Modification date"
-#: src/profiles/core/catalog.json:520
+#: src/profiles/core/catalog.json:545
 msgctxt "Profiles|Core|Catalog"
 msgid "Modification date"
 msgstr "修改日期"
@@ -1690,7 +1694,9 @@ msgstr ""
 
 #. Default: "No"
 #: src/profiles/core/catalog.json:365
+#: src/profiles/core/catalog.json:390
 #: src/profiles/core/vocabularies/boolean.json:6
+#: src/profiles/core/upgrades/1016/catalog.json:14
 msgctxt "Profiles|Core|Catalog"
 msgid "No"
 msgstr "否"
@@ -1965,14 +1971,14 @@ msgstr ""
 #: src/profiles/core/catalog.json:143
 #: src/profiles/core/catalog.json:204
 #: src/profiles/core/catalog.json:216
-#: src/profiles/core/catalog.json:564
-#: src/profiles/core/catalog.json:576
-#: src/profiles/core/catalog.json:643
-#: src/profiles/core/catalog.json:655
-#: src/profiles/core/catalog.json:716
-#: src/profiles/core/catalog.json:728
-#: src/profiles/core/catalog.json:789
-#: src/profiles/core/catalog.json:801
+#: src/profiles/core/catalog.json:589
+#: src/profiles/core/catalog.json:601
+#: src/profiles/core/catalog.json:668
+#: src/profiles/core/catalog.json:680
+#: src/profiles/core/catalog.json:741
+#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:814
+#: src/profiles/core/catalog.json:826
 msgctxt "Profiles|Core|Catalog"
 msgid "Please enter the number in days."
 msgstr "請輸入天數。"
@@ -1984,18 +1990,18 @@ msgstr "請輸入天數。"
 #: src/profiles/core/catalog.json:192
 #: src/profiles/core/catalog.json:198
 #: src/profiles/core/catalog.json:210
-#: src/profiles/core/catalog.json:552
-#: src/profiles/core/catalog.json:558
-#: src/profiles/core/catalog.json:570
-#: src/profiles/core/catalog.json:631
-#: src/profiles/core/catalog.json:637
-#: src/profiles/core/catalog.json:649
-#: src/profiles/core/catalog.json:704
-#: src/profiles/core/catalog.json:710
-#: src/profiles/core/catalog.json:722
-#: src/profiles/core/catalog.json:777
-#: src/profiles/core/catalog.json:783
-#: src/profiles/core/catalog.json:795
+#: src/profiles/core/catalog.json:577
+#: src/profiles/core/catalog.json:583
+#: src/profiles/core/catalog.json:595
+#: src/profiles/core/catalog.json:656
+#: src/profiles/core/catalog.json:662
+#: src/profiles/core/catalog.json:674
+#: src/profiles/core/catalog.json:729
+#: src/profiles/core/catalog.json:735
+#: src/profiles/core/catalog.json:747
+#: src/profiles/core/catalog.json:802
+#: src/profiles/core/catalog.json:808
+#: src/profiles/core/catalog.json:820
 msgctxt "Profiles|Core|Catalog"
 msgid "Please use YYYY/MM/DD."
 msgstr "請使用 YYYY/MM/DD 日期格式。"
@@ -2258,7 +2264,7 @@ msgid "Review"
 msgstr "審核"
 
 #. Default: "Review state"
-#: src/profiles/core/catalog.json:470
+#: src/profiles/core/catalog.json:495
 msgctxt "Profiles|Core|Catalog"
 msgid "Review state"
 msgstr "審核狀態"
@@ -2426,7 +2432,7 @@ msgid "Short name"
 msgstr "識別碼"
 
 #. Default: "Short name (id)"
-#: src/profiles/core/catalog.json:395
+#: src/profiles/core/catalog.json:420
 msgctxt "Profiles|Core|Catalog"
 msgid "Short name (id)"
 msgstr "識別碼"
@@ -2493,7 +2499,7 @@ msgid "Sitemap"
 msgstr "Sitemap"
 
 #. Default: "Sortable Title"
-#: src/profiles/core/catalog.json:495
+#: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
 msgid "Sortable Title"
 msgstr "可排序的標題"
@@ -2695,16 +2701,16 @@ msgstr "選擇會被顯示在導覽方框及網站地圖的內容型別。"
 #. Default: "The current day"
 #: src/profiles/core/catalog.json:149
 #: src/profiles/core/catalog.json:222
-#: src/profiles/core/catalog.json:582
-#: src/profiles/core/catalog.json:661
-#: src/profiles/core/catalog.json:734
-#: src/profiles/core/catalog.json:807
+#: src/profiles/core/catalog.json:607
+#: src/profiles/core/catalog.json:686
+#: src/profiles/core/catalog.json:759
+#: src/profiles/core/catalog.json:832
 msgctxt "Profiles|Core|Catalog"
 msgid "The current day"
 msgstr "今天"
 
 #. Default: "The date an item was created"
-#: src/profiles/core/catalog.json:673
+#: src/profiles/core/catalog.json:698
 msgctxt "Profiles|Core|Catalog"
 msgid "The date an item was created"
 msgstr "項目建立的日期"
@@ -2752,6 +2758,12 @@ msgctxt "Routes|Groups"
 msgid "The group name you entered already exists."
 msgstr ""
 
+#. Default: "The id is already in use in this folder."
+#: src/app.ts:273
+msgctxt "App"
+msgid "The id is already in use in this folder."
+msgstr ""
+
 #. Default: "The id “{id}” is invalid - it is already in use."
 #: src/routes/content/content.ts:900
 msgctxt "Routes|Content"
@@ -2772,7 +2784,7 @@ msgid "The item “{id}” is not found."
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"
-#: src/profiles/core/catalog.json:496
+#: src/profiles/core/catalog.json:521
 msgctxt "Profiles|Core|Catalog"
 msgid "The item’s title, transformed for sorting"
 msgstr "項目的標題"
@@ -2826,7 +2838,7 @@ msgid "The password for the ESMTP user account."
 msgstr "ESMTP 使用者帳號的密碼。"
 
 #. Default: "The person that created an item"
-#: src/profiles/core/catalog.json:415
+#: src/profiles/core/catalog.json:440
 msgctxt "Profiles|Core|Catalog"
 msgid "The person that created an item"
 msgstr "項目的建立者"
@@ -2838,7 +2850,7 @@ msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "您本機 SMTP（外寄電子郵件）伺服器的連接埠。通常為 '25'。"
 
 #. Default: "The request body is not valid JSON."
-#: src/app.ts:294
+#: src/app.ts:303
 msgctxt "App"
 msgid "The request body is not valid JSON."
 msgstr ""
@@ -2850,7 +2862,7 @@ msgid "The roles to check for."
 msgstr ""
 
 #. Default: "The short name of an item (used in the url)"
-#: src/profiles/core/catalog.json:396
+#: src/profiles/core/catalog.json:421
 msgctxt "Profiles|Core|Catalog"
 msgid "The short name of an item (used in the url)"
 msgstr "項目的識別碼（在 URL 中使用）"
@@ -2868,19 +2880,19 @@ msgid "The start date and time of an event"
 msgstr "事件開始的日期時間"
 
 #. Default: "The time and date an item was expired"
-#: src/profiles/core/catalog.json:600
+#: src/profiles/core/catalog.json:625
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was expired"
 msgstr "項目失效的日期時間"
 
 #. Default: "The time and date an item was first published"
-#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:771
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was first published"
 msgstr "項目首次發佈的日期時間"
 
 #. Default: "The time and date an item was last modified"
-#: src/profiles/core/catalog.json:521
+#: src/profiles/core/catalog.json:546
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was last modified"
 msgstr "項目最近修改的日期時間"
@@ -2892,7 +2904,7 @@ msgid "The topic of this item."
 msgstr "此項目的主題。"
 
 #. Default: "The user viewing the querystring results"
-#: src/profiles/core/catalog.json:428
+#: src/profiles/core/catalog.json:453
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr "使用者檢示查詢字串的結果"
@@ -2986,13 +2998,13 @@ msgstr ""
 #: src/profiles/core/catalog.json:297
 #: src/profiles/core/catalog.json:303
 #: src/profiles/core/catalog.json:310
-#: src/profiles/core/catalog.json:403
-#: src/profiles/core/catalog.json:422
-#: src/profiles/core/catalog.json:453
-#: src/profiles/core/catalog.json:459
+#: src/profiles/core/catalog.json:428
+#: src/profiles/core/catalog.json:447
 #: src/profiles/core/catalog.json:478
 #: src/profiles/core/catalog.json:484
+#: src/profiles/core/catalog.json:503
 #: src/profiles/core/catalog.json:509
+#: src/profiles/core/catalog.json:534
 msgctxt "Profiles|Core|Catalog"
 msgid "Tip: you can use * to autocomplete."
 msgstr "秘訣: 可以使用 * 來自動補齊。"
@@ -3014,18 +3026,18 @@ msgstr "收件者、寄件者與訊息為必填欄位。"
 #. Default: "Today"
 #: src/profiles/core/catalog.json:148
 #: src/profiles/core/catalog.json:221
-#: src/profiles/core/catalog.json:581
-#: src/profiles/core/catalog.json:660
-#: src/profiles/core/catalog.json:733
-#: src/profiles/core/catalog.json:806
+#: src/profiles/core/catalog.json:606
+#: src/profiles/core/catalog.json:685
+#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:831
 msgctxt "Profiles|Core|Catalog"
 msgid "Today"
 msgstr "今天"
 
 #. Default: "Transaction error."
 #: src/client.ts:93
-#: src/app.ts:168
-#: src/app.ts:185
+#: src/app.ts:169
+#: src/app.ts:186
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "交易錯誤。"
@@ -3067,7 +3079,7 @@ msgid "Tuesday"
 msgstr ""
 
 #. Default: "Type"
-#: src/profiles/core/catalog.json:445
+#: src/profiles/core/catalog.json:470
 msgctxt "Profiles|Core|Catalog"
 msgid "Type"
 msgstr "型別"
@@ -3314,10 +3326,10 @@ msgstr ""
 #. Default: "Within last"
 #: src/profiles/core/catalog.json:130
 #: src/profiles/core/catalog.json:203
-#: src/profiles/core/catalog.json:563
-#: src/profiles/core/catalog.json:642
-#: src/profiles/core/catalog.json:715
-#: src/profiles/core/catalog.json:788
+#: src/profiles/core/catalog.json:588
+#: src/profiles/core/catalog.json:667
+#: src/profiles/core/catalog.json:740
+#: src/profiles/core/catalog.json:813
 msgctxt "Profiles|Core|Catalog"
 msgid "Within last"
 msgstr "過去的天數"
@@ -3325,10 +3337,10 @@ msgstr "過去的天數"
 #. Default: "Within next"
 #: src/profiles/core/catalog.json:142
 #: src/profiles/core/catalog.json:215
-#: src/profiles/core/catalog.json:575
-#: src/profiles/core/catalog.json:654
-#: src/profiles/core/catalog.json:727
-#: src/profiles/core/catalog.json:800
+#: src/profiles/core/catalog.json:600
+#: src/profiles/core/catalog.json:679
+#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:825
 msgctxt "Profiles|Core|Catalog"
 msgid "Within next"
 msgstr "未來的天數"
@@ -3367,7 +3379,9 @@ msgstr ""
 
 #. Default: "Yes"
 #: src/profiles/core/catalog.json:371
+#: src/profiles/core/catalog.json:396
 #: src/profiles/core/vocabularies/boolean.json:5
+#: src/profiles/core/upgrades/1016/catalog.json:20
 msgctxt "Profiles|Core|Catalog"
 msgid "Yes"
 msgstr "是"

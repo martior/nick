@@ -23,7 +23,7 @@ Or use the client directly:
 {% include_relative examples/querystring/get.ts %}
 ```
 
-The server will respond with all querystring options in the portal. The operations are named like the `plone.app.querystring` operations Volto expects, the values of the `portal_type` and `review_state` vocabularies are included and indexes which can only be used for sorting (like `sortable_title` and `getObjPositionInParent`) are listed with `enabled` set to `false`:
+The server will respond with all querystring options in the portal. The operations are named like the `plone.app.querystring` operations Volto expects, the values of the `portal_type` and `review_state` vocabularies are included and indexes which can only be used for sorting (like `sortable_title` and `getObjPositionInParent`) are listed with `enabled` set to `false`. The `isFolderish` index (Plone's name; `is_folderish` keeps working) finds items that can contain other items:
 
 ```http
 {% include_relative examples/querystring/get.res %}

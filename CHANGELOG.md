@@ -30,6 +30,8 @@
 
 ### Feature
 
+- Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1017 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
+- Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1016) @martior
 - Add support for multiple profiles @robgietema
 - Add yeoman generator to create a Nick project @robgietema
 - Add vocabularies based on profiles @robgietema
@@ -200,6 +202,7 @@
 
 ### Bugfix
 
+- Make the ids of the documents in a folder unique in the database (documents in the recycle bin excepted), so imports and bulk loads can't create documents that can't be reached; a duplicate id gives 400. Run `pnpm migrate`; the migration lists the duplicate ids and stops if there are any, rename or remove those documents first @martior
 - Leave out the ancestors the user may not view from @breadcrumbs, so the titles of private folders don't leak @martior
 - Check the email address on PATCH @users like on create, an invalid one gives 400 @martior
 - Answer @sharing entries for users or groups that don't exist with 400 instead of ignoring them @martior

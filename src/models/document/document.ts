@@ -47,6 +47,7 @@ import {
   likePrefix,
   mapAsync,
   mapSync,
+  sortableTitle,
   uniqueId,
 } from '../../helpers/utils/utils';
 import { Model } from '../_model/_model';
@@ -431,6 +432,15 @@ export class Document extends Model {
   }
 
   /**
+   * Get the sortable title, see the sortableTitle helper
+   * @method sortableTitle
+   * @returns {string} Sortable title
+   */
+  sortableTitle(): string {
+    return sortableTitle(this.getTitle());
+  }
+
+  /**
    * Get title
    * @method getTitle
    * @returns {string} Title
@@ -573,7 +583,7 @@ export class Document extends Model {
         return child.id;
       }
       if (on === 'sortable_title' || on === 'title') {
-        return (child.json.title || '').toLowerCase();
+        return child.sortableTitle();
       }
       if (['created', 'modified'].includes(on)) {
         return `${child[on]}`;

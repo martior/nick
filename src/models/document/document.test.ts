@@ -8,10 +8,83 @@ import { describe, it, expect, vi } from 'vitest';
 
 // Internal imports
 import '../../app';
+import { isDuplicateIdError } from '../../helpers/error/error';
 import { createDocument } from '../../helpers/tests/tests';
+import {
+  down as dropUniqueIds,
+  findDuplicates,
+  up as uniqueIds,
+} from '../../migrations/202610210900_document_unique_id';
 import models from '../../models';
 
 describe('Document', () => {
+  describe('unique ids', () => {
+    it('should refuse a second document with the same id in a folder', async () => {
+      const Document = models.get('Document');
+      const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+      await createDocument(
+        '0123abcd-0000-4000-8000-000000000501',
+        news,
+        'twin',
+        'Page',
+      );
+      const error = await global
+        .txn!.raw('SAVEPOINT twin')
+        .then(() =>
+          createDocument(
+            '0123abcd-0000-4000-8000-000000000502',
+            news,
+            'twin',
+            'Page',
+          ),
+        )
+        .then(
+          () => undefined,
+          (err: any) => err,
+        );
+      await global.txn!.raw('ROLLBACK TO SAVEPOINT twin');
+      expect(isDuplicateIdError(error)).toBe(true);
+
+      // A document in the recycle bin doesn't block its id
+      await global.txn!('document')
+        .where({ uuid: '0123abcd-0000-4000-8000-000000000501' })
+        .update({ deleted: true });
+      await createDocument(
+        '0123abcd-0000-4000-8000-000000000503',
+        news,
+        'twin',
+        'Page',
+      );
+    });
+
+    it('should check for duplicates before adding the constraint', async () => {
+      const Document = models.get('Document');
+      const trx = global.txn!;
+      const news = await Document.fetchOne({ path: '/news' }, {}, trx);
+      await dropUniqueIds(trx);
+      for (const uuid of ['505', '506']) {
+        await createDocument(
+          `0123abcd-0000-4000-8000-000000000${uuid}`,
+          news,
+          'twin',
+          'Page',
+        );
+      }
+      expect(await findDuplicates(trx)).toEqual([
+        { parent: '/news', id: 'twin', count: 2 },
+      ]);
+      await trx.raw('SAVEPOINT migrate');
+      await expect(uniqueIds(trx)).rejects.toThrow(
+        '1 ids are used more than once in a folder',
+      );
+      await trx.raw('ROLLBACK TO SAVEPOINT migrate');
+      await trx('document')
+        .where({ uuid: '0123abcd-0000-4000-8000-000000000506' })
+        .delete();
+      await uniqueIds(trx);
+    });
+  });
+
   describe('allowedUsersGroupsRoles', () => {
     it('includes local roles and the owner with view in the workflow state', async () => {
       const Document = models.get('Document');

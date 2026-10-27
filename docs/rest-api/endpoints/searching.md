@@ -67,7 +67,7 @@ This will return the matching content objects:
 
 ## Sorting on title
 
-You can also sort the search results on title:
+You can also sort the search results on title. Like in Plone, `sortable_title` ignores case and accents and compares numbers by value (they are zero filled to 4 digits), so `Item 2` comes before `Item 10`:
 
 ```http
 {% include_relative examples/search/get_sort_title.req %}
