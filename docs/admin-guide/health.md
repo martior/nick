@@ -83,3 +83,7 @@ export const config = {
   },
 };
 ```
+
+## Several processes
+
+`@health` reports on the process that answers the request: the requests it is handling and its uptime. With several API replicas, probe each replica directly (as the health check of the Docker image does), not through the load balancer. Worker processes (`nick --modules=worker`) serve no HTTP; their jobs are visible in `@jobs`.

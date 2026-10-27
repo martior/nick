@@ -318,8 +318,10 @@ export type ConfigSettings = {
   s3: {
     bucket: string;
     region: string;
-    accessKeyId: string;
-    secretAccessKey: string;
+    endpoint?: string;
+    forcePathStyle?: boolean;
+    accessKeyId?: string;
+    secretAccessKey?: string;
   };
   localesDir: string;
   port: number;
@@ -354,6 +356,7 @@ export type ConfigSettings = {
     api: number;
     auth: number;
     trustProxy: number;
+    store?: 'memory' | 'postgres';
   };
   recyclebin: boolean;
   cache: {

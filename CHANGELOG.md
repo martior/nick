@@ -181,6 +181,9 @@
 - Add the `nick` command with `--modules=migrate,api,worker` (default: all) to run the API, the job worker and migrations in one process or split over several; `migrate` runs the knex migrations, installs new profiles and runs profile upgrades under an advisory lock and exits non-zero on errors @martior
 - Read the port from the `PORT` environment variable @martior
 - Run every profile upgrade step in its own transaction and record it as the profile version, so a failed upgrade keeps the steps before it and resumes at the failed step @martior
+- Add a production Dockerfile: multi-stage, production dependencies only, non-root, `nick` as entrypoint and a health check on @health @martior
+- Support S3-compatible blob storage (MinIO, R2, Ceph) with the `s3.endpoint` and `s3.forcePathStyle` settings, read the blob and S3 settings from `BLOBS` and `S3_*` environment variables, use the default AWS credential chain without static keys and reuse one S3 client @martior
+- Add a Postgres rate limit store (`rateLimit.store: postgres` or `RATE_LIMIT_STORE=postgres`), so rate limits count across API processes; the default stays in memory per process @martior
 
 ### Bugfix
 
@@ -367,6 +370,7 @@
 - Fix scheduled jobs reusing the committed request transaction after they were created, changed or deleted through the API @martior
 - Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
 - Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
+- Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
 
 ### Internal
 
@@ -424,6 +428,8 @@
 - Remove the unused `Document.fetchLocalUsersGroups` @martior
 - Add a `typecheck` script and run it in CI @martior
 - Check in CI that the previous version migrates and upgrades to the pushed version @martior
+- Move nodemon to the development dependencies @martior
+- Run the development docker-compose service from the node image @martior
 
 ### Documentation
 
@@ -446,6 +452,7 @@
 - Fix the url of the update scheduled job example @martior
 - Add the jobs admin guide @martior
 - Add the deployment admin guide @martior
+- Document which state is per process when Nick runs several API processes @martior
 
 ## 2.8.0 (2022-07-17)
 
