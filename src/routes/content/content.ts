@@ -861,7 +861,7 @@ export default [
     permission: 'Add',
     client: 'addContent',
     cache: 'manage',
-    middleware: contentBodyParser,
+    bodyParser: contentBodyParser,
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Type = models.get('Type');
       const Document = models.get('Document');
@@ -1132,7 +1132,7 @@ export default [
     permission: 'Modify',
     client: 'updateContent',
     cache: 'alter',
-    middleware: contentBodyParser,
+    bodyParser: contentBodyParser,
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Document = models.get('Document');
 

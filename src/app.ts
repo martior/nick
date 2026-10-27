@@ -121,7 +121,6 @@ app.use(
     xssFilter: true,
   }),
 );
-app.use(express.json({ limit: config.settings.requestLimit?.api || '1mb' }));
 
 // Use middleware
 middleware.use(app);
@@ -131,10 +130,20 @@ app.set('trust proxy', config.settings.rateLimit.trustProxy || 1);
 // Number of attempts of a request that hits a database deadlock
 const retryAttempts = 3;
 
+// Parse json bodies with the api limit, unless a route has its own body
+// parser, like the content routes with the larger files limit for uploads
+const jsonParser = (req: Request, res: Response, next: NextFunction) =>
+  express.json({ limit: config.settings.requestLimit?.api || '1mb' })(
+    req,
+    res,
+    next,
+  );
+
 // Add routes
 routes.routes.map((route: Route) => {
   app[route.op](
     `${regExpEscape(config.settings.prefix)}{*path}${route.view}`,
+    route.bodyParser || jsonParser,
     route.middleware ||
       ((_req: Request, _res: Response, next: NextFunction) => next()),
     async (req: any, res: Response): Promise<any> => {
@@ -296,7 +305,7 @@ app.use((err: any, req: any, res: Response, next: NextFunction): any => {
   if (res.headersSent || !err?.status || err.status >= 500) {
     return next(err);
   }
-  // The i18n middleware hasn't run if the global body parser failed
+  // The i18n middleware hasn't run if a body parser failed before it
   const message =
     err.type === 'entity.parse.failed'
       ? req.i18n

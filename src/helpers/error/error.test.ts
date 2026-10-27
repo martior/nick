@@ -5,10 +5,12 @@
 
 // External imports
 import request from 'supertest';
+import { validate } from 'uuid';
 import { describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
+import config from '../config/config';
 import models from '../../models';
 import { errorBody, isDuplicateIdError, isRetryableError } from './error';
 
@@ -49,6 +51,56 @@ describe('Error', () => {
         type: 'BadRequest',
         message: 'The request body is not valid JSON.',
       });
+    });
+
+    it('answers invalid json on other routes with a json error', async () => {
+      const res = await request(app)
+        .post('/@login')
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .send('{not json')
+        .expect(400);
+      expect(res.body.message).toBe('The request body is not valid JSON.');
+    });
+
+    it('applies the files limit to content and the api limit to other routes', async () => {
+      vi.mocked(validate).mockReturnValue(true);
+      const limits = config.settings.requestLimit as {
+        api: string;
+        files: string;
+      };
+      const { api, files } = limits;
+      limits.api = '1kb';
+      limits.files = '100kb';
+      try {
+        // An upload larger than the api limit
+        await request(app)
+          .post('/news')
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            '@type': 'File',
+            id: 'large',
+            title: 'Large',
+            file: {
+              data: Buffer.alloc(5000).toString('base64'),
+              encoding: 'base64',
+              'content-type': 'application/octet-stream',
+              filename: 'large.bin',
+            },
+          })
+          .expect(201);
+
+        // The same size on another route
+        await request(app)
+          .post('/@login')
+          .set('Accept', 'application/json')
+          .send({ login: 'admin', password: 'x'.repeat(5000) })
+          .expect(413);
+      } finally {
+        limits.api = api;
+        limits.files = files;
+      }
     });
 
     it('answers a duplicate id in a folder with 400', async () => {

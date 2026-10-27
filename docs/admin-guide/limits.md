@@ -25,11 +25,11 @@ export const config = {
 };
 ```
 
-| Key     | Default  | Description                                                    |
-| ------- | -------- | -------------------------------------------------------------- |
-| `api`   | `'1mb'`  | Maximum body size for all JSON API requests (global)           |
-| `files` | `'10mb'` | Maximum body size for content creation and update (POST/PATCH) |
-| `chunk` | `'1mb'`  | Chunk size when streaming file downloads via range requests    |
+| Key     | Default  | Description                                                                                                               |
+| ------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `api`   | `'1mb'`  | Maximum body size of JSON requests, except creating and updating content                                                  |
+| `files` | `'10mb'` | Maximum body size for content creation and update (POST/PATCH), with uploaded files as base64 JSON or multipart/form-data |
+| `chunk` | `'1mb'`  | Chunk size when streaming file downloads via range requests                                                               |
 
 Values use human-readable size strings (e.g. `'1mb'`, `'500kb'`, `'2gb'`).
 
