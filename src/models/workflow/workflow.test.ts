@@ -91,10 +91,26 @@ describe('Workflow', () => {
           await global.txn!('catalog').where({ document: page.uuid }).first()
         )._allowedUsersGroupsRoles;
       };
+      // The permissions outside of a request, like in move, search and lock
+      const userPermissions = async () => {
+        const User = models.get('User');
+        const user = await User.fetchById(
+          'reader',
+          { related: '[_roles, _groups._roles]' },
+          global.txn!,
+        );
+        const document = await Document.fetchOne(
+          { uuid: page.uuid },
+          {},
+          global.txn!,
+        );
+        return document.fetchUserPermissions(user, global.txn!);
+      };
 
       // The core private state gives Reader View
       await get().expect(200);
       expect(await allowed()).toContain('Reader');
+      expect(await userPermissions()).toContain('View');
 
       // A private state without Reader hides the page from global Readers
       const workflow = await Workflow.fetchById(
@@ -114,6 +130,7 @@ describe('Workflow', () => {
       await workflow.update({ json }, global.txn!);
       await get().expect(401);
       expect(await allowed()).not.toContain('Reader');
+      expect(await userPermissions()).not.toContain('View');
 
       // Unless the workflow keeps the additive model
       await workflow.update(
@@ -122,6 +139,7 @@ describe('Workflow', () => {
       );
       await get().expect(200);
       expect(await allowed()).toContain('Reader');
+      expect(await userPermissions()).toContain('View');
     });
   });
 });
