@@ -4,6 +4,6 @@ Content-Type: application/json
 {
   "error": {
     "type": "Not authenticated",
-    "message": "You need to be authenticated to access the vocabulary “users”."
+    "message": "You need to be authenticated to access the vocabulary “plone.app.vocabularies.Users”."
   }
 }

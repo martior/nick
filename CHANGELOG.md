@@ -14,6 +14,7 @@
 - Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 
+- Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
 ### Feature
 
 - Add support for multiple profiles @robgietema
@@ -164,6 +165,8 @@
 - Export comments of documents @martior
 - Export site title, robots.txt and language settings @martior
 - Convert querystring operations of collections and listing blocks in export @martior
+- Support the title and token filters and batching in the vocabularies endpoint @martior
+- Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
 
 ### Bugfix
 
