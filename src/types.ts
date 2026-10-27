@@ -262,6 +262,8 @@ export interface Route {
     | 'stable'
     | 'static';
   etag?: string;
+  // Parser of the request body, by default json with the `api` request limit
+  bodyParser?: any;
   middleware?: any;
   handler?: any;
 }

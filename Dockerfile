@@ -10,7 +10,9 @@
 # Configuration comes from environment variables (DB_HOST, DB_PASSWORD,
 # SECRET, PROFILES, ...) or from a config.ts mounted at /app/config.ts.
 # PROFILES lists the profiles to install, comma separated, for example
-# PROFILES=@plone/nick:core,@plone/nick:examplecontent.
+# PROFILES=@plone/nick:core,@plone/nick:default. Without PROFILES and a
+# config.ts the default profile is installed: the demo site, with an admin
+# user whose password is admin.
 #
 # Add-ons of this repository can be built in with
 # --build-arg ADDONS="packages/nick-example-addon"; projects with add-ons

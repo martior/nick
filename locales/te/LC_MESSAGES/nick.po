@@ -1236,8 +1236,8 @@ msgid "Information about rights held in and over this item."
 msgstr "ఈ అంశంలో మరియు దానిపై ఉన్న హక్కులకు సంబంధించిన సమాచారం."
 
 #. Default: "Internal server error"
-#: src/app.ts:265
-#: src/app.ts:285
+#: src/app.ts:274
+#: src/app.ts:294
 msgctxt "App"
 msgid "Internal server error"
 msgstr "అంతర్గత సర్వర్ లోపం"
@@ -2759,7 +2759,7 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id is already in use in this folder."
-#: src/app.ts:273
+#: src/app.ts:282
 msgctxt "App"
 msgid "The id is already in use in this folder."
 msgstr ""
@@ -2850,7 +2850,7 @@ msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "మీ స్థానిక SMTP (అవుట్‌గోయింగ్ ఇమెయిల్) సర్వర్ పోర్ట్. సాధారణంగా '25'."
 
 #. Default: "The request body is not valid JSON."
-#: src/app.ts:303
+#: src/app.ts:312
 msgctxt "App"
 msgid "The request body is not valid JSON."
 msgstr ""
@@ -3036,8 +3036,8 @@ msgstr "ఈ రోజు"
 
 #. Default: "Transaction error."
 #: src/client.ts:93
-#: src/app.ts:169
-#: src/app.ts:186
+#: src/app.ts:178
+#: src/app.ts:195
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "లావాదేవీ లోపం."

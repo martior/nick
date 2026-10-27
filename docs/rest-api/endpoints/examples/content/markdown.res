@@ -3,7 +3,7 @@ Content-Type: text/markdown
 
 # Welcome to Nick!
 
-This is the demo site of [Nick](https://nick.docs.plone.org) and is build with the [Volto](https://voltocms.com) frontend.
+This is the demo site of [Nick](https://nick.docs.plone.org) and is built with the [Volto](https://voltocms.com) frontend.
 
 ## Demo
 

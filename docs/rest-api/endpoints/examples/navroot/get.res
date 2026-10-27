@@ -30,7 +30,7 @@ Content-Type: application/json
                 ]
               },
               {
-                "text": " and is build with the "
+                "text": " and is built with the "
               },
               {
                 "type": "link",
@@ -49,7 +49,7 @@ Content-Type: application/json
             ]
           }
         ],
-        "plaintext": "This is the demo site of Nick and is build with the Volto frontend."
+        "plaintext": "This is the demo site of Nick and is built with the Volto frontend."
       },
       "e47fdd86-5d1b-4e6c-86a4-f3edf9d74e31": {
         "@type": "slate",
