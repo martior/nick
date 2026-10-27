@@ -30,6 +30,19 @@ export class Controlpanel extends Model {
   declare schema: Schema;
 
   /**
+   * Get the password fields of the schema.
+   * @method getPasswordFields
+   * @returns {string[]} Names of the password fields.
+   */
+  getPasswordFields(): string[] {
+    const self: InstanceType<typeof Controlpanel> = this;
+    const properties: any = self.schema?.properties || {};
+    return Object.keys(properties).filter(
+      (property) => properties[property].widget === 'password',
+    );
+  }
+
+  /**
    * Returns JSON data.
    * @method toJson
    * @param {Request} req Request object
@@ -49,7 +62,16 @@ export class Controlpanel extends Model {
     return extend
       ? ({
           ...json,
-          data: self.data,
+          // Never return stored passwords
+          data: {
+            ...self.data,
+            ...Object.fromEntries(
+              self
+                .getPasswordFields()
+                .filter((field) => field in (self.data || {}))
+                .map((field) => [field, null]),
+            ),
+          },
           schema: translateSchema(self.schema, req),
         } as unknown as Json)
       : (json as Json);

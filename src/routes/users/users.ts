@@ -11,9 +11,9 @@ import type { Request } from '../../types';
 // @ts-expect-error bcrypt-promise does not have types
 import bcrypt from 'bcrypt-promise';
 import { omit } from 'es-toolkit/object';
-import jwt from 'jsonwebtoken';
 
 // Internal imports
+import { createResetToken, verifyResetToken } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import events from '../../events';
 import { RequestException } from '../../helpers/error/error';
@@ -55,20 +55,15 @@ export default [
 
       // Check input
       if (req.body?.reset_token && req.body?.new_password && user) {
-        // Decode jwt
-        const decoded = jwt.verify(
-          req.body?.reset_token,
-          config.settings.secret,
-          { algorithms: ['HS256'] },
-        );
-
-        // User found
-        if (user && decoded && user.id === decoded.sub) {
+        // Check the reset token, it is valid only once
+        if (verifyResetToken(req.body.reset_token, user)) {
           const password = await bcrypt.hash(req.body?.new_password, 10);
           await User.update(
             user.id,
             {
               password,
+              // Log out all sessions
+              tokens: [],
             },
             trx,
           );
@@ -106,14 +101,7 @@ export default [
         );
       } else if (user) {
         // Create token
-        const token = jwt.sign(
-          {
-            sub: user.id,
-            fullname: user.fullname,
-          },
-          config.settings.secret,
-          { expiresIn: '2h', algorithm: 'HS256' },
-        );
+        const token = createResetToken(user);
 
         // Fetch settings
         const Controlpanel = models.get('Controlpanel');
@@ -336,14 +324,7 @@ export default [
       // Check if password reset
       if (req.body.sendPasswordReset) {
         // Create token
-        const token = jwt.sign(
-          {
-            sub: user.id,
-            fullname: user.fullname,
-          },
-          config.settings.secret,
-          { expiresIn: '2h', algorithm: 'HS256' },
-        );
+        const token = createResetToken(user);
 
         // Fetch settings
         const Controlpanel = models.get('Controlpanel');

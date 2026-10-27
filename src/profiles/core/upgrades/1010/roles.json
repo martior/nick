@@ -4,17 +4,22 @@
     {
       "id": "Owner",
       "title:i18n": "Owner",
-      "permissions": ["Delete"]
+      "permissions": ["Revert"]
     },
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Delete"]
+      "permissions": ["Revert"]
+    },
+    {
+      "id": "Reviewer",
+      "title:i18n": "Reviewer",
+      "permissions": ["Revert"]
     },
     {
       "id": "Administrator",
       "title:i18n": "Administrator",
-      "permissions": ["Delete"]
+      "permissions": ["Revert"]
     }
   ]
 }

@@ -1,6 +1,6 @@
 /**
- * Upgrade 1012 tests.
- * @module profiles/core/upgrades/1012/index.test
+ * Upgrade 1013 tests.
+ * @module profiles/core/upgrades/1013/index.test
  */
 
 // External imports
@@ -11,7 +11,7 @@ import '../../../../app';
 import models from '../../../../models';
 import { init } from './index';
 
-describe('Upgrade 1012', () => {
+describe('Upgrade 1013', () => {
   it('should make the title a text line with a maximum length', async () => {
     const trx = global.txn!;
     const Type = models.get('Type');
