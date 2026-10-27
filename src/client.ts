@@ -32,69 +32,86 @@ export class Client {
    */
   static initialize = ({ token: initToken, apiPath }: any): any => {
     initI18n();
-    const client = new Client() as any;
-    const Document = models.get('Document');
 
-    routes.routes.map((route: any) => {
-      if (route.client) {
-        client[route.client] = async (
-          {
-            token,
-            path,
-            data,
-            locktoken,
-            query,
-            params,
-            headers,
-            ...rest
-          } = {} as any,
-        ) => {
-          await initProfiles();
-          const req = {
-            token: initToken || token,
-            apiPath,
-            documentPath: path || '/',
-            body: data,
-            query,
-            params: {
-              ...(params ? params : {}),
-              ...rest,
-            },
-            headers,
-          } as Request;
-          if (locktoken) {
-            req.headers['Lock-Token'] = locktoken;
-          }
-
-          await i18n(req, {} as Response, (() => {}) as NextFunction);
-
-          const trx = await Document.startTransaction();
-
-          try {
-            const res = await callHandler(req, trx, route, () => {});
-
-            // Try to commit the transaction
-            try {
-              await trx.commit();
-            } catch (_err) {
-              throw new RequestException(500, {
-                message: req.i18n('Transaction error.'),
-              });
-            }
-
-            // Call the handler
-            return {
-              data: res.json,
-            };
-          } catch (err) {
-            // Rollback transaction
-            await trx.rollback();
-            throw err;
-          }
-        };
+    /**
+     * Call the handler of the route with the given client name.
+     * @method call
+     * @param {string} name Client name of the route.
+     * @param {Object} args Arguments of the call.
+     * @returns {Promise<Object>} Object with the data of the response.
+     */
+    const call = async (
+      name: string,
+      {
+        token,
+        path,
+        data,
+        locktoken,
+        query,
+        params,
+        headers,
+        ...rest
+      } = {} as any,
+    ) => {
+      // The profiles register the models and the routes
+      await initProfiles();
+      const route = routes.routes.find((route: any) => route.client === name);
+      if (!route) {
+        throw new Error(`Unknown client method: ${name}`);
       }
-    });
 
-    return client;
+      const req = {
+        token: initToken || token,
+        apiPath,
+        documentPath: path || '/',
+        body: data,
+        query,
+        params: {
+          ...(params ? params : {}),
+          ...rest,
+        },
+        headers: {
+          ...headers,
+          ...(locktoken ? { 'lock-token': locktoken } : {}),
+        },
+        // A client has no Accept-Language, so the default language is used
+        acceptsLanguages: () => false,
+      } as unknown as Request;
+
+      await i18n(req, {} as Response, (() => {}) as NextFunction);
+
+      const trx = await models.get('Document').startTransaction();
+
+      try {
+        const res = await callHandler(req, trx, route, () => {});
+
+        // Try to commit the transaction
+        try {
+          await trx.commit();
+        } catch (_err) {
+          throw new RequestException(500, {
+            message: req.i18n('Transaction error.'),
+          });
+        }
+
+        // Call the handler
+        return {
+          data: res.json,
+        };
+      } catch (err) {
+        // Rollback transaction
+        await trx.rollback();
+        throw err;
+      }
+    };
+
+    // The methods are named after the routes, which are only known once the
+    // profiles are initialized, so they are looked up when they are called
+    return new Proxy(new Client(), {
+      get: (target: any, name: string | symbol) =>
+        typeof name !== 'string' || name === 'then' || name in target
+          ? target[name]
+          : (args?: any) => call(name, args),
+    });
   };
 }

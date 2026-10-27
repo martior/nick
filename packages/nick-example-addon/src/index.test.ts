@@ -86,7 +86,7 @@ describe('Example add-on', () => {
     );
   });
 
-  it('should register its model, behavior, routes and periodic task', () => {
+  it('should register its model, behavior, routes and scheduled job', async () => {
     expect(models.get('ExampleNote').tableName).toBe('example.note');
     expect(behaviors.behaviors.example_rating.getStars).toBeDefined();
     expect(
@@ -94,9 +94,17 @@ describe('Example add-on', () => {
         ['/@notes', '/@rating'].includes(route.view),
       ).length,
     ).toBe(3);
-    expect(scheduledJobs.periodicTasks['example-purge-notes']).toMatchObject({
+    expect(scheduledJobs.actions.example_purge_notes).toBeDefined();
+
+    // The scheduled job comes from scheduled_jobs.json of the profile
+    expect(
+      await global.txn!('scheduled_job')
+        .where({ id: 'example-purge-notes' })
+        .first(),
+    ).toMatchObject({
       schedule: '0 3 * * *',
       action: 'example_purge_notes',
+      enabled: true,
     });
   });
 
@@ -158,10 +166,10 @@ describe('Example add-on', () => {
     ).toBe(400);
   });
 
-  it('should run its periodic task on the job queue', async () => {
+  it('should run its scheduled job on the job queue', async () => {
     vi.spyOn(jobs, 'check').mockResolvedValue(undefined);
 
-    // The code-declared task is scheduled by the workers
+    // The scheduled job of the profile is scheduled by the workers
     await scheduledJobs.refreshTasks(global.txn!);
     expect(scheduledJobs.tasks.map((task: any) => task.getPattern())).toContain(
       '0 3 * * *',
@@ -176,9 +184,11 @@ describe('Example add-on', () => {
     });
 
     // The slot's job runs the add-on's action
-    const task = scheduledJobs.periodicTasks['example-purge-notes'];
+    const scheduledJob = await global.txn!('scheduled_job')
+      .where({ id: 'example-purge-notes' })
+      .first();
     const id = await scheduledJobs.addJob(
-      { ...task, params: {} },
+      scheduledJob,
       new Date('2022-04-08T03:00:00.000Z'),
     );
     const job = await jobs.claim(global.txn!);

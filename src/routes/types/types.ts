@@ -113,7 +113,7 @@ function typeSchema(req: Request, type: any): Record<string, any> {
 
 export const handler = async (req: Request, trx: Knex.Transaction) => {
   const Type = models.get('Type');
-  const types = await Type.fetchAll({}, {}, trx);
+  const types = await Type.fetchAll({}, { order: 'id' }, trx);
 
   // Sort on the translated title like Plone
   const json = await types.toJson(req);
