@@ -482,6 +482,7 @@
 
 ### Documentation
 
+- Use the `default` profile instead of the old `examplecontent` name in the deployment docs and the Dockerfile, and say that the image installs the demo site with an `admin`/`admin` user without `PROFILES` @robgietema
 - Added documentation for AI support @robgietema
 - Rearranged documention into sections @robgietema
 - Use different documention theme @robgietema
