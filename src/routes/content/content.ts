@@ -47,6 +47,7 @@ import {
   isValidId,
   likePrefix,
   mapAsync,
+  parseRange,
   pasteId,
   uniqueId,
 } from '../../helpers/utils/utils';
@@ -107,6 +108,61 @@ function getDisposition(
       ? 'inline'
       : 'attachment';
   return `${type}; filename="${filename}"`;
+}
+
+/**
+ * Get the response for a part of a file: 206 with the range, or 200 when it
+ * is the whole file.
+ * @param {Request} req The request object.
+ * @param {Object} field The file field.
+ * @param {string} uuid Uuid of the file.
+ * @param {Buffer} buffer Contents of the file.
+ * @param {number} start First byte.
+ * @param {number} end Last byte.
+ * @returns {Object} The response.
+ */
+function fileRange(
+  req: Request,
+  field: any,
+  uuid: string,
+  buffer: Buffer,
+  start: number,
+  end: number,
+): any {
+  const size = buffer.length;
+  const whole = start === 0 && end >= size - 1;
+  return {
+    headers: {
+      'content-type': field['content-type'],
+      'content-disposition': getDisposition(
+        req,
+        field.filename,
+        field['content-type'],
+      ),
+      'content-length': whole ? size : end - start + 1,
+      ...(whole ? {} : { 'content-range': `bytes ${start}-${end}/${size}` }),
+      'Accept-Ranges': 'bytes',
+    },
+    status: whole ? 200 : 206,
+    etag: uuid,
+    xkeys: [req.document.uuid],
+    binary: whole ? buffer : buffer.subarray(start, end + 1),
+  };
+}
+
+/**
+ * Get the response for a range outside of a file.
+ * @param {number} size Size of the file.
+ * @returns {Object} The response.
+ */
+function rangeNotSatisfiable(size: number): any {
+  return {
+    headers: {
+      'content-range': `bytes */${size}`,
+      'Accept-Ranges': 'bytes',
+    },
+    status: 416,
+  };
 }
 
 /**
@@ -446,36 +502,15 @@ export default [
       );
       const size = buffer.length;
 
-      // Check range
-      const range = req.headers.range || `bytes=0-`;
-      let [start, end] = range
-        .replace(/bytes=/, '')
-        .split('-')
-        .map((x) => parseInt(x, 10));
-      if (isNaN(start)) {
-        start = 0;
+      // Check range, without a range or end the video is streamed in chunks
+      const range = parseRange(req.headers.range, size);
+      if (range === 'unsatisfiable') {
+        return rangeNotSatisfiable(size);
       }
-      if (isNaN(end)) {
-        end = Math.min(start + chunkSize - 1, size - 1);
-      }
+      const start = range?.start ?? 0;
+      const end = range?.end ?? Math.min(start + chunkSize - 1, size - 1);
 
-      return {
-        headers: {
-          'content-type': field['content-type'],
-          'content-disposition': getDisposition(
-            req,
-            field.filename,
-            field['content-type'],
-          ),
-          'content-length': end - start + 1,
-          'content-range': `bytes ${start}-${end}/${size}`,
-          'Accept-Ranges': 'bytes',
-        },
-        status: start === 0 && end === size - 1 ? 200 : 206,
-        etag: uuid,
-        xkeys: [req.document.uuid],
-        binary: buffer.subarray(start, end + 1),
-      };
+      return fileRange(req, field, uuid, buffer, start, end);
     },
   },
   {
@@ -495,20 +530,21 @@ export default [
 
       // Fetch file
       const buffer = await readFile(uuid, trx);
-      return {
-        headers: {
-          'content-type': field['content-type'],
-          'content-disposition': getDisposition(
-            req,
-            field.filename,
-            field['content-type'],
-          ),
-          'Accept-Ranges': 'bytes',
-        },
-        etag: uuid,
-        xkeys: [req.document.uuid],
-        binary: buffer,
-      };
+      const size = buffer.length;
+
+      // Check range, without a range the whole file is served
+      const range = parseRange(req.headers.range, size);
+      if (range === 'unsatisfiable') {
+        return rangeNotSatisfiable(size);
+      }
+      return fileRange(
+        req,
+        field,
+        uuid,
+        buffer,
+        range?.start ?? 0,
+        range?.end ?? size - 1,
+      );
     },
   },
   {

@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
+import config from '../../helpers/config/config';
 import {
   adminToken,
   createDocument,
@@ -793,5 +794,130 @@ describe('Content', () => {
       .get(`/news/image/@@images/${imageUuid}.png`)
       .set('Authorization', `Bearer ${adminToken}`)
       .expect(200);
+  });
+});
+
+describe('Ranges', () => {
+  // 3000 bytes, byte i is the digit i % 10
+  const payload = Buffer.from('0123456789'.repeat(300));
+
+  // Read the body as a buffer
+  const binary = (
+    res: request.Response,
+    callback: (err: Error | null, body: Buffer) => void,
+  ) => {
+    const chunks: Buffer[] = [];
+    res.on('data', (chunk: Buffer) => chunks.push(chunk));
+    res.on('end', () => callback(null, Buffer.concat(chunks)));
+  };
+
+  const addFile = async (type: string, field: string) => {
+    vi.mocked(validate).mockReturnValue(true);
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        '@type': type,
+        id: 'media',
+        title: 'Media',
+        [field]: {
+          data: payload.toString('base64'),
+          encoding: 'base64',
+          'content-type': 'video/mp4',
+          filename: 'media.mp4',
+        },
+      })
+      .expect(201);
+  };
+
+  const get = (path: string, range?: string) => {
+    const req = request(app)
+      .get(`/news/media/${path}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    if (range) {
+      req.set('Range', range);
+    }
+    return req.buffer(true).parse(binary);
+  };
+
+  describe('@@download', () => {
+    beforeEach(() => addFile('File', 'file'));
+
+    it('should serve the whole file without a range', async () => {
+      const res = await get('@@download/file').expect(200);
+      expect(res.headers['accept-ranges']).toBe('bytes');
+      expect(res.headers['content-length']).toBe('3000');
+      expect(res.headers['content-range']).toBeUndefined();
+      expect(res.body.equals(payload)).toBe(true);
+    });
+
+    it('should serve a range with a start and an end', async () => {
+      const res = await get('@@download/file', 'bytes=0-999').expect(206);
+      expect(res.headers['content-range']).toBe('bytes 0-999/3000');
+      expect(res.headers['content-length']).toBe('1000');
+      expect(res.body.equals(payload.subarray(0, 1000))).toBe(true);
+    });
+
+    it('should serve a range with an open end up to the last byte', async () => {
+      const res = await get('@@download/file', 'bytes=1000-').expect(206);
+      expect(res.headers['content-range']).toBe('bytes 1000-2999/3000');
+      expect(res.body.equals(payload.subarray(1000))).toBe(true);
+    });
+
+    it('should serve the last bytes', async () => {
+      const res = await get('@@download/file', 'bytes=-500').expect(206);
+      expect(res.headers['content-range']).toBe('bytes 2500-2999/3000');
+      expect(res.body.equals(payload.subarray(2500))).toBe(true);
+    });
+
+    it('should limit the end to the last byte', async () => {
+      const res = await get('@@download/file', 'bytes=2000-99999').expect(206);
+      expect(res.headers['content-range']).toBe('bytes 2000-2999/3000');
+      expect(res.body.equals(payload.subarray(2000))).toBe(true);
+    });
+
+    it('should refuse a range outside of the file', async () => {
+      const res = await get('@@download/file', 'bytes=3000-').expect(416);
+      expect(res.headers['content-range']).toBe('bytes */3000');
+    });
+
+    it('should serve the whole file for other ranges', async () => {
+      for (const range of ['bytes=0-1,10-11', 'chunks=0-1', 'bytes=5-3']) {
+        const res = await get('@@download/file', range).expect(200);
+        expect(res.headers['content-length']).toBe('3000');
+        expect(res.body.equals(payload)).toBe(true);
+      }
+    });
+  });
+
+  describe('@@videos', () => {
+    beforeEach(() => addFile('Video', 'video'));
+
+    it('should stream the video in chunks', async () => {
+      const limits = config.settings.requestLimit as { chunk: string };
+      const chunk = limits.chunk;
+      limits.chunk = '1000';
+      try {
+        const first = await get('@@videos/video').expect(206);
+        expect(first.headers['content-range']).toBe('bytes 0-999/3000');
+        const next = await get('@@videos/video', 'bytes=1000-').expect(206);
+        expect(next.headers['content-range']).toBe('bytes 1000-1999/3000');
+        expect(next.body.equals(payload.subarray(1000, 2000))).toBe(true);
+      } finally {
+        limits.chunk = chunk;
+      }
+    });
+
+    it('should serve the last bytes', async () => {
+      const res = await get('@@videos/video', 'bytes=-500').expect(206);
+      expect(res.headers['content-range']).toBe('bytes 2500-2999/3000');
+      expect(res.body.equals(payload.subarray(2500))).toBe(true);
+    });
+
+    it('should refuse a range outside of the file', async () => {
+      const res = await get('@@videos/video', 'bytes=5000-').expect(416);
+      expect(res.headers['content-range']).toBe('bytes */3000');
+    });
   });
 });
