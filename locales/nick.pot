@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-27T13:14:06.728Z\n"
+"POT-Creation-Date: 2026-10-27T13:54:01.898Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -2963,7 +2963,7 @@ msgid "Today"
 msgstr ""
 
 #. Default: "Transaction error."
-#: src/client.ts:81
+#: src/client.ts:93
 #: src/app.ts:172
 #: src/app.ts:189
 msgctxt "Client"
