@@ -35,7 +35,6 @@ import {
   contentBodyParser,
   resolveMultipartBody,
 } from '../../helpers/multipart/multipart';
-import { lockExpired } from '../../helpers/lock/lock';
 import { getBatching, getBatchParams } from '../../helpers/query/query';
 import { getRootUrl, getUrl } from '../../helpers/url/url';
 import {
@@ -220,11 +219,7 @@ export default [
         }
 
         // Check if locked
-        if (
-          document?.lock?.locked &&
-          !lockExpired(document) &&
-          req.headers['lock-token'] !== document.lock.token
-        ) {
+        if (document.isLockedFor(req.user.id, req.headers['lock-token'])) {
           throw new RequestException(423, {
             error: {
               message: req.i18n('Resource is locked.'),

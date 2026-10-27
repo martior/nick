@@ -221,6 +221,21 @@ describe('Locking', () => {
       .expect(204);
   });
 
+  it('should not move a document locked by another user with the token', async () => {
+    const token = await editorToken();
+    await request(app)
+      .post(`${path}/@lock`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    await request(app)
+      .post('/events/@move')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Lock-Token', (await getLock()).token)
+      .send({ source: path })
+      .expect(423);
+  });
+
   it('should not show the lock token to users who may only view', async () => {
     await testRequest(app, 'locking/post');
     const token = await createUser('viewer', ['Reader']);
