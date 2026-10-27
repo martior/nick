@@ -1942,7 +1942,7 @@ msgid "Pattern must be at least 1 character long."
 msgstr ""
 
 #. Default: "Pending review"
-#: src/profiles/core/workflows.json:23
+#: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Чека рецензија"
@@ -2082,13 +2082,13 @@ msgid "Provided block id is not valid."
 msgstr ""
 
 #. Default: "Publish"
-#: src/profiles/core/workflows.json:50
+#: src/profiles/core/workflows.json:52
 msgctxt "Profiles|Core|Workflows"
 msgid "Publish"
 msgstr "Објави"
 
 #. Default: "Published"
-#: src/profiles/core/workflows.json:35
+#: src/profiles/core/workflows.json:37
 msgctxt "Profiles|Core|Workflows"
 msgid "Published"
 msgstr "Објавено"
@@ -2245,7 +2245,7 @@ msgid "Resource is locked."
 msgstr ""
 
 #. Default: "Retract"
-#: src/profiles/core/workflows.json:60
+#: src/profiles/core/workflows.json:62
 msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Врати"
@@ -2383,7 +2383,7 @@ msgid "Send an email on the triggering object"
 msgstr ""
 
 #. Default: "Send back"
-#: src/profiles/core/workflows.json:55
+#: src/profiles/core/workflows.json:57
 msgctxt "Profiles|Core|Workflows"
 msgid "Send back"
 msgstr "Врати назад"
@@ -2535,7 +2535,7 @@ msgid "Submit"
 msgstr "испрати "
 
 #. Default: "Submit for publication"
-#: src/profiles/core/workflows.json:65
+#: src/profiles/core/workflows.json:67
 msgctxt "Profiles|Core|Workflows"
 msgid "Submit for publication"
 msgstr "Поднеси за објавување"
@@ -3268,7 +3268,7 @@ msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
-#: src/profiles/core/workflows.json:36
+#: src/profiles/core/workflows.json:38
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Видливо за сите, може да се уредува од сопственикот."
@@ -3281,7 +3281,7 @@ msgid "Visitors can create their own account. When this is off, only administrat
 msgstr ""
 
 #. Default: "Waiting to be reviewed, not editable by the owner."
-#: src/profiles/core/workflows.json:24
+#: src/profiles/core/workflows.json:25
 msgctxt "Profiles|Core|Workflows"
 msgid "Waiting to be reviewed, not editable by the owner."
 msgstr "Чека рецензија, не може да се уредува од сопственикот."
@@ -3420,7 +3420,7 @@ msgstr ""
 #: src/routes/content/content.ts:215
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
-#: src/helpers/handler/handler.ts:119
+#: src/helpers/handler/handler.ts:120
 msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""

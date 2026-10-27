@@ -959,11 +959,13 @@ export class Document extends Model {
       await self._type.fetchRelated('_workflow', trx);
     }
 
-    // Return global and workflow permissions
-    return uniq([
-      ...(await Role.fetchPermissions(roles, trx)),
-      ...self._type._workflow.getPermissions(self.workflow_state, roles),
-    ]);
+    // Return the global and workflow permissions, by the permission model
+    // of the workflow like the request handler
+    return self._type._workflow.applyPermissions(
+      self.workflow_state,
+      roles,
+      await Role.fetchPermissions(roles, trx),
+    );
   }
 
   /**
@@ -1526,8 +1528,9 @@ export class Document extends Model {
     state: string,
     globalRoles: string[],
   ): string[] {
+    const Workflow = models.get('Workflow');
     return uniq([
-      ...globalRoles,
+      ...(Workflow.isAcquired(workflow, state, 'View') ? globalRoles : []),
       ...Object.keys(
         pickBy(workflow?.states?.[state]?.permissions || {}, (value: any) =>
           value.includes('View'),
