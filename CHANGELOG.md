@@ -411,6 +411,7 @@
 
 ### Internal
 
+- Upgrade @formatjs/intl to 6.1.4 @robgietema
 - Upgrade express to 5.3.0 @robgietema
 - Reword the descriptions of the self-registration settings of the security control panel in Nick's own words @martior
 - Upgraded dependencies @robgietema
