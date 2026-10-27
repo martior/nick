@@ -1,8 +1,16 @@
-node_modules
+README.md
+**/node_modules
 npm-debug.log
 Dockerfile
 .dockerignore
 .git
+.github
 .gitignore
 .env
 logs
+coverage
+var
+docs
+packages/generator-nick
+/config.ts
+**/*.test.ts

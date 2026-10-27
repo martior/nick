@@ -62,7 +62,7 @@ describe('History', () => {
       .get('/news/@history')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${member}`)
-      .expect(403);
+      .expect(401);
     await request(app)
       .get('/news/@history/0')
       .set('Accept', 'application/json')
@@ -94,12 +94,39 @@ describe('History', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${contributor}`)
       .send({ version: 0 })
-      .expect(403);
+      .expect(401);
     await request(app)
       .patch('/news/@history')
       .set('Accept', 'application/json')
       .send({ version: 0 })
       .expect(401);
+  });
+
+  it('should require the modify permission in the current state', async () => {
+    const editor = await createUser('editor', ['Editor']);
+    await global.txn!('document')
+      .where({ path: '/news' })
+      .update({ workflow_state: 'pending' });
+
+    // The workflow takes modify away from editors in the pending state
+    const history = await request(app)
+      .get('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .expect(200);
+    expect(
+      history.body
+        .filter((item: any) => item.type === 'versioning')
+        .map((item: any) => item.may_revert),
+    ).toEqual([false, false]);
+    await request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .send({ version: 0 })
+      .expect(401);
+    const document = await global.txn!('document').where({ path: '/news' });
+    expect(document[0].version).toBe(1);
   });
 
   it('should reindex after a revert', async () => {
@@ -115,6 +142,26 @@ describe('History', () => {
     expect(document[0].path).toBe('/news');
   });
 
+  it('should return 404 for a version which is not a number', () =>
+    request(app)
+      .get('/news/@history/abc')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(404));
+
+  it('should refuse a revert without a valid version', async () => {
+    for (const body of [{}, { version: 'abc' }, { version: -1 }]) {
+      await request(app)
+        .patch('/news/@history')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body)
+        .expect(400);
+    }
+    const document = await global.txn!('document').where({ path: '/news' });
+    expect(document[0].version).toBe(1);
+  });
+
   it('should return 404 for an unknown version', () =>
     request(app)
       .patch('/news/@history')
@@ -122,4 +169,57 @@ describe('History', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ version: 99 })
       .expect(404));
+
+  it('should list the versions and the creation like plone.restapi', async () => {
+    const get = (path: string) =>
+      request(app)
+        .get(path)
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+    const patch = (body: any) =>
+      request(app)
+        .patch('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body)
+        .expect(204);
+
+    await patch({ title: 'v1', changeNote: 'Fixed a typo' });
+    await patch({ title: 'v2' });
+    await request(app)
+      .patch('/news/@history')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ version: 2 })
+      .expect(200);
+
+    const history = (await get('/news/@history').expect(200)).body;
+    const versions = history.filter((item: any) => item.type === 'versioning');
+    expect(
+      versions.map((item: any) => [item.version, item.comments]),
+    ).toStrictEqual([
+      [4, 'Reverted to revision 2'],
+      [3, null],
+      [2, 'Fixed a typo'],
+      [1, 'Changed title'],
+      [0, 'Initial version'],
+    ]);
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'created', title: 'Created' })
+      .expect(201);
+    const create = (await get('/news/created/@history').expect(200)).body.at(
+      -1,
+    );
+    expect([create.type, create.action, create.transition_title]).toStrictEqual(
+      ['workflow', 'Create', 'Create'],
+    );
+    expect(create.review_state).toBe('private');
+
+    expect((await get('/news').expect(200)).body.version).toBe('current');
+    expect((await get('/news/@history/1').expect(200)).body.version).toBe(1);
+    await get('/news/@history/99').expect(404);
+  });
 });

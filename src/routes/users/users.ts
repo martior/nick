@@ -10,11 +10,13 @@ import type { Request } from '../../types';
 // External imports
 // @ts-expect-error bcrypt-promise does not have types
 import bcrypt from 'bcrypt-promise';
+import { isEmpty } from 'es-toolkit/compat';
 import { omit } from 'es-toolkit/object';
 
 // Internal imports
 import { createResetToken, verifyResetToken } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
+import { getControlpanelSettings } from '../../helpers/controlpanels/controlpanels';
 import events from '../../events';
 import { RequestException } from '../../helpers/error/error';
 import {
@@ -29,6 +31,16 @@ import { getRootUrl } from '../../helpers/url/url';
 import models from '../../models';
 
 const userFields = ['id', 'fullname', 'email'];
+
+/**
+ * Check an email address of a user, undefined means not changed.
+ * @method isValidEmail
+ * @param {any} email Email address.
+ * @returns {boolean} True if undefined or a valid email address.
+ */
+const isValidEmail = (email: any): boolean =>
+  typeof email === 'undefined' ||
+  (typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
 const defaultLimit = 25;
 
 export default [
@@ -231,20 +243,35 @@ export default [
     handler: async (req: Request, trx: Knex.Transaction) => {
       const User = models.get('User');
 
-      // Check permissions
+      // Check permissions; others than user managers can register
+      // themselves if self-registration is enabled
       const manageUsers = req.permissions.includes('Manage Users');
-      if (!config.settings.userRegistration && !manageUsers) {
+      const security = manageUsers
+        ? {}
+        : await getControlpanelSettings('security', trx);
+      if (
+        !manageUsers &&
+        !config.settings.userRegistration &&
+        !security.enable_self_reg
+      ) {
         throw new RequestException(401, {
           message: req.i18n('You don’t have permissions to add a user.'),
         });
       }
+      const choosePassword = manageUsers || !!security.enable_user_pwd_choice;
+
+      // Users who register themselves can't choose roles or groups
+      if (
+        !manageUsers &&
+        (!isEmpty(req.body?.roles) || !isEmpty(req.body?.groups))
+      ) {
+        throw new RequestException(401, {
+          message: req.i18n('You are not allowed to set roles or groups.'),
+        });
+      }
 
       // Check email
-      if (
-        typeof req.body?.email !== 'undefined' &&
-        (typeof req.body.email !== 'string' ||
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.body.email))
-      ) {
+      if (!isValidEmail(req.body?.email)) {
         throw new RequestException(400, {
           message: req.i18n('You must enter a valid email address.'),
         });
@@ -299,7 +326,7 @@ export default [
             fullname: req.body.fullname,
             email: req.body.email,
             json,
-            password: manageUsers ? password : '',
+            password: choosePassword ? password : '',
             _roles: manageUsers ? req.body.roles || [] : [],
             _groups: manageUsers ? req.body.groups || [] : [],
           },
@@ -399,6 +426,13 @@ export default [
       ) {
         throw new RequestException(400, {
           message: req.i18n('Password should be at least 8 characters long.'),
+        });
+      }
+
+      // Check email, like on create
+      if (!isValidEmail(req.body?.email)) {
+        throw new RequestException(400, {
+          message: req.i18n('You must enter a valid email address.'),
         });
       }
 

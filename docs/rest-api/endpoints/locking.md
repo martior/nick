@@ -136,7 +136,7 @@ Or use the client directly:
 {% include_relative examples/locking/get.ts %}
 ```
 
-The server responds with status `200 OK` and returns the information about the lock.
+The server responds with status `200 OK` and returns the information about the lock. The lock token is only included for users who may edit the object (the `Modify` permission); users who may only view it get the lock information without the token. The same applies to the `lock` property of the content.
 
 ```http
 {% include_relative examples/locking/get.res %}
@@ -144,7 +144,7 @@ The server responds with status `200 OK` and returns the information about the l
 
 ## Updating a locked object
 
-To update a locked object with a PATCH request, you have to provide the lock token with the `Lock-Token` header. Without the token, or with a wrong token, the server responds with `403 Forbidden` and the message `Resource is locked.`. This applies to the lock creator too.
+To update a locked object with a PATCH request, you have to provide the lock token with the `Lock-Token` header. Without the token, or with a wrong token, the server responds with `403 Forbidden` and the message `Resource is locked.`. This applies to the lock creator too. The token only works for the user who created the lock: another user is refused even with the right token, and also needs the `Modify` permission like for any edit. The same holds for reverting to a previous version with `@history`.
 
 ```http
 {% include_relative examples/locking/update.req %}
@@ -160,7 +160,7 @@ The object stays locked after the update, so the client can keep editing with th
 
 ## Deleting a locked object
 
-A locked object can't be deleted. The server responds with `423 Locked` unless the request provides the lock token with the `Lock-Token` header.
+A locked object can't be deleted. The server responds with `423 Locked` unless the lock creator provides the lock token with the `Lock-Token` header.
 
 ```http
 {% include_relative examples/locking/delete_content_locked.req %}

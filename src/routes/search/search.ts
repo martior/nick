@@ -14,7 +14,10 @@ import { pick } from 'es-toolkit/object';
 import { chat } from '../../helpers/ai/ai';
 import config from '../../helpers/config/config';
 import { apiLimiter } from '../../helpers/limiter/limiter';
-import { getComponents } from '../../helpers/content/content';
+import {
+  fetchParentSummary,
+  getComponents,
+} from '../../helpers/content/content';
 import { RequestException } from '../../helpers/error/error';
 import {
   getBatching,
@@ -23,7 +26,7 @@ import {
   querystringToQuery,
   queryparamToQuery,
 } from '../../helpers/query/query';
-import { getUrl, getUrlByPath } from '../../helpers/url/url';
+import { getUrl } from '../../helpers/url/url';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
 
@@ -91,6 +94,24 @@ const batching = (
 };
 
 /**
+ * Up to this number of matches the matches are filtered before sorting.
+ * @constant FEW_MATCHES
+ */
+const FEW_MATCHES = 5000;
+
+/**
+ * Get the catalog method to fetch a batch of results, by the number of
+ * matches, see Catalog.fetchFewRestricted.
+ * @method fetchMethod
+ * @param {number} count Number of matches.
+ * @returns {string} Method name.
+ */
+const fetchMethod = (
+  count: number,
+): 'fetchFewRestricted' | 'fetchAllRestricted' =>
+  count <= FEW_MATCHES ? 'fetchFewRestricted' : 'fetchAllRestricted';
+
+/**
  * Serialize the search results.
  *
  * With `fullobjects` the full content objects are returned. Otherwise a
@@ -120,27 +141,18 @@ const serializeItems = async (
       const document = await Document.fetchOne({ uuid: item.UID }, {}, trx);
       await document.fetchRelated('_type', trx);
       await document.applyBehaviors(trx);
-      await document.fetchRelationLists(trx);
-      const parent = document.parent
-        ? await Document.fetchById(document.parent, {}, trx)
-        : undefined;
-      const documentReq = { ...req, document } as Request;
+      await document.fetchRelationLists(trx, req);
+      // The permissions on the item decide if the lock token is shown
+      const permissions = document.lock?.locked
+        ? await document.fetchUserPermissions(req.user, trx)
+        : [];
+      const documentReq = { ...req, document, permissions } as Request;
       return {
         ...(await document.toJson(
           documentReq,
           await getComponents(documentReq, trx, []),
         )),
-        ...(parent
-          ? {
-              parent: {
-                '@id': getUrlByPath(req, parent.path),
-                '@type': parent.type,
-                title: parent.json.title,
-                description: parent.json.description || '',
-                review_state: parent.workflow_state,
-              },
-            }
-          : {}),
+        ...(await fetchParentSummary(req, document, trx)),
       };
     });
   }
@@ -211,7 +223,7 @@ const querystringSearch = async (
   const total = isNaN(limit) || limit < 0 ? count : Math.min(count, limit);
   const items =
     size > 0 && start < total
-      ? await Catalog.fetchAllRestricted(
+      ? await Catalog[fetchMethod(count)](
           query[0],
           {
             ...query[1],
@@ -272,7 +284,7 @@ export default [
       const total = await Catalog.countRestricted(query[0], trx, req);
       const items =
         size > 0 && start < total
-          ? await Catalog.fetchAllRestricted(
+          ? await Catalog[fetchMethod(total)](
               query[0],
               { ...query[1], offset: start, limit: size },
               trx,

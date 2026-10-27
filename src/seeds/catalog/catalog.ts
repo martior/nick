@@ -7,6 +7,7 @@
 import type { Knex } from 'knex';
 
 // Internal imports
+import { createCoveringIndexes } from '../../helpers/catalog/catalog';
 import config from '../../helpers/config/config';
 import { fileExists } from '../../helpers/fs/fs';
 import { stripI18n } from '../../helpers/i18n/i18n';
@@ -66,10 +67,17 @@ export const seedCatalog = async (
             table.dateTime(field).index();
             break;
           case 'string[]':
-            table.specificType(field, 'text[]').index();
+            // The tokens of the permission filter match most documents
+            // (Anonymous, Authenticated), a GIN index makes the planner
+            // read all of them instead of using a selective index
+            if (index.name === 'allowedUsersGroupsRoles') {
+              table.specificType(field, 'text[]').index();
+            } else {
+              table.specificType(field, 'text[]').index(null, 'GIN');
+            }
             break;
           case 'uuid[]':
-            table.specificType(field, 'uuid[]').index();
+            table.specificType(field, 'uuid[]').index(null, 'GIN');
             break;
           case 'embed':
             table.specificType(
@@ -85,6 +93,24 @@ export const seedCatalog = async (
             break;
         }
       });
+      // Better estimates for rare words and keywords, see the
+      // catalog_statistics migration
+      if (
+        ['text', 'string[]', 'uuid[]'].includes(index.type) &&
+        index.name !== 'allowedUsersGroupsRoles'
+      ) {
+        await trx.raw(
+          'ALTER TABLE catalog ALTER COLUMN ?? SET STATISTICS 1000',
+          [`_${index.name}`],
+        );
+      }
+      // Prefix queries on paths need the pattern operator class
+      if (index.type === 'path') {
+        await trx.raw('CREATE INDEX ?? ON catalog (?? varchar_pattern_ops)', [
+          `catalog__${index.name.toLowerCase()}_pattern_index`,
+          `_${index.name}`,
+        ]);
+      }
     });
     await mapAsync(profile.metadata, async (metadata: any) => {
       // Add index
@@ -135,6 +161,8 @@ export const seedCatalog = async (
         }
       });
     });
+    // Indexes over several columns, once all columns exist
+    await createCoveringIndexes(trx);
     console.log('Catalog imported');
   }
 };

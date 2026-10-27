@@ -19,18 +19,18 @@ Nick provides a jobs system to manage long-running tasks asynchronously. Jobs ca
 
 A job object has the following properties:
 
-| Property      | Type             | Description                                                       |
-| ------------- | ---------------- | ----------------------------------------------------------------- |
-| `uuid`        | string           | UUID of the job                                                   |
-| `title`       | string           | Human-readable title                                              |
-| `description` | string           | Human-readable description                                        |
-| `params`      | object           | Parameters passed to the job                                      |
-| `actor`       | string           | User who created the job                                          |
-| `created`     | datetime         | Timestamp when the job was created                                |
-| `started`     | datetime or null | Timestamp when the job started                                    |
-| `finished`    | datetime or null | Timestamp when the job finished                                   |
-| `status`      | string           | Status: `created`, `running`, `completed`, `failed`, or `aborted` |
-| `result`      | object           | Result data produced by the job                                   |
+| Property      | Type             | Description                                                                                       |
+| ------------- | ---------------- | ------------------------------------------------------------------------------------------------- |
+| `uuid`        | string           | UUID of the job                                                                                   |
+| `title`       | string           | Human-readable title                                                                              |
+| `description` | string           | Human-readable description                                                                        |
+| `params`      | object           | Parameters passed to the job                                                                      |
+| `actor`       | string           | User who created the job                                                                          |
+| `created`     | datetime         | Timestamp when the job was created                                                                |
+| `started`     | datetime or null | Timestamp when the job started                                                                    |
+| `finished`    | datetime or null | Timestamp when the job finished                                                                   |
+| `status`      | string           | Status: `created` (queued or waiting for a retry), `started`, `completed`, `failed`, or `aborted` |
+| `result`      | object           | Result data produced by the job                                                                   |
 
 ## List all jobs
 

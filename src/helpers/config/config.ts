@@ -33,6 +33,20 @@ const {
   TRUST_PROXY,
   BLOBS_DIR,
   LOCALES_DIR,
+  JOBS_ISOLATION,
+  JOBS_LEASE,
+  JOBS_MAX_ATTEMPTS,
+  JOBS_POLL_INTERVAL,
+  JOBS_API_PATH,
+  PORT,
+  BLOBS,
+  S3_BUCKET,
+  S3_REGION,
+  S3_ENDPOINT,
+  S3_FORCE_PATH_STYLE,
+  S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY,
+  RATE_LIMIT_STORE,
 } = process.env;
 
 let config: any = {};
@@ -90,18 +104,22 @@ class Config {
         user: DB_USER || config.connection?.user || 'nick',
         password: DB_PASSWORD || config.connection?.password || 'nick',
       },
-      blobs: config.blobs || 'file',
+      blobs: (BLOBS || config.blobs || 'file') as 'file' | 'db' | 's3',
       blobsDir:
         BLOBS_DIR || config.blobsDir || `${__dirname}/../../../var/blobstorage`,
-      s3: config.s3 || {
-        bucket: 'my-bucket',
-        region: 'my-region',
-        accessKeyId: 'my-access-key-id',
-        secretAccessKey: 'my-secret-access-key',
+      s3: {
+        bucket: S3_BUCKET || config.s3?.bucket || 'my-bucket',
+        region: S3_REGION || config.s3?.region || 'us-east-1',
+        endpoint: S3_ENDPOINT || config.s3?.endpoint,
+        forcePathStyle: S3_FORCE_PATH_STYLE
+          ? S3_FORCE_PATH_STYLE === 'true'
+          : config.s3?.forcePathStyle || false,
+        accessKeyId: S3_ACCESS_KEY_ID || config.s3?.accessKeyId,
+        secretAccessKey: S3_SECRET_ACCESS_KEY || config.s3?.secretAccessKey,
       },
       localesDir:
         LOCALES_DIR || config.localesDir || `${__dirname}/../../../locales`,
-      port: config.port || 8080,
+      port: parseInt(PORT || config.port || '8080'),
       secret: getSecret(SECRET || config.secret, process.env.NODE_ENV),
       systemUsers: config.systemUsers || ['admin', 'anonymous'],
       systemGroups: config.systemGroups || ['Owner'],
@@ -136,7 +154,7 @@ class Config {
       frontendUrl: config.frontendUrl || 'http://localhost:3000',
       prefix: config.prefix || '',
       userRegistration: config.userRegistration || false,
-      profiles: config.profiles || ['@plone/nick:core', '@plone/nick:default'],
+      profiles: config.profiles || ['@plone/nick:default'],
       requestLimit: config.requestLimit || {
         api: '1mb',
         files: '10mb',
@@ -155,6 +173,8 @@ class Config {
         trustProxy: parseInt(
           TRUST_PROXY || config.rateLimit?.trustProxy || '1',
         ),
+        store: (RATE_LIMIT_STORE || config.rateLimit?.store || 'memory') as
+          'memory' | 'postgres',
       },
       recyclebin: config.recyclebin || false,
       cache: config.cache || {
@@ -219,6 +239,24 @@ class Config {
             enabled: false,
           },
         },
+      },
+      jobs: {
+        isolation: (JOBS_ISOLATION || config.jobs?.isolation || 'inline') as
+          'inline' | 'process',
+        lease: parseInt(JOBS_LEASE || config.jobs?.lease || '60'),
+        maxAttempts: parseInt(
+          JOBS_MAX_ATTEMPTS || config.jobs?.maxAttempts || '3',
+        ),
+        backoff: parseInt(config.jobs?.backoff || '10'),
+        maxBackoff: parseInt(config.jobs?.maxBackoff || '3600'),
+        pollInterval: parseInt(
+          JOBS_POLL_INTERVAL || config.jobs?.pollInterval || '2',
+        ),
+        refreshInterval: parseInt(config.jobs?.refreshInterval || '10'),
+        apiPath:
+          JOBS_API_PATH ||
+          config.jobs?.apiPath ||
+          `http://localhost:${PORT || config.port || 8080}`,
       },
       userschema: config.userschema || userschema,
     };

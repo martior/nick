@@ -44,8 +44,10 @@ import { getFactoryFields } from '../../helpers/schema/schema';
 import { getRootUrl } from '../../helpers/url/url';
 import {
   isPromise,
+  likePrefix,
   mapAsync,
   mapSync,
+  sortableTitle,
   uniqueId,
 } from '../../helpers/utils/utils';
 import { Model } from '../_model/_model';
@@ -82,6 +84,8 @@ export class Document extends Model {
     stealable: boolean;
     created: number;
     timeout: number;
+    creator?: string;
+    token?: string;
   };
   declare inherit_roles: boolean;
   declare workflow_state: string;
@@ -93,6 +97,7 @@ export class Document extends Model {
     state_title?: string;
     review_state?: string;
     transition_title?: string;
+    comments?: string;
   }[];
   declare translation_group: string;
   declare language: string;
@@ -274,17 +279,23 @@ export class Document extends Model {
     const self: InstanceType<typeof Document> = this;
     const Catalog = models.get('Catalog');
     const paths = (self._children || []).map((child: any) => child.path);
+
+    // Nothing to check without children
+    if (paths.length === 0) {
+      self._restrictedChildren = [];
+      return;
+    }
     const items = await Catalog.fetchAllRestricted(
       { _path: ['=', paths] },
       {},
       trx,
       req,
     );
-    const restrictedPaths = items.map(
-      (item: InstanceType<typeof Catalog>) => item._path,
+    const restrictedPaths = new Set(
+      items.map((item: InstanceType<typeof Catalog>) => item._path),
     );
     self._restrictedChildren = (self._children || []).filter((child: any) =>
-      restrictedPaths.includes(child.path),
+      restrictedPaths.has(child.path),
     );
   }
 
@@ -375,6 +386,61 @@ export class Document extends Model {
   }
 
   /**
+   * Check if the document is locked for a request: it is locked, the lock
+   * has not expired and the request isn't made by the creator of the lock
+   * with the lock token. The token alone is not enough, another user who
+   * learned it can't edit around the lock.
+   * @method isLockedFor
+   * @param {string} userId Id of the current user.
+   * @param {any} token Lock token of the request.
+   * @returns {boolean} True if the document is locked for the request.
+   */
+  isLockedFor(userId: string, token: any): boolean {
+    return (
+      this.isLockedByOther(userId) ||
+      (this.lock.locked && !lockExpired(this) && token !== this.lock.token)
+    );
+  }
+
+  /**
+   * Check if the document is locked by another user than the current user.
+   * @method isLockedByOther
+   * @param {string} userId Id of the current user.
+   * @returns {boolean} True if the document is locked by another user.
+   */
+  isLockedByOther(userId: string): boolean {
+    return (
+      this.lock.locked && !lockExpired(this) && userId !== this.lock.creator
+    );
+  }
+
+  /**
+   * Get the lock information to show to a user. The token is only shown to
+   * users who may edit the document; users who may only view it get the lock
+   * without the token.
+   * @method lockInfo
+   * @param {string[]} permissions Permissions of the user on the document.
+   * @returns {Object} Lock information.
+   */
+  lockInfo(permissions: string[]): any {
+    if (!this.lock.locked || lockExpired(this)) {
+      return { locked: false, stealable: true };
+    }
+    return permissions.includes('Modify')
+      ? this.lock
+      : omit(this.lock, ['token']);
+  }
+
+  /**
+   * Get the sortable title, see the sortableTitle helper
+   * @method sortableTitle
+   * @returns {string} Sortable title
+   */
+  sortableTitle(): string {
+    return sortableTitle(this.getTitle());
+  }
+
+  /**
    * Get title
    * @method getTitle
    * @returns {string} Title
@@ -399,7 +465,13 @@ export class Document extends Model {
   ): Promise<void> {
     const Redirect = models.get('Redirect');
     const documents: any = await this.fetchAll(
-      { path: ['~', `^${oldPath}`] },
+      {
+        path: [
+          'raw',
+          '(path = ? OR path LIKE ?)',
+          [oldPath, likePrefix(`${oldPath}/`)],
+        ],
+      },
       {},
       trx,
     );
@@ -416,14 +488,23 @@ export class Document extends Model {
       }),
     );
     const knex = Document.knex();
+    // Replace the path prefix of the documents below the old path
     await knex
       .raw(
-        `update document set path = regexp_replace(path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where path ~ '^${oldPath}/.*$'`,
+        'UPDATE document SET path = ? || substr(path, ?) WHERE path LIKE ?',
+        [newPath, oldPath.length + 1, likePrefix(`${oldPath}/`)],
       )
       .transacting(trx);
     await knex
       .raw(
-        `update catalog set _path = regexp_replace(_path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g'), path = regexp_replace(path, '^${oldPath}/(.*)$', '${newPath}/\\1', 'g') where _path ~ '^${oldPath}/.*$'`,
+        'UPDATE catalog SET "_path" = ? || substr("_path", ?), path = ? || substr(path, ?) WHERE "_path" LIKE ?',
+        [
+          newPath,
+          oldPath.length + 1,
+          newPath,
+          oldPath.length + 1,
+          likePrefix(`${oldPath}/`),
+        ],
       )
       .transacting(trx);
   }
@@ -434,26 +515,86 @@ export class Document extends Model {
    * @param {string} id Id of item to order.
    * @param {number|string} delta 'top', 'bottom' or numerical offset.
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} subsetIds Ids of the (visible) subset of the children
+   * the delta applies to, in their current order.
    * @returns {Promise} A Promise that resolves when the ordering has been done.
    */
-  async reorder(id: string, delta: any, trx?: Knex.Transaction): Promise<void> {
+  async reorder(
+    id: string,
+    delta: any,
+    trx?: Knex.Transaction,
+    subsetIds?: string[],
+  ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
-    let to: number;
-    const from = (self._children || []).findIndex(
-      (child: any) => child.id === id,
-    );
+    const children = self._children || [];
+
+    // The items which are ordered and their positions
+    const subset = subsetIds
+      ? children.filter((child: any) => subsetIds.includes(child.id))
+      : [...children];
+    const positions = subset.map((child: any) => children.indexOf(child));
+
+    // Ignore unknown items and invalid deltas
+    const from = subset.findIndex((child: any) => child.id === id);
+    const offset = parseInt(delta, 10);
+    if (
+      from === -1 ||
+      (delta !== 'top' && delta !== 'bottom' && isNaN(offset))
+    ) {
+      return;
+    }
 
     // Set to based on delta
+    let to: number;
     if (delta === 'top') {
       to = 0;
     } else if (delta === 'bottom') {
-      to = self._children.length - 1;
+      to = subset.length - 1;
     } else {
-      to = from + delta;
+      to = Math.min(Math.max(from + offset, 0), subset.length - 1);
     }
 
-    // Reorder and save to db
-    self._children.splice(to, 0, self._children.splice(from, 1)[0]);
+    // Reorder the subset and put it back at the positions of the subset
+    subset.splice(to, 0, subset.splice(from, 1)[0]);
+    positions.forEach((position: number, index: number) => {
+      children[position] = subset[index];
+    });
+    self._children = children;
+    await this.fixOrder(trx);
+  }
+
+  /**
+   * Sort the children
+   * @method sortChildren
+   * @param {string} on Field to sort on, like `id`, `sortable_title` or a
+   * field of the children.
+   * @param {string} order Sort order, `ascending` or `descending`.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise} A Promise that resolves when the sorting has been done.
+   */
+  async sortChildren(
+    on: string,
+    order: string,
+    trx?: Knex.Transaction,
+  ): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const value = (child: any): any => {
+      if (on === 'id' || on === 'getId') {
+        return child.id;
+      }
+      if (on === 'sortable_title' || on === 'title') {
+        return child.sortableTitle();
+      }
+      if (['created', 'modified'].includes(on)) {
+        return `${child[on]}`;
+      }
+      return child.json[on] ?? '';
+    };
+    self._children = [...(self._children || [])].sort((a: any, b: any) => {
+      const [x, y] = [value(a), value(b)];
+      const result = x < y ? -1 : x > y ? 1 : 0;
+      return order === 'descending' || order === 'reverse' ? -result : result;
+    });
     await this.fixOrder(trx);
   }
 
@@ -633,84 +774,147 @@ export class Document extends Model {
           }
         : {}),
       review_state: self.workflow_state,
-      lock:
-        self.lock.locked && lockExpired(self)
-          ? {
-              locked: false,
-              stealable: true,
-            }
-          : self.lock,
+      // The token is only shown to users who may edit the document
+      lock: self.lockInfo(
+        req.document?.uuid === self.uuid ? req.permissions || [] : [],
+      ),
     } as Json;
   }
 
   /**
    * Traverse path.
+   *
+   * The documents along the path, their local roles and their types are
+   * fetched with a constant number of queries, independent of the depth.
    * @method traverse
    * @param {Array} slugs Array of slugs.
    * @param {Object} user Current user object.
-   * @param {Array} roles Array of roles.
+   * @param {Array} roles Array of roles, fetched for this document if
+   * undefined.
+   * @param {Object} navroot Navigation root.
    * @param {Object} trx Transaction object.
+   * @param {Array} documents Documents along the path, fetched if undefined.
    * @returns {Promise<Object>} A Promise that resolves to an object.
    */
   async traverse(
     slugs: string[],
     user: any,
-    roles: string[],
+    roles: string[] | undefined,
     navroot: any,
     trx?: Knex.Transaction,
+    documents?: any[],
   ): Promise<any> {
     const self: InstanceType<typeof Document> = this;
-    // Check if at leaf node
-    if (slugs.length === 0) {
-      // Add owner to roles if current document owned by user
-      const extendedRoles = uniq([
-        ...roles,
-        ...(user.id === self.owner ? ['Owner'] : []),
-      ]);
+    const Type = models.get('Type');
 
-      // Return document and authorization data
-      return {
-        document: self,
-        localRoles: extendedRoles,
-        navroot,
-      };
-    } else {
-      // Fetch child matching the id
-      const child: any = await Document.fetchOne(
-        {
-          parent: self.uuid,
-          id: head(slugs),
-        },
-        {},
-        trx,
-      );
+    // Fetch the documents with the paths along the slugs, unless given
+    const paths = Document.getTraversalPaths(self.path, slugs);
+    const candidates: any[] =
+      documents ||
+      (paths.length > 0
+        ? await Document.query(trx).whereIn('path', paths)
+        : []);
+
+    // Walk down the slugs by parent and id
+    const chain: any[] = [];
+    let current: any = self;
+    for (const slug of slugs) {
+      const child =
+        candidates.find(
+          (candidate: any) =>
+            candidate.parent === current.uuid && candidate.id === slug,
+        ) ||
+        // Fall back to the parent and id if the path doesn't match
+        (await Document.fetchOne({ parent: current.uuid, id: slug }, {}, trx));
 
       // Check if child not found
       if (!child) {
         return false;
       }
-
-      // Fetch roles based on user and group from child
-      const childRoles = await user.fetchUserGroupRolesByDocument(
-        child.uuid,
-        trx,
-      );
-
-      // Fetch navroot
-      await child.fetchRelated('_type', trx);
-      const is_navroot = child._type
-        ? child._type._schema.behaviors.includes('navigation_root')
-        : false;
-
-      // Recursively call the traverse on child
-      return child.traverse(
-        drop(slugs, 1),
-        user,
-        child.inherit_roles ? uniq([...roles, ...childRoles]) : childRoles,
-        is_navroot ? child : navroot,
-        trx,
-      );
+      chain.push(child);
+      current = child;
     }
+
+    // Fetch the local roles of the user and the types of all documents
+    const localRoles = await user.fetchUserGroupRolesByDocuments(
+      [...(roles ? [] : [self.uuid]), ...chain.map((child) => child.uuid)],
+      trx,
+    );
+    const typeIds = uniq(chain.map((child) => child.type));
+    const types: any[] =
+      typeIds.length > 0
+        ? await Type.query(trx)
+            .withGraphJoined('_workflow')
+            .whereIn('type.id', typeIds)
+        : [];
+
+    // Merge the roles and find the navigation root top down
+    let mergedRoles: string[] = roles || localRoles[self.uuid];
+    chain.forEach((child: any) => {
+      child._type = types.find((type: any) => type.id === child.type);
+      mergedRoles = child.inherit_roles
+        ? uniq([...mergedRoles, ...localRoles[child.uuid]])
+        : localRoles[child.uuid];
+      if (child._type?._schema.behaviors.includes('navigation_root')) {
+        navroot = child;
+      }
+    });
+
+    // Add owner to roles if current document owned by user
+    const document = chain.length > 0 ? chain[chain.length - 1] : self;
+    return {
+      document,
+      localRoles: uniq([
+        ...mergedRoles,
+        ...(user.id === document.owner ? ['Owner'] : []),
+      ]),
+      navroot,
+    };
+  }
+
+  /**
+   * Get the paths of the documents along the slugs below a path.
+   * @method getTraversalPaths
+   * @static
+   * @param {string} path Path to start from.
+   * @param {Array} slugs Array of slugs.
+   * @returns {string[]} Paths.
+   */
+  static getTraversalPaths(path: string, slugs: string[]): string[] {
+    const base = path === '/' ? '' : path;
+    return slugs.map(
+      (_slug: string, index: number) =>
+        `${base}/${slugs.slice(0, index + 1).join('/')}`,
+    );
+  }
+
+  /**
+   * Traverse path from the root, fetching the root together with the
+   * documents along the path.
+   * @method traverseFromRoot
+   * @static
+   * @param {Array} slugs Array of slugs.
+   * @param {Object} user Current user object.
+   * @param {Object} trx Transaction object.
+   * @returns {Promise<Object>} Traversal result, false if not found.
+   */
+  static async traverseFromRoot(
+    slugs: string[],
+    user: any,
+    trx?: Knex.Transaction,
+  ): Promise<any> {
+    const documents: any[] = await Document.query(trx)
+      .whereNull('parent')
+      .orWhereIn('path', Document.getTraversalPaths('/', slugs));
+    const root = documents.find((document: any) => document.parent === null);
+    return root.traverse(
+      slugs,
+      user,
+      undefined,
+      root,
+      trx,
+      documents.filter((document: any) => document !== root),
+    );
   }
 
   /**
@@ -755,11 +959,13 @@ export class Document extends Model {
       await self._type.fetchRelated('_workflow', trx);
     }
 
-    // Return global and workflow permissions
-    return uniq([
-      ...(await Role.fetchPermissions(roles, trx)),
-      ...self._type._workflow.getPermissions(self.workflow_state, roles),
-    ]);
+    // Return the global and workflow permissions, by the permission model
+    // of the workflow like the request handler
+    return self._type._workflow.applyPermissions(
+      self.workflow_state,
+      roles,
+      await Role.fetchPermissions(roles, trx),
+    );
   }
 
   /**
@@ -773,12 +979,29 @@ export class Document extends Model {
     req: Request,
     trx?: Knex.Transaction,
   ): Promise<any[]> {
+    const self: InstanceType<typeof Document> = this;
     const User = models.get('User');
+
+    // The entry of the creation has no action, it is shown as "Create"
+    // like in plone.restapi
+    const history: any[] = self.workflow_history;
+
     return await Promise.all(
-      this.workflow_history.map(async (item: any) => {
-        const user = await User.fetchById(item.actor, {}, trx);
+      history.map(async (item: any) => {
+        const user = item.actor
+          ? await User.fetchById(item.actor, {}, trx)
+          : undefined;
         return {
           ...item,
+          ...(!item.action && (!item.type || item.type === 'workflow')
+            ? {
+                action: 'Create',
+                transition_title: 'Create',
+              }
+            : {}),
+          ...(item.state_title
+            ? { state_title: req.i18n(item.state_title) }
+            : {}),
           actor: {
             '@id': `${getRootUrl(req)}/@users/${item.actor}`,
             fullname: user ? user.fullname : item.actor,
@@ -855,6 +1078,8 @@ export class Document extends Model {
    * @param {boolean} recursive
    * @param {Knex.Transaction} trx Transaction object.
    * @param {Request} req Request object.
+   * @param {Object} options Comment and publication dates (`effective` and
+   * `expires`) of the transition.
    */
   async changeWorkflow(
     transition: string,
@@ -863,6 +1088,7 @@ export class Document extends Model {
     recursive: boolean,
     trx: Knex.Transaction,
     req: Request,
+    options: { comment?: string; effective?: string; expires?: string } = {},
   ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
 
@@ -879,6 +1105,27 @@ export class Document extends Model {
     const new_state =
       self._type._workflow.json.transitions[transition]?.new_state;
 
+    // Set the publication dates; the effective date is set when the item
+    // is published (viewable by anonymous) the first time
+    const dates = pick(options, ['effective', 'expires']);
+    if (
+      new_state &&
+      new_state !== old_state &&
+      !self.json.effective &&
+      !dates.effective &&
+      self._type._workflow
+        .getPermissions(new_state, ['Anonymous'])
+        .includes('View')
+    ) {
+      dates.effective = modified;
+    }
+    if (Object.keys(dates).length > 0) {
+      await self.updateAndFetch({ json: { ...self.json, ...dates } }, trx);
+      if (!new_state || new_state === old_state) {
+        await self.reindex(trx);
+      }
+    }
+
     // Check if state is available and not the current state
     if (new_state && new_state !== old_state) {
       // Add to workflow history
@@ -891,6 +1138,7 @@ export class Document extends Model {
         review_state: new_state,
         transition_title:
           self._type._workflow.json.transitions[transition].title,
+        ...(options.comment ? { comments: options.comment } : {}),
       });
 
       // Trigger on before change workflow
@@ -949,6 +1197,7 @@ export class Document extends Model {
           recursive,
           trx,
           req,
+          options,
         ),
     );
   }
@@ -1279,8 +1528,9 @@ export class Document extends Model {
     state: string,
     globalRoles: string[],
   ): string[] {
+    const Workflow = models.get('Workflow');
     return uniq([
-      ...globalRoles,
+      ...(Workflow.isAcquired(workflow, state, 'View') ? globalRoles : []),
       ...Object.keys(
         pickBy(workflow?.states?.[state]?.permissions || {}, (value: any) =>
           value.includes('View'),
@@ -1305,9 +1555,12 @@ export class Document extends Model {
   ): string[] {
     return uniq([
       ...viewRoles,
+      // Sorted, so the result doesn't depend on the order in which the
+      // local roles were collected (per document, by subtree or in batches)
       ...localRoles
         .filter((localRole) => viewRoles.includes(localRole.role))
-        .map((localRole) => localRole.principal),
+        .map((localRole) => localRole.principal)
+        .sort(),
       ...(owner && viewRoles.includes('Owner') ? [userToken(owner)] : []),
     ]);
   }
@@ -1424,8 +1677,8 @@ export class Document extends Model {
         'workflow_state',
       )
       .where('uuid', self.uuid)
-      .orWhereRaw('starts_with(path, ?)', [
-        self.path === '/' ? '/' : `${self.path}/`,
+      .orWhereRaw('path LIKE ?', [
+        likePrefix(self.path === '/' ? '/' : `${self.path}/`),
       ])
       .orderByRaw('length(path)')
       .transacting(trx);
@@ -1490,6 +1743,175 @@ export class Document extends Model {
         .transacting(trx);
     }
     return allowed.length;
+  }
+
+  /**
+   * Reindex the catalog of all documents, or of the documents of some
+   * types, in batches. Types, workflows, indexes and local roles are
+   * fetched once, the permissions are computed from the paths and every
+   * batch is written with one statement in its own transaction, so other
+   * changes don't wait for the whole reindex.
+   * @method reindexCatalog
+   * @static
+   * @param {Object} options Types (default all), batch size and an abort
+   * signal.
+   * @return {Promise<number>} Number of reindexed documents.
+   */
+  static async reindexCatalog(
+    options: {
+      types?: string[];
+      batchSize?: number;
+      signal?: AbortSignal;
+    } = {},
+  ): Promise<number> {
+    const Index = models.get('Index');
+    const Type = models.get('Type');
+    const knex = Document.knex();
+    const batchSize = options.batchSize || 500;
+
+    // Fetch what is the same for all documents
+    const indexes = (await Index.fetchAll({}, {}, undefined)).models;
+    const types: Record<string, any> = Object.fromEntries(
+      (await Type.fetchAll({}, { related: '_workflow' })).map((type: any) => [
+        type.id,
+        type,
+      ]),
+    );
+    const globalRoles = await Document.fetchGlobalViewRoles();
+    const columns: Record<string, string> = Object.fromEntries(
+      (
+        await knex.raw(
+          `SELECT attname, format_type(atttypid, atttypmod) AS type FROM pg_attribute
+            WHERE attrelid = 'catalog'::regclass AND attnum > 0 AND NOT attisdropped`,
+        )
+      ).rows.map((row: any) => [row.attname, row.type]),
+    );
+
+    // Local roles and blocked inheritance by path, the other documents
+    // have no local roles and inherit
+    const local = new Map<
+      string,
+      { inherit: boolean; roles: { principal: string; role: string }[] }
+    >();
+    (
+      await knex.raw(
+        `SELECT d.path, d.inherit_roles, r."user", r."group", r.role FROM document d
+          LEFT JOIN (
+            SELECT document, "user", NULL AS "group", role FROM user_role_document
+            UNION ALL
+            SELECT document, NULL, "group", role FROM group_role_document
+          ) r ON r.document = d.uuid
+          WHERE r.document IS NOT NULL OR NOT d.inherit_roles`,
+      )
+    ).rows.forEach((row: any) => {
+      const entry = local.get(row.path) || {
+        inherit: row.inherit_roles,
+        roles: [] as { principal: string; role: string }[],
+      };
+      if (row.role) {
+        entry.roles.push({
+          principal: row.user ? userToken(row.user) : groupToken(row.group),
+          role: row.role,
+        });
+      }
+      local.set(row.path, entry);
+    });
+    const localRoles = (document: any) => {
+      let path = document.path;
+      let roles = local.get(path)?.roles || [];
+      let inherit = document.inherit_roles;
+      while (inherit && path !== '/') {
+        path = path.substring(0, path.lastIndexOf('/')) || '/';
+        const entry = local.get(path);
+        roles = [...roles, ...(entry?.roles || [])];
+        inherit = entry ? entry.inherit : true;
+      }
+      return roles;
+    };
+
+    // Reindex the documents in batches ordered by uuid
+    let count = 0;
+    let lastUuid: string | undefined;
+    for (;;) {
+      if (options.signal?.aborted) {
+        throw new Error('Reindex aborted');
+      }
+      const documents: any[] = await Document.query()
+        .modify((query: any) => {
+          if (options.types) {
+            query.whereIn('type', options.types);
+          }
+          if (lastUuid) {
+            query.where('uuid', '>', lastUuid);
+          }
+        })
+        .orderBy('uuid')
+        .limit(batchSize);
+      if (documents.length === 0) {
+        break;
+      }
+
+      // Get the catalog fields of the documents
+      const kinds: Record<string, { type: string; metadata: boolean }> = {};
+      const rows = await mapAsync(documents, async (document: any) => {
+        document._type = types[document.type];
+        const fields = await document.getIndexFields(undefined, {
+          indexes,
+          values: {
+            allowedUsersGroupsRoles: Document.getAllowed(
+              Document.getViewRoles(
+                document._type?._workflow?.json,
+                document.workflow_state,
+                globalRoles,
+              ),
+              localRoles(document),
+              document.owner,
+            ),
+          },
+        });
+        Object.keys(fields).forEach((name: string) => {
+          kinds[name] = fields[name];
+        });
+        return {
+          ...mapValues(fields, (field: any) =>
+            field.type === 'embed' ? JSON.stringify(field.value) : field.value,
+          ),
+          document: document.uuid,
+        };
+      });
+
+      // Write the batch with one statement
+      const names = Object.keys(kinds).filter((name) => columns[name]);
+      const value = (name: string) => {
+        if (kinds[name].type === 'text' && !kinds[name].metadata) {
+          return `to_tsvector('nick', v."${name}")`;
+        }
+        return kinds[name].type === 'embed'
+          ? `v."${name}"::${columns[name]}`
+          : `v."${name}"`;
+      };
+      const recordType = (name: string) =>
+        kinds[name].type === 'embed' ||
+        (kinds[name].type === 'text' && !kinds[name].metadata)
+          ? 'text'
+          : columns[name];
+      await knex.transaction(async (trx: Knex.Transaction) => {
+        await trx.raw(
+          `INSERT INTO catalog (document, ${names.map((name) => `"${name}"`).join(', ')})
+            SELECT v.document, ${names.map(value).join(', ')}
+            FROM jsonb_to_recordset(?::jsonb) AS v(document uuid, ${names
+              .map((name) => `"${name}" ${recordType(name)}`)
+              .join(', ')})
+            ON CONFLICT (document) DO UPDATE SET ${names
+              .map((name) => `"${name}" = EXCLUDED."${name}"`)
+              .join(', ')}`,
+          [JSON.stringify(rows)],
+        );
+      });
+      count += documents.length;
+      lastUuid = documents[documents.length - 1].uuid;
+    }
+    return count;
   }
 
   /**
@@ -1659,14 +2081,19 @@ export class Document extends Model {
   }
 
   /**
-   * Index object
-   * @method index
+   * Get the catalog fields of the document
+   * @method getIndexFields
    * @param {Knex.Transaction} trx Transaction object.
-   * @param {boolean} insert Insert or update.
+   * @param {Object} options Indexes to use instead of fetching them and
+   * values to use for some attributes instead of computing them.
+   * @returns {Promise<Object>} Type, metadata flag and value by column.
    */
-  async index(trx: Knex.Transaction, insert = true): Promise<void> {
+  async getIndexFields(
+    trx?: Knex.Transaction,
+    options: { indexes?: any[]; values?: Record<string, any> } = {},
+  ): Promise<Record<string, any>> {
     const self: InstanceType<typeof Document> = this;
-    let fields: any = {};
+    const fields: any = {};
 
     // If type not found fetch type
     if (!self._type) {
@@ -1686,14 +2113,17 @@ export class Document extends Model {
 
     // Fetch indexes
     const Index = models.get('Index');
-    const indexes: any = await Index.fetchAll({}, {}, trx);
+    const indexes: any[] =
+      options.indexes || (await Index.fetchAll({}, {}, trx)).models;
 
     // Loop indexes
-    await mapAsync((indexes as any).models, async (index: any) => {
+    await mapAsync(indexes, async (index: any) => {
       const name = index.metadata ? index.name : `_${index.name}`;
       if (index.attr in self) {
         fields[name] = { type: index.type, metadata: index.metadata };
-        if (isFunction((self as any)[index.attr])) {
+        if (options.values && index.attr in options.values) {
+          fields[name].value = options.values[index.attr];
+        } else if (isFunction((self as any)[index.attr])) {
           const value = (self as any)[index.attr](trx);
           fields[name].value = isPromise(value) ? await value : value;
         } else {
@@ -1714,11 +2144,22 @@ export class Document extends Model {
       }
     });
 
+    // Remove undefined
+    return omitBy(fields, (field: any) => isUndefined(field.value));
+  }
+
+  /**
+   * Index object
+   * @method index
+   * @param {Knex.Transaction} trx Transaction object.
+   * @param {boolean} insert Insert or update.
+   */
+  async index(trx: Knex.Transaction, insert = true): Promise<void> {
+    const self: InstanceType<typeof Document> = this;
+    const fields = await self.getIndexFields(trx);
+
     // Get knex
     const knex = Document.knex();
-
-    // Remove undefined
-    fields = omitBy(fields, (field: any) => isUndefined(field.value));
 
     // Create catalog entry
     if (insert) {
@@ -1771,7 +2212,13 @@ export class Document extends Model {
   ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
     if (types) {
-      await self.fetchRelated('[_children(order)._type, _type]', trx);
+      // Reuse the type of the document if it is already fetched. One
+      // relation at a time: objection fetches sibling relations in
+      // parallel, and a transaction has only one connection.
+      if (!self._type) {
+        await self.fetchRelated('_type', trx);
+      }
+      await self.fetchRelated('_children(order)._type', trx);
     } else {
       await self.fetchRelated('_children(order)', trx);
     }

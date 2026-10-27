@@ -65,7 +65,7 @@ describe('Aliases', () => {
       .get('/news/@aliases')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${token}`)
-      .expect(403);
+      .expect(401);
 
     // An editor of the news folder lists its aliases, not those of the site
     await request(app)
@@ -86,6 +86,6 @@ describe('Aliases', () => {
       .get('/@aliases')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${token}`)
-      .expect(403);
+      .expect(401);
   });
 });

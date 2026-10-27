@@ -67,7 +67,7 @@ function readFile(filename: string): FileData {
   // Get body from request
   const body =
     data.length - 1 > headerLength
-      ? headers['Content-Type'] === 'application/json' ||
+      ? headers['Content-Type']?.startsWith('application/json') ||
         headers['Accept'] === 'application/json'
         ? JSON.parse(data.slice(headerLength + 1).join('\n'))
         : data.slice(headerLength + 1).join('\n')

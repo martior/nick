@@ -377,6 +377,31 @@
       "vocabulary": null
     },
     {
+      "name": "isFolderish",
+      "type": "boolean",
+      "attr": "isFolderish",
+      "title:i18n": "Folder-like",
+      "description:i18n": "Find items that can contain other objects",
+      "group": "Metadata",
+      "enabled": true,
+      "sortable": false,
+      "operators": {
+        "boolean.isFalse": {
+          "title:i18n": "No",
+          "description": "",
+          "operation": "isFalse",
+          "widget": null
+        },
+        "boolean.isTrue": {
+          "title:i18n": "Yes",
+          "description": "",
+          "operation": "isTrue",
+          "widget": null
+        }
+      },
+      "vocabulary": null
+    },
+    {
       "name": "exclude_from_nav",
       "type": "boolean",
       "attr": "exclude_from_nav",
@@ -491,7 +516,7 @@
     {
       "name": "sortable_title",
       "type": "string",
-      "attr": "getTitle",
+      "attr": "sortableTitle",
       "title:i18n": "Sortable Title",
       "description:i18n": "The item’s title, transformed for sorting",
       "group": "Text",

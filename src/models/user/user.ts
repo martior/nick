@@ -13,6 +13,7 @@ import { compact, flattenDeep, uniq } from 'es-toolkit/array';
 // Internal imports
 import models from '../';
 import { Model } from '../_model/_model';
+import { authenticatedUsers } from '../../helpers/auth/auth';
 import config from '../../helpers/config/config';
 import { removeFile } from '../../helpers/fs/fs';
 import { getFactoryFields } from '../../helpers/schema/schema';
@@ -102,13 +103,19 @@ export class User extends Model {
   }
 
   /**
-   * Get groups of the user.
+   * Get groups of the user. Authenticated users are member of the
+   * `AuthenticatedUsers` group, like in Plone.
    * @method getGroups
    * @returns {string[]} Array of groups.
    */
   getGroups(): string[] {
     const self: InstanceType<typeof User> = this;
-    return self._groups ? self._groups.map((group: any) => group.id) : [];
+    const groups = self._groups
+      ? self._groups.map((group: any) => group.id)
+      : [];
+    return self.id === 'anonymous' || groups.includes(authenticatedUsers)
+      ? groups
+      : [...groups, authenticatedUsers];
   }
 
   /**
@@ -193,6 +200,44 @@ export class User extends Model {
       trx,
     );
     return uniq([...roles, ...groupRoles]);
+  }
+
+  /**
+   * Fetch user and group roles of several documents at once.
+   * @method fetchUserGroupRolesByDocuments
+   * @param {string[]} documents Uuids of the documents
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<Object>} Arrays of roles by document uuid.
+   */
+  async fetchUserGroupRolesByDocuments(
+    documents: string[],
+    trx?: Knex.Transaction,
+  ): Promise<Record<string, string[]>> {
+    const self: InstanceType<typeof User> = this;
+    const knex = trx || User.knex();
+    const roles: Record<string, string[]> = Object.fromEntries(
+      documents.map((document) => [document, []]),
+    );
+    if (documents.length === 0) {
+      return roles;
+    }
+    const rows: any[] = await knex('user_role_document')
+      .select('document', 'role')
+      .where('user', self.id)
+      .whereIn('document', documents);
+    const groups = self.getGroups();
+    if (groups.length > 0) {
+      rows.push(
+        ...(await knex('group_role_document')
+          .select('document', 'role')
+          .whereIn('group', groups)
+          .whereIn('document', documents)),
+      );
+    }
+    rows.forEach((row: any) => {
+      roles[row.document] = uniq([...roles[row.document], row.role]);
+    });
+    return roles;
   }
 
   /**

@@ -35,6 +35,8 @@ export const config = {
   s3: {
     bucket: 'my-bucket-name',
     region: 'my-region',
+    // endpoint: 'http://localhost:9000', // MinIO, R2, Ceph, ...
+    // forcePathStyle: true,
     accessKeyId: 'my-access-key-id>',
     secretAccessKey: 'my-secret-access-key',
   },
@@ -71,7 +73,7 @@ export const config = {
   profiles: [
     '@plone/nick:core',
     /* '@plone/nick:ai', */
-    '@plone/nick:examplecontent',
+    '@plone/nick:default',
     /* '@plone/nick:multilingual', */
     /* '@plone/nick:multilingualcontent', */
   ],

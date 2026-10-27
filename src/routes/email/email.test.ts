@@ -48,13 +48,13 @@ describe('Email', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${token}`)
       .send(mail)
-      .expect(403);
+      .expect(401);
     await request(app)
       .post('/news/@users/admin/@email-notification')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${token}`)
       .send(mail)
-      .expect(403);
+      .expect(401);
 
     // Not on content, also not for the admin
     await request(app)

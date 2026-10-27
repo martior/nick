@@ -52,15 +52,15 @@ describe('Content Rules', () => {
       req
         .set('Accept', 'application/json')
         .set('Authorization', `Bearer ${token}`);
-    await editor(request(app).get('/events/@content-rules')).expect(403);
+    await editor(request(app).get('/events/@content-rules')).expect(401);
     await editor(request(app).post('/events/@content-rules/rule-1')).expect(
-      403,
+      401,
     );
     await editor(request(app).patch('/events/@content-rules'))
       .send({ 'form.button.Disable': true, rule_ids: ['rule-1'] })
-      .expect(403);
+      .expect(401);
     await editor(request(app).delete('/events/@content-rules'))
       .send({ rule_ids: ['rule-1'] })
-      .expect(403);
+      .expect(401);
   });
 });

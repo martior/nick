@@ -3,7 +3,16 @@ Content-Type: application/json
 
 {
   "@id": "http://localhost:8080/news/@workflow",
-  "history": [],
+  "history": [
+    {
+      "action": "publish",
+      "actor": "admin",
+      "comments": "",
+      "review_state": "published",
+      "time": "2022-04-03T20:22:00.000Z",
+      "title": "Published"
+    }
+  ],
   "state": {
     "id": "published",
     "title": "Published"

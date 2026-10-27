@@ -1,0 +1,7 @@
+{
+  "id": "@plone/nick-example-addon:default",
+  "title": "Nick Example Add-on",
+  "description": "Example add-on: a content type, a behavior, a REST service, a scheduled job and its own tables",
+  "version": 1000,
+  "dependencies": ["@plone/nick:core"]
+}

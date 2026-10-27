@@ -9,6 +9,7 @@ import type { Request } from '../../types';
 
 // External imports
 import { compact, drop, head, last } from 'es-toolkit/array';
+import { omit } from 'es-toolkit/object';
 
 // Internal imports
 import {
@@ -63,6 +64,7 @@ async function traverse(
         {
           '@id': `${last(items)['@id']}/${child.id}`,
           title: child.getTitle(),
+          path: child.path,
         },
       ],
       trx,
@@ -89,10 +91,36 @@ export const handler = async (req: Request, trx: Knex.Transaction) => {
     ],
     trx,
   );
+
+  // Leave out the ancestors the user may not view, so their titles don't
+  // leak; the permissions are checked in one catalog query
+  const Catalog = models.get('Catalog');
+  const ancestors = drop(items, 1)
+    .slice(0, -1)
+    .map((item: any) => item.path);
+  const visible = new Set(
+    ancestors.length > 0
+      ? (
+          await Catalog.fetchAllRestricted(
+            { _path: ['=', ancestors] },
+            {},
+            trx,
+            req,
+          )
+        ).map((item: any) => item._path)
+      : [],
+  );
+  const crumbs = drop(items, 1)
+    .filter(
+      (item: any, index: number, all: any[]) =>
+        index === all.length - 1 || visible.has(item.path),
+    )
+    .map((item: any) => omit(item, ['path']));
+
   return {
     json: {
       '@id': `${getUrl(req)}/@breadcrumbs`,
-      items: drop(items, 1),
+      items: crumbs,
       root: getUrlByPath(req, req.navroot.path),
     },
   };

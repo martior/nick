@@ -17,6 +17,7 @@ import { applyCache } from './helpers/cache/cache';
 import config from './helpers/config/config';
 import {
   errorBody,
+  isDuplicateIdError,
   isRetryableError,
   RequestException,
 } from './helpers/error/error';
@@ -29,7 +30,6 @@ import { getRootUrl } from './helpers/url/url';
 import { regExpEscape } from './helpers/utils/utils';
 import models from './models';
 import routes from './routes';
-import scheduledJobs from './scheduled_jobs';
 import middleware from './middleware';
 import requests from './helpers/requests/requests';
 
@@ -38,9 +38,6 @@ await initProfiles();
 
 // Initialize i18n
 initI18n();
-
-// Run scheduled tasks
-await scheduledJobs.refreshTasks();
 
 // Create blob dir if it doesn’t exist
 if (config.settings.blobs === 'file' && !existsSync(config.settings.blobsDir)) {
@@ -268,6 +265,14 @@ routes.routes.map((route: Route) => {
                 ? { message: req.i18n('Internal server error') }
                 : err.message;
             return res.status(err.status).send(errorBody(err.status, message));
+          } else if (isDuplicateIdError(err)) {
+            // An id which is already used in the folder, the checks of the
+            // routes normally catch this before the database does
+            return res.status(400).send(
+              errorBody(400, {
+                message: req.i18n('The id is already in use in this folder.'),
+              }),
+            );
           } else {
             // Log error
             log.error(err);

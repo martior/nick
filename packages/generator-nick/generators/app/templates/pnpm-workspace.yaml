@@ -1,2 +1,4 @@
-packages:
-  - 'src/develop/nick'
+allowBuilds:
+  bcrypt: true
+  esbuild: true
+  sharp: true
