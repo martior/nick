@@ -1,5 +1,5 @@
 /**
- * Upgrade 1008: prefix users and groups in the catalog permissions.
+ * Upgrade 1008: add the selection.none querystring operation.
  * @module profiles/core/upgrades/1008
  */
 
@@ -7,19 +7,35 @@
 import type { Knex } from 'knex';
 
 // Internal imports
-import models from '../../../../models';
+import { mapAsync } from '../../../../helpers/utils/utils';
 
 /**
- * Rebuild the allowed users, groups and roles of all documents, users are
- * now stored as `user:<id>` and groups as `group:<id>`.
+ * Add the selection.none operation to the selection indexes.
  * @method init
  * @param {Knex.Transaction} trx Transaction object.
  * @returns {Promise<void>} Promise resolved when done.
  */
 export async function init(trx: Knex.Transaction): Promise<void> {
-  const Document = models.get('Document');
-  const root = await Document.fetchOne({ parent: null }, {}, trx);
-  if (root) {
-    await root.reindexSecurity(trx);
-  }
+  const indexes = await trx('index').whereIn('id', [
+    '_Subject',
+    '_portal_type',
+    '_review_state',
+  ]);
+  await mapAsync(indexes, async (index: any) => {
+    if (index.operators && !index.operators['selection.none']) {
+      await trx('index')
+        .where({ id: index.id })
+        .update({
+          operators: {
+            ...index.operators,
+            'selection.none': {
+              title: 'Matches none of',
+              description: 'Tip: you can use * to autocomplete.',
+              operation: 'excludes',
+              widget: 'MultipleSelectionWidget',
+            },
+          },
+        });
+    }
+  });
 }

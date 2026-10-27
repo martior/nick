@@ -7,7 +7,7 @@ Content-Type: application/json
   "title": "Mail",
   "data": {
     "host": "localhost",
-    "pass": "",
+    "pass": null,
     "port": 25,
     "user": "",
     "debug": true,
