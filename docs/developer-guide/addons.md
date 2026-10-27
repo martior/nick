@@ -6,9 +6,9 @@ permalink: /developer-guide/addons
 
 # Add-ons
 
-An add-on is an npm package that depends on `@plone/nick` and contains one or more [profiles](/developer-guide/profiles). It can add content types, behaviors, REST services, vocabularies, blocks, event subscribers, control panels, periodic tasks and its own tables with its own migrations, without changing Nick itself. Projects created with the [generator](/admin-guide/installation) are structured the same way: the project is a package with a profile.
+An add-on is an npm package that depends on `@plone/nick` and contains one or more [profiles](/developer-guide/profiles). It can add content types, behaviors, REST services, vocabularies, blocks, event subscribers, control panels, scheduled jobs and its own tables with its own migrations, without changing Nick itself. Projects created with the [generator](/admin-guide/installation) are structured the same way: the project is a package with a profile.
 
-`packages/nick-example-addon` in the Nick repository is a complete example. It adds a `Review` content type, an `example_rating` behavior, the `@notes` and `@rating` services, a nightly periodic task, a `note` table in its own `example` Postgres schema, and two migrations (a schema migration and a batched data migration). Its tests install it and use every extension point.
+`packages/nick-example-addon` in the Nick repository is a complete example. It adds a `Review` content type, an `example_rating` behavior, the `@notes` and `@rating` services, a nightly scheduled job, a `note` table in its own `example` Postgres schema, and two migrations (a schema migration and a batched data migration). Its tests install it and use every extension point.
 
 ## Package
 
@@ -76,14 +76,14 @@ Deep imports like `@plone/nick/src/routes` still work, but they are **deprecated
 
 | Group                    | Exports                                                                                                                                                                                                                           |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Registries               | `behaviors`, `blobs`, `blocks`, `contentRules`, `events`, `middleware`, `models`, `routes`, `scheduledJobs` (actions and periodic tasks), `seeds`, `vocabularies`                                                                |
+| Registries               | `behaviors`, `blobs`, `blocks`, `contentRules`, `events`, `middleware`, `models`, `routes`, `scheduledJobs` (actions), `seeds`, `vocabularies`                                                                                   |
 | Models                   | `Model`, `Collection`                                                                                                                                                                                                             |
 | Configuration and DB     | `config`, `knex`, `log`                                                                                                                                                                                                           |
 | Requests                 | `RequestException`, `getUrl`, `getUrlByPath`, `getRootUrl`, `getPath`, `hasPermission`, `getControlpanelSettings`                                                                                                                 |
 | Jobs and data migrations | `jobs`, `migrateInBatches`, `registerDataMigration`, `queueDataMigration`, `dataMigrationProgress`                                                                                                                                |
 | Profiles and migrations  | `configuredProfiles`, `resolveProfiles`, `resolveProfile`, `resolvePackage`, `getProfiles`, `getPackages`, `readMetadata`, `initProfile`, `initProfiles`, `installProfiles`, `upgradeProfiles`, `migrateDatabase`, `migrateChain`, `migrationChains`, `migrationStatus`, `migrationTable`, `MigrationSource` |
 | Utilities                | `mapAsync`, `mapSync`, `uniqueId`, `stripI18n`, `Client`, `getApp` (the Express app, for tests)                                                                                                                                   |
-| Types                    | `Knex`, `Request`, `Route`, `View`, `Json`, `JsonObject`, `Params`, `Schema`, `Block`, `MiddlewareHandler`, `SeedHandler`, `Vocabulary`, `VocabularyTerm`, `VocabularyHandler`, `ScheduledJobAction`, `ScheduledJobContext`, `ContentRuleAction`, `ContentRuleCondition`, `PeriodicTask`, `ProfileMetadata`, `NickPackageConfig`, `ConfigSettings`, `DataMigration`, `BatchHandler`, `MigrationChain`, `PackageInfo`, `ProfileInfo` |
+| Types                    | `Knex`, `Request`, `Route`, `View`, `Json`, `JsonObject`, `Params`, `Schema`, `Block`, `MiddlewareHandler`, `SeedHandler`, `Vocabulary`, `VocabularyTerm`, `VocabularyHandler`, `ScheduledJobAction`, `ScheduledJobContext`, `ContentRuleAction`, `ContentRuleCondition`, `ProfileMetadata`, `NickPackageConfig`, `ConfigSettings`, `DataMigration`, `BatchHandler`, `MigrationChain`, `PackageInfo`, `ProfileInfo` |
 
 Control panels are profile data: add them as `controlpanels/<id>.json` in a profile, and read their settings with `getControlpanelSettings(id, trx)`.
 
@@ -104,13 +104,7 @@ export function init(): void {
   models.register('AcmeNote', () => Note); // own table
   behaviors.register('acme_rating', rating); // code half of a behavior
   routes.register(notesRoutes); // REST services
-  scheduledJobs.registerAction('acme_purge', purge); // job action
-  scheduledJobs.registerTask({
-    id: 'acme-purge',
-    title: 'Purge notes',
-    schedule: '0 3 * * *', // cron
-    action: 'acme_purge',
-  });
+  scheduledJobs.registerAction('acme_purge', purge); // action of a scheduled job
   registerDataMigration(noteWords); // may run on the job queue
 }
 ```
@@ -119,9 +113,22 @@ The data halves are files in the profile: `types/<type>.json`, `behaviors/<behav
 
 Routes registered later take precedence, so register add-on routes after core's (the dependency order does that).
 
-## Periodic tasks
+## Scheduled jobs
 
-`scheduledJobs.registerTask()` declares a [scheduled job](/developer-guide/scheduled-jobs) in code. The workers schedule it like the scheduled jobs in the database: once per time slot across all workers, run as a job with retries. A scheduled job in the database with the same id overrides the task, so a site administrator can change its schedule or disable it through `@scheduled-jobs`. An invalid cron expression throws when the task is registered.
+An add-on adds [scheduled jobs](/developer-guide/scheduled-jobs) like any other profile, in a `scheduled_jobs.json` file of its profile, and registers the actions they run with `scheduledJobs.registerAction()`. The scheduled jobs are stored when the profile is installed, so a site administrator can change their schedule or disable them through `@scheduled-jobs`. The workers run each of them once per time slot across all workers, as a job with retries. Don't use `purge` in an add-on: it removes the scheduled jobs of the site and of other profiles.
+
+```json
+{
+  "scheduled_jobs": [
+    {
+      "id": "acme-purge",
+      "title": "Purge notes",
+      "action": "acme_purge",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}
+```
 
 ## Tables and migrations
 

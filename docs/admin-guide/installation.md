@@ -472,6 +472,10 @@ You should see output indicating Nick is running, typically on port 8080:
 Nick is running on http://localhost:8080
 ```
 
+### Set a secret
+
+Nick signs login and password reset tokens with a secret. Set it with the `SECRET` environment variable (or `secret` in `config.ts`) to a long random value, for example the output of `openssl rand -hex 32`. Production (`NODE_ENV=production`) refuses to start without it. The default value `secret` is only used when `NODE_ENV` is `development` or `test`; otherwise Nick uses a random secret, so all users are logged out when Nick restarts and several Nick processes don't accept each other's tokens.
+
 ### Verify it works
 
 Open a new terminal and test the API:

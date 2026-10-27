@@ -13,6 +13,22 @@ Content-Type: application/json
       "token": "Add Comment"
     },
     {
+      "title": "Delegate Contributor",
+      "token": "Delegate Contributor"
+    },
+    {
+      "title": "Delegate Editor",
+      "token": "Delegate Editor"
+    },
+    {
+      "title": "Delegate Reader",
+      "token": "Delegate Reader"
+    },
+    {
+      "title": "Delegate Reviewer",
+      "token": "Delegate Reviewer"
+    },
+    {
       "title": "Delete",
       "token": "Delete"
     },
@@ -77,5 +93,5 @@ Content-Type: application/json
       "token": "View History"
     }
   ],
-  "items_total": 18
+  "items_total": 22
 }

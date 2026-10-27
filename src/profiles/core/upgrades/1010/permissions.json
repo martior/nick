@@ -2,8 +2,8 @@
   "purge": false,
   "permissions": [
     {
-      "id": "Delete",
-      "title:i18n": "Delete"
+      "id": "Revert",
+      "title:i18n": "Revert"
     }
   ]
 }

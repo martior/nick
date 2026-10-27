@@ -8,25 +8,20 @@ import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import '../../../../app';
-import { sortableTitle } from '../../../../helpers/utils/utils';
 import { init } from './index';
 
 describe('Upgrade 1016', () => {
-  it('should recompute the sortable titles', async () => {
+  it('should fill the isFolderish index', async () => {
     const trx = global.txn!;
-    await trx('index')
-      .where({ name: 'sortable_title' })
-      .update({ attr: 'getTitle' });
-    await trx('catalog').update({ _sortable_title: trx.ref('Title') });
+    await trx('catalog').update({ _isFolderish: null });
 
     await init(trx);
 
-    const index = await trx('index').where({ name: 'sortable_title' }).first();
-    expect(index.attr).toBe('sortableTitle');
-    const rows = await trx('catalog').select('Title', '_sortable_title');
+    const rows = await trx('catalog').select('_is_folderish', '_isFolderish');
     expect(rows.length).toBeGreaterThan(0);
     rows.forEach((row: any) =>
-      expect(row._sortable_title).toBe(sortableTitle(row.Title)),
+      expect(row._isFolderish).toBe(row._is_folderish),
     );
+    expect(rows.some((row: any) => row._isFolderish === true)).toBe(true);
   });
 });

@@ -303,9 +303,15 @@ export class Document extends Model {
    * Fetch relation lists
    * @method fetchRelationLists
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {Request} req Request object, if given only the related documents
+   * the current user can view are fetched.
    */
-  async fetchRelationLists(trx?: Knex.Transaction): Promise<void> {
+  async fetchRelationLists(
+    trx?: Knex.Transaction,
+    req?: Request,
+  ): Promise<void> {
     const self: InstanceType<typeof Document> = this;
+    const Catalog = models.get('Catalog');
     // Check if version data
     const version = self._version ? { ...self._version.json } : {};
 
@@ -332,9 +338,22 @@ export class Document extends Model {
       relationListFields.map(async (field: string) => {
         // Check if related documents
         if (Array.isArray(json[field]) && json[field].length > 0) {
+          let uuids = json[field];
+
+          // Only keep the documents the user can view
+          if (req) {
+            const items = await Catalog.fetchAllRestricted(
+              { _UID: ['=', uuids] },
+              {},
+              trx,
+              req,
+            );
+            uuids = items.map((item: any) => item._UID);
+          }
+
           self._relationLists[field] = await Document.fetchAll(
             {
-              uuid: ['=', json[field]],
+              uuid: ['=', uuids],
             },
             {},
             trx,
@@ -899,6 +918,55 @@ export class Document extends Model {
   }
 
   /**
+   * Fetch the permissions of a user on this document, the same way as they
+   * are calculated when traversing to the document in a request.
+   * @method fetchUserPermissions
+   * @param {Object} user User object with roles and groups.
+   * @param {Knex.Transaction} trx Transaction object.
+   * @returns {Promise<string[]>} Array of permissions.
+   */
+  async fetchUserPermissions(
+    user: any,
+    trx?: Knex.Transaction,
+  ): Promise<string[]> {
+    const self: InstanceType<typeof Document> = this;
+    const Role = models.get('Role');
+
+    // Deleted documents can't be accessed
+    if (self.deleted) {
+      return [];
+    }
+
+    // Get the local roles by traversing from the root
+    const root = await Document.fetchOne({ parent: null }, {}, trx);
+    const result = await root.traverse(
+      compact(self.path.split('/')),
+      user,
+      await user.fetchUserGroupRolesByDocument(root.uuid, trx),
+      root,
+      trx,
+    );
+    if (!result) {
+      return [];
+    }
+    const roles = uniq([...result.localRoles, ...user.getRoles()]);
+
+    // Fetch type and workflow
+    if (!self._type) {
+      await self.fetchRelated('_type', trx);
+    }
+    if (!self._type._workflow) {
+      await self._type.fetchRelated('_workflow', trx);
+    }
+
+    // Return global and workflow permissions
+    return uniq([
+      ...(await Role.fetchPermissions(roles, trx)),
+      ...self._type._workflow.getPermissions(self.workflow_state, roles),
+    ]);
+  }
+
+  /**
    * Fetch workflow history
    * @method fetchWorkflowHistory
    * @param {Request} req Request object
@@ -943,45 +1011,6 @@ export class Document extends Model {
         };
       }),
     );
-  }
-
-  /**
-   * Fetch the permissions of a user on this document
-   * @method fetchUserPermissions
-   * @param {Object} user User object with roles and groups.
-   * @param {Knex.Transaction} trx Transaction object.
-   * @returns {Promise<string[]>} Array of permissions.
-   */
-  async fetchUserPermissions(
-    user: any,
-    trx: Knex.Transaction,
-  ): Promise<string[]> {
-    const self: InstanceType<typeof Document> = this;
-    const Role = models.get('Role');
-
-    // Get global, local and owner roles
-    const tokens = principalTokens(user);
-    const roles = uniq([
-      ...(await self.fetchLocalRoles(trx))
-        .filter((localRole) => tokens.includes(localRole.principal))
-        .map((localRole) => localRole.role),
-      ...user.getRoles(),
-      ...(user.id === self.owner ? ['Owner'] : []),
-    ]);
-
-    // Fetch type and workflow
-    if (!self._type) {
-      await self.fetchRelated('_type', trx);
-    }
-    if (!self._type._workflow) {
-      await self._type.fetchRelated('_workflow', trx);
-    }
-
-    // Get permissions
-    return uniq([
-      ...(await Role.fetchPermissions(roles, trx)),
-      ...self._type._workflow.getPermissions(self.workflow_state, roles),
-    ]);
   }
 
   /**
@@ -1178,16 +1207,25 @@ export class Document extends Model {
    * @param {string} path New path.
    * @param {string} id New id.
    * @param {Knex.Transaction} trx Transaction object.
+   * @param {string[]} created Uuids of the copies created by this copy, they
+   * are never copied again (when copying into a descendant of itself).
    */
   async copy(
     parent: string,
     path: string,
     id: string,
     trx?: Knex.Transaction,
+    created: string[] = [],
   ): Promise<any> {
     const self: InstanceType<typeof Document> = this;
     // Get json
     let json: any = self.json;
+
+    // Get the children before the copy is created, it can be one of them
+    await self.fetchChildren({}, trx, false);
+    const children = self._children.filter(
+      (child: any) => !created.includes(child.uuid),
+    );
 
     // Get type information
     await self.fetchRelated('_type', trx);
@@ -1257,10 +1295,13 @@ export class Document extends Model {
         id,
         uuid: uuid(),
         workflow_history: JSON.stringify(self.workflow_history),
+        // The lock belongs to the original
+        lock: { locked: false, stealable: true },
       },
       {},
       trx,
     );
+    created.push(document.uuid);
 
     // Copy versions
     await self.fetchRelated('_versions', trx);
@@ -1298,13 +1339,18 @@ export class Document extends Model {
       }),
     );
 
-    // Copy children
-    await self.fetchChildren({}, trx, false);
-    await Promise.all(
-      self._children.map(async (child: any) => {
-        await child.copy(document.uuid, `${path}/${child.id}`, child.id, trx);
-      }),
-    );
+    // Copy children, one by one so copies created inside the tree are known
+    for (const child of children) {
+      if (!created.includes(child.uuid)) {
+        await child.copy(
+          document.uuid,
+          `${path}/${child.id}`,
+          child.id,
+          trx,
+          created,
+        );
+      }
+    }
 
     // Index document
     await document.index(trx);

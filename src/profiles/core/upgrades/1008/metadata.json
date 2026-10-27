@@ -3,5 +3,5 @@
   "title": "Nick Core",
   "description": "Core functionality of Nick",
   "version": 1008,
-  "upgrade": "Prefix users and groups in the catalog permissions."
+  "upgrade": "Add the selection.none querystring operation."
 }

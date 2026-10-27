@@ -4,22 +4,27 @@
     {
       "id": "Owner",
       "title:i18n": "Owner",
-      "permissions": ["Revert"]
+      "permissions": ["View History"]
+    },
+    {
+      "id": "Contributor",
+      "title:i18n": "Contributor",
+      "permissions": ["View History"]
     },
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Revert"]
+      "permissions": ["View History"]
     },
     {
       "id": "Reviewer",
       "title:i18n": "Reviewer",
-      "permissions": ["Revert"]
+      "permissions": ["View History"]
     },
     {
       "id": "Administrator",
       "title:i18n": "Administrator",
-      "permissions": ["Revert"]
+      "permissions": ["View History"]
     }
   ]
 }
