@@ -195,6 +195,8 @@ A successful response to a `PATCH` request will be indicated by a `204 No Conten
 {% include_relative examples/users/patch.res %}
 ```
 
+Like on create, an invalid email address gives `400 Bad Request` and the user is not changed.
+
 Users without the `Manage Users` permission can update their own properties, like their full name and email address:
 
 ```http

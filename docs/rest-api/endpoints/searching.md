@@ -267,7 +267,7 @@ This will return the matching content objects:
 
 ## Sorting using batching
 
-Results are batched with a default batch size of 25. You can specify the batch size (`b_size`) and the batch start (`b_start`) when searching. `items_total` is the total number of results; when there is more than one batch a `batching` object with links to the current, first, last, next and previous batch is added:
+Results are batched with a default batch size of 25. You can specify the batch size (`b_size`) and the batch start (`b_start`) when searching. Both have to be integers, the batch size not negative (a negative batch start is the start, like in Plone); any other value gives `400 Bad Request`, as does a `path.depth` that is not an integer or a value of a date index (for example `created.query`) that is not a date. `items_total` is the total number of results; when there is more than one batch a `batching` object with links to the current, first, last, next and previous batch is added:
 
 ```http
 {% include_relative examples/search/get_batch.req %}

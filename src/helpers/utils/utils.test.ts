@@ -147,15 +147,25 @@ describe('utils', () => {
 
   describe('isValidId', () => {
     it('accepts ids Zope accepts', () => {
-      ['news', 'has space', 'UPPER.case~ok', 'index_html', '@search'].forEach(
+      ['news', 'has space', 'UPPER.case~ok', 'index_html', 'a@b'].forEach(
         (id) => expect(isValidId(id)).toBe(true),
       );
     });
 
     it('refuses ids Zope refuses', () => {
-      ['', 'a/b', '_a', '.', '..', 'aq_parent', 'a__', 'ü', 12].forEach((id) =>
-        expect(isValidId(id)).toBe(false),
-      );
+      [
+        '',
+        'a/b',
+        '_a',
+        '.',
+        '..',
+        'aq_parent',
+        'a__',
+        'ü',
+        12,
+        '@search',
+        '@@view',
+      ].forEach((id) => expect(isValidId(id)).toBe(false));
     });
   });
 

@@ -10,6 +10,7 @@
 - Require the Modify permission to list the aliases of an item, and Manage Site to list all aliases of the site @martior
 - Only use the default secret 'secret' when NODE_ENV is development or test, use a random secret otherwise when none is configured @martior
 - Only list and grant the roles the user may delegate in @sharing, with new Delegate <role> permissions (upgrade 1007) @martior
+- Ids starting with `@` are refused with 400 on create and rename, so content can't hide services like `@search` below a folder @martior
 - Reverting with `@history` also requires the Modify permission in the current state, so a revert can't change content the workflow doesn't let the user edit (for example an Editor on a pending item); `may_revert` follows @martior
 - A workflow transition of content locked by another user is refused with `403 Resource is locked.`, like edits and deletes @martior
 - A lock token only lets the creator of the lock edit, revert, move or delete the locked content; another user who learned the token is refused. The token is no longer shown in `@lock` and in the `lock` of the content to users without the Modify permission @martior
@@ -200,6 +201,10 @@
 ### Bugfix
 
 - Leave out the ancestors the user may not view from @breadcrumbs, so the titles of private folders don't leak @martior
+- Check the email address on PATCH @users like on create, an invalid one gives 400 @martior
+- Answer @sharing entries for users or groups that don't exist with 400 instead of ignoring them @martior
+- Answer @search with an invalid `b_start`, `b_size`, `path.depth` or date with 400 instead of ignoring the value; a negative `b_start` is still the start, like in Plone @martior
+- Answer reordering with an unknown `obj_id` or an invalid `delta` with 400 instead of ignoring it @martior
 - Answer `@history` requests with a version that is not a number with 404 and a revert without a valid version with 400 instead of 500 @martior
 - Change behavior to snake case @robgietema
 - Remove authentication header from breadcrumbs call in docs @robgietema
