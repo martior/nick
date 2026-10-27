@@ -145,6 +145,50 @@ export function stripNewlines(string: string): string {
 }
 
 /**
+ * Parse the Range header of a request for a file, like RFC 9110: a single
+ * bytes range `start-end`, `start-` (end open) or `-length` (the last bytes).
+ * An end beyond the file is the last byte.
+ * @method parseRange
+ * @param {string} header Range header.
+ * @param {number} size Size of the file in bytes.
+ * @returns {Object | 'unsatisfiable' | undefined} Start and end (undefined
+ * when open), `unsatisfiable` when the range is outside of the file, or
+ * undefined when the whole file has to be served: no header, several
+ * ranges, another unit or an invalid range.
+ */
+export function parseRange(
+  header: string | undefined,
+  size: number,
+): { start: number; end?: number } | 'unsatisfiable' | undefined {
+  const match = (header || '').trim().match(/^bytes=(\d*)-(\d*)$/);
+  if (!match || (match[1] === '' && match[2] === '')) {
+    return undefined;
+  }
+
+  // The last bytes
+  if (match[1] === '') {
+    const length = parseInt(match[2], 10);
+    if (length === 0 || size === 0) {
+      return 'unsatisfiable';
+    }
+    return { start: Math.max(size - length, 0), end: size - 1 };
+  }
+
+  const start = parseInt(match[1], 10);
+  const end = match[2] === '' ? undefined : parseInt(match[2], 10);
+  if (end !== undefined && end < start) {
+    return undefined;
+  }
+  if (start >= size) {
+    return 'unsatisfiable';
+  }
+  return {
+    start,
+    end: end === undefined ? undefined : Math.min(end, size - 1),
+  };
+}
+
+/**
  * Convert string with bytes to number
  * @param bytes Input string
  * @returns Values in bytes

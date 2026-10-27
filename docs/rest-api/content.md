@@ -274,6 +274,16 @@ If a resource has been retrieved successfully, the server responds with `200 OK`
 
 Video fields are streamed with range requests from `<item url>/@@videos/<field>`. Like the other download endpoints this needs the `View` permission on the item. A browser `<video>` element can't send an `Authorization` header, so for private videos it needs the `auth_token` cookie.
 
+### Range requests
+
+`<item url>/@@download/<field>` and `<item url>/@@videos/<field>` support a single bytes range in the `Range` header, so audio and video players can seek without downloading the file from the start:
+
+- `bytes=<start>-<end>`, `bytes=<start>-` (to the end) and `bytes=-<length>` (the last bytes) answer `206 Partial Content` with a `Content-Range` header. An end beyond the file is the last byte.
+- A range that starts after the end of the file answers `416 Range Not Satisfiable` with `Content-Range: bytes */<size>`.
+- Several ranges, another unit or an invalid range are ignored and the whole file is served.
+
+Without a `Range` header `@@download` serves the whole file, while `@@videos` serves the first chunk (the `chunk` key of `requestLimit`, `1mb` by default). `@@videos` also limits a range with an open end to one chunk.
+
 ### Downloading images by uuid
 
 The `download` urls of image fields and their scales have the form `<item url>/@@images/<uuid>.<extension>`. Such a url only serves an image that is stored on the item itself, in one of its versions, or in a control panel (for example the site logo). Any other uuid answers `404 Not Found`, so the View permission on the item always applies to its images.

@@ -23,6 +23,7 @@ import {
   getNodeVersion,
   stripNewlines,
   bytesToNumber,
+  parseRange,
 } from './utils';
 
 describe('utils', () => {
@@ -121,6 +122,53 @@ describe('utils', () => {
   describe('stripNewlines', () => {
     it('removes newlines', () => {
       expect(stripNewlines('a\nb\rc\r\nd')).toBe('abcd');
+    });
+  });
+
+  describe('parseRange', () => {
+    it('parses a range with a start and an end', () => {
+      expect(parseRange('bytes=0-999', 3000)).toEqual({ start: 0, end: 999 });
+    });
+
+    it('parses a range with an open end', () => {
+      expect(parseRange('bytes=1000-', 3000)).toEqual({
+        start: 1000,
+        end: undefined,
+      });
+    });
+
+    it('parses the last bytes', () => {
+      expect(parseRange('bytes=-500', 3000)).toEqual({
+        start: 2500,
+        end: 2999,
+      });
+      expect(parseRange('bytes=-5000', 3000)).toEqual({
+        start: 0,
+        end: 2999,
+      });
+    });
+
+    it('limits the end to the last byte', () => {
+      expect(parseRange('bytes=2000-99999', 3000)).toEqual({
+        start: 2000,
+        end: 2999,
+      });
+    });
+
+    it('refuses a range outside of the file', () => {
+      expect(parseRange('bytes=3000-', 3000)).toBe('unsatisfiable');
+      expect(parseRange('bytes=3000-3999', 3000)).toBe('unsatisfiable');
+      expect(parseRange('bytes=-0', 3000)).toBe('unsatisfiable');
+      expect(parseRange('bytes=0-', 0)).toBe('unsatisfiable');
+    });
+
+    it('ignores what is not a single bytes range', () => {
+      expect(parseRange(undefined, 3000)).toBeUndefined();
+      expect(parseRange('bytes=0-1,10-11', 3000)).toBeUndefined();
+      expect(parseRange('chunks=0-1', 3000)).toBeUndefined();
+      expect(parseRange('bytes=-', 3000)).toBeUndefined();
+      expect(parseRange('bytes=5-3', 3000)).toBeUndefined();
+      expect(parseRange('bytes=a-b', 3000)).toBeUndefined();
     });
   });
 
