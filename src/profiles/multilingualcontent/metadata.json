@@ -3,5 +3,5 @@
   "title": "Nick Multilingual Content",
   "description": "Multilingual content for Nick",
   "version": 1000,
-  "dependencies": ["@plone/nick:core"]
+  "dependencies": ["@plone/nick:multilingual"]
 }

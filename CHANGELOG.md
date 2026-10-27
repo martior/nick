@@ -4,6 +4,12 @@
 
 ### Breaking
 
+- Require the Manage Site permission and the site root for the @email-send and @users/<id>/@email-notification endpoints @martior
+- Require the Manage Site permission for the @content-rules endpoints @martior
+- Require the Modify permission for the users and groups vocabularies, like Plone @martior
+- Require the Modify permission to list the aliases of an item, and Manage Site to list all aliases of the site @martior
+- Only use the default secret 'secret' when NODE_ENV is development or test, use a random secret otherwise when none is configured @martior
+- Only list and grant the roles the user may delegate in @sharing, with new Delegate <role> permissions (upgrade 1007) @martior
 - Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
 - Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
@@ -12,7 +18,7 @@
 - Error responses have the plone.restapi shape `{ "type": ..., "message": ... }`: 404 responses no longer use `{ "error": ... }`, and an invalid JSON body gives a JSON 400 instead of an HTML page. Redirects have an absolute `Location` header @martior
 - The items of a folder are batched like in plone.restapi (`b_start`, `b_size`, default 25 items) with `items_total` and `batching`; clients that expect all children in `items` have to page or pass a larger `b_size` @martior
 - A @sharing entry is the complete set of the principal's local roles, like in Plone: roles not named in the entry are revoked. Clients that sent only the changed roles must send all roles @martior
-- The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1013) @martior
+- The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1014) @martior
 - A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
 - @contextnavigation has the shape and the tree of plone.restapi's: an envelope with `available`, `has_custom_name`, `title` and `url`, items with `href`, `type`, `normalized_id`, `is_current`, `is_in_path` and `is_folderish` instead of catalog metadata, and the `topLevel`, `currentFolderOnly`, `root_path` and `name` parameters @martior
 - Importing `src/app.ts` no longer schedules or runs jobs, and jobs no longer run in a child process per job by default. Run a worker with `nick --modules=worker` (`src/server.ts` and `pnpm start` run the API and a worker); set `jobs.isolation` to `process` to keep the child processes. Run `pnpm migrate` for the job queue table @martior
@@ -156,6 +162,7 @@
 - Read auth token from either the header or from a cookie @robgietema
 - Make the search batch size limit configurable via requestLimit.batch @robgietema
 - Add custom upgrade code support via index.ts in upgrade steps @robgietema
+- Add support for multipart/form-data in content POST and PATCH requests @mamico
 - Export workflow definitions, type workflows and the state of documents without workflow @martior
 - Export the workflow history of documents @martior
 - Export the versions of documents @martior
@@ -179,11 +186,11 @@
 - Support S3-compatible blob storage (MinIO, R2, Ceph) with the `s3.endpoint` and `s3.forcePathStyle` settings, read the blob and S3 settings from `BLOBS` and `S3_*` environment variables, use the default AWS credential chain without static keys and reuse one S3 client @martior
 - Add a Postgres rate limit store (`rateLimit.store: postgres` or `RATE_LIMIT_STORE=postgres`), so rate limits count across API processes; the default stays in memory per process @martior
 - Profiles can declare `dependencies` in their metadata.json. Nick loads, installs and upgrades the profiles in dependency order, adds dependencies that are not listed and refuses dependency cycles. The `PROFILES` environment variable (comma separated) replaces `profiles` of `config.ts` @martior
+- Rename the examplecontent profile back to default, matching its id. Without `profiles` in `config.ts` the default profile is installed, with core as its dependency, and multilingualcontent depends on multilingual @robgietema
 - Every package (core, add-on or project) has its own migration chain: the knex migrations in `nick.migrations` of its package.json, its own ledger `knex_migrations_<package>` and optionally its own Postgres schema (`nick.schema`). `nick --modules=migrate` runs core's chain and then the chains of the packages of the profiles in dependency order, every migration in its own transaction, so a failed migration exits non-zero and the next run resumes with it @martior
 - Add batched, resumable data migrations: `migrateInBatches` commits every batch with its cursor in the new `migration_progress` table, so an interrupted data migration resumes after its last batch; registered data migrations can also run on the job queue (`registerDataMigration`, `queueDataMigration`). Run `pnpm migrate` @martior
-- Add periodic tasks declared in code (`scheduledJobs.registerTask`): the workers schedule them like scheduled jobs, once per time slot, and a scheduled job with the same id overrides them @martior
-- `@plone/nick` exports a typed public API for add-ons and projects: the registries (behaviors, blocks, blobs, content rules, events, middleware, models, routes, scheduled jobs and periodic tasks, seeds, vocabularies), `Model`, configuration, request, job, profile and migration helpers and their types, with an `exports` map. Deep imports like `@plone/nick/src/routes` still work but are deprecated @martior
-- Add `enable_self_reg` and `enable_user_pwd_choice` to the security control panel: anonymous users can register themselves when self-registration is enabled, cannot set roles or groups, and their password is kept when they may choose it, like in Plone. Run `pnpm seed:upgrade` (upgrade 1014) @martior
+- `@plone/nick` exports a typed public API for add-ons and projects: the registries (behaviors, blocks, blobs, content rules, events, middleware, models, routes, scheduled jobs, seeds, vocabularies), `Model`, configuration, request, job, profile and migration helpers and their types, with an `exports` map. Deep imports like `@plone/nick/src/routes` still work but are deprecated @martior
+- Add `enable_self_reg` and `enable_user_pwd_choice` to the security control panel: anonymous users can register themselves when self-registration is enabled, cannot set roles or groups, and their password is kept when they may choose it, like in Plone. Run `pnpm seed:upgrade` (upgrade 1015) @martior
 - Add `pnpm migrate:check`: it migrates a scratch database from scratch, installs the profiles and fails when migrate fails, when a second run changes the schema, when a model has no table or when the schema differs from the committed snapshot `src/migrations/schema.snapshot.txt` (which includes the catalog columns profiles create). `nick --modules=migrate --check-schema` compares a live database with the snapshot. CI runs the check @martior
 - The Docker image installs the profiles listed in the `PROFILES` environment variable, so it runs without a mounted config.ts, and can include add-ons of the repository with `--build-arg ADDONS="packages/nick-example-addon"` @martior
 
@@ -277,7 +284,26 @@
 - Fix job runner import @robgietema
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
+- Fix PostgreSQL 18 volume mount @sneridagh
 - Fix mail debug print link issue @robgietema
+- Only serve images by uuid that belong to the item, its versions or a control panel, so private images can't be read through another item @martior
+- Only show uploaded files inline when their content type is safe to show inline, so uploaded html can't run scripts on the api origin @martior
+- Skip ancestors the user can't view in the @inherit endpoint @martior
+- Only list items the user can view in the @navroot endpoint @martior
+- Only list items and breaches the user can view in the @linkintegrity endpoint @martior
+- Only serialize related items the user can view in relation list fields @martior
+- Don't return stored passwords like the ESMTP password in control panels @martior
+- Only list subjects of items the user can view in the subjects vocabulary @martior
+- Require the View permission on the item to read, add or reply to comments @martior
+- Only list translations the user can view, and require Modify on the other item to link or unlink translations @martior
+- Fix copying a folder into its own subfolder, which recursed without end @martior
+- Hide expired and not yet effective items in @search and @querystring-search from users who can't edit the context @martior
+- Refuse to move items locked by another user, and don't copy the lock of an item to its copy @martior
+- Use dedicated single-use tokens for password resets, login tokens can no longer reset a password @martior
+- Only revoke a local role on the item itself in the @sharing endpoint, not on every item @martior
+- Require the View permission to stream videos with @@videos @martior
+- Skip sources the user can't view in @copy and @move, and require Modify on the source to move it @martior
+- Fix non ascii image filename @martior
 - Fix document urls in export and import of ids containing dots @martior
 - Paginate search, users and groups in export, plone.restapi 10 batches users @martior
 - Keep core users, roles, permissions and actions when importing an exported profile and map Plone roles to Nick roles @martior
@@ -334,7 +360,9 @@
 - Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
 - Support the categories:list parameter of @actions @martior
 - Refuse aliases which are relative or the path of existing content or of another alias @martior
-- Validate content on create and update like plone.restapi: field types, required fields, text lines and maximum lengths (the title is a text line of at most 1024 characters, upgrade 1012), and explicit ids; a missing `@type` is a 400 and an unknown `@type` a 403. Text is normalized to NFC. Run `pnpm seed:upgrade` @martior
+- Sort types and behaviors by id in @types and the types control panel, so their order doesn't change after an upgrade @robgietema
+- Fix the client used in the documentation examples: create its methods once the profiles are initialized, use the default language and pass the lock token @robgietema
+- Validate content on create and update like plone.restapi: field types, required fields, text lines and maximum lengths (the title is a text line of at most 1024 characters, upgrade 1013), and explicit ids; a missing `@type` is a 400 and an unknown `@type` a 403. Text is normalized to NFC. Run `pnpm seed:upgrade` @martior
 - Allow ids, paths and titles longer than 255 characters instead of failing with a 500 (new migration, run `pnpm migrate`); ids generated from a title are at most 255 characters @martior
 - Accept the uuid of new content as `UID` like plone.restapi, and answer an invalid or used uuid with a 400 instead of a 500 @martior
 - Add the `parent` summary to content (also to `fullobjects` items), the `Location` header on create and `Prefer: return=representation` on update, like plone.restapi; folder items always have a `description` @martior
@@ -406,6 +434,7 @@
 - Rename default profile to examplecontent @robgietema
 - Fix initialization for client @robgietema
 - Save controlpanel and userschema files as blobs @robgietema
+- Add a test helper to create users with a login token @martior
 - Move the dependabot configuration out of the workflows folder, where it failed as a workflow on every push @martior
 - Fix TypeScript type errors @martior
 - Remove the unused `Document.fetchLocalUsersGroups` @martior
@@ -413,7 +442,7 @@
 - Check in CI that the previous version migrates and upgrades to the pushed version @martior
 - Move nodemon to the development dependencies @martior
 - Run the development docker-compose service from the node image @martior
-- Add the example add-on `packages/nick-example-addon`: a content type, a behavior, REST services, a periodic task, a table in its own schema and two migrations in its own chain, with tests that install it and use every extension point, and a test that a broken data migration fails migrate and resumes after the fix @martior
+- Add the example add-on `packages/nick-example-addon`: a content type, a behavior, REST services, a scheduled job, a table in its own schema and two migrations in its own chain, with tests that install it and use every extension point, and a test that a broken data migration fails migrate and resumes after the fix @martior
 
 ### Documentation
 
@@ -437,7 +466,7 @@
 - Add the jobs admin guide @martior
 - Add the deployment admin guide @martior
 - Document which state is per process when Nick runs several API processes @martior
-- Add the add-ons developer guide (package layout, profile dependencies, public API, per-package migrations and schemas, batched data migrations, periodic tasks, drift check, testing) and mark deep imports as deprecated @martior
+- Add the add-ons developer guide (package layout, profile dependencies, public API, per-package migrations and schemas, batched data migrations, drift check, testing) and mark deep imports as deprecated @martior
 
 ## 2.8.0 (2022-07-17)
 

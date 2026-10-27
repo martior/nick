@@ -295,7 +295,7 @@ The server will respond with a `200 OK` response and send an email to the user t
 {% include_relative examples/users/reset_password_mail.res %}
 ```
 
-The token that is part of the reset url in the email can be used to authorize setting a new password:
+The token that is part of the reset url in the email can be used to authorize setting a new password. The token is valid for 2 hours and only once, login tokens are not accepted. Setting a new password this way logs the user out of all sessions:
 
 ```http
 {% include_relative examples/users/reset_password_set.req %}
