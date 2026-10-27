@@ -1,6 +1,6 @@
 /**
- * Upgrade 1012: make the title a text line of at most 1024 characters.
- * @module profiles/core/upgrades/1012
+ * Upgrade 1013: make the title a text line of at most 1024 characters.
+ * @module profiles/core/upgrades/1013
  */
 
 // Type imports
