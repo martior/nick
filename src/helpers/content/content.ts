@@ -53,6 +53,22 @@ interface Json {
 }
 
 /**
+ * Check if a field value refers to a file in a profile, like
+ * `{ "path": "/blobs/report.pdf", "filename": "report.pdf", "content-type": "application/pdf" }`.
+ * @method isProfileFile
+ * @param {any} value Field value.
+ * @returns {boolean} True if the value refers to a profile file.
+ */
+export function isProfileFile(value: any): boolean {
+  return (
+    isObject(value) &&
+    typeof (value as any).path === 'string' &&
+    !('data' in value) &&
+    !('uuid' in value)
+  );
+}
+
+/**
  * Handle file uploads and updates
  * @method handleFiles
  * @param {Json} json Current json object.
@@ -83,6 +99,19 @@ export async function handleFiles(
           mime.lookup(`${profile}${fields[field]}`) ||
           'application/octet-stream',
         filename: last(fields[field].split('/')) || '',
+      };
+    }
+
+    // Check if a path with content type and filename is specified
+    if (isProfileFile(fields[field]) && profile) {
+      fields[field] = {
+        data: await readProfileFile(profile, fields[field].path),
+        encoding: 'base64',
+        'content-type':
+          fields[field]['content-type'] ||
+          mime.lookup(`${profile}${fields[field].path}`) ||
+          'application/octet-stream',
+        filename: fields[field].filename || last(fields[field].path.split('/')),
       };
     }
 
@@ -163,6 +192,19 @@ export async function handleImages(
           mime.lookup(`${profile}${fields[field]}`) ||
           'application/octet-stream',
         filename: last(fields[field].split('/')) || '',
+      };
+    }
+
+    // Check if a path with content type and filename is specified
+    if (isProfileFile(fields[field]) && profile) {
+      fields[field] = {
+        data: await readProfileFile(profile, fields[field].path),
+        encoding: 'base64',
+        'content-type':
+          fields[field]['content-type'] ||
+          mime.lookup(`${profile}${fields[field].path}`) ||
+          'application/octet-stream',
+        filename: fields[field].filename || last(fields[field].path.split('/')),
       };
     }
 
@@ -361,7 +403,7 @@ export async function getComponents(
     if (req.document._children) {
       await mapAsync(req.document._children, async (child: any) => {
         await child.fetchRelated('_catalog', trx);
-        await child.fetchRelationLists(trx);
+        await child.fetchRelationLists(trx, req);
       });
     }
     components.catalog = {

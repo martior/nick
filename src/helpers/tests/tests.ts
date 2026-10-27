@@ -7,10 +7,10 @@
 import type { AllMethods } from 'supertest/types';
 
 // External imports
+import { createHmac } from 'crypto';
 import { indexOf, isEmpty } from 'es-toolkit/compat';
 import { Application } from 'express';
 import fs from 'fs';
-import { createHmac } from 'node:crypto';
 import request, { Response } from 'supertest';
 import { expect } from 'vitest';
 
@@ -18,6 +18,10 @@ import { expect } from 'vitest';
 import { addToken } from '../auth/auth';
 import config from '../config/config';
 import models from '../../models';
+
+// Token of the admin user, added to the admin user in the test setup
+export const adminToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImZ1bGxuYW1lIjoiQWRtaW4iLCJpYXQiOjE2NDkzMTI0NDl9.RS1Ny_r0v7vIylFfK6q0JVJrkiDuTOh9iG9IL8xbzAk';
 
 interface FileData {
   request: string;
@@ -141,6 +145,44 @@ export function testRequest(app: Application, filename: string): request.Test {
 }
 
 /**
+ * Create a user with a valid login token. The token is signed here because
+ * `jwt.sign` is mocked in the test setup.
+ * @method createUserWithToken
+ * @param {string} id Id of the user.
+ * @param {string[]} roles Global roles of the user.
+ * @returns {Promise<string>} Token of the user.
+ */
+export async function createUserWithToken(
+  id: string,
+  roles: string[] = [],
+): Promise<string> {
+  const User = models.get('User');
+  const encode = (data: object) =>
+    Buffer.from(JSON.stringify(data)).toString('base64url');
+  const unsigned = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({
+    sub: id,
+    fullname: id,
+    iat: 1649312449,
+  })}`;
+  const token = `${unsigned}.${createHmac('sha256', config.settings.secret)
+    .update(unsigned)
+    .digest('base64url')}`;
+  const user = await User.create(
+    {
+      id,
+      fullname: id,
+      email: `${id}@example.com`,
+      password: '',
+      _roles: roles,
+    },
+    { related: ['_roles'] },
+    global.txn!,
+  );
+  await addToken(user, token, global.txn!);
+  return token;
+}
+
+/**
  * Create a user with global roles and return a valid token for the user
  * @method createUser
  * @param {string} id Id of the user.
@@ -151,27 +193,46 @@ export async function createUser(
   id: string,
   roles: string[] = [],
 ): Promise<string> {
-  const User = models.get('User');
-  const user = await User.create(
-    { id, fullname: id, password: 'secret', email: `${id}@example.com` },
+  return createUserWithToken(id, roles);
+}
+
+/**
+ * Create and index a document
+ * @method createDocument
+ * @param {string} uuid Uuid of the document.
+ * @param {Object} parent Parent document.
+ * @param {string} id Id of the document.
+ * @param {string} type Type of the document.
+ * @param {Object} fields Other fields of the document.
+ * @returns {Promise<Object>} Document.
+ */
+export async function createDocument(
+  uuid: string,
+  parent: any,
+  id: string,
+  type: string,
+  fields: any = {},
+): Promise<any> {
+  const Document = models.get('Document');
+  const document: any = await Document.create(
+    {
+      uuid,
+      parent: parent.uuid,
+      id,
+      path: `${parent.path === '/' ? '' : parent.path}/${id}`,
+      position_in_parent: 99,
+      version: 0,
+      owner: 'admin',
+      type,
+      workflow_state: 'private',
+      workflow_history: JSON.stringify([]),
+      lock: { locked: false, stealable: true },
+      json: { title: id },
+      ...fields,
+    },
     {},
     global.txn!,
   );
-  await Promise.all(
-    roles.map((role) => user.$relatedQuery('_roles', global.txn!).relate(role)),
-  );
-
-  // Sign a token, jwt.sign is mocked in the tests
-  const encode = (data: any) =>
-    Buffer.from(JSON.stringify(data)).toString('base64url');
-  const content = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({
-    sub: id,
-    fullname: id,
-    iat: 1649312449,
-  })}`;
-  const token = `${content}.${createHmac('sha256', config.settings.secret)
-    .update(content)
-    .digest('base64url')}`;
-  await addToken(user, token, global.txn!);
-  return token;
+  await document.index(global.txn!);
+  return document;
 }

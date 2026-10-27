@@ -75,6 +75,29 @@ export default [
         };
       }
 
+      // Check the permission of protected vocabularies
+      const id = req.params.id;
+      const permission = vocabularies.permission(id);
+      if (permission && !req.permissions.includes(permission)) {
+        const anonymous = req.user.id === 'anonymous';
+        throw new RequestException(anonymous ? 401 : 403, {
+          error: {
+            type: anonymous
+              ? req.i18n('Not authenticated')
+              : req.i18n('Not authorized'),
+            message: anonymous
+              ? req.i18n(
+                  'You need to be authenticated to access the vocabulary “{id}”.',
+                  { id },
+                )
+              : req.i18n(
+                  'You are not authorized to access the vocabulary “{id}”.',
+                  { id },
+                ),
+          },
+        });
+      }
+
       // Get items
       const items = vocabularies.exists(req.params.id)
         ? await vocabularies.get(req.params.id)(req, trx)

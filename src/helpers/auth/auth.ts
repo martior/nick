@@ -7,6 +7,7 @@
 import type { Request, User } from '../../types';
 
 // External imports
+import { createHmac } from 'crypto';
 import { isUndefined } from 'es-toolkit/predicate';
 import jwt from 'jsonwebtoken';
 import { Knex } from 'knex';
@@ -26,6 +27,41 @@ export function hasPermission(
   permission: string,
 ): boolean {
   return isUndefined(permission) || permissions.includes(permission);
+}
+
+/**
+ * Get the catalog permission token of a user.
+ * @method userToken
+ * @param {string} id User id.
+ * @returns {string} Token.
+ */
+export function userToken(id: string): string {
+  return `user:${id}`;
+}
+
+/**
+ * Get the catalog permission token of a group.
+ * @method groupToken
+ * @param {string} id Group id.
+ * @returns {string} Token.
+ */
+export function groupToken(id: string): string {
+  return `group:${id}`;
+}
+
+/**
+ * Get the catalog permission tokens of a user: the user, its groups and its
+ * roles. Users and groups are prefixed so they can't match a role.
+ * @method principalTokens
+ * @param {User} user User object.
+ * @returns {string[]} Tokens.
+ */
+export function principalTokens(user: any): string[] {
+  return [
+    userToken(user.id),
+    ...(user._groups || []).map((group: any) => groupToken(group.id)),
+    ...user.getRoles(),
+  ];
 }
 
 /**
@@ -127,4 +163,70 @@ export async function removeToken(
 
   // Store tokens
   await user.update({ tokens }, trx);
+}
+
+/**
+ * Get the secret for password reset tokens. It is derived from the secret, so
+ * a reset token is never a valid login token and the other way around.
+ * @method getResetSecret
+ * @returns {string} Secret.
+ */
+function getResetSecret(): string {
+  return createHmac('sha256', config.settings.secret)
+    .update('reset-password')
+    .digest('hex');
+}
+
+/**
+ * Get a fingerprint of the current password of a user. It changes when the
+ * password changes, which makes a reset token valid only once.
+ * @method getPasswordFingerprint
+ * @param {User} user User object.
+ * @returns {string} Fingerprint.
+ */
+function getPasswordFingerprint(user: User): string {
+  return createHmac('sha256', getResetSecret())
+    .update(`${user.id}:${(user as any).password || ''}`)
+    .digest('hex');
+}
+
+/**
+ * Create a password reset token for a user.
+ * @method createResetToken
+ * @param {User} user User object.
+ * @returns {string} Reset token.
+ */
+export function createResetToken(user: User): string {
+  return jwt.sign(
+    {
+      sub: user.id,
+      purpose: 'reset-password',
+      fingerprint: getPasswordFingerprint(user),
+    },
+    getResetSecret(),
+    { expiresIn: '2h', algorithm: 'HS256' },
+  );
+}
+
+/**
+ * Check a password reset token of a user. Login tokens, tokens of other
+ * users and tokens used before (the password changed since) are invalid.
+ * @method verifyResetToken
+ * @param {string} token Reset token.
+ * @param {User} user User object.
+ * @returns {boolean} True if valid.
+ */
+export function verifyResetToken(token: string, user: User): boolean {
+  try {
+    const decoded: any = jwt.verify(token, getResetSecret(), {
+      algorithms: ['HS256'],
+    });
+    return (
+      decoded.purpose === 'reset-password' &&
+      decoded.sub === user.id &&
+      decoded.fingerprint === getPasswordFingerprint(user)
+    );
+  } catch (_err) {
+    return false;
+  }
 }

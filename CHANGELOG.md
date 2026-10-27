@@ -4,6 +4,15 @@
 
 ### Breaking
 
+- Require the Manage Site permission and the site root for the @email-send and @users/<id>/@email-notification endpoints @martior
+- Require the Manage Site permission for the @content-rules endpoints @martior
+- Require the Modify permission for the users and groups vocabularies, like Plone @martior
+- Require the Modify permission to list the aliases of an item, and Manage Site to list all aliases of the site @martior
+- Only use the default secret 'secret' when NODE_ENV is development or test, use a random secret otherwise when none is configured @martior
+- Only list and grant the roles the user may delegate in @sharing, with new Delegate <role> permissions (upgrade 1007) @martior
+- Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
+- Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
+
 ### Feature
 
 - Add support for multiple profiles @robgietema
@@ -142,6 +151,18 @@
 - Read auth token from either the header or from a cookie @robgietema
 - Make the search batch size limit configurable via requestLimit.batch @robgietema
 - Add custom upgrade code support via index.ts in upgrade steps @robgietema
+- Add support for multipart/form-data in content POST and PATCH requests @mamico
+- Export workflow definitions, type workflows and the state of documents without workflow @martior
+- Export the workflow history of documents @martior
+- Export the versions of documents @martior
+- Export local roles and the inherit flag of documents @martior
+- Export files and images of documents and import profile files with filename and content type @martior
+- Export relations with uuids and make links in exported documents relative to the site root @martior
+- Export translations of documents @martior
+- Export redirects @martior
+- Export comments of documents @martior
+- Export site title, robots.txt and language settings @martior
+- Convert querystring operations of collections and listing blocks in export @martior
 
 ### Bugfix
 
@@ -233,10 +254,69 @@
 - Fix job runner import @robgietema
 - Fix transaction bug in jobs @robgietema
 - Fix navroot structure @robgietema
+- Fix PostgreSQL 18 volume mount @sneridagh
 - Fix mail debug print link issue @robgietema
+- Only serve images by uuid that belong to the item, its versions or a control panel, so private images can't be read through another item @martior
+- Only show uploaded files inline when their content type is safe to show inline, so uploaded html can't run scripts on the api origin @martior
+- Skip ancestors the user can't view in the @inherit endpoint @martior
+- Only list items the user can view in the @navroot endpoint @martior
+- Only list items and breaches the user can view in the @linkintegrity endpoint @martior
+- Only serialize related items the user can view in relation list fields @martior
+- Don't return stored passwords like the ESMTP password in control panels @martior
+- Only list subjects of items the user can view in the subjects vocabulary @martior
+- Require the View permission on the item to read, add or reply to comments @martior
+- Only list translations the user can view, and require Modify on the other item to link or unlink translations @martior
+- Fix copying a folder into its own subfolder, which recursed without end @martior
+- Hide expired and not yet effective items in @search and @querystring-search from users who can't edit the context @martior
+- Refuse to move items locked by another user, and don't copy the lock of an item to its copy @martior
+- Use dedicated single-use tokens for password resets, login tokens can no longer reset a password @martior
+- Only revoke a local role on the item itself in the @sharing endpoint, not on every item @martior
+- Require the View permission to stream videos with @@videos @martior
+- Skip sources the user can't view in @copy and @move, and require Modify on the source to move it @martior
+- Fix non ascii image filename @martior
+- Fix document urls in export and import of ids containing dots @martior
+- Paginate search, users and groups in export, plone.restapi 10 batches users @martior
+- Keep core users, roles, permissions and actions when importing an exported profile and map Plone roles to Nick roles @martior
+- Give every exported user its own random password instead of one shared password @martior
+- Stop the export on failed requests, read groups unbatched and skip comments in the document listing @martior
+- Export type behaviors, allowed content types and unlisted types, so exported documents can be traversed @martior
+- Fix import of exported groups without email @martior
+- Allow descriptions longer than 255 characters for workflows, types and groups @martior
+- Return the comments of workflow transitions in @history @martior
+- Keep the folder order of exported documents and fix the import of position 0 @martior
+- Replace lists instead of merging them by index when seeding controlpanels @martior
+- Support plone.app.querystring operation names in querystring search @martior
+- Fix server error on searchable text with multiple words or operators @martior
+- Support keyword, path query and range parameters in search @martior
+- Fix search items total and add batching links with a default batch size of 25 @martior
+- Update the catalog paths of the children of a moved or renamed folder @martior
+- Support fullobjects and metadata_fields in search and add description to the search results @martior
+- Add the GET variant of the querystring search endpoint @martior
+- Ignore accents in text search @martior
+- Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
+- Return the navigation root url as the breadcrumbs root @martior
+- Add description to navigation items and return a bad request on an invalid navigation depth @martior
+- Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
+- Reindex the search permissions of the item and its children after a change of local roles or inheritance in @sharing, in a job for large subtrees @martior
+- Prefix users and groups in the catalog permissions as `user:` and `group:`, so a user or group named like a role no longer sees items that role may view; run `pnpm seed:upgrade` to rebuild them @martior
+- Check workflow transitions against the current state and the permissions on every child with `include_children`, return 400 for unknown or unavailable transitions and require View @martior
+- Require the new Revert permission to revert to a previous version, report it in `may_revert`, reindex after a revert and keep the path of top level items; run `pnpm seed:upgrade` to add it @martior
+- Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
+- Keep the content, children, versions and jobs of a deleted user instead of deleting them, the owner and actor are set to null @martior
+- Lock the user while storing or removing a token, so concurrent logins of one user no longer invalidate each other's tokens @martior
+- Lock the document for changes and the parent for changes of its children, so concurrent edits no longer fail on duplicate versions and concurrent creates and deletes in one folder no longer deadlock @martior
+- Run a request again, up to three times, when its transaction hits a database deadlock or serialization failure instead of returning 500 @martior
+- Accept @sharing posts without entries or inherit, ignore unknown roles and return 400 instead of 500 for invalid sharing data @martior
+- List users and groups with local or acquired roles in the @sharing entries and search principals by id too @martior
+- Unlock content on DELETE @lock and let a forced unlock steal a stealable lock of another user @martior
+- Keep the token, timeout and stealable setting when refreshing a lock and don't lock unlocked content on refresh @martior
+- Keep the lock when locked content is saved with the lock token @martior
+- Return 403 "Resource is locked." when locked content is saved without the lock token @martior
+- Refuse to delete locked content with 423 Locked unless the lock token is provided @martior
+- Return the existing lock when locking content locked by another user @martior
+- Return the existing lock when unlocking content locked by another user without force @martior
 - Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
 - Treat the token of a deleted user as anonymous instead of failing with a server error @martior
-- Lock the user while storing or removing a token, so concurrent logins of one user no longer invalidate each other's tokens @martior
 
 ### Internal
 
@@ -288,6 +368,7 @@
 - Rename default profile to examplecontent @robgietema
 - Fix initialization for client @robgietema
 - Save controlpanel and userschema files as blobs @robgietema
+- Add a test helper to create users with a login token @martior
 
 ### Documentation
 
@@ -306,6 +387,7 @@
 - Add documentation on how to setup limits @robgietema
 - Add documentation on how to setup caching @robgietema
 - Add documentation about profiles @robgietema
+- Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 
 ## 2.8.0 (2022-07-17)
 

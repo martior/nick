@@ -88,6 +88,7 @@ export class Model extends ObjectionModel {
      * { "json->>'title'": 'News'}              // Search in json field
      * { title: ['like', 'News'] }              // Override operator
      * { title: ['raw', 'similarity > 0.75'] }  // Use raw SQL
+     * { a: ['raw', '"a" > ?', [0.75]] }       // Use raw SQL with bindings
      * { roles: ['=', ['Reader', 'Editor']] }   // Search by values
      */
     if (where) {
@@ -103,7 +104,7 @@ export class Model extends ObjectionModel {
           valueWrapper = 'all(?)';
         }
         if (operator === '@@') {
-          valueWrapper = 'to_tsquery(?)';
+          valueWrapper = "to_tsquery('nick', ?)";
         }
         if (values === null) {
           query =
@@ -111,7 +112,10 @@ export class Model extends ObjectionModel {
               ? query.whereNotNull(`${key}`)
               : query.whereNull(`${key}`);
         } else if (operator === 'raw') {
-          query = query.whereRaw(values);
+          query =
+            Array.isArray(value) && value.length > 2
+              ? query.whereRaw(values, value[2])
+              : query.whereRaw(values);
         } else {
           query = query.whereRaw(`${attribute} ${operator} ${valueWrapper}`, [
             values,

@@ -25,7 +25,7 @@ export default [
   {
     op: 'get',
     view: '/@history',
-    permission: 'View',
+    permission: 'View History',
     client: 'getHistory',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
@@ -49,10 +49,13 @@ export default [
   {
     op: 'patch',
     view: '/@history',
-    permission: 'View',
+    permission: 'Revert',
     client: 'revertHistory',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // Lock the document to serialize concurrent changes
+      await req.document.lockForUpdate(trx);
+
       // Check if locked
       const lock = req.document.lock;
       if (
@@ -81,6 +84,16 @@ export default [
         trx,
       );
 
+      // Check if version exists
+      if (!version) {
+        throw new RequestException(404, {
+          error: {
+            message: req.i18n('Version not found.'),
+            type: req.i18n('Not found'),
+          },
+        });
+      }
+
       // Get id and path variables of document, parent and siblings
       await req.document.fetchRelated('_parent', trx);
       await req.document._parent.fetchChildren({}, trx, false);
@@ -96,7 +109,11 @@ export default [
             )
           : id;
       const newPath =
-        path === '/' ? path : `${req.document._parent.path}/${newId}`;
+        path === '/'
+          ? path
+          : `${
+              req.document._parent.path === '/' ? '' : req.document._parent.path
+            }/${newId}`;
 
       // Create new version
       const json = omit(version.json, ['changeNote']);
@@ -125,7 +142,7 @@ export default [
       }
 
       // Save document with new values
-      await req.document.update(
+      await req.document.updateAndFetch(
         {
           id: newId,
           path: newPath,
@@ -139,6 +156,9 @@ export default [
         },
         trx,
       );
+
+      // Reindex document
+      await req.document.reindex(trx);
 
       // Send ok message
       return {
