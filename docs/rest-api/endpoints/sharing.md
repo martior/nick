@@ -29,7 +29,7 @@ The `available_roles` property contains the list of roles that can be managed vi
 
 ## Searching for principles
 
-Users and/or groups without a sharing entry can be found by appending the argument `search` to the query string. ie `?search=admin`. Global roles are marked with the string `global`. Inherited roles are marked with the string `acquired`.
+The `entries` list the users and groups with a local role on the object or one of the parents it inherits from. Users and/or groups without a sharing entry can be found by id, full name or group title by appending the argument `search` to the query string. ie `?search=admin`. Global roles are marked with the string `global`. Inherited roles are marked with the string `acquired`.
 
 ```http
 {% include_relative examples/sharing/get_search.req %}
@@ -62,5 +62,7 @@ Or use the client directly:
 ```http
 {% include_relative examples/sharing/post.res %}
 ```
+
+Both `inherit` and `entries` are optional: `{"inherit": false}` only blocks the inheritance of local roles and `{}` changes nothing. Every entry needs an `id`, a `type` (`user` or `group`) and a `roles` object; roles set to `true` are granted, roles set to `false` are revoked, and unknown roles and principals are ignored. Other data returns `400 Bad Request`.
 
 After the local roles or the `inherit` flag change, the permissions in the catalog are reindexed for the object and every object below it, so `@search`, navigation and folder listings show the new permissions. Subtrees with fewer objects than `reindexSecurityLimit` (default `1000`, set it in `config.ts`) are reindexed within the request. Larger subtrees are reindexed by a `reindex_security` job that starts when the request is committed; until that job is finished, search results below the object may still use the old permissions. The job can be followed with the `@jobs` endpoint, and the same action can be used in a scheduled job to reindex the security of any path.

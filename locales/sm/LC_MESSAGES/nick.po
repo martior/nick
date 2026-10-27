@@ -1860,14 +1860,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:250
+#: src/routes/sharing/sharing.ts:296
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:251
+#: src/routes/sharing/sharing.ts:297
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -2081,6 +2081,12 @@ msgstr "Faʻatulagaga"
 msgctxt "Profiles|Core|Actions"
 msgid "Sharing"
 msgstr "Faʻasoa"
+
+#. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
+#: src/routes/sharing/sharing.ts:220
+msgctxt "Routes|Sharing"
+msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
+msgstr ""
 
 #. Default: "Short name"
 #: src/profiles/core/behaviors/short_name.json:3
