@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-27T22:35:57.899Z\n"
+"POT-Creation-Date: 2026-10-27T22:47:18.587Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1233,8 +1233,8 @@ msgid "Information about rights held in and over this item."
 msgstr ""
 
 #. Default: "Internal server error"
-#: src/app.ts:265
-#: src/app.ts:285
+#: src/app.ts:274
+#: src/app.ts:294
 msgctxt "App"
 msgid "Internal server error"
 msgstr ""
@@ -2756,7 +2756,7 @@ msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The id is already in use in this folder."
-#: src/app.ts:273
+#: src/app.ts:282
 msgctxt "App"
 msgid "The id is already in use in this folder."
 msgstr ""
@@ -2847,7 +2847,7 @@ msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr ""
 
 #. Default: "The request body is not valid JSON."
-#: src/app.ts:303
+#: src/app.ts:312
 msgctxt "App"
 msgid "The request body is not valid JSON."
 msgstr ""
@@ -3033,8 +3033,8 @@ msgstr ""
 
 #. Default: "Transaction error."
 #: src/client.ts:93
-#: src/app.ts:169
-#: src/app.ts:186
+#: src/app.ts:178
+#: src/app.ts:195
 msgctxt "Client"
 msgid "Transaction error."
 msgstr ""
