@@ -7,7 +7,7 @@ parent: Endpoints
 
 ## Searching content
 
-Content can be searched for by invoking the `/@search` endpoint on any context:
+Content can be searched for by invoking the `/@search` endpoint on any context. Only items the current user can view are returned. Like in Plone, users without the `Modify` permission on the context (for example anonymous users) don't get inactive items: items which are expired or not effective yet. This also applies to `@querystring-search`.
 
 ```http
 {% include_relative examples/search/get.req %}

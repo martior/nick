@@ -26,10 +26,13 @@ export async function subjects(
   trx: Knex.Transaction,
 ): Promise<VocabularyTerm[]> {
   const Catalog = models.get('Catalog');
-  const subjects = await Catalog.fetchAll(
+
+  // Only use the subjects of items the user can view
+  const subjects = await Catalog.fetchAllRestricted(
     { _Subject: ['is not', null] },
     {},
     trx,
+    req,
   );
   return arrayToVocabulary(
     uniq([...subjects.map((subject: any) => subject._Subject)].flat()),

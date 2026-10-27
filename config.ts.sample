@@ -73,7 +73,7 @@ export const config = {
   profiles: [
     '@plone/nick:core',
     /* '@plone/nick:ai', */
-    '@plone/nick:examplecontent',
+    '@plone/nick:default',
     /* '@plone/nick:multilingual', */
     /* '@plone/nick:multilingualcontent', */
   ],

@@ -51,7 +51,7 @@ Aliases must be absolute paths and can't be the path of existing content or of a
 
 ## Listing URL aliases of a Page
 
-To list aliases, you can send a `GET` request to the `/@aliases` endpoint:
+To list aliases, you can send a `GET` request to the `/@aliases` endpoint. This needs the `Modify` permission on the page:
 
 ```http
 {% include_relative examples/aliases/list.req %}
@@ -112,7 +112,7 @@ Response:
 
 ## Listing all available aliases
 
-To list all aliases, send a `GET` request to the `/@aliases` endpoint on site `root`:
+To list all aliases, send a `GET` request to the `/@aliases` endpoint on site `root`. This needs the `Manage Site` permission:
 
 ```http
 {% include_relative examples/aliases/list_root.req %}
