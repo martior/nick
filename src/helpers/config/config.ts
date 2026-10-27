@@ -22,6 +22,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const {
   ALLOWED_ORIGINS,
+  BIND_HOST,
   API_RATE_LIMIT,
   AUTH_RATE_LIMIT,
   DB_HOST,
@@ -119,6 +120,7 @@ class Config {
       },
       localesDir:
         LOCALES_DIR || config.localesDir || `${__dirname}/../../../locales`,
+      host: BIND_HOST || config.host || undefined,
       port: parseInt(PORT || config.port || '8080'),
       secret: getSecret(SECRET || config.secret, process.env.NODE_ENV),
       systemUsers: config.systemUsers || ['admin', 'anonymous'],

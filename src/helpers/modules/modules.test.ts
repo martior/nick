@@ -7,10 +7,17 @@
 import { describe, expect, it, vi } from 'vitest';
 
 // Internal imports
+import config from '../config/config';
 import { knex } from '../knex/knex';
 import * as migrate from '../migrate/migrate';
 import * as drift from '../drift/drift';
-import { allModules, parseModules, parseOptions, run } from './modules';
+import {
+  allModules,
+  parseModules,
+  parseOptions,
+  run,
+  startApi,
+} from './modules';
 
 describe('parseModules', () => {
   it('should default to all modules', () => {
@@ -90,5 +97,30 @@ describe('parseOptions', () => {
     expect(parseOptions(['--check-schema=schema.txt'])).toEqual({
       checkSchema: 'schema.txt',
     });
+  });
+});
+
+describe('startApi', () => {
+  const listen = async (host: string | undefined) => {
+    const { host: configHost, port } = config.settings;
+    config.settings.host = host;
+    config.settings.port = 0;
+    try {
+      const server = await startApi();
+      const address = server.address() as { address: string };
+      await new Promise((resolve) => server.close(resolve));
+      return address.address;
+    } finally {
+      config.settings.host = configHost;
+      config.settings.port = port;
+    }
+  };
+
+  it('should listen on the configured host', async () => {
+    expect(await listen('127.0.0.1')).toBe('127.0.0.1');
+  });
+
+  it('should listen on all interfaces without a host', async () => {
+    expect(['::', '0.0.0.0']).toContain(await listen(undefined));
   });
 });

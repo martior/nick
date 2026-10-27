@@ -112,10 +112,19 @@ export async function checkSchema(snapshot: string): Promise<boolean> {
 export async function startApi(): Promise<Server> {
   const { default: app } = await import('../../app');
   return await new Promise((resolve) => {
-    const server = app.listen(config.settings.port, () => {
-      log.info(`Server listening on port ${config.settings.port}`);
+    const { host, port } = config.settings;
+    const listening = () => {
+      log.info(
+        `Server listening on ${host ? `${host}:${port}` : `port ${port}`}`,
+      );
       resolve(server);
-    });
+    };
+
+    // Listen on all interfaces unless a host is configured, like 127.0.0.1
+    // behind a reverse proxy
+    const server = host
+      ? app.listen(port, host, listening)
+      : app.listen(port, listening);
   });
 }
 
