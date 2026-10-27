@@ -2967,7 +2967,7 @@ msgid "Today"
 msgstr "ಇಂದು"
 
 #. Default: "Transaction error."
-#: src/client.ts:81
+#: src/client.ts:93
 #: src/app.ts:168
 #: src/app.ts:185
 msgctxt "Client"
