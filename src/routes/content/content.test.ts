@@ -12,9 +12,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import app from '../../app';
 import {
   adminToken,
+  createDocument,
+  createUser,
   createUserWithToken,
   testRequest,
 } from '../../helpers/tests/tests';
+import models from '../../models';
+
+const token = adminToken;
 
 // A 1x1 pixel png image
 const png =
@@ -111,6 +116,104 @@ describe('Content', () => {
 
   it('should export a markdown file for an object', () =>
     testRequest(app, 'content/markdown'));
+
+  it('should ignore a workflow history sent on create', async () => {
+    const Document = models.get('Document');
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        '@type': 'Page',
+        id: 'forged',
+        title: 'Forged',
+        workflow_history: [
+          {
+            action: 'publish',
+            actor: 'mallory',
+            review_state: 'published',
+            time: '2001-01-01T00:00:00Z',
+          },
+        ],
+      })
+      .expect(201);
+    const document = await Document.fetchOne(
+      { path: '/news/forged' },
+      {},
+      global.txn!,
+    );
+    expect(document.workflow_history).toEqual([]);
+  });
+
+  it('should only allow site managers to set the uuid', async () => {
+    const Document = models.get('Document');
+    const contributor = await createUser('contributor');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await news
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Contributor', user: 'contributor' });
+    const body = {
+      '@type': 'Page',
+      id: 'with-uuid',
+      title: 'With uuid',
+      uuid: '0123abcd-0000-4000-8000-000000000001',
+    };
+
+    await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${contributor}`)
+      .send(body)
+      .expect(403);
+
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send(body)
+      .expect(201);
+    expect(res.body.UID).toBe(body.uuid);
+  });
+
+  it('should require the delete permission', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const pending = await createDocument(
+      '0123abcd-0000-4000-8000-000000000002',
+      news,
+      'pending',
+      'Page',
+      { workflow_state: 'pending' },
+    );
+    const reviewer = await createUser('reviewer');
+    const editor = await createUser('editor');
+    await pending
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Reviewer', user: 'reviewer' });
+    await pending
+      .$relatedQuery('_userRoles', global.txn!)
+      .relate({ id: 'Editor', user: 'editor' });
+
+    // A reviewer may modify a pending item but not delete it
+    await request(app)
+      .patch('/news/pending')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${reviewer}`)
+      .send({ title: 'Reviewed' })
+      .expect(204);
+    await request(app)
+      .delete('/news/pending')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${reviewer}`)
+      .expect(403);
+
+    // An editor may delete it
+    await request(app)
+      .delete('/news/pending')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${editor}`)
+      .expect(204);
+  });
 
   it('should only serve images of the document itself', async () => {
     // Add a private image, all uuids are mocked

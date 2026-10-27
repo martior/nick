@@ -29,6 +29,10 @@ Content-Type: application/json
       "token": "Delegate Reviewer"
     },
     {
+      "title": "Delete",
+      "token": "Delete"
+    },
+    {
       "title": "Login",
       "token": "Login"
     },
@@ -65,6 +69,10 @@ Content-Type: application/json
       "token": "Register"
     },
     {
+      "title": "Revert",
+      "token": "Revert"
+    },
+    {
       "title": "Review",
       "token": "Review"
     },
@@ -79,7 +87,11 @@ Content-Type: application/json
     {
       "title": "View Comments",
       "token": "View Comments"
+    },
+    {
+      "title": "View History",
+      "token": "View History"
     }
   ],
-  "items_total": 19
+  "items_total": 22
 }

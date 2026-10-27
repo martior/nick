@@ -10,6 +10,8 @@
 - Require the Modify permission to list the aliases of an item, and Manage Site to list all aliases of the site @martior
 - Only use the default secret 'secret' when NODE_ENV is development or test, use a random secret otherwise when none is configured @martior
 - Only list and grant the roles the user may delegate in @sharing, with new Delegate <role> permissions (upgrade 1007) @martior
+- Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
+- Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
 
 ### Feature
 
@@ -294,6 +296,12 @@
 - Return plone.app.querystring operation names, vocabulary values and sort indexes in the querystring endpoint @martior
 - Return the navigation root url as the breadcrumbs root @martior
 - Add description to navigation items and return a bad request on an invalid navigation depth @martior
+- Include users and groups with a local role and the owner in the search permissions when the workflow state gives that role View @martior
+- Reindex the search permissions of the item and its children after a change of local roles or inheritance in @sharing, in a job for large subtrees @martior
+- Prefix users and groups in the catalog permissions as `user:` and `group:`, so a user or group named like a role no longer sees items that role may view; run `pnpm seed:upgrade` to rebuild them @martior
+- Check workflow transitions against the current state and the permissions on every child with `include_children`, return 400 for unknown or unavailable transitions and require View @martior
+- Require the new Revert permission to revert to a previous version, report it in `may_revert`, reindex after a revert and keep the path of top level items; run `pnpm seed:upgrade` to add it @martior
+- Ignore a workflow history sent when creating content and only allow site managers to choose the uuid @martior
 
 ### Internal
 

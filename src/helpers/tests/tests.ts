@@ -181,3 +181,58 @@ export async function createUserWithToken(
   await addToken(user, token, global.txn!);
   return token;
 }
+
+/**
+ * Create a user with global roles and return a valid token for the user
+ * @method createUser
+ * @param {string} id Id of the user.
+ * @param {string[]} roles Global roles of the user.
+ * @returns {Promise<string>} Token of the user.
+ */
+export async function createUser(
+  id: string,
+  roles: string[] = [],
+): Promise<string> {
+  return createUserWithToken(id, roles);
+}
+
+/**
+ * Create and index a document
+ * @method createDocument
+ * @param {string} uuid Uuid of the document.
+ * @param {Object} parent Parent document.
+ * @param {string} id Id of the document.
+ * @param {string} type Type of the document.
+ * @param {Object} fields Other fields of the document.
+ * @returns {Promise<Object>} Document.
+ */
+export async function createDocument(
+  uuid: string,
+  parent: any,
+  id: string,
+  type: string,
+  fields: any = {},
+): Promise<any> {
+  const Document = models.get('Document');
+  const document: any = await Document.create(
+    {
+      uuid,
+      parent: parent.uuid,
+      id,
+      path: `${parent.path === '/' ? '' : parent.path}/${id}`,
+      position_in_parent: 99,
+      version: 0,
+      owner: 'admin',
+      type,
+      workflow_state: 'private',
+      workflow_history: JSON.stringify([]),
+      lock: { locked: false, stealable: true },
+      json: { title: id },
+      ...fields,
+    },
+    {},
+    global.txn!,
+  );
+  await document.index(global.txn!);
+  return document;
+}

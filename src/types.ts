@@ -392,6 +392,7 @@ export type ConfigSettings = {
     chunk: string;
     batch: number;
   };
+  reindexSecurityLimit?: number;
   userschema: (req: Request) => Schema;
   [key: string]: unknown;
 };

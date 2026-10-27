@@ -62,3 +62,5 @@ Or use the client directly:
 ```http
 {% include_relative examples/sharing/post.res %}
 ```
+
+After the local roles or the `inherit` flag change, the permissions in the catalog are reindexed for the object and every object below it, so `@search`, navigation and folder listings show the new permissions. Subtrees with fewer objects than `reindexSecurityLimit` (default `1000`, set it in `config.ts`) are reindexed within the request. Larger subtrees are reindexed by a `reindex_security` job that starts when the request is committed; until that job is finished, search results below the object may still use the old permissions. The job can be followed with the `@jobs` endpoint, and the same action can be used in a scheduled job to reindex the security of any path.

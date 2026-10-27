@@ -26,7 +26,10 @@
         "Modify Comments",
         "Delegate Reader",
         "Delegate Contributor",
-        "Delegate Editor"
+        "Delegate Editor",
+        "Revert",
+        "Delete",
+        "View History"
       ]
     },
     {
@@ -37,17 +40,24 @@
     {
       "id": "Contributor",
       "title:i18n": "Contributor",
-      "permissions": ["Add"]
+      "permissions": ["Add", "View History"]
     },
     {
       "id": "Editor",
       "title:i18n": "Editor",
-      "permissions": ["Submit", "Delegate Reader", "Delegate Editor"]
+      "permissions": [
+        "Submit",
+        "Delegate Reader",
+        "Delegate Editor",
+        "Revert",
+        "Delete",
+        "View History"
+      ]
     },
     {
       "id": "Reviewer",
       "title:i18n": "Reviewer",
-      "permissions": ["Review", "Modify Comments"]
+      "permissions": ["Review", "Modify Comments", "Revert", "View History"]
     },
     {
       "id": "Administrator",
@@ -62,7 +72,10 @@
         "Delegate Reader",
         "Delegate Contributor",
         "Delegate Editor",
-        "Delegate Reviewer"
+        "Delegate Reviewer",
+        "Revert",
+        "Delete",
+        "View History"
       ]
     }
   ]

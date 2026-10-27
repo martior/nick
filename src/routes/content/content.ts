@@ -368,7 +368,7 @@ export default [
   {
     op: 'get',
     view: '/@history/:version',
-    permission: 'View',
+    permission: 'View History',
     client: 'getHistoryVersion',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
@@ -797,6 +797,13 @@ export default [
       // Get json data
       const properties = type._schema.properties;
 
+      // Only site managers may choose the uuid
+      if (req.body.uuid && !req.permissions.includes('Manage Site')) {
+        throw new RequestException(403, {
+          message: req.i18n('You are not authorized to set the uuid.'),
+        });
+      }
+
       // Set uuid
       const newUuid = req.body.uuid || uuid();
 
@@ -844,7 +851,7 @@ export default [
             : req.document._children.length,
         lock: { locked: false, stealable: true },
         workflow_state: type._workflow.json.initial_state,
-        workflow_history: JSON.stringify(req.body.workflow_history || []),
+        workflow_history: JSON.stringify([]),
         owner: req.user.id,
         json,
       }) as any;
@@ -1091,7 +1098,7 @@ export default [
   {
     op: 'delete',
     view: '',
-    permission: 'Modify',
+    permission: 'Delete',
     client: 'deleteContent',
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {

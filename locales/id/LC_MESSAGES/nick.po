@@ -80,7 +80,7 @@ msgid "Add"
 msgstr "Tambah"
 
 #. Default: "Add Comment"
-#: src/profiles/core/permissions.json:54
+#: src/profiles/core/permissions.json:66
 #: src/profiles/core/upgrades/1002/permissions.json:10
 msgctxt "Profiles|Core|Permissions"
 msgid "Add Comment"
@@ -135,7 +135,10 @@ msgid "Adds title and description fields."
 msgstr "Menambahkan bidang judul dan deskripsi."
 
 #. Default: "Administrator"
-#: src/profiles/core/roles.json:54
+#: src/profiles/core/roles.json:64
+#: src/profiles/core/upgrades/1012/roles.json:26
+#: src/profiles/core/upgrades/1011/roles.json:16
+#: src/profiles/core/upgrades/1010/roles.json:21
 #: src/profiles/core/upgrades/1007/roles.json:20
 #: src/profiles/core/upgrades/1002/roles.json:26
 msgctxt "Profiles|Core|Roles"
@@ -520,7 +523,8 @@ msgid "Contents"
 msgstr "Konten"
 
 #. Default: "Contributor"
-#: src/profiles/core/roles.json:39
+#: src/profiles/core/roles.json:42
+#: src/profiles/core/upgrades/1012/roles.json:11
 msgctxt "Profiles|Core|Roles"
 msgid "Contributor"
 msgstr "Kontributor"
@@ -645,38 +649,40 @@ msgid "Define the event recurrence rule."
 msgstr ""
 
 #. Default: "Delegate Contributor"
-#: src/profiles/core/permissions.json:66
+#: src/profiles/core/permissions.json:78
 #: src/profiles/core/upgrades/1007/permissions.json:6
 msgctxt "Profiles|Core|Permissions"
 msgid "Delegate Contributor"
 msgstr ""
 
 #. Default: "Delegate Editor"
-#: src/profiles/core/permissions.json:70
+#: src/profiles/core/permissions.json:82
 #: src/profiles/core/upgrades/1007/permissions.json:10
 msgctxt "Profiles|Core|Permissions"
 msgid "Delegate Editor"
 msgstr ""
 
 #. Default: "Delegate Reader"
-#: src/profiles/core/permissions.json:74
+#: src/profiles/core/permissions.json:86
 #: src/profiles/core/upgrades/1007/permissions.json:14
 msgctxt "Profiles|Core|Permissions"
 msgid "Delegate Reader"
 msgstr ""
 
 #. Default: "Delegate Reviewer"
-#: src/profiles/core/permissions.json:78
+#: src/profiles/core/permissions.json:90
 #: src/profiles/core/upgrades/1007/permissions.json:18
 msgctxt "Profiles|Core|Permissions"
 msgid "Delegate Reviewer"
 msgstr ""
 
 #. Default: "Delete"
+#: src/profiles/core/permissions.json:38
 #: src/profiles/core/actions.json:54
-msgctxt "Profiles|Core|Actions"
+#: src/profiles/core/upgrades/1011/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
 msgid "Delete"
-msgstr "Hapus"
+msgstr ""
 
 #. Default: "Delete item"
 #: src/content_rules/actions/delete_item.ts:20
@@ -741,7 +747,7 @@ msgstr ""
 #. Default: "Document locked"
 #: src/routes/history/history.ts:68
 #: src/routes/content/content.ts:213
-#: src/routes/content/content.ts:978
+#: src/routes/content/content.ts:985
 msgctxt "Routes|History"
 msgid "Document locked"
 msgstr "Dokumen dikunci"
@@ -789,7 +795,10 @@ msgid "Edit"
 msgstr "Edit"
 
 #. Default: "Editor"
-#: src/profiles/core/roles.json:44
+#: src/profiles/core/roles.json:47
+#: src/profiles/core/upgrades/1012/roles.json:16
+#: src/profiles/core/upgrades/1011/roles.json:11
+#: src/profiles/core/upgrades/1010/roles.json:11
 #: src/profiles/core/upgrades/1007/roles.json:15
 msgctxt "Profiles|Core|Roles"
 msgid "Editor"
@@ -1376,14 +1385,14 @@ msgid "Modify"
 msgstr "Modifikasi"
 
 #. Default: "Modify Comments"
-#: src/profiles/core/permissions.json:58
+#: src/profiles/core/permissions.json:70
 #: src/profiles/core/upgrades/1002/permissions.json:14
 msgctxt "Profiles|Core|Permissions"
 msgid "Modify Comments"
 msgstr ""
 
 #. Default: "Modify Own Comments"
-#: src/profiles/core/permissions.json:62
+#: src/profiles/core/permissions.json:74
 #: src/profiles/core/upgrades/1002/permissions.json:18
 msgctxt "Profiles|Core|Permissions"
 msgid "Modify Own Comments"
@@ -1511,6 +1520,12 @@ msgctxt "Routes|Vocabularies"
 msgid "Not authorized"
 msgstr ""
 
+#. Default: "Not found"
+#: src/routes/history/history.ts:89
+msgctxt "Routes|History"
+msgid "Not found"
+msgstr ""
+
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
 #: src/routes/users/users.ts:142
@@ -1563,6 +1578,9 @@ msgstr "Urutan dalam pelipat"
 
 #. Default: "Owner"
 #: src/profiles/core/roles.json:22
+#: src/profiles/core/upgrades/1012/roles.json:6
+#: src/profiles/core/upgrades/1011/roles.json:6
+#: src/profiles/core/upgrades/1010/roles.json:6
 #: src/profiles/core/upgrades/1007/roles.json:6
 #: src/profiles/core/upgrades/1002/roles.json:16
 msgctxt "Profiles|Core|Roles"
@@ -1619,6 +1637,18 @@ msgstr ""
 msgctxt "Profiles|Core|Actions"
 msgid "Paste"
 msgstr "Tempel"
+
+#. Default: "Path"
+#: src/scheduled_jobs/actions/reindex_security.ts:35
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Path"
+msgstr ""
+
+#. Default: "Path of the item, for example /news."
+#: src/scheduled_jobs/actions/reindex_security.ts:33
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Path of the item, for example /news."
+msgstr ""
 
 #. Default: "Pattern must be at least 1 character long."
 #: src/routes/replace/replace.ts:36
@@ -1792,7 +1822,7 @@ msgid "Re-enter the password. Make sure the passwords are identical."
 msgstr ""
 
 #. Default: "Reader"
-#: src/profiles/core/roles.json:34
+#: src/profiles/core/roles.json:37
 msgctxt "Profiles|Core|Roles"
 msgid "Reader"
 msgstr "Pembaca"
@@ -1804,7 +1834,7 @@ msgid "Recurrence"
 msgstr ""
 
 #. Default: "Register"
-#: src/profiles/core/permissions.json:38
+#: src/profiles/core/permissions.json:50
 #: src/profiles/core/actions.json:103
 msgctxt "Profiles|Core|Permissions"
 msgid "Register"
@@ -1826,6 +1856,26 @@ msgstr ""
 #: src/scheduled_jobs/actions/reindex.ts:20
 msgctxt "Scheduled jobs|Actions|Reindex"
 msgid "Reindex items of type {type}"
+msgstr ""
+
+#. Default: "Reindex security"
+#: src/scheduled_jobs/actions/reindex_security.ts:16
+#: src/routes/sharing/sharing.ts:247
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex security"
+msgstr ""
+
+#. Default: "Reindex security of {path}"
+#: src/scheduled_jobs/actions/reindex_security.ts:20
+#: src/routes/sharing/sharing.ts:248
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex security of {path}"
+msgstr ""
+
+#. Default: "Reindex the permissions of an item and the items below it"
+#: src/scheduled_jobs/actions/reindex_security.ts:18
+msgctxt "Scheduled jobs|Actions|Reindex security"
+msgid "Reindex the permissions of an item and the items below it"
 msgstr ""
 
 #. Default: "Related"
@@ -1894,8 +1944,15 @@ msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Tarik"
 
+#. Default: "Revert"
+#: src/profiles/core/permissions.json:46
+#: src/profiles/core/upgrades/1010/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "Revert"
+msgstr ""
+
 #. Default: "Review"
-#: src/profiles/core/permissions.json:42
+#: src/profiles/core/permissions.json:54
 msgctxt "Profiles|Core|Permissions"
 msgid "Review"
 msgstr "Tinjau"
@@ -1907,7 +1964,9 @@ msgid "Review state"
 msgstr "Status tinjauan"
 
 #. Default: "Reviewer"
-#: src/profiles/core/roles.json:49
+#: src/profiles/core/roles.json:59
+#: src/profiles/core/upgrades/1012/roles.json:21
+#: src/profiles/core/upgrades/1010/roles.json:16
 #: src/profiles/core/upgrades/1002/roles.json:21
 msgctxt "Profiles|Core|Roles"
 msgid "Reviewer"
@@ -2127,7 +2186,7 @@ msgid "Subject of the message"
 msgstr ""
 
 #. Default: "Submit"
-#: src/profiles/core/permissions.json:46
+#: src/profiles/core/permissions.json:58
 msgctxt "Profiles|Core|Permissions"
 msgid "Submit"
 msgstr "Kirim"
@@ -2562,6 +2621,18 @@ msgctxt "Content rules|Actions|Transition workflow"
 msgid "Transition workflow state"
 msgstr ""
 
+#. Default: "Transition {transition} is not available for {path}."
+#: src/routes/workflow/workflow.ts:43
+msgctxt "Routes|Workflow"
+msgid "Transition {transition} is not available for {path}."
+msgstr ""
+
+#. Default: "Transition {transition} is not available in the current state."
+#: src/routes/workflow/workflow.ts:84
+msgctxt "Routes|Workflow"
+msgid "Transition {transition} is not available in the current state."
+msgstr ""
+
 #. Default: "Type"
 #: src/profiles/core/catalog.json:445
 msgctxt "Profiles|Core|Catalog"
@@ -2684,6 +2755,12 @@ msgctxt "Content rules|Actions|Version item"
 msgid "Version item with comment {comment}"
 msgstr ""
 
+#. Default: "Version not found."
+#: src/routes/history/history.ts:88
+msgctxt "Routes|History"
+msgid "Version not found."
+msgstr ""
+
 #. Default: "Versioning"
 #: src/profiles/core/behaviors/versioning.json:3
 msgctxt "Profiles|Core|Behaviors|Versioning"
@@ -2717,10 +2794,17 @@ msgid "View"
 msgstr "Lihat"
 
 #. Default: "View Comments"
-#: src/profiles/core/permissions.json:50
+#: src/profiles/core/permissions.json:62
 #: src/profiles/core/upgrades/1002/permissions.json:6
 msgctxt "Profiles|Core|Permissions"
 msgid "View Comments"
+msgstr ""
+
+#. Default: "View History"
+#: src/profiles/core/permissions.json:42
+#: src/profiles/core/upgrades/1012/permissions.json:6
+msgctxt "Profiles|Core|Permissions"
+msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
@@ -2816,7 +2900,7 @@ msgid "Yes"
 msgstr "Ya"
 
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:45
+#: src/routes/workflow/workflow.ts:93
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Anda tidak memiliki otorisasi untuk mengakses sumber daya ini."
@@ -2845,6 +2929,12 @@ msgctxt "Routes|Translations"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
+#. Default: "You are not authorized to set the uuid."
+#: src/routes/content/content.ts:803
+msgctxt "Routes|Content"
+msgid "You are not authorized to set the uuid."
+msgstr ""
+
 #. Default: "You can’t delete system groups."
 #: src/routes/groups/groups.ts:141
 msgctxt "Routes|Groups"
@@ -2871,7 +2961,7 @@ msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
 #: src/routes/history/history.ts:65
-#: src/routes/content/content.ts:975
+#: src/routes/content/content.ts:982
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Anda tidak memiliki izin untuk menyimpan dokumen ini karena dikunci oleh pengguna lain."
