@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-27T05:16:40.119Z\n"
+"POT-Creation-Date: 2026-10-27T13:14:06.728Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -1031,6 +1031,18 @@ msgctxt "Profiles|Core|Types|Feed"
 msgid "Feed"
 msgstr ""
 
+#. Default: "Field {id} already exists."
+#: src/routes/types/types.ts:231
+msgctxt "Routes|Types"
+msgid "Field {id} already exists."
+msgstr ""
+
+#. Default: "Fieldset {id} already exists."
+#: src/routes/types/types.ts:206
+msgctxt "Routes|Types"
+msgid "Fieldset {id} already exists."
+msgstr ""
+
 #. Default: "File"
 #: src/profiles/core/types/file.json:3
 #: src/profiles/core/types/file.json:19
@@ -1243,6 +1255,12 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:590
 msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
+msgstr ""
+
+#. Default: "Invalid parameter factory."
+#: src/routes/types/types.ts:226
+msgctxt "Routes|Types"
+msgid "Invalid parameter factory."
 msgstr ""
 
 #. Default: "Invalid query."
@@ -1537,6 +1555,12 @@ msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr ""
 
+#. Default: "Missing parameter title."
+#: src/routes/types/types.ts:193
+msgctxt "Routes|Types"
+msgid "Missing parameter title."
+msgstr ""
+
 #. Default: "Modification date"
 #: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
@@ -1606,8 +1630,9 @@ msgid "Name of a person to contact about this event."
 msgstr ""
 
 #. Default: "Navigation"
+#: src/routes/contextnavigation/contextnavigation.ts:233
 #: src/profiles/core/controlpanels/navigation.json:3
-msgctxt "Profiles|Core|Controlpanels|Navigation"
+msgctxt "Routes|Contextnavigation"
 msgid "Navigation"
 msgstr ""
 
@@ -1714,7 +1739,10 @@ msgstr ""
 #: src/routes/users/users.ts:156
 #: src/routes/users/users.ts:391
 #: src/routes/users/users.ts:458
-#: src/routes/types/types.ts:45
+#: src/routes/types/types.ts:59
+#: src/routes/types/types.ts:171
+#: src/routes/types/types.ts:329
+#: src/routes/types/types.ts:376
 #: src/routes/translations/translations.ts:33
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:70
@@ -3289,6 +3317,7 @@ msgstr ""
 
 #. Default: "You are not authorized to access this resource."
 #: src/routes/users/users.ts:374
+#: src/routes/types/types.ts:43
 #: src/routes/translations/translations.ts:39
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
