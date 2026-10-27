@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
 // Internal imports
+import { RequestException } from '../../helpers/error/error';
 import { getUrl } from '../../helpers/url/url';
 import { mapAsync } from '../../helpers/utils/utils';
 import models from '../../models';
@@ -27,11 +28,21 @@ export default [
   {
     op: 'get',
     view: '/@aliases',
-    permission: 'View',
+    permission: 'Modify',
     client: 'getAliases',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Redirect = models.get('Redirect');
+
+      // Listing the aliases of the whole site needs Manage Site
+      if (
+        req.document.uuid === req.navroot.uuid &&
+        !req.permissions.includes('Manage Site')
+      ) {
+        throw new RequestException(403, {
+          message: req.i18n('You are not authorized to access this resource.'),
+        });
+      }
       const options = {
         ...(req.query.query ? { path: ['like', `%${req.query.query}%`] } : {}),
         ...(typeof req.query.manual !== 'undefined'

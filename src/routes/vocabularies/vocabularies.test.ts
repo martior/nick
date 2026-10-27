@@ -9,7 +9,11 @@ import { describe, expect, it } from 'vitest';
 
 // Internal imports
 import app from '../../app';
-import { testRequest } from '../../helpers/tests/tests';
+import {
+  adminToken,
+  createUserWithToken,
+  testRequest,
+} from '../../helpers/tests/tests';
 
 describe('Vocabularies', () => {
   it('should return the vocabularies', () =>
@@ -132,4 +136,77 @@ describe('Vocabularies', () => {
 
   it('should return a 404 if the vocabulary does not exist', () =>
     testRequest(app, 'vocabularies/get_notfound'));
+
+  it('should not return the users and groups vocabularies to members', async () => {
+    const token = await createUserWithToken('member');
+    await request(app)
+      .get('/@vocabularies/groups')
+      .set('Accept', 'application/json')
+      .expect(401);
+    await request(app)
+      .get('/@vocabularies/users')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+    await request(app)
+      .get('/@vocabularies/groups')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+
+    // Also not through the principals vocabulary or the plone.app names
+    for (const id of [
+      'principals',
+      'plone.app.vocabularies.Groups',
+      'plone.app.vocabularies.Principals',
+    ]) {
+      await request(app)
+        .get(`/@vocabularies/${id}`)
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(403);
+    }
+  });
+
+  it('should only return subjects of items the user can view', async () => {
+    await request(app)
+      .post('/')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        '@type': 'Page',
+        id: 'private-page',
+        title: 'Private Page',
+        subjects: ['secret-keyword'],
+      })
+      .expect(201);
+    const tokens = (res: request.Response) =>
+      res.body.items.map((item: any) => item.token);
+
+    // An editor of the news folder, who can't view the private page
+    const token = await createUserWithToken('editor');
+    await request(app)
+      .post('/news/@sharing')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        entries: [{ id: 'editor', type: 'user', roles: { Editor: true } }],
+        inherit: true,
+      })
+      .expect(204);
+    const editor = await request(app)
+      .get('/news/@vocabularies/subjects')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(tokens(editor)).not.toContain('secret-keyword');
+
+    // Admin
+    const admin = await request(app)
+      .get('/@vocabularies/subjects')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    expect(tokens(admin)).toContain('secret-keyword');
+  });
 });
