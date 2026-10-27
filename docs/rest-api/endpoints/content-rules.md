@@ -13,7 +13,7 @@ Content rules can perform routine tasks, including the following.
 - Send email when a content item is deleted.
 - Delete content after a certain date.
 
-Available content rules in a Nick site can be listed and queried by accessing the `/@content-rules` endpoint in any context. Access requires the `Modify` permission.
+Available content rules in a Nick site can be listed and queried by accessing the `/@content-rules` endpoint in any context. Access requires the `Manage Site` permission.
 
 ```http
 {% include_relative examples/content_rules/get.req %}

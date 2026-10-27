@@ -34,6 +34,9 @@ export const seedWorkflow = async (
       // If doesn’t exist
       if (!current) {
         await Workflow.create(workflow, {}, trx);
+      } else if (profile.replace) {
+        // Replace the definition, for example with an exported workflow
+        await Workflow.update(workflow.id, workflow, trx);
       } else {
         await Workflow.update(
           workflow.id,

@@ -46,8 +46,8 @@ export async function callHandler(
     trx,
   );
 
-  // If token not in user model
-  if (!req.token || !(req.user.tokens || []).includes(req.token)) {
+  // If user not found (e.g. deleted) or token not in user model
+  if (!req.user || !req.token || !(req.user.tokens || []).includes(req.token)) {
     // Set anonymous user
     req.user = await User.fetchById(
       'anonymous',

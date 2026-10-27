@@ -13,6 +13,26 @@ Content-Type: application/json
       "token": "Add Comment"
     },
     {
+      "title": "Delegate Contributor",
+      "token": "Delegate Contributor"
+    },
+    {
+      "title": "Delegate Editor",
+      "token": "Delegate Editor"
+    },
+    {
+      "title": "Delegate Reader",
+      "token": "Delegate Reader"
+    },
+    {
+      "title": "Delegate Reviewer",
+      "token": "Delegate Reviewer"
+    },
+    {
+      "title": "Delete",
+      "token": "Delete"
+    },
+    {
       "title": "Login",
       "token": "Login"
     },
@@ -49,6 +69,10 @@ Content-Type: application/json
       "token": "Register"
     },
     {
+      "title": "Revert",
+      "token": "Revert"
+    },
+    {
       "title": "Review",
       "token": "Review"
     },
@@ -63,7 +87,11 @@ Content-Type: application/json
     {
       "title": "View Comments",
       "token": "View Comments"
+    },
+    {
+      "title": "View History",
+      "token": "View History"
     }
   ],
-  "items_total": 15
+  "items_total": 22
 }

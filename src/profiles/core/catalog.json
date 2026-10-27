@@ -304,6 +304,12 @@
           "operation": "contains",
           "title:i18n": "Matches any condition",
           "widget": "MultipleSelectionWidget"
+        },
+        "selection.none": {
+          "title:i18n": "Matches none of",
+          "description:i18n": "Tip: you can use * to autocomplete.",
+          "operation": "excludes",
+          "widget": "MultipleSelectionWidget"
         }
       },
       "vocabulary": "subjects"
@@ -447,6 +453,12 @@
           "description:i18n": "Tip: you can use * to autocomplete.",
           "operation": "contains",
           "widget": "MultipleSelectionWidget"
+        },
+        "selection.none": {
+          "title:i18n": "Matches none of",
+          "description:i18n": "Tip: you can use * to autocomplete.",
+          "operation": "excludes",
+          "widget": "MultipleSelectionWidget"
         }
       },
       "vocabulary": "types"
@@ -465,6 +477,12 @@
           "title:i18n": "Matches any condition",
           "description:i18n": "Tip: you can use * to autocomplete.",
           "operation": "contains",
+          "widget": "MultipleSelectionWidget"
+        },
+        "selection.none": {
+          "title:i18n": "Matches none of",
+          "description:i18n": "Tip: you can use * to autocomplete.",
+          "operation": "excludes",
           "widget": "MultipleSelectionWidget"
         }
       },

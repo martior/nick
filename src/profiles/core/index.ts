@@ -121,6 +121,7 @@ import { workflow_state } from '../../content_rules/conditions/workflow_state';
 // Scheduled jobs
 import scheduledJobs from '../../scheduled_jobs';
 import { reindex } from '../../scheduled_jobs/actions/reindex';
+import { reindex_security } from '../../scheduled_jobs/actions/reindex_security';
 
 // Routes
 import routes from '../../routes';
@@ -219,7 +220,7 @@ export function init(): void {
   vocabularies.register('behaviors', behaviorVocab);
   vocabularies.register('captchaProviders', captchaProviders);
   vocabularies.register('Fields', fields);
-  vocabularies.register('groups', groups);
+  vocabularies.register('groups', groups, 'Modify');
   vocabularies.register('imageScales', imageScales);
   vocabularies.register('permissions', permissions);
   vocabularies.register('roles', roles);
@@ -235,7 +236,7 @@ export function init(): void {
   vocabularies.register('metadataFields', metadataFields);
   vocabularies.register('months', months);
   vocabularies.register('monthsAbbr', monthsAbbr);
-  vocabularies.register('principals', principals);
+  vocabularies.register('principals', principals, 'Modify');
   vocabularies.register('timezones', timezones);
   vocabularies.register('weekdays', weekdays);
   vocabularies.register('weekdaysAbbr', weekdaysAbbr);
@@ -267,8 +268,11 @@ export function init(): void {
     vocabularies.register(
       `plone.app.vocabularies.${name}`,
       vocabulary,
-      // Protected like in plone.app.content
-      ['Keywords', 'Users'].includes(name) ? 'Modify' : undefined,
+      // Protected like in plone.app.content, and like the groups and
+      // principals vocabularies above
+      ['Groups', 'Keywords', 'Principals', 'Users'].includes(name)
+        ? 'Modify'
+        : undefined,
     ),
   );
 
@@ -317,6 +321,7 @@ export function init(): void {
 
   // Register scheduled job actions
   scheduledJobs.registerAction('reindex', reindex);
+  scheduledJobs.registerAction('reindex_security', reindex_security);
 
   // Routes
   routes.register(contentRoutes); // Register content routes first as they are the fallback
