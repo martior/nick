@@ -12,6 +12,7 @@
 - Only list and grant the roles the user may delegate in @sharing, with new Delegate <role> permissions (upgrade 1007) @martior
 - Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
 - Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
+- Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 
 ### Feature
 
@@ -317,6 +318,17 @@
 - Return the existing lock when unlocking content locked by another user without force @martior
 - Give every token a unique id, so logging out one session no longer logs out other sessions of the user @martior
 - Treat the token of a deleted user as anonymous instead of failing with a server error @martior
+- Set the password of a user on PATCH @users and apply the password policy @martior
+- Answer 400 instead of 401 or 500 when a password is missing or too short on @users @martior
+- Answer 403 when resetting a password with a wrong old password or for another user instead of a silent 200 @martior
+- Answer 400 instead of 500 when a group is created without a name, with an existing name or with unknown roles or users @martior
+- List the members of a group in GET @groups/<id> @martior
+- Search groups case insensitive and support the limit parameter on @groups @martior
+- Answer 404 when deleting or updating a user or group that doesn't exist @martior
+- Let users update their own properties with PATCH @users @martior
+- Refuse an invalid email address when creating a user @martior
+- Return the Location header when creating a user or group @martior
+- Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
 
 ### Internal
 
@@ -388,6 +400,7 @@
 - Add documentation on how to setup caching @robgietema
 - Add documentation about profiles @robgietema
 - Document what the Plone migration migrates, what it doesn't and how to verify it @martior
+- Fix the url of the update scheduled job example @martior
 
 ## 2.8.0 (2022-07-17)
 

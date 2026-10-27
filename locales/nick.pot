@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Nick\n"
-"POT-Creation-Date: 2026-10-27T03:40:57.782Z\n"
+"POT-Creation-Date: 2026-10-27T04:11:44.044Z\n"
 "Last-Translator: Rob Gietema\n"
 "Language-Team: Nick\n"
 "MIME-Version: 1.0\n"
@@ -230,7 +230,7 @@ msgid "An entity responsible for making this item available."
 msgstr ""
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:249
+#: src/routes/users/users.ts:320
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -315,6 +315,16 @@ msgstr ""
 #: src/profiles/core/controlpanels/language.json:27
 msgctxt "Profiles|Core|Controlpanels|Language"
 msgid "Available languages"
+msgstr ""
+
+#. Default: "Bad request"
+#: src/routes/groups/groups.ts:99
+#: src/routes/groups/groups.ts:107
+#: src/routes/groups/groups.ts:119
+#: src/routes/groups/groups.ts:133
+#: src/routes/groups/groups.ts:149
+msgctxt "Routes|Groups"
+msgid "Bad request"
 msgstr ""
 
 #. Default: "Basic metadata"
@@ -807,6 +817,12 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
 msgstr ""
 
+#. Default: "Either a password or sendPasswordReset must be provided."
+#: src/routes/users/users.ts:257
+msgctxt "Routes|Users"
+msgid "Either a password or sendPasswordReset must be provided."
+msgstr ""
+
 #. Default: "Email"
 #: src/routes/userschema/userschema.ts:40
 #: src/routes/userschema/userschema.ts:93
@@ -1208,6 +1224,13 @@ msgctxt "Profiles|Core|Types|File"
 msgid "Lets you upload a file to the site."
 msgstr ""
 
+#. Default: "Limit must be a positive number."
+#: src/routes/users/users.ts:189
+#: src/routes/groups/groups.ts:69
+msgctxt "Routes|Users"
+msgid "Limit must be a positive number."
+msgstr ""
+
 #. Default: "List of attendees."
 #: src/profiles/core/types/event.json:73
 msgctxt "Profiles|Core|Types|Event"
@@ -1525,7 +1548,9 @@ msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:142
+#: src/routes/users/users.ts:156
+#: src/routes/users/users.ts:391
+#: src/routes/users/users.ts:458
 #: src/routes/types/types.ts:45
 #: src/routes/translations/translations.ts:33
 #: src/routes/scheduled_jobs/scheduled_jobs.ts:50
@@ -1536,7 +1561,9 @@ msgstr ""
 #: src/routes/jobs/jobs.ts:37
 #: src/routes/jobs/jobs.ts:77
 #: src/routes/jobs/jobs.ts:188
-#: src/routes/groups/groups.ts:34
+#: src/routes/groups/groups.ts:37
+#: src/routes/groups/groups.ts:194
+#: src/routes/groups/groups.ts:238
 #: src/routes/email/email.ts:24
 #: src/routes/email/email.ts:90
 #: src/routes/controlpanels/controlpanels.ts:167
@@ -1622,15 +1649,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:102
-#: src/routes/users/users.ts:268
+#: src/routes/users/users.ts:116
+#: src/routes/users/users.ts:339
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr ""
 
 #. Default: "Password should be at least 8 characters long."
-#: src/routes/users/users.ts:50
-#: src/routes/users/users.ts:196
+#: src/routes/users/users.ts:52
+#: src/routes/users/users.ts:267
+#: src/routes/users/users.ts:401
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1773,6 +1801,12 @@ msgctxt "Profiles|Ai|Controlpanels"
 msgid "Prompts"
 msgstr ""
 
+#. Default: "Property “groupname” is required."
+#: src/routes/groups/groups.ts:100
+msgctxt "Routes|Groups"
+msgid "Property “groupname” is required."
+msgstr ""
+
 #. Default: "Provided block id is not valid."
 #: src/routes/form/form.ts:48
 #: src/routes/form/form.ts:99
@@ -1811,10 +1845,9 @@ msgid "Query"
 msgstr ""
 
 #. Default: "Query must be at least 2 characters long."
-#: src/routes/users/users.ts:163
 #: src/routes/principals/principals.ts:30
-#: src/routes/groups/groups.ts:55
-msgctxt "Routes|Users"
+#: src/routes/groups/groups.ts:58
+msgctxt "Routes|Principals"
 msgid "Query must be at least 2 characters long."
 msgstr ""
 
@@ -1992,6 +2025,12 @@ msgstr ""
 #: src/content_rules/conditions/user_role.ts:45
 msgctxt "Content rules|Conditions|User role"
 msgid "Roles"
+msgstr ""
+
+#. Default: "Roles and users must be lists."
+#: src/routes/groups/groups.ts:120
+msgctxt "Routes|Groups"
+msgid "Roles and users must be lists."
 msgstr ""
 
 #. Default: "Roles are: {roles}"
@@ -2238,13 +2277,13 @@ msgid "Successfully enabled rules {rules} to subfolders"
 msgstr ""
 
 #. Default: "System group"
-#: src/routes/groups/groups.ts:142
+#: src/routes/groups/groups.ts:231
 msgctxt "Routes|Groups"
 msgid "System group"
 msgstr ""
 
 #. Default: "System users"
-#: src/routes/users/users.ts:351
+#: src/routes/users/users.ts:450
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr ""
@@ -2395,10 +2434,16 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:103
-#: src/routes/users/users.ts:269
+#: src/routes/users/users.ts:117
+#: src/routes/users/users.ts:340
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
+msgstr ""
+
+#. Default: "The group name you entered already exists."
+#: src/routes/groups/groups.ts:108
+msgctxt "Routes|Groups"
+msgid "The group name you entered already exists."
 msgstr ""
 
 #. Default: "The item’s title, transformed for sorting"
@@ -2666,6 +2711,18 @@ msgctxt "Routes|Content"
 msgid "Type {type} not found."
 msgstr ""
 
+#. Default: "Unknown roles: {roles}"
+#: src/routes/groups/groups.ts:134
+msgctxt "Routes|Groups"
+msgid "Unknown roles: {roles}"
+msgstr ""
+
+#. Default: "Unknown users: {users}"
+#: src/routes/groups/groups.ts:150
+msgctxt "Routes|Groups"
+msgid "Unknown users: {users}"
+msgstr ""
+
 #. Default: "Upload too large."
 #: src/helpers/multipart/multipart.ts:56
 msgctxt "Helpers|Multipart"
@@ -2699,7 +2756,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:70
+#: src/routes/users/users.ts:72
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr ""
@@ -2901,6 +2958,12 @@ msgctxt "Routes|Authentication"
 msgid "Wrong login and/or password."
 msgstr ""
 
+#. Default: "Wrong password."
+#: src/routes/users/users.ts:90
+msgctxt "Routes|Users"
+msgid "Wrong password."
+msgstr ""
+
 #. Default: "Yes"
 #: src/profiles/core/catalog.json:371
 #: src/profiles/core/vocabularies/boolean.json:5
@@ -2921,6 +2984,7 @@ msgid "You are not authorized to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
+#: src/routes/users/users.ts:374
 #: src/routes/translations/translations.ts:39
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
@@ -2934,7 +2998,7 @@ msgstr ""
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
-msgctxt "Routes|Translations"
+msgctxt "Routes|Users"
 msgid "You are not authorized to access this resource."
 msgstr ""
 
@@ -2944,14 +3008,20 @@ msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
 
+#. Default: "You can only change your own password."
+#: src/routes/users/users.ts:79
+msgctxt "Routes|Users"
+msgid "You can only change your own password."
+msgstr ""
+
 #. Default: "You can’t delete system groups."
-#: src/routes/groups/groups.ts:141
+#: src/routes/groups/groups.ts:230
 msgctxt "Routes|Groups"
 msgid "You can’t delete system groups."
 msgstr ""
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:350
+#: src/routes/users/users.ts:449
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr ""
@@ -2981,15 +3051,21 @@ msgid "You don’t have permission to unlock this document."
 msgstr ""
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:189
+#: src/routes/users/users.ts:238
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr ""
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:130
+#: src/routes/users/users.ts:144
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
+msgstr ""
+
+#. Default: "You must enter a valid email address."
+#: src/routes/users/users.ts:249
+msgctxt "Routes|Users"
+msgid "You must enter a valid email address."
 msgstr ""
 
 #. Default: "You need to be authenticated to access the vocabulary “{id}”."

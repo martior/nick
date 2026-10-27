@@ -39,7 +39,7 @@ Or use the client directly:
 {% include_relative examples/groups/list_query.ts %}
 ```
 
-The server will respond with a list the filtered groups in the portal with groupname starts with the query.
+The server will respond with the groups whose groupname contains the query, ignoring case. At most `limit` groups are returned, 25 by default.
 
 ```http
 {% include_relative examples/groups/list_query.res %}
@@ -65,6 +65,16 @@ If the group has been created successfully, the server will respond with a statu
 {% include_relative examples/groups/post.res %}
 ```
 
+The `groupname` is required and must not be in use by another group, and all `roles` and `users` must exist. Otherwise the server responds with a `400 Bad Request`:
+
+```http
+{% include_relative examples/groups/post_duplicate.req %}
+```
+
+```http
+{% include_relative examples/groups/post_duplicate.res %}
+```
+
 ## Read Group
 
 To retrieve all details for a particular group, send a `GET` request to the `/@groups` endpoint and append the group id to the URL:
@@ -84,6 +94,8 @@ The server will respond with a `200 OK` status code and the JSON representation 
 ```http
 {% include_relative examples/groups/get.res %}
 ```
+
+The ids of the users in the group are listed in `members`.
 
 ## Update Group
 
@@ -124,3 +136,5 @@ A successful response will be indicated by a `204 No Content` response:
 ```http
 {% include_relative examples/groups/delete.res %}
 ```
+
+If the group doesn't exist, the server responds with a `404 Not Found`.

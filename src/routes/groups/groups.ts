@@ -12,7 +12,10 @@ import config from '../../helpers/config/config';
 import events from '../../events';
 import { RequestException } from '../../helpers/error/error';
 import { apiLimiter } from '../../helpers/limiter/limiter';
+import { getRootUrl } from '../../helpers/url/url';
 import models from '../../models';
+
+const defaultLimit = 25;
 
 export default [
   {
@@ -26,7 +29,7 @@ export default [
       const group = await Group.fetchById(
         req.params.id,
         {
-          related: '_roles',
+          related: '[_roles, _users]',
         },
         trx,
       );
@@ -55,9 +58,21 @@ export default [
           error: req.i18n('Query must be at least 2 characters long.'),
         });
       }
+
+      // Check limit
+      const limit =
+        query || req.query.limit
+          ? parseInt(String(req.query.limit || defaultLimit), 10)
+          : undefined;
+      if (typeof limit !== 'undefined' && (isNaN(limit) || limit < 1)) {
+        throw new RequestException(400, {
+          error: req.i18n('Limit must be a positive number.'),
+        });
+      }
+
       const groups = await Group.fetchAll(
-        query ? { id: ['like', `%${query}%`] } : {},
-        { order: 'title', related: '_roles' },
+        query ? { id: ['ilike', `%${query.replace(/[\\%_]/g, '\\$&')}%`] } : {},
+        { order: 'title', related: '_roles', limit },
         trx,
       );
       return {
@@ -74,16 +89,81 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Group = models.get('Group');
+      const Role = models.get('Role');
+      const User = models.get('User');
+
+      // Check group name
+      if (typeof req.body?.groupname !== 'string' || !req.body.groupname) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Property “groupname” is required.'),
+          },
+        });
+      }
+      if (await Group.fetchById(req.body.groupname, {}, trx)) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('The group name you entered already exists.'),
+          },
+        });
+      }
+
+      // Check roles and users
+      const roles = req.body.roles ?? [];
+      const users = req.body.users ?? [];
+      if (!Array.isArray(roles) || !Array.isArray(users)) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Roles and users must be lists.'),
+          },
+        });
+      }
+      const knownRoles = (
+        await Role.fetchAll({ id: ['=', roles] }, {}, trx)
+      ).map((role: any) => role.id);
+      const unknownRoles = roles.filter(
+        (role: string) => !knownRoles.includes(role),
+      );
+      if (unknownRoles.length > 0) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Unknown roles: {roles}', {
+              roles: unknownRoles.join(', '),
+            }),
+          },
+        });
+      }
+      const knownUsers = (
+        await User.fetchAll({ id: ['=', users] }, {}, trx)
+      ).map((user: any) => user.id);
+      const unknownUsers = users.filter(
+        (user: string) => !knownUsers.includes(user),
+      );
+      if (unknownUsers.length > 0) {
+        throw new RequestException(400, {
+          error: {
+            type: req.i18n('Bad request'),
+            message: req.i18n('Unknown users: {users}', {
+              users: unknownUsers.join(', '),
+            }),
+          },
+        });
+      }
+
       const group = await Group.create(
         {
           id: req.body.groupname,
           title: req.body.title,
           description: req.body.description,
           email: req.body.email,
-          _roles: req.body.roles,
-          _users: req.body.users,
+          _roles: roles,
+          _users: users,
         },
-        { related: 'roles' },
+        {},
         trx,
       );
 
@@ -93,6 +173,9 @@ export default [
       // Send created
       return {
         status: 201,
+        headers: {
+          Location: `${getRootUrl(req)}/@groups/${group.id}`,
+        },
         json: await group.toJson(req),
       };
     },
@@ -105,6 +188,12 @@ export default [
     cache: 'alter',
     handler: async (req: Request, trx: Knex.Transaction) => {
       const Group = models.get('Group');
+
+      // Check if group exists
+      if (!(await Group.fetchById(req.params.id, {}, trx))) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
+      }
+
       const group = await Group.update(
         req.params.id,
         {
@@ -142,6 +231,11 @@ export default [
             type: req.i18n('System group'),
           },
         });
+      }
+
+      // Check if group exists
+      if (!(await Group.fetchById(req.params.id, {}, trx))) {
+        throw new RequestException(404, { error: req.i18n('Not found.') });
       }
 
       // Trigger on before delete group
