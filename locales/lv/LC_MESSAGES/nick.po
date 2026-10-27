@@ -1126,6 +1126,12 @@ msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Nederīgi akreditācijas dati"
 
+#. Default: "Invalid depth."
+#: src/routes/navigation/navigation.ts:79
+msgctxt "Routes|Navigation"
+msgid "Invalid depth."
+msgstr ""
+
 #. Default: "Invalid move."
 #: src/routes/controlpanels/controlpanels.ts:537
 #: src/routes/controlpanels/controlpanels.ts:590
