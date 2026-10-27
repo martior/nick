@@ -22,3 +22,5 @@ Example response, `root` is the url of the navigation root:
 ```http
 {% include_relative examples/breadcrumbs/get.res %}
 ```
+
+Ancestors the user may not view are left out, so the title of a private folder doesn't show up in the breadcrumbs of a published item inside it.

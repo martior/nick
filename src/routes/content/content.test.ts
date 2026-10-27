@@ -142,7 +142,9 @@ describe('Content', () => {
       {},
       global.txn!,
     );
-    expect(document.workflow_history).toEqual([]);
+    expect(
+      document.workflow_history.map((item: any) => [item.action, item.actor]),
+    ).toEqual([[null, 'admin']]);
   });
 
   it('should only allow site managers to set the uuid', async () => {
@@ -175,6 +177,320 @@ describe('Content', () => {
     expect(res.body.UID).toBe(body.uuid);
   });
 
+  it('should validate the type and the fields on create', async () => {
+    const post = (body: any) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+
+    expect((await post({ title: 'No type' }).expect(400)).body.message).toBe(
+      "Property '@type' is required.",
+    );
+    expect(
+      (await post({ '@type': 'NoSuchType', title: 'x' }).expect(403)).body
+        .message,
+    ).toBe(
+      "Invalid '@type' parameter. No content type with the name “NoSuchType” found.",
+    );
+    const errors = async (body: any) =>
+      JSON.parse((await post(body).expect(400)).body.message);
+    expect(await errors({ '@type': 'Page', title: 12345 })).toStrictEqual([
+      {
+        field: 'title',
+        message: 'Object is of wrong type.',
+        error: 'ValidationError',
+      },
+    ]);
+    expect(
+      (await errors({ '@type': 'Page', title: 'x', description: ['a'] }))[0]
+        .field,
+    ).toBe('description');
+    expect(
+      (await errors({ '@type': 'Page', title: 'line1\nline2' }))[0].message,
+    ).toBe('Constraint not satisfied');
+    expect(
+      (await errors({ '@type': 'Page', title: 'x'.repeat(1025) }))[0].message,
+    ).toBe('Value is too long');
+    expect(
+      (await errors({ '@type': 'Page', title: 'x', blocks: 'not-a-dict' }))[0]
+        .field,
+    ).toBe('blocks');
+  });
+
+  it('should validate explicit ids on create', async () => {
+    const post = (id: string) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ '@type': 'Page', id, title: 'x' });
+
+    for (const id of [
+      'slash/inside',
+      '_underscore',
+      '..',
+      'aq_parent',
+      '@search',
+    ]) {
+      await post(id).expect(400);
+    }
+
+    // The service is not hidden by a child
+    const search = await request(app)
+      .get('/news/@search')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(search.body.items).toBeDefined();
+    await post('has space').expect(201);
+    expect((await post('has space').expect(400)).body.message).toBe(
+      'The id “has space” is invalid - it is already in use.',
+    );
+  });
+
+  it('should validate the fields on update', async () => {
+    const patch = (body: any) =>
+      request(app)
+        .patch('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+
+    expect(
+      JSON.parse((await patch({ title: null }).expect(400)).body.message),
+    ).toStrictEqual([
+      {
+        field: 'title',
+        message: 'Required input is missing.',
+        error: 'ValidationError',
+      },
+    ]);
+    await patch({ title: { not: 'a string' } }).expect(400);
+    await patch({ id: '_news' }).expect(400);
+    await patch({ description: null }).expect(204);
+  });
+
+  it('should allow ids and titles longer than 255 characters', async () => {
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'a'.repeat(300), title: 'y'.repeat(1024) })
+      .expect(201);
+    expect(res.body.id).toBe('a'.repeat(300));
+    expect(res.body.title).toBe('y'.repeat(1024));
+  });
+
+  it('should normalize text to the NFC form', async () => {
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'combining', title: 'e\u0301 acute' })
+      .expect(201);
+    expect(res.body.title).toBe('\u00e9 acute');
+  });
+
+  it('should accept the uuid as UID', async () => {
+    const post = (UID: any) =>
+      request(app)
+        .post('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ '@type': 'Page', title: 'With UID', UID });
+
+    const res = await post('0123456789abcdef0123456789abcdef').expect(201);
+    expect(res.body.UID).toBe('01234567-89ab-cdef-0123-456789abcdef');
+    await post('0123456789abcdef0123456789abcdef').expect(400);
+    await post('not-a-uuid').expect(400);
+  });
+
+  it('should batch the items of a folder', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    for (const id of ['c0', 'c1', 'c2', 'c3', 'c4']) {
+      await createDocument(
+        `0123abcd-0000-4000-8000-00000000010${id[1]}`,
+        news,
+        id,
+        'Page',
+        {
+          position_in_parent: parseInt(id[1], 10),
+        },
+      );
+    }
+    const get = (query: string) =>
+      request(app)
+        .get(`/news?${query}`)
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+    let res = await get('b_size=2');
+    expect(res.body.items_total).toBe(5);
+    expect(res.body.items.map((item: any) => item.id)).toStrictEqual([
+      'c0',
+      'c1',
+    ]);
+    expect(res.body.batching.next).toBe(
+      'http://localhost:8080/news?b_size=2&b_start=2',
+    );
+    expect(res.body.items[0].description).toBe('');
+    expect(res.body.items[0].parent).toBeUndefined();
+
+    res = await get('b_size=2&b_start=4&fullobjects=1');
+    expect(res.body.items.map((item: any) => item.id)).toStrictEqual(['c4']);
+    expect(res.body.items[0].parent['@id']).toBe('http://localhost:8080/news');
+
+    res = await get('');
+    expect(res.body.items_total).toBe(5);
+    expect(res.body.batching).toBeUndefined();
+  });
+
+  it('should return the content on update if preferred', async () => {
+    const res = await request(app)
+      .patch('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .set('Prefer', 'return=representation')
+      .send({ title: 'Updated news' })
+      .expect(200);
+    expect(res.body.title).toBe('Updated news');
+    expect(res.body.parent['@id']).toBe('http://localhost:8080');
+  });
+
+  it('should not return a parent the user can not view', async () => {
+    const admin = (req: request.Test) =>
+      req
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+
+    // A published page in a private folder
+    await admin(request(app).post('/'))
+      .send({
+        '@type': 'Folder',
+        id: 'private-folder',
+        uuid: '5d7e9f1a-3b5c-4d6e-8f9a-1b2c3d4e5f01',
+        title: 'Secret',
+      })
+      .expect(201);
+    await admin(request(app).post('/private-folder'))
+      .send({
+        '@type': 'Page',
+        id: 'page',
+        uuid: '5d7e9f1a-3b5c-4d6e-8f9a-1b2c3d4e5f02',
+        title: 'Page',
+      })
+      .expect(201);
+    await admin(
+      request(app).post('/private-folder/page/@workflow/publish'),
+    ).expect(200);
+
+    // Anonymous can view the page, but not its parent
+    const anonymous = await request(app)
+      .get('/private-folder/page')
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(anonymous.body.parent).toBeUndefined();
+
+    // The admin gets the parent
+    const res = await admin(request(app).get('/private-folder/page')).expect(
+      200,
+    );
+    expect(res.body.parent.title).toBe('Secret');
+  });
+
+  it('should return the location of new content', async () => {
+    const res = await request(app)
+      .post('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ '@type': 'Page', id: 'located', title: 'Located' })
+      .expect(201);
+    expect(res.headers.location).toBe('http://localhost:8080/news/located');
+  });
+
+  it('should order items within a subset and sort them', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const titles: Record<string, string> = {
+      a: 'Beta',
+      b: 'Alpha',
+      c: 'Gamma',
+      d: 'Delta',
+    };
+    for (const [index, id] of ['a', 'b', 'c', 'd'].entries()) {
+      await createDocument(
+        `0123abcd-0000-4000-8000-00000000020${index}`,
+        news,
+        id,
+        'Page',
+        {
+          position_in_parent: index,
+          json: { title: titles[id] },
+        },
+      );
+    }
+    const patch = (body: any) =>
+      request(app)
+        .patch('/news')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    const ids = async () =>
+      (
+        await request(app)
+          .get('/news')
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+      ).body.items.map((item: any) => item.id);
+
+    await patch({
+      ordering: { obj_id: 'd', delta: 'top', subset_ids: ['c', 'd'] },
+    }).expect(204);
+    expect(await ids()).toStrictEqual(['a', 'b', 'd', 'c']);
+
+    await patch({
+      ordering: { obj_id: 'a', delta: 1, subset_ids: ['c', 'a'] },
+    }).expect(400);
+    await patch({ ordering: { obj_id: 'unknown', delta: 1 } }).expect(400);
+    await patch({ ordering: { obj_id: 'a', delta: 'sideways' } }).expect(400);
+    await patch({ ordering: { obj_id: 'a', delta: 1.5 } }).expect(400);
+    expect(await ids()).toStrictEqual(['a', 'b', 'd', 'c']);
+    await patch({ ordering: { obj_id: 'b', delta: -10 } }).expect(204);
+    expect(await ids()).toStrictEqual(['b', 'a', 'd', 'c']);
+
+    await patch({
+      sort: { on: 'sortable_title', order: 'descending' },
+    }).expect(204);
+    expect(await ids()).toStrictEqual(['c', 'd', 'a', 'b']);
+
+    await patch({
+      ordering: { obj_id: 'b', delta: 'top' },
+      title: 'Sorted news',
+    }).expect(204);
+    expect(await ids()).toStrictEqual(['b', 'c', 'd', 'a']);
+    const res = await request(app)
+      .get('/news')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.body.title).toBe('Sorted news');
+  });
+
+  it('should prefix the id of a copy in the same folder', async () => {
+    const res = await request(app)
+      .post('/events/@copy')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ source: '/events/event-1' })
+      .expect(200);
+    expect(res.body[0].target).toBe(
+      'http://localhost:8080/events/copy_of_event-1',
+    );
+  });
+
   it('should require the delete permission', async () => {
     const Document = models.get('Document');
     const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
@@ -205,7 +521,7 @@ describe('Content', () => {
       .delete('/news/pending')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${reviewer}`)
-      .expect(403);
+      .expect(401);
 
     // An editor may delete it
     await request(app)

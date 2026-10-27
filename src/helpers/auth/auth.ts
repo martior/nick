@@ -29,6 +29,9 @@ export function hasPermission(
   return isUndefined(permission) || permissions.includes(permission);
 }
 
+// Group of all authenticated users, like in Plone
+export const authenticatedUsers = 'AuthenticatedUsers';
+
 /**
  * Get the catalog permission token of a user.
  * @method userToken
@@ -50,8 +53,9 @@ export function groupToken(id: string): string {
 }
 
 /**
- * Get the catalog permission tokens of a user: the user, its groups and its
- * roles. Users and groups are prefixed so they can't match a role.
+ * Get the catalog permission tokens of a user: the user, its groups (with
+ * `AuthenticatedUsers` for authenticated users) and its roles. Users and
+ * groups are prefixed so they can't match a role.
  * @method principalTokens
  * @param {User} user User object.
  * @returns {string[]} Tokens.
@@ -59,7 +63,10 @@ export function groupToken(id: string): string {
 export function principalTokens(user: any): string[] {
   return [
     userToken(user.id),
-    ...(user._groups || []).map((group: any) => groupToken(group.id)),
+    ...(user.getGroups
+      ? user.getGroups()
+      : (user._groups || []).map((group: any) => group.id)
+    ).map((group: string) => groupToken(group)),
     ...user.getRoles(),
   ];
 }

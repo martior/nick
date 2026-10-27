@@ -7,5 +7,5 @@ const login = await cli.login({
 
 const { data } = await cli.getContextNavigation({
   token: login.data.token,
-  path: '/',
+  path: '/events',
 });

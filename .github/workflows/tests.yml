@@ -57,3 +57,98 @@ jobs:
           API_RATE_LIMIT: 1000
           AUTH_RATE_LIMIT: 1000
         run: pnpm test
+
+  upgrade:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [26.x]
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: nick
+          POSTGRES_PASSWORD: nick
+          POSTGRES_DB: nick
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Node setup
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Enable corepack
+        shell: bash
+        run: npm i -g corepack@latest && corepack enable
+
+      # Bootstrap the version before this push
+      - name: Bootstrap the previous version
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          BASE="$BEFORE"
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then BASE=HEAD~1; fi
+          echo "Upgrading from $(git rev-parse --short "$BASE")"
+          git checkout -q "$BASE"
+          pnpm bootstrap
+
+      # Migrate and upgrade to this version; fails on any error
+      - name: Migrate and upgrade
+        run: |
+          git checkout -q ${{ github.sha }}
+          pnpm install --frozen-lockfile
+          pnpm nick --modules=migrate
+          pnpm nick --modules=migrate
+
+  drift:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [26.x]
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: nick
+          POSTGRES_PASSWORD: nick
+          POSTGRES_DB: nick
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node setup
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Enable corepack
+        shell: bash
+        run: npm i -g corepack@latest && corepack enable
+
+      - name: Install
+        run: pnpm install --frozen-lockfile && pnpm create-config
+
+      # Migrate a scratch database and compare the schema with the snapshot
+      - name: Check core migrations for drift
+        run: pnpm migrate:check
+
+      - name: Check the example add-on migrations for drift
+        env:
+          PROFILES: '@plone/nick:core,@plone/nick-example-addon:default'
+        run: pnpm migrate:check --schema example --snapshot packages/nick-example-addon/src/migrations/schema.snapshot.txt

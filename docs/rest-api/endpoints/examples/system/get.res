@@ -14,7 +14,7 @@ Content-Type: application/json
     },
     {
       "label": "Express",
-      "value": "5.2.1"
+      "value": "5.3.0"
     },
     {
       "label": "Objection.js",

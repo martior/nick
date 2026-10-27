@@ -10,9 +10,7 @@ Content-Type: application/json
   },
   "description": "News Items",
   "blocks_layout": {
-    "items": [
-      "79ba8858-1dd3-4719-b731-5951e32fbf79"
-    ]
+    "items": ["79ba8858-1dd3-4719-b731-5951e32fbf79"]
   },
   "items": [],
   "@components": {
@@ -53,7 +51,7 @@ Content-Type: application/json
   "@id": "http://localhost:8080/news",
   "@type": "Folder",
   "id": "news",
-   "language": {
+  "language": {
     "title": "English",
     "token": "en"
   },
@@ -68,5 +66,14 @@ Content-Type: application/json
   "lock": {
     "locked": false,
     "stealable": true
-  }
+  },
+  "parent": {
+    "@id": "http://localhost:8080",
+    "@type": "Site",
+    "title": "Welcome to Nick!",
+    "description": "Congratulations! You have successfully installed Nick.",
+    "review_state": "published"
+  },
+  "items_total": 0,
+  "version": "current"
 }

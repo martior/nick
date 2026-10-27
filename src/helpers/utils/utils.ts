@@ -114,6 +114,17 @@ export function regExpEscape(string: string): string {
 }
 
 /**
+ * Escape a string and turn it into a LIKE pattern matching it as a prefix.
+ * Prefix patterns can use the path indexes, regular expressions can't.
+ * @method likePrefix
+ * @param {String} prefix Prefix
+ * @returns {String} LIKE pattern
+ */
+export function likePrefix(prefix: string): string {
+  return `${prefix.replace(/[\\%_]/g, '\\$&')}%`;
+}
+
+/**
  * Get the node version
  * @method getNodeVersion
  * @param {String} string Input string
@@ -155,4 +166,69 @@ export function bytesToNumber(bytes: string): number {
   const unit = match[2];
 
   return units[unit] ? value * units[unit] : value;
+}
+
+/**
+ * Get the sortable title of a title, like Plone's sortable_title: accents
+ * removed, lower case, stripped and numbers zero filled to 4 digits, so
+ * `Item 2` sorts before `Item 10`.
+ * @method sortableTitle
+ * @param {any} title Title.
+ * @returns {string} Sortable title, empty if the title is not a string.
+ */
+export function sortableTitle(title: any): string {
+  if (typeof title !== 'string') {
+    return '';
+  }
+  return title
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[0-9]+/g, (number: string) => number.padStart(4, '0'));
+}
+
+/**
+ * Check if an id is valid, like Zope's checkValidId: only characters which
+ * are allowed in urls, traversable, and not starting with an underscore or
+ * `aq_` or ending with two underscores. Ids starting with `@` are refused
+ * too, because such path segments address services: a child called
+ * `@search` would hide the search service of its folder.
+ * @method isValidId
+ * @param {any} id Id to check.
+ * @returns {boolean} True if the id is valid.
+ */
+export function isValidId(id: any): boolean {
+  return (
+    typeof id === 'string' &&
+    id !== '' &&
+    !/[^a-zA-Z0-9\-_~,.$()# @]/.test(id) &&
+    id !== '.' &&
+    id !== '..' &&
+    !id.startsWith('_') &&
+    !id.startsWith('@') &&
+    !id.startsWith('aq_') &&
+    id !== 'REQUEST' &&
+    !id.endsWith('__')
+  );
+}
+
+/**
+ * Get the id of a pasted item, like Zope: `copy_of_<id>`, `copy2_of_<id>`
+ * and so on when the id is already used.
+ * @method pasteId
+ * @param {string} id Id of the item.
+ * @param {Array<string>} ids Ids of the items in the target folder.
+ * @returns {string} Unique id.
+ */
+export function pasteId(id: string, ids: string[]): string {
+  const match = id.match(/^copy([0-9]*)_of_(.*)$/);
+  let n = match ? parseInt(match[1] || '1', 10) : 0;
+  const original = match ? match[2] : id;
+  let newId = id;
+  while (ids.includes(newId)) {
+    newId = `copy${n ? n + 1 : ''}_of_${original}`;
+    n = n + 1;
+  }
+  return newId;
 }

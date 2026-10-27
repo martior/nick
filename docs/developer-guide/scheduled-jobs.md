@@ -30,6 +30,10 @@ The handler receives three arguments:
 
 It should return an object (e.g. `{ status: 'success' }`).
 
+A fourth argument, `context`, holds the uuid of the job (`context.job`) and an `AbortSignal` (`context.signal`) that fires when the job is aborted or its worker lost the lease. Long-running handlers should check it between steps.
+
+A handler that throws is retried (see [Jobs](/admin-guide/jobs)), and a job can be retried after a worker crashed in the middle of it, so handlers must be safe to run more than once. Database changes made through `trx` are rolled back when the attempt fails; side effects outside the database (mail, HTTP calls, files) are not.
+
 ## Creating an action
 
 ```ts

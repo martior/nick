@@ -10,14 +10,30 @@
 - Require the Modify permission to list the aliases of an item, and Manage Site to list all aliases of the site @martior
 - Only use the default secret 'secret' when NODE_ENV is development or test, use a random secret otherwise when none is configured @martior
 - Only list and grant the roles the user may delegate in @sharing, with new Delegate <role> permissions (upgrade 1007) @martior
+- Ids starting with `@` are refused with 400 on create and rename, so content can't hide services like `@search` below a folder @martior
+- Reverting with `@history` also requires the Modify permission in the current state, so a revert can't change content the workflow doesn't let the user edit (for example an Editor on a pending item); `may_revert` follows @martior
+- A workflow transition of content locked by another user is refused with `403 Resource is locked.`, like edits and deletes @martior
+- A lock token only lets the creator of the lock edit, revert, move or delete the locked content; another user who learned the token is refused. The token is no longer shown in `@lock` and in the `lock` of the content to users without the Modify permission @martior
 - Listing the history and getting previous versions require the new View History permission instead of View, given to Owner, Contributor, Editor, Reviewer and Administrator; anonymous users and members can no longer read old versions of published content. Run `pnpm seed:upgrade` @martior
+- Workflows use the `acquire` permission model by default: for the permissions a workflow manages (default: those used in its states), the roles a state lists replace the global role permissions instead of being added to them, like in Plone. Run `pnpm permissions:dry-run` before upgrading to list the content whose permissions change, then `pnpm seed:upgrade` (upgrade 1018); set `"permission_model": "additive"` on a workflow to keep the old behaviour. The core workflow now lists Reader in the private and pending states @martior
 - Deleting content requires the new Delete permission instead of Modify. The core profile gives it to Owner, Editor and Administrator; run `pnpm seed:upgrade`, and give Delete to custom roles that should keep deleting @martior
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 - Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
 - Require the Manage Users permission for @roles, like Plone @martior
+- Error responses have the plone.restapi shape `{ "type": ..., "message": ... }`: 404 responses no longer use `{ "error": ... }`, and an invalid JSON body gives a JSON 400 instead of an HTML page. Redirects have an absolute `Location` header @martior
+- The items of a folder are batched like in plone.restapi (`b_start`, `b_size`, default 25 items) with `items_total` and `batching`; clients that expect all children in `items` have to page or pass a larger `b_size` @martior
+- A @sharing entry is the complete set of the principal's local roles, like in Plone: roles not named in the entry are revoked. Clients that sent only the changed roles must send all roles @martior
+- The core workflow gives `Owner` `View` and `Modify` in the private state, `View` in the pending state and `Modify` in the published state, like Plone's simple publication workflow, so creators can view and edit their own private items. Run `pnpm seed:upgrade` (upgrade 1014) @martior
+- A request without the needed permission answers `401 Unauthorized` with type `Unauthorized` for authenticated users too, like plone.restapi, instead of `403 Forbidden` @martior
+- @contextnavigation has the shape and the tree of plone.restapi's: an envelope with `available`, `has_custom_name`, `title` and `url`, items with `href`, `type`, `normalized_id`, `is_current`, `is_in_path` and `is_folderish` instead of catalog metadata, and the `topLevel`, `currentFolderOnly`, `root_path` and `name` parameters @martior
+- Importing `src/app.ts` no longer schedules or runs jobs, and jobs no longer run in a child process per job by default. Run a worker with `nick --modules=worker` (`src/server.ts` and `pnpm start` run the API and a worker); set `jobs.isolation` to `process` to keep the child processes. Run `pnpm migrate` for the job queue table @martior
+- Projects created with the generator depend on the `@plone/nick` npm package instead of a source checkout of Nick in `src/develop/nick` (mrs-developer), and keep their migrations in their own chain (`nick.migrations` in package.json) instead of in knexfile.ts. Existing projects keep working unchanged. To move one: remove `src/develop`, `mrs.developer.json`, the `workspaces` entry and the `develop`/`preinstall` scripts, add `@plone/nick` as a dependency, import from `@plone/nick` instead of `@plone/nick/src/...`, set `localesDir` to `node_modules/@plone/nick/locales`, and either keep knexfile.ts (its directories stay in the core ledger `knex_migrations`) or add `"nick": { "migrations": "src/migrations" }` to package.json, move the project's rows from `knex_migrations` to `knex_migrations_<project>` (as named by `migrationTable()`, created with the columns of `knex_migrations`) and remove knexfile.ts @martior
 
 ### Feature
 
+- Sort on `sortable_title` like Plone: case and accents are ignored and numbers are compared by value, so `Item 2` comes before `Item 10`; folder sorting on `sortable_title` does the same. Run `pnpm seed:upgrade` (upgrade 1017 recomputes the sortable titles in the catalog from the title metadata, no full reindex needed) @martior
+- Add the `isFolderish` catalog index of Plone, which Volto's listing block offers; `is_folderish` keeps working. Run `pnpm seed:upgrade` (upgrade 1016) @martior
+- Add an `acquire` permission model to workflows (`permission_model`, `managed_permissions` and per state `acquire`), where the roles of a state replace the global role permissions like in Plone @martior
 - Add support for multiple profiles @robgietema
 - Add yeoman generator to create a Nick project @robgietema
 - Add vocabularies based on profiles @robgietema
@@ -168,9 +184,33 @@
 - Convert querystring operations of collections and listing blocks in export @martior
 - Support the title and token filters and batching in the vocabularies endpoint @martior
 - Add the plone.app.vocabularies names Volto uses and the principals, timezones, weekdays, months and metadata fields vocabularies @martior
+- Add the `AuthenticatedUsers` group of all authenticated users, like Plone's: it is always listed in @sharing, and local roles given to it apply to every logged-in user, also in search @martior
+- Add field and fieldset lookup (`@types/<type>/<name>`) and through-the-web schema changes to @types: POST adds a field or a fieldset, PATCH changes it and DELETE removes it, like plone.restapi @martior
+- Run jobs from a Postgres queue: workers claim the oldest job with `FOR UPDATE SKIP LOCKED`, hold a lease renewed by a heartbeat (jobs of a crashed worker are retried), retry failed jobs with exponential backoff up to `jobs.maxAttempts` and support idempotency keys. Jobs run in the worker process by default (`jobs.isolation`) @martior
+- Add the `nick` command with `--modules=migrate,api,worker` (default: all) to run the API, the job worker and migrations in one process or split over several; `migrate` runs the knex migrations, installs new profiles and runs profile upgrades under an advisory lock and exits non-zero on errors @martior
+- Read the port from the `PORT` environment variable @martior
+- Run every profile upgrade step in its own transaction and record it as the profile version, so a failed upgrade keeps the steps before it and resumes at the failed step @martior
+- Add a production Dockerfile: multi-stage, production dependencies only, non-root, `nick` as entrypoint and a health check on @health @martior
+- Support S3-compatible blob storage (MinIO, R2, Ceph) with the `s3.endpoint` and `s3.forcePathStyle` settings, read the blob and S3 settings from `BLOBS` and `S3_*` environment variables, use the default AWS credential chain without static keys and reuse one S3 client @martior
+- Add a Postgres rate limit store (`rateLimit.store: postgres` or `RATE_LIMIT_STORE=postgres`), so rate limits count across API processes; the default stays in memory per process @martior
+- Profiles can declare `dependencies` in their metadata.json. Nick loads, installs and upgrades the profiles in dependency order, adds dependencies that are not listed and refuses dependency cycles. The `PROFILES` environment variable (comma separated) replaces `profiles` of `config.ts` @martior
+- Rename the examplecontent profile back to default, matching its id. Without `profiles` in `config.ts` the default profile is installed, with core as its dependency, and multilingualcontent depends on multilingual @robgietema
+- Every package (core, add-on or project) has its own migration chain: the knex migrations in `nick.migrations` of its package.json, its own ledger `knex_migrations_<package>` and optionally its own Postgres schema (`nick.schema`). `nick --modules=migrate` runs core's chain and then the chains of the packages of the profiles in dependency order, every migration in its own transaction, so a failed migration exits non-zero and the next run resumes with it @martior
+- Add batched, resumable data migrations: `migrateInBatches` commits every batch with its cursor in the new `migration_progress` table, so an interrupted data migration resumes after its last batch; registered data migrations can also run on the job queue (`registerDataMigration`, `queueDataMigration`). Run `pnpm migrate` @martior
+- `@plone/nick` exports a typed public API for add-ons and projects: the registries (behaviors, blocks, blobs, content rules, events, middleware, models, routes, scheduled jobs, seeds, vocabularies), `Model`, configuration, request, job, profile and migration helpers and their types, with an `exports` map. Deep imports like `@plone/nick/src/routes` still work but are deprecated @martior
+- Add `enable_self_reg` and `enable_user_pwd_choice` to the security control panel: anonymous users can register themselves when self-registration is enabled, cannot set roles or groups, and their password is kept when they may choose it, like in Plone. Run `pnpm seed:upgrade` (upgrade 1015) @martior
+- Add `pnpm migrate:check`: it migrates a scratch database from scratch, installs the profiles and fails when migrate fails, when a second run changes the schema, when a model has no table or when the schema differs from the committed snapshot `src/migrations/schema.snapshot.txt` (which includes the catalog columns profiles create). `nick --modules=migrate --check-schema` compares a live database with the snapshot. CI runs the check @martior
+- The Docker image installs the profiles listed in the `PROFILES` environment variable, so it runs without a mounted config.ts, and can include add-ons of the repository with `--build-arg ADDONS="packages/nick-example-addon"` @martior
 
 ### Bugfix
 
+- Make the ids of the documents in a folder unique in the database (documents in the recycle bin excepted), so imports and bulk loads can't create documents that can't be reached; a duplicate id gives 400. Run `pnpm migrate`; the migration lists the duplicate ids and stops if there are any, rename or remove those documents first @martior
+- Leave out the ancestors the user may not view from @breadcrumbs, so the titles of private folders don't leak @martior
+- Check the email address on PATCH @users like on create, an invalid one gives 400 @martior
+- Answer @sharing entries for users or groups that don't exist with 400 instead of ignoring them @martior
+- Answer @search with an invalid `b_start`, `b_size`, `path.depth` or date with 400 instead of ignoring the value; a negative `b_start` is still the start, like in Plone @martior
+- Answer reordering with an unknown `obj_id` or an invalid `delta` with 400 instead of ignoring it @martior
+- Answer `@history` requests with a version that is not a number with 404 and a revert without a valid version with 400 instead of 500 @martior
 - Change behavior to snake case @robgietema
 - Remove authentication header from breadcrumbs call in docs @robgietema
 - Read config file from working directory @robgietema
@@ -335,9 +375,44 @@
 - Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
 - Support the categories:list parameter of @actions @martior
 - Refuse aliases which are relative or the path of existing content or of another alias @martior
+- Sort types and behaviors by id in @types and the types control panel, so their order doesn't change after an upgrade @robgietema
+- Fix the client used in the documentation examples: create its methods once the profiles are initialized, use the default language and pass the lock token @robgietema
+- Validate content on create and update like plone.restapi: field types, required fields, text lines and maximum lengths (the title is a text line of at most 1024 characters, upgrade 1013), and explicit ids; a missing `@type` is a 400 and an unknown `@type` a 403. Text is normalized to NFC. Run `pnpm seed:upgrade` @martior
+- Allow ids, paths and titles longer than 255 characters instead of failing with a 500 (new migration, run `pnpm migrate`); ids generated from a title are at most 255 characters @martior
+- Accept the uuid of new content as `UID` like plone.restapi, and answer an invalid or used uuid with a 400 instead of a 500 @martior
+- Add the `parent` summary to content (also to `fullobjects` items), the `Location` header on create and `Prefer: return=representation` on update, like plone.restapi; folder items always have a `description` @martior
+- Support `subset_ids` and `sort` when ordering content, ignore an unknown `obj_id` instead of moving another item, keep a negative delta in range, and apply other fields sent with the ordering in the same PATCH @martior
+- Name copies and moved items whose id is taken `copy_of_<id>` like Plone instead of `<id>-1` @martior
+- Set the `effective` and `expires` dates sent with a workflow transition (also on children with `include_children`), refuse invalid dates with a 400, set the effective date when content is published the first time, and answer a POST to `@workflow` without a transition with a 400 instead of a 404 @martior
+- Store the comment of a workflow transition and return the workflow history in `@workflow` (it was always empty) @martior
+- Shape `@history` like plone.restapi: list the creation as a `Create` entry, give versions without a change note `null` comments, say 'revision' in the revert comment, add `version` to content (`current`) and to old versions, and answer an unknown version with a 404 @martior
+- Record the creation of content as the first workflow history entry (without action) like Plone, instead of deriving a `Create` entry, so migrated histories are shown unchanged @martior
+- Add the `disabled` flag to @sharing entries, `true` for the entry of the current user, like Plone @martior
+- @types is only available to authenticated users, list items have `id` and `immediately_addable`, and the schema has `type: object` and the content type `application/json+schema`, like plone.restapi @martior
+- Sort the @types list on the translated title, like Plone @martior
+- Record failed jobs as `failed` instead of `completed`, add the result location to completed jobs and return 404 when aborting an unknown job @martior
+- Fix scheduled jobs reusing the committed request transaction after they were created, changed or deleted through the API @martior
+- Run a scheduled job once per time slot with any number of processes: only worker processes schedule jobs, importing the app no longer starts the scheduler, and each slot adds its job with a unique key @martior
+- Exit with a non-zero code when `pnpm seed` or `pnpm seed:upgrade` fails @martior
+- Stop an aborted job right away by cancelling its running database query, and do not log an aborted job as retried @martior
+- The default profiles are `@plone/nick:core` only; the default `@plone/nick:default` profile never existed @martior
+- Find the core migrations when there is no knexfile.ts in the working directory @martior
+- Index the keyword catalog columns (Subject, isReferencing, block_types, ...) with GIN instead of btree, so keyword queries such as a listing by Subject can use their index on large sites; the permission tokens keep their btree index. Run `pnpm migrate` @martior
+- Index the paths of documents and the catalog with the pattern operator class and query subtrees with `LIKE` prefixes instead of `starts_with` and regular expressions, so path and `path.depth` queries use an index. Run `pnpm migrate` @martior
+- Moving, renaming or deleting (with the recycle bin) an item no longer touches siblings whose id starts with the same text (`/news` and `/newsletter`), paths with quotes no longer break the move, and subtree queries in moves, deletes, sharing and link integrity use the path index instead of regular expressions @martior
+- Resolve a path with a constant number of queries instead of four per level (one query for the documents along the path, one or two for the local roles and one for the types), and stop fetching the anonymous user twice per request @martior
+- Fix the reindex job action, which did nothing for a single type and failed for a list of types: it now reindexes the documents of the given types (all documents without types) in batches of 500, each written with one statement in its own transaction, with the types, indexes and local roles fetched once instead of per document, and stops when the job is aborted @martior
+- Order search results without `sort_on` by the primary key instead of the unindexed UID metadata column (the same order), so a batch of results no longer sorts every match, and collect more statistics for the full text and keyword catalog columns, so Postgres still uses the full text index for rare words. Run `pnpm migrate` @martior
+- Filter the viewable children of a folder in linear time instead of comparing every child with every catalog entry, which took seconds for folders with thousands of items @martior
+- Skip the catalog query for the children of content without children and reuse the already fetched type when fetching children, two queries less per request for most pages @martior
+- Fetch the user of a request with its roles and groups, and the types along the path with their workflows, with one joined query each instead of one query per relation @martior
+- Count search results faster: a catalog index by type and state that includes the permission columns and Subject lets Postgres count listings by type, state and subject and searches of the whole site without reading the catalog rows, and a search of the whole site no longer adds a path condition. Run `pnpm migrate` @martior
+- Filter search results before sorting them when the search matches at most 5000 items, so a selective search no longer walks an index in sort order through most of the catalog @martior
 
 ### Internal
 
+- Upgrade express to 5.3.0 @robgietema
+- Reword the descriptions of the self-registration settings of the security control panel in Nick's own words @martior
 - Upgraded dependencies @robgietema
 - Update node dependency requirement @robgietema
 - Split profiles in core and default @robgietema
@@ -391,6 +466,11 @@
 - Fix TypeScript type errors @martior
 - Remove the unused `Document.fetchLocalUsersGroups` @martior
 - Add a `typecheck` script and run it in CI @martior
+- Check in CI that the previous version migrates and upgrades to the pushed version @martior
+- Move nodemon to the development dependencies @martior
+- Run the development docker-compose service from the node image @martior
+- Add the example add-on `packages/nick-example-addon`: a content type, a behavior, REST services, a scheduled job, a table in its own schema and two migrations in its own chain, with tests that install it and use every extension point, and a test that a broken data migration fails migrate and resumes after the fix @martior
+- Fetch the type and the children of a document one after the other instead of in parallel, so a request transaction no longer runs two queries at once on its connection (pg warns about this and pg 9 refuses it) @martior
 
 ### Documentation
 
@@ -411,6 +491,10 @@
 - Add documentation about profiles @robgietema
 - Document what the Plone migration migrates, what it doesn't and how to verify it @martior
 - Fix the url of the update scheduled job example @martior
+- Add the jobs admin guide @martior
+- Add the deployment admin guide @martior
+- Document which state is per process when Nick runs several API processes @martior
+- Add the add-ons developer guide (package layout, profile dependencies, public API, per-package migrations and schemas, batched data migrations, drift check, testing) and mark deep imports as deprecated @martior
 
 ## 2.8.0 (2022-07-17)
 

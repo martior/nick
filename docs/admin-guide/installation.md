@@ -318,11 +318,11 @@ The generator created a project structure like this:
 
 ```
 my_nick_project/
-├── config.js           # Main configuration file
-├── package.json        # Project dependencies and scripts
+├── config.ts           # Main configuration file
+├── package.json        # Project dependencies (@plone/nick) and scripts
 ├── src/
+│   ├── migrations/     # Knex migrations of the project's own tables
 │   └── profiles/       # Content type definitions, workflows, etc.
-├── blobstorage/        # Where uploaded files will be stored
 └── ...
 ```
 
@@ -519,6 +519,9 @@ Volto will start on http://localhost:3000 and connect to Nick on port 8080.
 ```bash
 # Start Nick (development mode with auto-reload)
 pnpm start
+
+# Migrate, then run the API and the job worker (see Deployment)
+pnpm nick --modules=migrate,api,worker
 
 # Run tests
 pnpm test

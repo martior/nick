@@ -195,6 +195,8 @@ A successful response to a `PATCH` request will be indicated by a `204 No Conten
 {% include_relative examples/users/patch.res %}
 ```
 
+Like on create, an invalid email address gives `400 Bad Request` and the user is not changed.
+
 Users without the `Manage Users` permission can update their own properties, like their full name and email address:
 
 ```http
@@ -253,7 +255,7 @@ If the user doesn't exist, the server responds with a `404 Not Found`.
 
 ## User Registration
 
-If user registration it is enabled, then an anonymous user can register a new user using the user creation endpoint.
+If user registration is enabled, an anonymous user can register a new user using the user creation endpoint. Enable it with `enable_self_reg` in the `security` control panel (or `userRegistration` in `config.ts`). Self-registering users cannot set roles or groups (`401 Unauthorized`), and their password is only stored when `enable_user_pwd_choice` is enabled in the `security` control panel; otherwise they set it with a password reset.
 
 To create a new user send a `POST` request to the `@users` endpoint:
 

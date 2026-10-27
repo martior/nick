@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.1.0 (unreleased)
+
+### Breaking
+
+- Generated projects depend on the `@plone/nick` npm package instead of a source checkout in `src/develop/nick` (mrs-developer), import from `@plone/nick`, run with the `nick` command and keep their migrations in their own chain (`nick.migrations` in package.json) instead of a knexfile.ts. See the Nick changelog for moving an existing project @martior
+
 ## 0.0.7 (2024-12-18)
 
 ### Bugfix

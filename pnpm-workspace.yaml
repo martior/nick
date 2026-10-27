@@ -1,3 +1,5 @@
+packages:
+  - 'packages/nick-example-addon'
 allowBuilds:
   bcrypt: true
   esbuild: true

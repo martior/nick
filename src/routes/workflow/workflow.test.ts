@@ -5,10 +5,11 @@
 
 // External imports
 import request from 'supertest';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 // Internal imports
 import app from '../../app';
+import * as lock from '../../helpers/lock/lock';
 import {
   createDocument,
   createUser,
@@ -58,6 +59,44 @@ describe('Workflow', () => {
   it('should change a workflow state', async () => {
     await testRequest(app, 'content/post');
     return testRequest(app, 'workflow/post');
+  });
+
+  it('should refuse a transition of an item locked by another user', async () => {
+    const spy = vi.spyOn(lock, 'lockExpired').mockReturnValue(false);
+    try {
+      await testRequest(app, 'content/post');
+      const document = await fetch('/news/my-news-item');
+      await document.update(
+        {
+          lock: {
+            locked: true,
+            stealable: true,
+            creator: 'editor',
+            token: 'other-token',
+            created: '2022-04-08T16:00:00.000Z',
+            timeout: 600,
+          },
+        },
+        global.txn!,
+      );
+      const res = await transition('/news/my-news-item', 'publish');
+      expect(res.status).toBe(403);
+      expect(res.body.error.message).toBe('Resource is locked.');
+      expect((await fetch('/news/my-news-item')).workflow_state).toBe(
+        'private',
+      );
+
+      // The creator of the lock may change the state
+      await document.update(
+        { lock: { ...document.lock, creator: 'admin' } },
+        global.txn!,
+      );
+      expect((await transition('/news/my-news-item', 'publish')).status).toBe(
+        200,
+      );
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('should refuse an unknown transition', async () => {
@@ -132,5 +171,108 @@ describe('Workflow', () => {
     expect((await fetch('/news/folder/sub/page')).workflow_state).toBe(
       'published',
     );
+  });
+
+  it('should set the publication dates', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const folder = await createDocument(
+      '0123abcd-0000-4000-8000-000000000301',
+      news,
+      'dated',
+      'Folder',
+    );
+    await createDocument(
+      '0123abcd-0000-4000-8000-000000000302',
+      folder,
+      'child',
+      'Page',
+    );
+
+    // Invalid dates are refused
+    await transition('/news/dated', 'publish', {
+      effective: 'not-a-date',
+    }).expect(400);
+    expect((await fetch('/news/dated')).workflow_state).toBe('private');
+
+    // Submitting doesn't set the effective date
+    await transition('/news/dated', 'submit').expect(200);
+    expect((await fetch('/news/dated')).json.effective).toBeUndefined();
+
+    // Dates are applied to the children too
+    const res = await transition('/news/dated', 'publish', {
+      include_children: true,
+      effective: '2030-06-01T12:00:00',
+      expires: '2031-05-06T07:08:00',
+      comment: 'Published with dates',
+    }).expect(200);
+    expect(res.body.comments).toBe('Published with dates');
+    const child = await fetch('/news/dated/child');
+    expect(child.json.effective).toBe('2030-06-01T12:00:00');
+    expect(child.json.expires).toBe('2031-05-06T07:08:00');
+    expect(child.workflow_history.at(-1).comments).toBe('Published with dates');
+    const workflow = await request(app)
+      .get('/news/dated/child/@workflow')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(
+      workflow.body.history.map((item: any) => [item.action, item.comments]),
+    ).toStrictEqual([['publish', 'Published with dates']]);
+
+    // Republishing keeps the effective date
+    await transition('/news/dated', 'retract').expect(200);
+    await transition('/news/dated', 'publish').expect(200);
+    expect((await fetch('/news/dated')).json.effective).toBe(
+      '2030-06-01T12:00:00',
+    );
+  });
+
+  it('should set the effective date when first published', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    await createDocument(
+      '0123abcd-0000-4000-8000-000000000303',
+      news,
+      'undated',
+      'Page',
+    );
+    await transition('/news/undated', 'publish').expect(200);
+    expect((await fetch('/news/undated')).json.effective).toBe(
+      '2022-04-08T16:00:00.000Z',
+    );
+  });
+
+  it('should refuse a post without a transition', () =>
+    request(app)
+      .post('/news/@workflow')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400));
+
+  it('should let the owner view and edit a private item', async () => {
+    const Document = models.get('Document');
+    const news = await Document.fetchOne({ path: '/news' }, {}, global.txn!);
+    const owner = await createUser('owner');
+    await createDocument(
+      '0123abcd-0000-4000-8000-000000000501',
+      news,
+      'mine',
+      'Page',
+      { owner: 'owner' },
+    );
+    const page = (method: 'get' | 'patch') =>
+      request(app)
+        [method]('/news/mine')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${owner}`);
+
+    await page('get').expect(200);
+    await page('patch').send({ title: 'Mine' }).expect(204);
+
+    // Pending: the owner may view but not edit
+    await transition('/news/mine', 'submit').expect(200);
+    await page('get').expect(200);
+    await page('patch').send({ title: 'Changed' }).expect(401);
   });
 });

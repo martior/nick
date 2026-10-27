@@ -7,6 +7,7 @@
 import type { Knex } from 'knex';
 
 // Internal imports
+import { createCoveringIndexes } from '../../helpers/catalog/catalog';
 import config from '../../helpers/config/config';
 import { fileExists } from '../../helpers/fs/fs';
 import { stripI18n } from '../../helpers/i18n/i18n';
@@ -45,7 +46,7 @@ export const seedCatalog = async (
         const field = `_${index.name}`;
         switch (index.type) {
           case 'string':
-            table.string(field).index();
+            table.text(field).index();
             break;
           case 'integer':
             table.integer(field).index();
@@ -54,7 +55,7 @@ export const seedCatalog = async (
             table.float(field).index();
             break;
           case 'path':
-            table.string(field).index();
+            table.text(field).index();
             break;
           case 'uuid':
             table.uuid(field).index();
@@ -66,10 +67,17 @@ export const seedCatalog = async (
             table.dateTime(field).index();
             break;
           case 'string[]':
-            table.specificType(field, 'character varying(255)[]').index();
+            // The tokens of the permission filter match most documents
+            // (Anonymous, Authenticated), a GIN index makes the planner
+            // read all of them instead of using a selective index
+            if (index.name === 'allowedUsersGroupsRoles') {
+              table.specificType(field, 'text[]').index();
+            } else {
+              table.specificType(field, 'text[]').index(null, 'GIN');
+            }
             break;
           case 'uuid[]':
-            table.specificType(field, 'uuid[]').index();
+            table.specificType(field, 'uuid[]').index(null, 'GIN');
             break;
           case 'embed':
             table.specificType(
@@ -85,6 +93,24 @@ export const seedCatalog = async (
             break;
         }
       });
+      // Better estimates for rare words and keywords, see the
+      // catalog_statistics migration
+      if (
+        ['text', 'string[]', 'uuid[]'].includes(index.type) &&
+        index.name !== 'allowedUsersGroupsRoles'
+      ) {
+        await trx.raw(
+          'ALTER TABLE catalog ALTER COLUMN ?? SET STATISTICS 1000',
+          [`_${index.name}`],
+        );
+      }
+      // Prefix queries on paths need the pattern operator class
+      if (index.type === 'path') {
+        await trx.raw('CREATE INDEX ?? ON catalog (?? varchar_pattern_ops)', [
+          `catalog__${index.name.toLowerCase()}_pattern_index`,
+          `_${index.name}`,
+        ]);
+      }
     });
     await mapAsync(profile.metadata, async (metadata: any) => {
       // Add index
@@ -106,7 +132,7 @@ export const seedCatalog = async (
             table.uuid(metadata.name);
             break;
           case 'string':
-            table.string(metadata.name);
+            table.text(metadata.name);
             break;
           case 'float':
             table.float(metadata.name);
@@ -124,7 +150,7 @@ export const seedCatalog = async (
             table.json(metadata.name);
             break;
           case 'string[]':
-            table.specificType(metadata.name, 'character varying(255)[]');
+            table.specificType(metadata.name, 'text[]');
             break;
           case 'text':
             table.text(metadata.name);
@@ -135,6 +161,8 @@ export const seedCatalog = async (
         }
       });
     });
+    // Indexes over several columns, once all columns exist
+    await createCoveringIndexes(trx);
     console.log('Catalog imported');
   }
 };

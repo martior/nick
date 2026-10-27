@@ -31,13 +31,13 @@ export const config = {
 };
 ```
 
-| Key        | Default                                            | Description                             |
-| ---------- | -------------------------------------------------- | --------------------------------------- |
-| `blobs`    | `'file'`                                           | Storage backend                         |
-| `blobsDir` | `{packageRoot}/../../../var/blobstorage`           | Filesystem path (file backend only)     |
-| `s3`       | `{ bucket, region, accessKeyId, secretAccessKey }` | S3 connection details (s3 backend only) |
+| Key        | Default                                                                      | Description                             |
+| ---------- | ---------------------------------------------------------------------------- | --------------------------------------- |
+| `blobs`    | `'file'`                                                                     | Storage backend                         |
+| `blobsDir` | `{packageRoot}/../../../var/blobstorage`                                     | Filesystem path (file backend only)     |
+| `s3`       | `{ bucket, region, endpoint, forcePathStyle, accessKeyId, secretAccessKey }` | S3 connection details (s3 backend only) |
 
-The `blobsDir` can also be overridden via the `BLOBS_DIR` environment variable, which takes priority over the config file value.
+The `blobsDir` can also be overridden via the `BLOBS_DIR` environment variable, and `blobs` via `BLOBS`; they take priority over the config file value.
 
 ## File Storage (`'file'`)
 
@@ -109,17 +109,45 @@ export const config = {
 };
 ```
 
-### Using an S3-compatible service (MinIO, DigitalOcean Spaces, etc.)
+### Using an S3-compatible service (MinIO, Cloudflare R2, Ceph, DigitalOcean Spaces, etc.)
 
-For non-AWS S3 services, set the endpoint via the `S3_ENDPOINT` environment variable:
+Set `endpoint` to the service's URL. Most self-hosted services (MinIO, Ceph) also need path-style addressing (`http://host/bucket/key` instead of `http://bucket.host/key`), which `forcePathStyle` turns on.
+
+```typescript
+export const config = {
+  blobs: 's3',
+  s3: {
+    bucket: 'nick',
+    region: 'us-east-1', // R2: 'auto'
+    endpoint: 'http://minio:9000', // R2: 'https://<account id>.r2.cloudflarestorage.com'
+    forcePathStyle: true,
+    accessKeyId: '...',
+    secretAccessKey: '...',
+  },
+};
+```
+
+### Environment variables
+
+Every S3 setting can also be set with an environment variable, which takes priority over `config.ts`. `BLOBS` selects the backend.
+
+| Variable               | Setting                              |
+| ---------------------- | ------------------------------------ |
+| `BLOBS`                | `blobs`                              |
+| `S3_BUCKET`            | `s3.bucket`                          |
+| `S3_REGION`            | `s3.region`                          |
+| `S3_ENDPOINT`          | `s3.endpoint`                        |
+| `S3_FORCE_PATH_STYLE`  | `s3.forcePathStyle` (`true`/`false`) |
+| `S3_ACCESS_KEY_ID`     | `s3.accessKeyId`                     |
+| `S3_SECRET_ACCESS_KEY` | `s3.secretAccessKey`                 |
 
 ```bash
-# MinIO running locally
-export S3_ENDPOINT=http://localhost:9000
-
-# DigitalOcean Spaces
-export S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
+# MinIO
+export BLOBS=s3 S3_BUCKET=nick S3_ENDPOINT=http://localhost:9000 S3_FORCE_PATH_STYLE=true \
+  S3_ACCESS_KEY_ID=minio S3_SECRET_ACCESS_KEY=minio-secret
 ```
+
+Without `accessKeyId` and `secretAccessKey`, the AWS SDK's default credential chain is used (`AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, shared config files, or the IAM role of the instance or pod).
 
 ### IAM Permissions
 

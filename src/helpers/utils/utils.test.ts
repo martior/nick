@@ -11,11 +11,15 @@ import {
   mapAsync,
   mapSync,
   uniqueId,
+  isValidId,
+  sortableTitle,
+  pasteId,
   removeUndefined,
   arrayToVocabulary,
   objectToVocabulary,
   isPromise,
   regExpEscape,
+  likePrefix,
   getNodeVersion,
   stripNewlines,
   bytesToNumber,
@@ -102,6 +106,12 @@ describe('utils', () => {
     });
   });
 
+  describe('likePrefix', () => {
+    it('escapes like wildcards and adds a trailing wildcard', () => {
+      expect(likePrefix('/a_b%c\\d/')).toBe('/a\\_b\\%c\\\\d/%');
+    });
+  });
+
   describe('getNodeVersion', () => {
     it('returns node version', () => {
       expect(getNodeVersion()).toBe(process.version);
@@ -133,6 +143,55 @@ describe('utils', () => {
 
     it('returns value for unknown unit', () => {
       expect(bytesToNumber('5 xb')).toBe(5);
+    });
+  });
+
+  describe('sortableTitle', () => {
+    it('makes titles sortable like Plone', () => {
+      expect(sortableTitle(' Item 2 ')).toBe('item 0002');
+      expect(sortableTitle('Item 10')).toBe('item 0010');
+      expect(sortableTitle('Item 12345')).toBe('item 12345');
+      expect(sortableTitle('Ångström Éclair')).toBe('angstrom eclair');
+      expect(sortableTitle(undefined)).toBe('');
+      expect(
+        [sortableTitle('Item 10'), sortableTitle('item 2')].sort(),
+      ).toEqual(['item 0002', 'item 0010']);
+    });
+  });
+
+  describe('isValidId', () => {
+    it('accepts ids Zope accepts', () => {
+      ['news', 'has space', 'UPPER.case~ok', 'index_html', 'a@b'].forEach(
+        (id) => expect(isValidId(id)).toBe(true),
+      );
+    });
+
+    it('refuses ids Zope refuses', () => {
+      [
+        '',
+        'a/b',
+        '_a',
+        '.',
+        '..',
+        'aq_parent',
+        'a__',
+        'ü',
+        12,
+        '@search',
+        '@@view',
+      ].forEach((id) => expect(isValidId(id)).toBe(false));
+    });
+  });
+
+  describe('pasteId', () => {
+    it('keeps a free id', () => {
+      expect(pasteId('src', ['other'])).toBe('src');
+    });
+
+    it('prefixes the id like Zope', () => {
+      expect(pasteId('src', ['src'])).toBe('copy_of_src');
+      expect(pasteId('src', ['src', 'copy_of_src'])).toBe('copy2_of_src');
+      expect(pasteId('copy_of_src', ['copy_of_src'])).toBe('copy2_of_src');
     });
   });
 });

@@ -147,7 +147,7 @@ msgstr "Správce"
 
 #. Default: "Administrators"
 #: src/profiles/multilingualcontent/groups.json:6
-#: src/profiles/examplecontent/groups.json:6
+#: src/profiles/default/groups.json:6
 msgctxt "Profiles|Multilingualcontent|Groups"
 msgid "Administrators"
 msgstr "Správci"
@@ -155,10 +155,10 @@ msgstr "Správci"
 #. Default: "After N days in the future"
 #: src/profiles/core/catalog.json:95
 #: src/profiles/core/catalog.json:168
-#: src/profiles/core/catalog.json:528
-#: src/profiles/core/catalog.json:607
-#: src/profiles/core/catalog.json:680
-#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:553
+#: src/profiles/core/catalog.json:632
+#: src/profiles/core/catalog.json:705
+#: src/profiles/core/catalog.json:778
 msgctxt "Profiles|Core|Catalog"
 msgid "After N days in the future"
 msgstr "Po N dnech v budoucnosti"
@@ -166,10 +166,10 @@ msgstr "Po N dnech v budoucnosti"
 #. Default: "After date"
 #: src/profiles/core/catalog.json:124
 #: src/profiles/core/catalog.json:197
-#: src/profiles/core/catalog.json:557
-#: src/profiles/core/catalog.json:636
-#: src/profiles/core/catalog.json:709
-#: src/profiles/core/catalog.json:782
+#: src/profiles/core/catalog.json:582
+#: src/profiles/core/catalog.json:661
+#: src/profiles/core/catalog.json:734
+#: src/profiles/core/catalog.json:807
 msgctxt "Profiles|Core|Catalog"
 msgid "After date"
 msgstr "Po datu"
@@ -177,10 +177,10 @@ msgstr "Po datu"
 #. Default: "After relative date"
 #: src/profiles/core/catalog.json:94
 #: src/profiles/core/catalog.json:167
-#: src/profiles/core/catalog.json:527
-#: src/profiles/core/catalog.json:606
-#: src/profiles/core/catalog.json:679
-#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:552
+#: src/profiles/core/catalog.json:631
+#: src/profiles/core/catalog.json:704
+#: src/profiles/core/catalog.json:777
 msgctxt "Profiles|Core|Catalog"
 msgid "After relative date"
 msgstr "Po relativním datu"
@@ -188,10 +188,10 @@ msgstr "Po relativním datu"
 #. Default: "After the current day"
 #: src/profiles/core/catalog.json:101
 #: src/profiles/core/catalog.json:174
-#: src/profiles/core/catalog.json:534
-#: src/profiles/core/catalog.json:613
-#: src/profiles/core/catalog.json:686
-#: src/profiles/core/catalog.json:759
+#: src/profiles/core/catalog.json:559
+#: src/profiles/core/catalog.json:638
+#: src/profiles/core/catalog.json:711
+#: src/profiles/core/catalog.json:784
 msgctxt "Profiles|Core|Catalog"
 msgid "After the current day"
 msgstr "Po aktuálním dni"
@@ -199,10 +199,10 @@ msgstr "Po aktuálním dni"
 #. Default: "After today"
 #: src/profiles/core/catalog.json:100
 #: src/profiles/core/catalog.json:173
-#: src/profiles/core/catalog.json:533
-#: src/profiles/core/catalog.json:612
-#: src/profiles/core/catalog.json:685
-#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:558
+#: src/profiles/core/catalog.json:637
+#: src/profiles/core/catalog.json:710
+#: src/profiles/core/catalog.json:783
 msgctxt "Profiles|Core|Catalog"
 msgid "After today"
 msgstr "Po dnešku"
@@ -214,14 +214,15 @@ msgid "Allowed Content Types"
 msgstr "Povolené typy obsahu"
 
 #. Default: "Allows users to login with their email address instead of specifying a separate login name."
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:30
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:16
-#: src/profiles/core/controlpanels/security.json:16
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+#: src/profiles/core/controlpanels/security.json:30
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
 msgid "Allows users to login with their email address instead of specifying a separate login name."
 msgstr ""
 
 #. Default: "Already locked"
-#: src/routes/lock/lock.ts:125
+#: src/routes/lock/lock.ts:113
 msgctxt "Routes|Lock"
 msgid "Already locked"
 msgstr "Již uzamčeno"
@@ -233,7 +234,7 @@ msgid "An entity responsible for making this item available."
 msgstr "Subjekt odpovědný za zpřístupnění této položky."
 
 #. Default: "An error occurred while creating the user."
-#: src/routes/users/users.ts:320
+#: src/routes/users/users.ts:347
 msgctxt "Routes|Users"
 msgid "An error occurred while creating the user."
 msgstr ""
@@ -245,13 +246,13 @@ msgid "An item’s description"
 msgstr "Popis položky"
 
 #. Default: "An item’s type (e.g. Event)"
-#: src/profiles/core/catalog.json:446
+#: src/profiles/core/catalog.json:471
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s type (e.g. Event)"
 msgstr "Typ položky (např. Událost)"
 
 #. Default: "An item’s workflow state (e.g.published)"
-#: src/profiles/core/catalog.json:471
+#: src/profiles/core/catalog.json:496
 msgctxt "Profiles|Core|Catalog"
 msgid "An item’s workflow state (e.g.published)"
 msgstr "Stav pracovního toku položky (např. publikováno)"
@@ -363,10 +364,10 @@ msgstr "Základní metadata"
 #. Default: "Before N days in the past"
 #: src/profiles/core/catalog.json:107
 #: src/profiles/core/catalog.json:180
-#: src/profiles/core/catalog.json:540
-#: src/profiles/core/catalog.json:619
-#: src/profiles/core/catalog.json:692
-#: src/profiles/core/catalog.json:765
+#: src/profiles/core/catalog.json:565
+#: src/profiles/core/catalog.json:644
+#: src/profiles/core/catalog.json:717
+#: src/profiles/core/catalog.json:790
 msgctxt "Profiles|Core|Catalog"
 msgid "Before N days in the past"
 msgstr "Před N dny v minulosti"
@@ -374,10 +375,10 @@ msgstr "Před N dny v minulosti"
 #. Default: "Before date"
 #: src/profiles/core/catalog.json:136
 #: src/profiles/core/catalog.json:209
-#: src/profiles/core/catalog.json:569
-#: src/profiles/core/catalog.json:648
-#: src/profiles/core/catalog.json:721
-#: src/profiles/core/catalog.json:794
+#: src/profiles/core/catalog.json:594
+#: src/profiles/core/catalog.json:673
+#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:819
 msgctxt "Profiles|Core|Catalog"
 msgid "Before date"
 msgstr "Před datem"
@@ -385,10 +386,10 @@ msgstr "Před datem"
 #. Default: "Before relative date"
 #: src/profiles/core/catalog.json:106
 #: src/profiles/core/catalog.json:179
-#: src/profiles/core/catalog.json:539
-#: src/profiles/core/catalog.json:618
-#: src/profiles/core/catalog.json:691
-#: src/profiles/core/catalog.json:764
+#: src/profiles/core/catalog.json:564
+#: src/profiles/core/catalog.json:643
+#: src/profiles/core/catalog.json:716
+#: src/profiles/core/catalog.json:789
 msgctxt "Profiles|Core|Catalog"
 msgid "Before relative date"
 msgstr "Před relativním datem"
@@ -396,10 +397,10 @@ msgstr "Před relativním datem"
 #. Default: "Before the current day"
 #: src/profiles/core/catalog.json:113
 #: src/profiles/core/catalog.json:186
-#: src/profiles/core/catalog.json:546
-#: src/profiles/core/catalog.json:625
-#: src/profiles/core/catalog.json:698
-#: src/profiles/core/catalog.json:771
+#: src/profiles/core/catalog.json:571
+#: src/profiles/core/catalog.json:650
+#: src/profiles/core/catalog.json:723
+#: src/profiles/core/catalog.json:796
 msgctxt "Profiles|Core|Catalog"
 msgid "Before the current day"
 msgstr "Před aktuálním dnem"
@@ -407,10 +408,10 @@ msgstr "Před aktuálním dnem"
 #. Default: "Before today"
 #: src/profiles/core/catalog.json:112
 #: src/profiles/core/catalog.json:185
-#: src/profiles/core/catalog.json:545
-#: src/profiles/core/catalog.json:624
-#: src/profiles/core/catalog.json:697
-#: src/profiles/core/catalog.json:770
+#: src/profiles/core/catalog.json:570
+#: src/profiles/core/catalog.json:649
+#: src/profiles/core/catalog.json:722
+#: src/profiles/core/catalog.json:795
 msgctxt "Profiles|Core|Catalog"
 msgid "Before today"
 msgstr "Před dneškem"
@@ -424,10 +425,10 @@ msgstr "Chování"
 #. Default: "Between dates"
 #: src/profiles/core/catalog.json:118
 #: src/profiles/core/catalog.json:191
-#: src/profiles/core/catalog.json:551
-#: src/profiles/core/catalog.json:630
-#: src/profiles/core/catalog.json:703
-#: src/profiles/core/catalog.json:776
+#: src/profiles/core/catalog.json:576
+#: src/profiles/core/catalog.json:655
+#: src/profiles/core/catalog.json:728
+#: src/profiles/core/catalog.json:801
 msgctxt "Profiles|Core|Catalog"
 msgid "Between dates"
 msgstr "Mezi daty"
@@ -470,6 +471,12 @@ msgctxt "Profiles|Core|Behaviors|Versioning"
 msgid "Change Note"
 msgstr "Poznámka ke změně"
 
+#. Default: "Client/server ordering mismatch."
+#: src/routes/content/content.ts:1123
+msgctxt "Routes|Content"
+msgid "Client/server ordering mismatch."
+msgstr ""
+
 #. Default: "Comment"
 #: src/content_rules/actions/version_item.ts:33
 msgctxt "Content rules|Actions|Version item"
@@ -487,6 +494,12 @@ msgstr ""
 #: src/routes/userschema/userschema.ts:115
 msgctxt "Routes|Userschema"
 msgid "Confirm password"
+msgstr ""
+
+#. Default: "Constraint not satisfied"
+#: src/helpers/schema/schema.ts:205
+msgctxt "Helpers|Schema"
+msgid "Constraint not satisfied"
 msgstr ""
 
 #. Default: "Contact"
@@ -517,7 +530,7 @@ msgstr ""
 #: src/profiles/core/catalog.json:240
 #: src/profiles/core/catalog.json:259
 #: src/profiles/core/catalog.json:278
-#: src/profiles/core/catalog.json:502
+#: src/profiles/core/catalog.json:527
 msgctxt "Profiles|Core|Catalog"
 msgid "Contains"
 msgstr "Obsahuje"
@@ -593,19 +606,19 @@ msgid "Coverage"
 msgstr "Pokrytí"
 
 #. Default: "Creation date"
-#: src/profiles/core/catalog.json:672
+#: src/profiles/core/catalog.json:697
 msgctxt "Profiles|Core|Catalog"
 msgid "Creation date"
 msgstr "Datum vytvoření"
 
 #. Default: "Creator"
-#: src/profiles/core/catalog.json:414
+#: src/profiles/core/catalog.json:439
 msgctxt "Profiles|Core|Catalog"
 msgid "Creator"
 msgstr "Tvůrce"
 
 #. Default: "Current logged in user"
-#: src/profiles/core/catalog.json:427
+#: src/profiles/core/catalog.json:452
 msgctxt "Profiles|Core|Catalog"
 msgid "Current logged in user"
 msgstr "Aktuálně přihlášený uživatel"
@@ -665,6 +678,7 @@ msgstr ""
 #: src/content_rules/actions/transition_workflow.ts:26
 #: src/content_rules/actions/send_email.ts:30
 #: src/constants/userschema.ts:13
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:14
 #: src/profiles/core/upgrades/1001/controlpanels/usergroup.json:10
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:10
 #: src/profiles/core/types/video.json:13
@@ -673,7 +687,7 @@ msgstr ""
 #: src/profiles/core/types/feed.json:13
 #: src/profiles/core/types/event.json:25
 #: src/profiles/core/controlpanels/usergroup.json:10
-#: src/profiles/core/controlpanels/security.json:10
+#: src/profiles/core/controlpanels/security.json:14
 #: src/profiles/core/behaviors/versioning.json:10
 #: src/profiles/core/behaviors/preview_image_link.json:10
 #: src/profiles/core/behaviors/basic.json:10
@@ -790,13 +804,14 @@ msgid "Document copied"
 msgstr ""
 
 #. Default: "Document locked"
-#: src/routes/history/history.ts:71
-#: src/routes/content/content.ts:216
-#: src/routes/content/content.ts:995
-#: src/routes/content/content.ts:1132
-msgctxt "Routes|History"
+#: src/routes/workflow/workflow.ts:121
+#: src/routes/history/history.ts:84
+#: src/routes/content/content.ts:226
+#: src/routes/content/content.ts:1189
+#: src/routes/content/content.ts:1360
+msgctxt "Routes|Workflow"
 msgid "Document locked"
-msgstr "Dokument uzamčen"
+msgstr ""
 
 #. Default: "Document modified"
 #: src/profiles/core/vocabularies/events.json:10
@@ -851,13 +866,13 @@ msgid "Editor"
 msgstr "Editor"
 
 #. Default: "Effective date"
-#: src/profiles/core/catalog.json:745
+#: src/profiles/core/catalog.json:770
 msgctxt "Profiles|Core|Catalog"
 msgid "Effective date"
 msgstr "Datum účinnosti"
 
 #. Default: "Either a password or sendPasswordReset must be provided."
-#: src/routes/users/users.ts:257
+#: src/routes/users/users.ts:284
 msgctxt "Routes|Users"
 msgid "Either a password or sendPasswordReset must be provided."
 msgstr ""
@@ -891,6 +906,13 @@ msgstr ""
 #: src/content_rules/actions/send_email.ts:59
 msgctxt "Content rules|Actions|Send email"
 msgid "Email source"
+msgstr ""
+
+#. Default: "Enable self-registration"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:19
+#: src/profiles/core/controlpanels/security.json:19
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "Enable self-registration"
 msgstr ""
 
 #. Default: "Enables Volto Blocks support"
@@ -999,7 +1021,7 @@ msgid "Expiration Date"
 msgstr "Datum vypršení platnosti"
 
 #. Default: "Expiration date"
-#: src/profiles/core/catalog.json:599
+#: src/profiles/core/catalog.json:624
 msgctxt "Profiles|Core|Catalog"
 msgid "Expiration date"
 msgstr "Datum vypršení platnosti"
@@ -1020,6 +1042,18 @@ msgstr ""
 #: src/profiles/core/types/feed.json:3
 msgctxt "Profiles|Core|Types|Feed"
 msgid "Feed"
+msgstr ""
+
+#. Default: "Field {id} already exists."
+#: src/routes/types/types.ts:231
+msgctxt "Routes|Types"
+msgid "Field {id} already exists."
+msgstr ""
+
+#. Default: "Fieldset {id} already exists."
+#: src/routes/types/types.ts:206
+msgctxt "Routes|Types"
+msgid "Fieldset {id} already exists."
 msgstr ""
 
 #. Default: "File"
@@ -1061,6 +1095,8 @@ msgstr "Najít položky související s vybranými položkami"
 
 #. Default: "Find items that can contain other objects"
 #: src/profiles/core/catalog.json:359
+#: src/profiles/core/catalog.json:384
+#: src/profiles/core/upgrades/1016/catalog.json:8
 msgctxt "Profiles|Core|Catalog"
 msgid "Find items that can contain other objects"
 msgstr "Najít položky, které mohou obsahovat jiné objekty"
@@ -1073,6 +1109,8 @@ msgstr "Složka"
 
 #. Default: "Folder-like"
 #: src/profiles/core/catalog.json:358
+#: src/profiles/core/catalog.json:383
+#: src/profiles/core/upgrades/1016/catalog.json:7
 msgctxt "Profiles|Core|Catalog"
 msgid "Folder-like"
 msgstr "Podobné složce"
@@ -1198,11 +1236,17 @@ msgid "Information about rights held in and over this item."
 msgstr "Informace o právech držených k této položce."
 
 #. Default: "Internal server error"
-#: src/app.ts:258
-#: src/app.ts:269
+#: src/app.ts:265
+#: src/app.ts:285
 msgctxt "App"
 msgid "Internal server error"
 msgstr "Interní chyba serveru"
+
+#. Default: "Invalid '@type' parameter. No content type with the name “{type}” found."
+#: src/routes/content/content.ts:858
+msgctxt "Routes|Content"
+msgid "Invalid '@type' parameter. No content type with the name “{type}” found."
+msgstr ""
 
 #. Default: "Invalid credentials"
 #: src/routes/authentication/authentication.ts:88
@@ -1210,6 +1254,12 @@ msgstr "Interní chyba serveru"
 msgctxt "Routes|Authentication"
 msgid "Invalid credentials"
 msgstr "Neplatné přihlašovací údaje"
+
+#. Default: "Invalid date for {field}."
+#: src/routes/workflow/workflow.ts:79
+msgctxt "Routes|Workflow"
+msgid "Invalid date for {field}."
+msgstr ""
 
 #. Default: "Invalid depth."
 #: src/routes/navigation/navigation.ts:79
@@ -1224,9 +1274,15 @@ msgctxt "Routes|Controlpanels"
 msgid "Invalid move."
 msgstr ""
 
+#. Default: "Invalid parameter factory."
+#: src/routes/types/types.ts:226
+msgctxt "Routes|Types"
+msgid "Invalid parameter factory."
+msgstr ""
+
 #. Default: "Invalid query."
-#: src/routes/search/search.ts:196
-#: src/routes/search/search.ts:345
+#: src/routes/search/search.ts:208
+#: src/routes/search/search.ts:357
 msgctxt "Routes|Search"
 msgid "Invalid query."
 msgstr ""
@@ -1237,9 +1293,15 @@ msgctxt "Routes|Authentication"
 msgid "Invalid session"
 msgstr "Neplatná relace"
 
+#. Default: "Invalid value for {name}."
+#: src/helpers/query/query.ts:785
+msgctxt "Helpers|Query"
+msgid "Invalid value for {name}."
+msgstr ""
+
 #. Default: "Is"
-#: src/profiles/core/catalog.json:402
-#: src/profiles/core/catalog.json:508
+#: src/profiles/core/catalog.json:427
+#: src/profiles/core/catalog.json:533
 msgctxt "Profiles|Core|Catalog"
 msgid "Is"
 msgstr "Je"
@@ -1317,6 +1379,13 @@ msgctxt "Profiles|Core|Catalog"
 msgid "Less than"
 msgstr "Méně než"
 
+#. Default: "Let users select their own passwords"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:24
+#: src/profiles/core/controlpanels/security.json:24
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "Let users select their own passwords"
+msgstr ""
+
 #. Default: "Lets you upload a file to the site."
 #: src/profiles/core/types/file.json:4
 msgctxt "Profiles|Core|Types|File"
@@ -1324,7 +1393,7 @@ msgid "Lets you upload a file to the site."
 msgstr "Umožňuje nahrát soubor na web."
 
 #. Default: "Limit must be a positive number."
-#: src/routes/users/users.ts:189
+#: src/routes/users/users.ts:201
 #: src/routes/groups/groups.ts:69
 msgctxt "Routes|Users"
 msgid "Limit must be a positive number."
@@ -1385,6 +1454,12 @@ msgstr ""
 msgctxt "Profiles|Core|Actions"
 msgid "Log out"
 msgstr "Odhlásit se"
+
+#. Default: "Logged-in users"
+#: src/routes/sharing/sharing.ts:181
+msgctxt "Routes|Sharing"
+msgid "Logged-in users"
+msgstr ""
 
 #. Default: "Logger"
 #: src/content_rules/actions/logger.ts:13
@@ -1475,17 +1550,17 @@ msgstr "Odpovídá všem"
 
 #. Default: "Matches any condition"
 #: src/profiles/core/catalog.json:305
-#: src/profiles/core/catalog.json:421
-#: src/profiles/core/catalog.json:452
+#: src/profiles/core/catalog.json:446
 #: src/profiles/core/catalog.json:477
+#: src/profiles/core/catalog.json:502
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches any condition"
 msgstr "Odpovídá kterémukoli"
 
 #. Default: "Matches none of"
 #: src/profiles/core/catalog.json:309
-#: src/profiles/core/catalog.json:458
 #: src/profiles/core/catalog.json:483
+#: src/profiles/core/catalog.json:508
 msgctxt "Profiles|Core|Catalog"
 msgid "Matches none of"
 msgstr ""
@@ -1510,8 +1585,14 @@ msgctxt "Routes|Authentication"
 msgid "Missing credentials"
 msgstr "Chybějící přihlašovací údaje"
 
+#. Default: "Missing parameter title."
+#: src/routes/types/types.ts:193
+msgctxt "Routes|Types"
+msgid "Missing parameter title."
+msgstr ""
+
 #. Default: "Modification date"
-#: src/profiles/core/catalog.json:520
+#: src/profiles/core/catalog.json:545
 msgctxt "Profiles|Core|Catalog"
 msgid "Modification date"
 msgstr "Datum úpravy"
@@ -1579,10 +1660,11 @@ msgid "Name of a person to contact about this event."
 msgstr ""
 
 #. Default: "Navigation"
+#: src/routes/contextnavigation/contextnavigation.ts:233
 #: src/profiles/core/controlpanels/navigation.json:3
-msgctxt "Profiles|Core|Controlpanels|Navigation"
+msgctxt "Routes|Contextnavigation"
 msgid "Navigation"
-msgstr "Navigace"
+msgstr ""
 
 #. Default: "Navigation path"
 #: src/profiles/core/catalog.json:20
@@ -1612,7 +1694,9 @@ msgstr ""
 
 #. Default: "No"
 #: src/profiles/core/catalog.json:365
+#: src/profiles/core/catalog.json:390
 #: src/profiles/core/vocabularies/boolean.json:6
+#: src/profiles/core/upgrades/1016/catalog.json:14
 msgctxt "Profiles|Core|Catalog"
 msgid "No"
 msgstr "Ne"
@@ -1630,9 +1714,15 @@ msgid "No data is submitted."
 msgstr ""
 
 #. Default: "No query supplied."
-#: src/routes/search/search.ts:191
+#: src/routes/search/search.ts:203
 msgctxt "Routes|Search"
 msgid "No query supplied."
+msgstr ""
+
+#. Default: "No transition specified."
+#: src/routes/workflow/workflow.ts:187
+msgctxt "Routes|Workflow"
+msgid "No transition specified."
 msgstr ""
 
 #. Default: "None"
@@ -1653,7 +1743,7 @@ msgid "None"
 msgstr ""
 
 #. Default: "Not allowed"
-#: src/routes/lock/lock.ts:178
+#: src/routes/lock/lock.ts:166
 msgctxt "Routes|Lock"
 msgid "Not allowed"
 msgstr "Nepovoleno"
@@ -1671,26 +1761,30 @@ msgid "Not authorized"
 msgstr ""
 
 #. Default: "Not found"
-#: src/routes/history/history.ts:92
+#: src/routes/history/history.ts:105
 msgctxt "Routes|History"
 msgid "Not found"
 msgstr ""
 
 #. Default: "Not found."
 #: src/routes/vocabularies/vocabularies.ts:65
-#: src/routes/users/users.ts:156
-#: src/routes/users/users.ts:391
-#: src/routes/users/users.ts:458
-#: src/routes/types/types.ts:45
+#: src/routes/users/users.ts:168
+#: src/routes/users/users.ts:418
+#: src/routes/users/users.ts:492
+#: src/routes/types/types.ts:59
+#: src/routes/types/types.ts:171
+#: src/routes/types/types.ts:329
+#: src/routes/types/types.ts:376
 #: src/routes/translations/translations.ts:33
-#: src/routes/scheduled_jobs/scheduled_jobs.ts:50
-#: src/routes/scheduled_jobs/scheduled_jobs.ts:70
+#: src/routes/scheduled_jobs/scheduled_jobs.ts:43
+#: src/routes/scheduled_jobs/scheduled_jobs.ts:63
 #: src/routes/recyclebin/recyclebin.ts:35
 #: src/routes/recyclebin/recyclebin.ts:104
 #: src/routes/recyclebin/recyclebin.ts:202
-#: src/routes/jobs/jobs.ts:37
-#: src/routes/jobs/jobs.ts:77
-#: src/routes/jobs/jobs.ts:188
+#: src/routes/jobs/jobs.ts:30
+#: src/routes/jobs/jobs.ts:70
+#: src/routes/jobs/jobs.ts:153
+#: src/routes/jobs/jobs.ts:184
 #: src/routes/groups/groups.ts:37
 #: src/routes/groups/groups.ts:194
 #: src/routes/groups/groups.ts:238
@@ -1707,13 +1801,13 @@ msgstr ""
 #: src/routes/controlpanels/controlpanels.ts:630
 #: src/routes/controlpanels/controlpanels.ts:677
 #: src/routes/controlpanels/controlpanels.ts:715
-#: src/routes/content/content.ts:496
+#: src/routes/content/content.ts:525
 msgctxt "Routes|Vocabularies"
 msgid "Not found."
 msgstr "Nenalezeno."
 
 #. Default: "Not found: {url}"
-#: src/helpers/handler/handler.ts:79
+#: src/helpers/handler/handler.ts:75
 msgctxt "Helpers|Handler"
 msgid "Not found: {url}"
 msgstr ""
@@ -1730,8 +1824,14 @@ msgctxt "Vocabularies|Months"
 msgid "November"
 msgstr ""
 
+#. Default: "Object is of wrong type."
+#: src/helpers/schema/schema.ts:198
+msgctxt "Helpers|Schema"
+msgid "Object is of wrong type."
+msgstr ""
+
 #. Default: "Object “{id}” is locked."
-#: src/routes/content/content.ts:1129
+#: src/routes/content/content.ts:1357
 msgctxt "Routes|Content"
 msgid "Object “{id}” is locked."
 msgstr ""
@@ -1803,16 +1903,16 @@ msgid "Password"
 msgstr ""
 
 #. Default: "Password reset request"
-#: src/routes/users/users.ts:116
-#: src/routes/users/users.ts:339
+#: src/routes/users/users.ts:128
+#: src/routes/users/users.ts:366
 msgctxt "Routes|Users"
 msgid "Password reset request"
 msgstr "Žádost o resetování hesla"
 
 #. Default: "Password should be at least 8 characters long."
-#: src/routes/users/users.ts:52
-#: src/routes/users/users.ts:267
-#: src/routes/users/users.ts:401
+#: src/routes/users/users.ts:64
+#: src/routes/users/users.ts:294
+#: src/routes/users/users.ts:428
 msgctxt "Routes|Users"
 msgid "Password should be at least 8 characters long."
 msgstr ""
@@ -1842,10 +1942,17 @@ msgid "Pattern must be at least 1 character long."
 msgstr ""
 
 #. Default: "Pending review"
-#: src/profiles/core/workflows.json:22
+#: src/profiles/core/workflows.json:24
 msgctxt "Profiles|Core|Workflows"
 msgid "Pending review"
 msgstr "Čeká na revizi"
+
+#. Default: "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:25
+#: src/profiles/core/controlpanels/security.json:25
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "People who sign up choose their password themselves. When this is off, new accounts get no password and have to reset it."
+msgstr ""
 
 #. Default: "Perform a workflow transition on the triggering object"
 #: src/content_rules/actions/transition_workflow.ts:16
@@ -1864,14 +1971,14 @@ msgstr ""
 #: src/profiles/core/catalog.json:143
 #: src/profiles/core/catalog.json:204
 #: src/profiles/core/catalog.json:216
-#: src/profiles/core/catalog.json:564
-#: src/profiles/core/catalog.json:576
-#: src/profiles/core/catalog.json:643
-#: src/profiles/core/catalog.json:655
-#: src/profiles/core/catalog.json:716
-#: src/profiles/core/catalog.json:728
-#: src/profiles/core/catalog.json:789
-#: src/profiles/core/catalog.json:801
+#: src/profiles/core/catalog.json:589
+#: src/profiles/core/catalog.json:601
+#: src/profiles/core/catalog.json:668
+#: src/profiles/core/catalog.json:680
+#: src/profiles/core/catalog.json:741
+#: src/profiles/core/catalog.json:753
+#: src/profiles/core/catalog.json:814
+#: src/profiles/core/catalog.json:826
 msgctxt "Profiles|Core|Catalog"
 msgid "Please enter the number in days."
 msgstr "Zadejte počet dní."
@@ -1883,18 +1990,18 @@ msgstr "Zadejte počet dní."
 #: src/profiles/core/catalog.json:192
 #: src/profiles/core/catalog.json:198
 #: src/profiles/core/catalog.json:210
-#: src/profiles/core/catalog.json:552
-#: src/profiles/core/catalog.json:558
-#: src/profiles/core/catalog.json:570
-#: src/profiles/core/catalog.json:631
-#: src/profiles/core/catalog.json:637
-#: src/profiles/core/catalog.json:649
-#: src/profiles/core/catalog.json:704
-#: src/profiles/core/catalog.json:710
-#: src/profiles/core/catalog.json:722
-#: src/profiles/core/catalog.json:777
-#: src/profiles/core/catalog.json:783
-#: src/profiles/core/catalog.json:795
+#: src/profiles/core/catalog.json:577
+#: src/profiles/core/catalog.json:583
+#: src/profiles/core/catalog.json:595
+#: src/profiles/core/catalog.json:656
+#: src/profiles/core/catalog.json:662
+#: src/profiles/core/catalog.json:674
+#: src/profiles/core/catalog.json:729
+#: src/profiles/core/catalog.json:735
+#: src/profiles/core/catalog.json:747
+#: src/profiles/core/catalog.json:802
+#: src/profiles/core/catalog.json:808
+#: src/profiles/core/catalog.json:820
 msgctxt "Profiles|Core|Catalog"
 msgid "Please use YYYY/MM/DD."
 msgstr "Použijte prosím formát RRRR/MM/DD."
@@ -1955,6 +2062,12 @@ msgctxt "Profiles|Ai|Controlpanels"
 msgid "Prompts"
 msgstr "Výzvy"
 
+#. Default: "Property '@type' is required."
+#: src/routes/content/content.ts:842
+msgctxt "Routes|Content"
+msgid "Property '@type' is required."
+msgstr ""
+
 #. Default: "Property “groupname” is required."
 #: src/routes/groups/groups.ts:100
 msgctxt "Routes|Groups"
@@ -1969,13 +2082,13 @@ msgid "Provided block id is not valid."
 msgstr ""
 
 #. Default: "Publish"
-#: src/profiles/core/workflows.json:47
+#: src/profiles/core/workflows.json:52
 msgctxt "Profiles|Core|Workflows"
 msgid "Publish"
 msgstr "Publikovat"
 
 #. Default: "Published"
-#: src/profiles/core/workflows.json:33
+#: src/profiles/core/workflows.json:37
 msgctxt "Profiles|Core|Workflows"
 msgid "Published"
 msgstr "Publikováno"
@@ -2050,14 +2163,14 @@ msgstr ""
 
 #. Default: "Reindex security"
 #: src/scheduled_jobs/actions/reindex_security.ts:16
-#: src/routes/sharing/sharing.ts:296
+#: src/routes/sharing/sharing.ts:340
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security"
 msgstr ""
 
 #. Default: "Reindex security of {path}"
 #: src/scheduled_jobs/actions/reindex_security.ts:20
-#: src/routes/sharing/sharing.ts:297
+#: src/routes/sharing/sharing.ts:341
 msgctxt "Scheduled jobs|Actions|Reindex security"
 msgid "Reindex security of {path}"
 msgstr ""
@@ -2116,21 +2229,23 @@ msgctxt "Routes|Replace"
 msgid "Replacement must be provided."
 msgstr ""
 
-#. Default: "Required field(s) missing."
-#: src/routes/content/content.ts:796
+#. Default: "Required input is missing."
+#: src/routes/content/content.ts:872
+#: src/helpers/schema/schema.ts:178
 msgctxt "Routes|Content"
-msgid "Required field(s) missing."
-msgstr "Chybí povinná pole."
+msgid "Required input is missing."
+msgstr ""
 
 #. Default: "Resource is locked."
-#: src/routes/content/content.ts:215
-#: src/routes/content/content.ts:994
-msgctxt "Routes|Content"
+#: src/routes/workflow/workflow.ts:120
+#: src/routes/content/content.ts:225
+#: src/routes/content/content.ts:1188
+msgctxt "Routes|Workflow"
 msgid "Resource is locked."
 msgstr ""
 
 #. Default: "Retract"
-#: src/profiles/core/workflows.json:57
+#: src/profiles/core/workflows.json:62
 msgctxt "Profiles|Core|Workflows"
 msgid "Retract"
 msgstr "Stáhnout"
@@ -2149,7 +2264,7 @@ msgid "Review"
 msgstr "Revize"
 
 #. Default: "Review state"
-#: src/profiles/core/catalog.json:470
+#: src/profiles/core/catalog.json:495
 msgctxt "Profiles|Core|Catalog"
 msgid "Review state"
 msgstr "Stav revize"
@@ -2236,9 +2351,10 @@ msgid "Secure"
 msgstr "Zabezpečit"
 
 #. Default: "Security"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:3
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:3
 #: src/profiles/core/controlpanels/security.json:3
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
 msgid "Security"
 msgstr ""
 
@@ -2267,7 +2383,7 @@ msgid "Send an email on the triggering object"
 msgstr ""
 
 #. Default: "Send back"
-#: src/profiles/core/workflows.json:52
+#: src/profiles/core/workflows.json:57
 msgctxt "Profiles|Core|Workflows"
 msgid "Send back"
 msgstr "Poslat zpět"
@@ -2304,7 +2420,7 @@ msgid "Sharing"
 msgstr "Sdílení"
 
 #. Default: "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
-#: src/routes/sharing/sharing.ts:220
+#: src/routes/sharing/sharing.ts:235
 msgctxt "Routes|Sharing"
 msgid "Sharing data needs an optional boolean inherit and a list of entries with an id, a type user or group and roles."
 msgstr ""
@@ -2316,7 +2432,7 @@ msgid "Short name"
 msgstr "Krátký název"
 
 #. Default: "Short name (id)"
-#: src/profiles/core/catalog.json:395
+#: src/profiles/core/catalog.json:420
 msgctxt "Profiles|Core|Catalog"
 msgid "Short name (id)"
 msgstr "Krátký název (id)"
@@ -2383,7 +2499,7 @@ msgid "Sitemap"
 msgstr "Mapa stránek"
 
 #. Default: "Sortable Title"
-#: src/profiles/core/catalog.json:495
+#: src/profiles/core/catalog.json:520
 msgctxt "Profiles|Core|Catalog"
 msgid "Sortable Title"
 msgstr "Řaditelný název"
@@ -2419,7 +2535,7 @@ msgid "Submit"
 msgstr "Odeslat"
 
 #. Default: "Submit for publication"
-#: src/profiles/core/workflows.json:62
+#: src/profiles/core/workflows.json:67
 msgctxt "Profiles|Core|Workflows"
 msgid "Submit for publication"
 msgstr "Odeslat k publikování"
@@ -2473,7 +2589,7 @@ msgid "System group"
 msgstr "Systémová skupina"
 
 #. Default: "System users"
-#: src/routes/users/users.ts:450
+#: src/routes/users/users.ts:484
 msgctxt "Routes|Users"
 msgid "System users"
 msgstr "Systémoví uživatelé"
@@ -2585,19 +2701,25 @@ msgstr "Typy obsahu, které by se měly zobrazovat v navigaci a mapě stránek."
 #. Default: "The current day"
 #: src/profiles/core/catalog.json:149
 #: src/profiles/core/catalog.json:222
-#: src/profiles/core/catalog.json:582
-#: src/profiles/core/catalog.json:661
-#: src/profiles/core/catalog.json:734
-#: src/profiles/core/catalog.json:807
+#: src/profiles/core/catalog.json:607
+#: src/profiles/core/catalog.json:686
+#: src/profiles/core/catalog.json:759
+#: src/profiles/core/catalog.json:832
 msgctxt "Profiles|Core|Catalog"
 msgid "The current day"
 msgstr "Aktuální den"
 
 #. Default: "The date an item was created"
-#: src/profiles/core/catalog.json:673
+#: src/profiles/core/catalog.json:698
 msgctxt "Profiles|Core|Catalog"
 msgid "The date an item was created"
 msgstr "Datum vytvoření položky"
+
+#. Default: "The delta has to be top, bottom or an integer."
+#: src/routes/content/content.ts:1151
+msgctxt "Routes|Content"
+msgid "The delta has to be top, bottom or an integer."
+msgstr ""
 
 #. Default: "The email address that sends the email. If no email is provided here, it will use the portal from address."
 #: src/content_rules/actions/send_email.ts:56
@@ -2624,8 +2746,8 @@ msgid "The file extension to check for"
 msgstr ""
 
 #. Default: "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
-#: src/routes/users/users.ts:117
-#: src/routes/users/users.ts:340
+#: src/routes/users/users.ts:129
+#: src/routes/users/users.ts:367
 msgctxt "Routes|Users"
 msgid "The following link takes you to a page where you can reset your password: {url} (This link will expire in 2 hours)"
 msgstr ""
@@ -2636,8 +2758,33 @@ msgctxt "Routes|Groups"
 msgid "The group name you entered already exists."
 msgstr ""
 
+#. Default: "The id is already in use in this folder."
+#: src/app.ts:273
+msgctxt "App"
+msgid "The id is already in use in this folder."
+msgstr ""
+
+#. Default: "The id “{id}” is invalid - it is already in use."
+#: src/routes/content/content.ts:900
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid - it is already in use."
+msgstr ""
+
+#. Default: "The id “{id}” is invalid."
+#: src/routes/content/content.ts:889
+#: src/routes/content/content.ts:1207
+msgctxt "Routes|Content"
+msgid "The id “{id}” is invalid."
+msgstr ""
+
+#. Default: "The item “{id}” is not found."
+#: src/routes/content/content.ts:1139
+msgctxt "Routes|Content"
+msgid "The item “{id}” is not found."
+msgstr ""
+
 #. Default: "The item’s title, transformed for sorting"
-#: src/profiles/core/catalog.json:496
+#: src/profiles/core/catalog.json:521
 msgctxt "Profiles|Core|Catalog"
 msgid "The item’s title, transformed for sorting"
 msgstr "Název položky, upravený pro řazení"
@@ -2691,7 +2838,7 @@ msgid "The password for the ESMTP user account."
 msgstr "Heslo pro uživatelský účet ESMTP."
 
 #. Default: "The person that created an item"
-#: src/profiles/core/catalog.json:415
+#: src/profiles/core/catalog.json:440
 msgctxt "Profiles|Core|Catalog"
 msgid "The person that created an item"
 msgstr "Osoba, která vytvořila položku"
@@ -2702,6 +2849,12 @@ msgctxt "Profiles|Core|Controlpanels|Mail"
 msgid "The port of your local SMTP (outgoing email) server. Usually '25'."
 msgstr "Port vašeho místního serveru SMTP (odchozí email). Obvykle '25'."
 
+#. Default: "The request body is not valid JSON."
+#: src/app.ts:303
+msgctxt "App"
+msgid "The request body is not valid JSON."
+msgstr ""
+
 #. Default: "The roles to check for."
 #: src/content_rules/conditions/user_role.ts:34
 msgctxt "Content rules|Conditions|User role"
@@ -2709,7 +2862,7 @@ msgid "The roles to check for."
 msgstr ""
 
 #. Default: "The short name of an item (used in the url)"
-#: src/profiles/core/catalog.json:396
+#: src/profiles/core/catalog.json:421
 msgctxt "Profiles|Core|Catalog"
 msgid "The short name of an item (used in the url)"
 msgstr "Krátký název položky (použitý v URL)"
@@ -2727,19 +2880,19 @@ msgid "The start date and time of an event"
 msgstr "Datum a čas zahájení události"
 
 #. Default: "The time and date an item was expired"
-#: src/profiles/core/catalog.json:600
+#: src/profiles/core/catalog.json:625
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was expired"
 msgstr "Čas a datum, kdy položka vypršela"
 
 #. Default: "The time and date an item was first published"
-#: src/profiles/core/catalog.json:746
+#: src/profiles/core/catalog.json:771
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was first published"
 msgstr "Čas a datum, kdy byla položka poprvé publikována"
 
 #. Default: "The time and date an item was last modified"
-#: src/profiles/core/catalog.json:521
+#: src/profiles/core/catalog.json:546
 msgctxt "Profiles|Core|Catalog"
 msgid "The time and date an item was last modified"
 msgstr "Čas a datum, kdy byla položka naposledy upravena"
@@ -2751,10 +2904,28 @@ msgid "The topic of this item."
 msgstr "Téma této položky."
 
 #. Default: "The user viewing the querystring results"
-#: src/profiles/core/catalog.json:428
+#: src/profiles/core/catalog.json:453
 msgctxt "Profiles|Core|Catalog"
 msgid "The user viewing the querystring results"
 msgstr "Uživatel prohlížející výsledky dotazu"
+
+#. Default: "The uuid is already in use."
+#: src/routes/content/content.ts:935
+msgctxt "Routes|Content"
+msgid "The uuid is already in use."
+msgstr ""
+
+#. Default: "The uuid is invalid."
+#: src/routes/content/content.ts:930
+msgctxt "Routes|Content"
+msgid "The uuid is invalid."
+msgstr ""
+
+#. Default: "The version is missing or invalid."
+#: src/routes/history/history.ts:70
+msgctxt "Routes|History"
+msgid "The version is missing or invalid."
+msgstr ""
 
 #. Default: "The workflow states to check for."
 #: src/content_rules/conditions/workflow_state.ts:31
@@ -2762,8 +2933,14 @@ msgctxt "Content rules|Conditions|Workflow state"
 msgid "The workflow states to check for."
 msgstr ""
 
+#. Default: "The {type} “{id}” is not found."
+#: src/routes/sharing/sharing.ts:252
+msgctxt "Routes|Sharing"
+msgid "The {type} “{id}” is not found."
+msgstr ""
+
 #. Default: "This document is already locked by another user."
-#: src/routes/lock/lock.ts:122
+#: src/routes/lock/lock.ts:110
 msgctxt "Routes|Lock"
 msgid "This document is already locked by another user."
 msgstr "Tento dokument je již uzamčen jiným uživatelem."
@@ -2821,20 +2998,20 @@ msgstr ""
 #: src/profiles/core/catalog.json:297
 #: src/profiles/core/catalog.json:303
 #: src/profiles/core/catalog.json:310
-#: src/profiles/core/catalog.json:403
-#: src/profiles/core/catalog.json:422
-#: src/profiles/core/catalog.json:453
-#: src/profiles/core/catalog.json:459
+#: src/profiles/core/catalog.json:428
+#: src/profiles/core/catalog.json:447
 #: src/profiles/core/catalog.json:478
 #: src/profiles/core/catalog.json:484
+#: src/profiles/core/catalog.json:503
 #: src/profiles/core/catalog.json:509
+#: src/profiles/core/catalog.json:534
 msgctxt "Profiles|Core|Catalog"
 msgid "Tip: you can use * to autocomplete."
 msgstr "Tip: pro automatické dokončování můžete použít *."
 
 #. Default: "Title"
 #: src/profiles/core/catalog.json:271
-#: src/profiles/core/behaviors/basic.json:22
+#: src/profiles/core/behaviors/basic.json:24
 #: src/profiles/ai/controlpanels/ai.json:29
 msgctxt "Profiles|Core|Catalog"
 msgid "Title"
@@ -2849,18 +3026,18 @@ msgstr "Komu, od a zpráva jsou povinná pole."
 #. Default: "Today"
 #: src/profiles/core/catalog.json:148
 #: src/profiles/core/catalog.json:221
-#: src/profiles/core/catalog.json:581
-#: src/profiles/core/catalog.json:660
-#: src/profiles/core/catalog.json:733
-#: src/profiles/core/catalog.json:806
+#: src/profiles/core/catalog.json:606
+#: src/profiles/core/catalog.json:685
+#: src/profiles/core/catalog.json:758
+#: src/profiles/core/catalog.json:831
 msgctxt "Profiles|Core|Catalog"
 msgid "Today"
 msgstr "Dnes"
 
 #. Default: "Transaction error."
-#: src/client.ts:81
-#: src/app.ts:167
-#: src/app.ts:184
+#: src/client.ts:93
+#: src/app.ts:169
+#: src/app.ts:186
 msgctxt "Client"
 msgid "Transaction error."
 msgstr "Chyba transakce."
@@ -2878,13 +3055,13 @@ msgid "Transition workflow state"
 msgstr ""
 
 #. Default: "Transition {transition} is not available for {path}."
-#: src/routes/workflow/workflow.ts:43
+#: src/routes/workflow/workflow.ts:44
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available for {path}."
 msgstr ""
 
 #. Default: "Transition {transition} is not available in the current state."
-#: src/routes/workflow/workflow.ts:87
+#: src/routes/workflow/workflow.ts:101
 msgctxt "Routes|Workflow"
 msgid "Transition {transition} is not available in the current state."
 msgstr ""
@@ -2902,7 +3079,7 @@ msgid "Tuesday"
 msgstr ""
 
 #. Default: "Type"
-#: src/profiles/core/catalog.json:445
+#: src/profiles/core/catalog.json:470
 msgctxt "Profiles|Core|Catalog"
 msgid "Type"
 msgstr "Typ"
@@ -2914,16 +3091,10 @@ msgid "Type Name"
 msgstr "Název typu"
 
 #. Default: "Type of the current document is not found."
-#: src/helpers/handler/handler.ts:98
+#: src/helpers/handler/handler.ts:94
 msgctxt "Helpers|Handler"
 msgid "Type of the current document is not found."
 msgstr "Typ aktuálního dokumentu nebyl nalezen."
-
-#. Default: "Type {type} not found."
-#: src/routes/content/content.ts:785
-msgctxt "Routes|Content"
-msgid "Type {type} not found."
-msgstr ""
 
 #. Default: "Unknown roles: {roles}"
 #: src/routes/groups/groups.ts:134
@@ -2950,9 +3121,10 @@ msgid "Use '../' to navigate to parent objects."
 msgstr "Použijte '../' pro navigaci k nadřazeným objektům."
 
 #. Default: "Use email address as login name"
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:29
 #: src/profiles/core/upgrades/1001/controlpanels/security.json:15
-#: src/profiles/core/controlpanels/security.json:15
-msgctxt "Profiles|Core|Upgrades|1001|Controlpanels|Security"
+#: src/profiles/core/controlpanels/security.json:29
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
 msgid "Use email address as login name"
 msgstr ""
 
@@ -2970,7 +3142,7 @@ msgid "User created"
 msgstr ""
 
 #. Default: "User doesn’t exist or invalid credentials."
-#: src/routes/users/users.ts:72
+#: src/routes/users/users.ts:84
 msgctxt "Routes|Users"
 msgid "User doesn’t exist or invalid credentials."
 msgstr "Uživatel neexistuje nebo neplatné přihlašovací údaje."
@@ -3023,6 +3195,12 @@ msgctxt "Content rules|Conditions|User role"
 msgid "User’s role"
 msgstr ""
 
+#. Default: "Value is too long"
+#: src/helpers/schema/schema.ts:210
+msgctxt "Helpers|Schema"
+msgid "Value is too long"
+msgstr ""
+
 #. Default: "Version item"
 #: src/content_rules/actions/version_item.ts:14
 msgctxt "Content rules|Actions|Version item"
@@ -3036,7 +3214,9 @@ msgid "Version item with comment {comment}"
 msgstr ""
 
 #. Default: "Version not found."
-#: src/routes/history/history.ts:91
+#: src/routes/history/history.ts:104
+#: src/routes/content/content.ts:394
+#: src/routes/content/content.ts:402
 msgctxt "Routes|History"
 msgid "Version not found."
 msgstr ""
@@ -3088,13 +3268,20 @@ msgid "View History"
 msgstr ""
 
 #. Default: "Visible to everyone, editable by the owner."
-#: src/profiles/core/workflows.json:34
+#: src/profiles/core/workflows.json:38
 msgctxt "Profiles|Core|Workflows"
 msgid "Visible to everyone, editable by the owner."
 msgstr "Viditelné pro všechny, upravitelné vlastníkem."
 
+#. Default: "Visitors can create their own account. When this is off, only administrators can add users."
+#: src/profiles/core/upgrades/1015/controlpanels/security.json:20
+#: src/profiles/core/controlpanels/security.json:20
+msgctxt "Profiles|Core|Upgrades|1015|Controlpanels|Security"
+msgid "Visitors can create their own account. When this is off, only administrators can add users."
+msgstr ""
+
 #. Default: "Waiting to be reviewed, not editable by the owner."
-#: src/profiles/core/workflows.json:23
+#: src/profiles/core/workflows.json:25
 msgctxt "Profiles|Core|Workflows"
 msgid "Waiting to be reviewed, not editable by the owner."
 msgstr "Čeká na revizi, vlastník nemůže upravovat."
@@ -3139,10 +3326,10 @@ msgstr ""
 #. Default: "Within last"
 #: src/profiles/core/catalog.json:130
 #: src/profiles/core/catalog.json:203
-#: src/profiles/core/catalog.json:563
-#: src/profiles/core/catalog.json:642
-#: src/profiles/core/catalog.json:715
-#: src/profiles/core/catalog.json:788
+#: src/profiles/core/catalog.json:588
+#: src/profiles/core/catalog.json:667
+#: src/profiles/core/catalog.json:740
+#: src/profiles/core/catalog.json:813
 msgctxt "Profiles|Core|Catalog"
 msgid "Within last"
 msgstr "Během posledních"
@@ -3150,10 +3337,10 @@ msgstr "Během posledních"
 #. Default: "Within next"
 #: src/profiles/core/catalog.json:142
 #: src/profiles/core/catalog.json:215
-#: src/profiles/core/catalog.json:575
-#: src/profiles/core/catalog.json:654
-#: src/profiles/core/catalog.json:727
-#: src/profiles/core/catalog.json:800
+#: src/profiles/core/catalog.json:600
+#: src/profiles/core/catalog.json:679
+#: src/profiles/core/catalog.json:752
+#: src/profiles/core/catalog.json:825
 msgctxt "Profiles|Core|Catalog"
 msgid "Within next"
 msgstr "Během příštích"
@@ -3185,20 +3372,28 @@ msgid "Wrong login and/or password."
 msgstr "Chybné přihlášení a/nebo heslo."
 
 #. Default: "Wrong password."
-#: src/routes/users/users.ts:90
+#: src/routes/users/users.ts:102
 msgctxt "Routes|Users"
 msgid "Wrong password."
 msgstr ""
 
 #. Default: "Yes"
 #: src/profiles/core/catalog.json:371
+#: src/profiles/core/catalog.json:396
 #: src/profiles/core/vocabularies/boolean.json:5
+#: src/profiles/core/upgrades/1016/catalog.json:20
 msgctxt "Profiles|Core|Catalog"
 msgid "Yes"
 msgstr "Ano"
 
+#. Default: "You are not allowed to set roles or groups."
+#: src/routes/users/users.ts:269
+msgctxt "Routes|Users"
+msgid "You are not allowed to set roles or groups."
+msgstr ""
+
 #. Default: "You are not authorization to access this resource."
-#: src/routes/workflow/workflow.ts:96
+#: src/routes/workflow/workflow.ts:110
 msgctxt "Routes|Workflow"
 msgid "You are not authorization to access this resource."
 msgstr "Nemáte oprávnění k přístupu k tomuto zdroji."
@@ -3210,17 +3405,19 @@ msgid "You are not authorized to access the vocabulary “{id}”."
 msgstr ""
 
 #. Default: "You are not authorized to access this resource."
-#: src/routes/users/users.ts:374
+#: src/routes/users/users.ts:401
+#: src/routes/types/types.ts:43
 #: src/routes/translations/translations.ts:39
 #: src/routes/recyclebin/recyclebin.ts:45
 #: src/routes/recyclebin/recyclebin.ts:114
 #: src/routes/recyclebin/recyclebin.ts:212
-#: src/routes/jobs/jobs.ts:46
-#: src/routes/jobs/jobs.ts:86
-#: src/routes/jobs/jobs.ts:138
-#: src/routes/jobs/jobs.ts:166
-#: src/routes/jobs/jobs.ts:197
-#: src/routes/content/content.ts:201
+#: src/routes/jobs/jobs.ts:39
+#: src/routes/jobs/jobs.ts:79
+#: src/routes/jobs/jobs.ts:131
+#: src/routes/jobs/jobs.ts:162
+#: src/routes/jobs/jobs.ts:193
+#: src/routes/history/history.ts:59
+#: src/routes/content/content.ts:215
 #: src/routes/comments/comments.ts:54
 #: src/routes/aliases/aliases.ts:43
 #: src/helpers/handler/handler.ts:120
@@ -3229,7 +3426,7 @@ msgid "You are not authorized to access this resource."
 msgstr ""
 
 #. Default: "You are not authorized to set the uuid."
-#: src/routes/content/content.ts:812
+#: src/routes/content/content.ts:921
 msgctxt "Routes|Content"
 msgid "You are not authorized to set the uuid."
 msgstr ""
@@ -3241,7 +3438,7 @@ msgid "You can not filter by title and token at the same time."
 msgstr ""
 
 #. Default: "You can only change your own password."
-#: src/routes/users/users.ts:79
+#: src/routes/users/users.ts:91
 msgctxt "Routes|Users"
 msgid "You can only change your own password."
 msgstr ""
@@ -3253,7 +3450,7 @@ msgid "You can’t delete system groups."
 msgstr "Systémové skupiny nelze smazat."
 
 #. Default: "You can’t delete system users."
-#: src/routes/users/users.ts:449
+#: src/routes/users/users.ts:483
 msgctxt "Routes|Users"
 msgid "You can’t delete system users."
 msgstr "Systémové uživatele nelze smazat."
@@ -3271,31 +3468,32 @@ msgid "You don’t have permission to edit this comment."
 msgstr ""
 
 #. Default: "You don’t have permission to save this document because it is locked by another user."
-#: src/routes/history/history.ts:68
+#: src/routes/history/history.ts:81
 msgctxt "Routes|History"
 msgid "You don’t have permission to save this document because it is locked by another user."
 msgstr "Nemáte oprávnění uložit tento dokument, protože je uzamčen jiným uživatelem."
 
 #. Default: "You don’t have permission to unlock this document."
-#: src/routes/lock/lock.ts:175
+#: src/routes/lock/lock.ts:163
 msgctxt "Routes|Lock"
 msgid "You don’t have permission to unlock this document."
 msgstr "Nemáte oprávnění odemknout tento dokument."
 
 #. Default: "You don’t have permissions to add a user."
-#: src/routes/users/users.ts:238
+#: src/routes/users/users.ts:258
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to add a user."
 msgstr "Nemáte oprávnění přidat uživatele."
 
 #. Default: "You don’t have permissions to view this user."
-#: src/routes/users/users.ts:144
+#: src/routes/users/users.ts:156
 msgctxt "Routes|Users"
 msgid "You don’t have permissions to view this user."
 msgstr ""
 
 #. Default: "You must enter a valid email address."
-#: src/routes/users/users.ts:249
+#: src/routes/users/users.ts:276
+#: src/routes/users/users.ts:435
 msgctxt "Routes|Users"
 msgid "You must enter a valid email address."
 msgstr ""

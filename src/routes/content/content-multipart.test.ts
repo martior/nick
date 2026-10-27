@@ -133,9 +133,7 @@ describe('Content multipart/form-data', () => {
         contentType: 'text/plain',
       });
 
-    // No `@type`, which fails the same way an empty `{}` JSON POST already does
-    // today (a pre-existing gap: `Type.fetchById(undefined, ...)` throws instead
-    // of the route's own 400 "Type not found" check ever being reached).
-    expect(response.status).toBe(500);
+    // No `@type`, which is a bad request like an empty `{}` JSON POST
+    expect(response.status).toBe(400);
   });
 });

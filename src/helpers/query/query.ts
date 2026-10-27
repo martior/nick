@@ -21,8 +21,9 @@ import { normalize } from 'path';
 // Internal imports
 import { embed } from '../../helpers/ai/ai';
 import config from '../../helpers/config/config';
+import { RequestException } from '../../helpers/error/error';
 import { getUrlByPath } from '../../helpers/url/url';
-import { regExpEscape } from '../../helpers/utils/utils';
+import { likePrefix } from '../../helpers/utils/utils';
 import models from '../../models';
 
 /**
@@ -106,6 +107,15 @@ const stripTrailingSlash = (path: string): string =>
   path.length > 1 ? path.replace(/\/+$/, '') || '/' : path;
 
 /**
+ * SQL expression for the number of slashes in a path column.
+ * @method slashes
+ * @param {string} column Quoted column name.
+ * @returns {string} SQL expression.
+ */
+const slashes = (column: string): string =>
+  `(char_length(${column}) - char_length(replace(${column}, '/', '')))`;
+
+/**
  * Build a where condition for one or more path queries.
  *
  * Depth semantics (ExtendedPathIndex):
@@ -119,21 +129,35 @@ const stripTrailingSlash = (path: string): string =>
 export const pathCondition = (
   paths: { path: string; depth?: number }[],
 ): ['raw', string, any[]] => {
+  // Every path is below the root, no condition lets the planner use the
+  // covering indexes for counting
+  if (
+    paths.some(
+      ({ path, depth }) =>
+        stripTrailingSlash(path) === '/' && (depth === undefined || depth < 0),
+    )
+  ) {
+    return ['raw', 'true', []];
+  }
   const sql: string[] = [];
   const bindings: any[] = [];
   paths.forEach(({ path, depth }) => {
     const base = stripTrailingSlash(path);
     const prefix = base === '/' ? '/' : `${base}/`;
     if (depth === undefined || depth < 0) {
-      sql.push('("_path" = ? OR starts_with("_path", ?))');
-      bindings.push(base, prefix);
+      sql.push('("_path" = ? OR "_path" LIKE ?)');
+      bindings.push(base, likePrefix(prefix));
     } else if (depth === 0) {
       sql.push('"_path" = ?');
       bindings.push(base);
     } else {
-      sql.push('"_path" ~ ?');
+      // Descendants with up to depth - 1 more slashes than the prefix
+      const level = prefix.split('/').length - 1;
+      sql.push(`("_path" LIKE ? AND ${slashes('"_path"')} BETWEEN ? AND ?)`);
       bindings.push(
-        `^${regExpEscape(prefix)}[^/]+(/[^/]+){0,${Math.min(depth, 100) - 1}}$`,
+        `${likePrefix(prefix).slice(0, -1)}_%`,
+        level,
+        level + Math.min(depth, 100) - 1,
       );
     }
   });
@@ -391,8 +415,10 @@ export const querystringToQuery = async (
   const options: QueryOptions = {
     offset: 0,
     limit: 100,
+    // Without sort_on order by the primary key: the same order as by UID,
+    // but a limited query can walk the index instead of sorting all matches
     order: {
-      column: 'UID',
+      column: 'document',
       reverse: false,
     },
     select: undefined,
@@ -628,10 +654,15 @@ export const querystringToQuery = async (
 
   // Check path depth
   if (querystring['path.depth']) {
-    where['_path'] = [
-      '~',
-      `^${root}[^/]+${'(/[^/]+)?'.repeat(Math.min(querystring['path.depth'] - 1, 20))}$`,
-    ];
+    where['_path'] = pathCondition([
+      {
+        path: root,
+        depth: Math.min(
+          Math.max(parseInt(`${querystring['path.depth']}`, 10) || 1, 1),
+          21,
+        ),
+      },
+    ]);
   }
 
   // Check batch size
@@ -747,14 +778,53 @@ export const queryparamToQuery = async (
     };
   });
 
+  // Check the values which have to be integers and dates, an invalid value
+  // is a malformed request
+  const invalid = (name: string) =>
+    new RequestException(400, {
+      message: req.i18n('Invalid value for {name}.', { name }),
+    });
+  // A negative batch start is the start, like in Plone
+  if (
+    params.b_start !== undefined &&
+    !/^-?[0-9]+$/.test(`${params.b_start.query}`)
+  ) {
+    throw invalid('b_start');
+  }
+  if (
+    params.b_size !== undefined &&
+    !/^[0-9]+$/.test(`${params.b_size.query}`)
+  ) {
+    throw invalid('b_size');
+  }
+  if (
+    params.path?.depth !== undefined &&
+    !/^-?[0-9]+$/.test(`${params.path.depth}`)
+  ) {
+    throw invalid('path.depth');
+  }
+  Object.keys(params).forEach((key: string) => {
+    if (
+      indexes[key]?.type === 'date' &&
+      params[key].query !== undefined &&
+      toArray(params[key].query).some(
+        (item: any) => item !== '' && parseDate(item) === undefined,
+      )
+    ) {
+      throw invalid(key);
+    }
+  });
+
   const where: WhereClause = {};
 
   // Default option
   const options: QueryOptions = {
     offset: 0,
     limit: 100,
+    // Without sort_on order by the primary key: the same order as by UID,
+    // but a limited query can walk the index instead of sorting all matches
     order: {
-      column: 'UID',
+      column: 'document',
       reverse: false,
     },
     select: undefined,
