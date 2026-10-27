@@ -40,6 +40,9 @@ describe('Aliases', () => {
   it('should add a new alias in bulk', () =>
     testRequest(app, 'aliases/post_root'));
 
+  it('should not add an alias of existing content', () =>
+    testRequest(app, 'aliases/post_existing'));
+
   it('should delete an alias', async () => {
     await testRequest(app, 'aliases/post');
     return testRequest(app, 'aliases/delete');

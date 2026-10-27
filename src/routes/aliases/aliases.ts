@@ -96,7 +96,19 @@ export default [
       const root = req.document.uuid === req.navroot.uuid;
 
       const items = req.body.items || [];
+      const failed: string[] = [];
       await mapAsync(items, async (item: RedirectItem) => {
+        // Refuse relative paths and paths of existing content or aliases
+        if (
+          typeof item.path !== 'string' ||
+          !item.path.startsWith('/') ||
+          (await Document.fetchOne({ path: item.path }, {}, trx)) ||
+          (await Redirect.fetchOne({ path: item.path }, {}, trx))
+        ) {
+          failed.push(item.path);
+          return;
+        }
+
         const document = root
           ? (await Document.fetchOne({ path: item['redirect-to'] }, {}, trx))
               .uuid
@@ -112,6 +124,16 @@ export default [
           trx,
         );
       });
+
+      // Send the aliases which could not be added
+      if (failed.length > 0) {
+        return {
+          json: {
+            type: 'error',
+            failed,
+          },
+        };
+      }
 
       // Send created
       return {

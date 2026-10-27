@@ -15,6 +15,7 @@
 - Return the @users listing as an object with items and items_total like plone.restapi, and support the search, groups-filter:list and limit parameters @martior
 
 - Require the Modify permission for the users and subjects vocabularies (and their plone.app.vocabularies names), like Plone @martior
+- Require the Manage Users permission for @roles, like Plone @martior
 ### Feature
 
 - Add support for multiple profiles @robgietema
@@ -332,6 +333,8 @@
 - Refuse an invalid email address when creating a user @martior
 - Return the Location header when creating a user or group @martior
 - Allow one-character `query` and `search` values on @users like Plone, as Volto searches on every keystroke @martior
+- Support the categories:list parameter of @actions @martior
+- Refuse aliases which are relative or the path of existing content or of another alias @martior
 
 ### Internal
 

@@ -16,4 +16,7 @@ describe('Actions', () => {
 
   it('should get actions as authenticated', () =>
     testRequest(app, 'actions/get_authenticated'));
+
+  it('should get the actions of the requested categories', () =>
+    testRequest(app, 'actions/get_categories'));
 });

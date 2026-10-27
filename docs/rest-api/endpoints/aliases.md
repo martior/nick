@@ -39,6 +39,16 @@ Response:
 {% include_relative examples/aliases/post.res %}
 ```
 
+Aliases must be absolute paths and can't be the path of existing content or of an existing alias. Such aliases are not added; the others are. The server then responds with `200 OK` and lists the aliases which failed, like plone.restapi:
+
+```http
+{% include_relative examples/aliases/post_existing.req %}
+```
+
+```http
+{% include_relative examples/aliases/post_existing.res %}
+```
+
 ## Listing URL aliases of a Page
 
 To list aliases, you can send a `GET` request to the `/@aliases` endpoint. This needs the `Modify` permission on the page:
