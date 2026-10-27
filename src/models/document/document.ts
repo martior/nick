@@ -83,6 +83,8 @@ export class Document extends Model {
     stealable: boolean;
     created: number;
     timeout: number;
+    creator?: string;
+    token?: string;
   };
   declare inherit_roles: boolean;
   declare workflow_state: string;
@@ -380,6 +382,52 @@ export class Document extends Model {
    */
   setId(id: string | undefined, blacklist: string[]): void {
     this.id = uniqueId(id || '', blacklist);
+  }
+
+  /**
+   * Check if the document is locked for a request: it is locked, the lock
+   * has not expired and the request isn't made by the creator of the lock
+   * with the lock token. The token alone is not enough, another user who
+   * learned it can't edit around the lock.
+   * @method isLockedFor
+   * @param {string} userId Id of the current user.
+   * @param {any} token Lock token of the request.
+   * @returns {boolean} True if the document is locked for the request.
+   */
+  isLockedFor(userId: string, token: any): boolean {
+    return (
+      this.isLockedByOther(userId) ||
+      (this.lock.locked && !lockExpired(this) && token !== this.lock.token)
+    );
+  }
+
+  /**
+   * Check if the document is locked by another user than the current user.
+   * @method isLockedByOther
+   * @param {string} userId Id of the current user.
+   * @returns {boolean} True if the document is locked by another user.
+   */
+  isLockedByOther(userId: string): boolean {
+    return (
+      this.lock.locked && !lockExpired(this) && userId !== this.lock.creator
+    );
+  }
+
+  /**
+   * Get the lock information to show to a user. The token is only shown to
+   * users who may edit the document; users who may only view it get the lock
+   * without the token.
+   * @method lockInfo
+   * @param {string[]} permissions Permissions of the user on the document.
+   * @returns {Object} Lock information.
+   */
+  lockInfo(permissions: string[]): any {
+    if (!this.lock.locked || lockExpired(this)) {
+      return { locked: false, stealable: true };
+    }
+    return permissions.includes('Modify')
+      ? this.lock
+      : omit(this.lock, ['token']);
   }
 
   /**
@@ -716,13 +764,10 @@ export class Document extends Model {
           }
         : {}),
       review_state: self.workflow_state,
-      lock:
-        self.lock.locked && lockExpired(self)
-          ? {
-              locked: false,
-              stealable: true,
-            }
-          : self.lock,
+      // The token is only shown to users who may edit the document
+      lock: self.lockInfo(
+        req.document?.uuid === self.uuid ? req.permissions || [] : [],
+      ),
     } as Json;
   }
 

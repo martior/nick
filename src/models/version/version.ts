@@ -73,7 +73,9 @@ export class Version extends Model {
           }
         : null,
       comments: isObject(self.json) ? (self.json.changeNote ?? null) : null,
-      may_revert: req.permissions.includes('Revert'),
+      may_revert:
+        req.permissions.includes('Revert') &&
+        req.permissions.includes('Modify'),
       time: self.created,
       transition_title: 'Edited',
       type: 'versioning',

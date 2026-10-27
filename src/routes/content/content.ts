@@ -35,7 +35,6 @@ import {
   contentBodyParser,
   resolveMultipartBody,
 } from '../../helpers/multipart/multipart';
-import { lockExpired } from '../../helpers/lock/lock';
 import { getBatching, getBatchParams } from '../../helpers/query/query';
 import { getRootUrl, getUrl } from '../../helpers/url/url';
 import {
@@ -220,11 +219,7 @@ export default [
         }
 
         // Check if locked
-        if (
-          document?.lock?.locked &&
-          !lockExpired(document) &&
-          req.headers['lock-token'] !== document.lock.token
-        ) {
+        if (document.isLockedFor(req.user.id, req.headers['lock-token'])) {
           throw new RequestException(423, {
             error: {
               message: req.i18n('Resource is locked.'),
@@ -393,6 +388,12 @@ export default [
     client: 'getHistoryVersion',
     cache: 'manage',
     handler: async (req: Request, trx: Knex.Transaction) => {
+      // A version is a non-negative integer, there is no other version
+      if (!/^[0-9]+$/.test(req.params.version)) {
+        throw new RequestException(404, {
+          message: req.i18n('Version not found.'),
+        });
+      }
       await req.document.fetchChildren({}, trx);
       const version = parseInt(req.params.version, 10);
       await req.document.fetchVersion(version, trx);
@@ -1152,12 +1153,7 @@ export default [
       }
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(403, {
           error: {
             message: req.i18n('Resource is locked.'),
@@ -1326,12 +1322,7 @@ export default [
       await req.document.lockForUpdate(trx);
 
       // Check if locked
-      const lock = req.document.lock;
-      if (
-        lock.locked &&
-        !lockExpired(req.document) &&
-        req.headers['lock-token'] !== lock.token
-      ) {
+      if (req.document.isLockedFor(req.user.id, req.headers['lock-token'])) {
         throw new RequestException(423, {
           error: {
             message: req.i18n('Object “{id}” is locked.', {

@@ -142,7 +142,11 @@ const serializeItems = async (
       await document.fetchRelated('_type', trx);
       await document.applyBehaviors(trx);
       await document.fetchRelationLists(trx, req);
-      const documentReq = { ...req, document } as Request;
+      // The permissions on the item decide if the lock token is shown
+      const permissions = document.lock?.locked
+        ? await document.fetchUserPermissions(req.user, trx)
+        : [];
+      const documentReq = { ...req, document, permissions } as Request;
       return {
         ...(await document.toJson(
           documentReq,
