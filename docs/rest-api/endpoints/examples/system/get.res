@@ -6,7 +6,7 @@ Content-Type: application/json
    "items": [
     {
       "label": "Nick",
-      "value": "2.8.0"
+      "value": "3.0.0"
     },
     {
       "label": "Node.js",

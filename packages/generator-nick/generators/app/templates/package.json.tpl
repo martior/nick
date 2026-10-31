@@ -44,7 +44,7 @@
     "vitest": "5.0.0-beta.6"
   },
   "dependencies": {
-    "@plone/nick": "^2.9.0",
+    "@plone/nick": "^3.0.0",
     "tsx": "4.23.12"
   }
 }

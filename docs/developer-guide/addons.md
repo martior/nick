@@ -26,7 +26,7 @@ An add-on is an npm package that depends on `@plone/nick` and contains one or mo
     "schema": "acme"
   },
   "peerDependencies": {
-    "@plone/nick": "^2.9.0"
+    "@plone/nick": "^3.0.0"
   }
 }
 ```
