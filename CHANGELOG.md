@@ -1,5 +1,7 @@
 # Change Log
 
+## 3.0.1 (unreleased)
+
 ## 3.0.0 (2026-10-31)
 
 ### Breaking
